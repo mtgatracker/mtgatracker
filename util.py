@@ -4,6 +4,7 @@ generally stuff that is useful but just hasn't quite found a home elswhere in th
 to being moved at random! """
 
 import os
+
 from models.set import Pool
 from set_data.rix import RivalsOfIxalan
 from set_data.weird import WeirdLands
@@ -58,6 +59,19 @@ example_deck = {
     'dataStoreVersion': None}
 
 
+def card_ids_to_card_list(list_ids):
+    return [id_to_card(card_id) for card_id in list_ids]
+
+
+def id_to_card(card_id):
+    # TODO: this is silly
+        try:
+            return all_mtga_cards.find_one(card_id)
+        except:
+            print("NOOO cant find {} in all_mtga_cards".format(card_id))
+            raise
+
+
 def process_deck(deck_dict):
     deck_pool = Pool(deck_dict["name"])
     for card_obj in deck_dict["mainDeck"]:
@@ -76,3 +90,5 @@ def print_deck(deck_pool):
     grouped = deck_pool.group_cards()
     for card in grouped.keys():
         print("  {}x {}".format(grouped[card], card))
+
+

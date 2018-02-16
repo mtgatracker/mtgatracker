@@ -1,4 +1,5 @@
 import re
+from models.card import Card
 
 
 class Set(object):
@@ -27,6 +28,9 @@ class Pool(object):
             cards = []
         self.cards = cards
 
+    def __repr__(self):
+        return "<Pool {}: {} cards>".format(self.pool_name, len(self.cards))
+
     def group_cards(self):
         grouped = {}
         for card in self.cards:
@@ -35,6 +39,25 @@ class Pool(object):
             grouped[card] += 1
         return grouped
 
+    def transfer_all_to(self, other_pool):
+        for card in self.cards:
+            other_pool.cards.append(card)
+        while self.cards:
+            self.cards.pop()
+
+    def transfer_cards_to(self, cards, other_pool):
+        # TODO: make this "session safe" (ie if we error on the third card, we should not have transferred the first 2)
+        for card in cards:
+            self.transfer_card_to(card, other_pool)
+
+    def transfer_card_to(self, card, other_pool):
+        # TODO: make this atomic, somehow?
+        res = card
+        if not isinstance(card, Card):  # allow you to pass in cards or ids or searches
+            res = self.find_one(card)
+        self.cards.remove(res)
+        other_pool.cards.append(res)
+
     @classmethod
     def from_sets(cls, pool_name, sets):
         cards = []
@@ -42,6 +65,14 @@ class Pool(object):
             for card in set.cards_in_set:
                 cards.append(card)
         return Pool(pool_name, cards)
+
+    def find_one(self, id_or_keyword):
+        result = set(self.search(id_or_keyword))
+        if len(result) < 1:
+            raise ValueError("Pool does not contain {}".format(id_or_keyword))
+        elif len(result) > 1:
+            raise ValueError("Pool search '{}' not narrow enough, got: {}".format(id_or_keyword, result))
+        return result.pop()
 
     def search(self, id_or_keyword, direct_match_returns_single=False):
         keyword_as_int = None

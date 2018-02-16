@@ -46,6 +46,7 @@ def block_watch_task(in_queue, out_queue):
             break
 
 
+# slash of talons
 def json_blob_reader_task(in_queue, out_queue):
     last_blob = None
     while True:
@@ -56,10 +57,10 @@ def json_blob_reader_task(in_queue, out_queue):
         if "Deck.GetDeckLists" in json_recieved:
             print("looks like you just saved your decks. Here they are...")
             for deck in json_recieved["Deck.GetDeckLists"]:
-                print_deck(process_deck(deck))
+                process_deck(deck)
             print("--------------------")
         else:
-            print("unknown blob: {}".format(json_recieved.keys()))
+            print("unknown blob: {}".format(json_recieved))
         if json_recieved is None:
             break
 
