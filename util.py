@@ -2,13 +2,11 @@
 
 generally stuff that is useful but just hasn't quite found a home elswhere in the project yet. Anything here is subject
 to being moved at random! """
-
 import os
-
-from models.set import Pool
-from set_data.rix import RivalsOfIxalan
-from set_data.weird import WeirdLands
-from set_data.xln import Ixalan
+import models.set as set
+import set_data.xln as xln
+import set_data.rix as rix
+import set_data.weird as weird
 
 appdata_roaming = os.getenv("APPDATA")
 wotc_locallow_path = os.path.join(appdata_roaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA")
@@ -17,7 +15,7 @@ output_log = os.path.join(wotc_locallow_path, "output_log.txt")
 my_documents_log_path = os.path.join(os.path.expanduser("~"), "Documents", "MTGA", "Logs")
 my_documents_logs = os.listdir(my_documents_log_path)
 
-all_mtga_cards = Pool.from_sets("mtga_cards", sets=[RivalsOfIxalan, Ixalan, WeirdLands])
+all_mtga_cards = set.Pool.from_sets("mtga_cards", sets=[rix.RivalsOfIxalan, xln.Ixalan, weird.WeirdLands])
 
 example_deck = {
     'id': '32e22460-c165-48a3-881a-b6fad5d963b0',
@@ -73,16 +71,19 @@ def id_to_card(card_id):
 
 
 def process_deck(deck_dict):
-    deck_pool = Pool(deck_dict["name"])
+    deck_id = deck_dict['id']
+    deck = set.Deck(deck_dict["name"], deck_id)
     for card_obj in deck_dict["mainDeck"]:
         try:
             card = all_mtga_cards.search(card_obj["id"])[0]
             for i in range(card_obj["quantity"]):
-                deck_pool.cards.append(card)
+                deck.cards.append(card)
         except:
             print("NOOO cant find {} in all_mtga_cards".format(card_obj))
             raise
-    return deck_pool
+    with mtga_app.mtga_watch_app.game_lock:
+        mtga_app.mtga_watch_app.player_decks[deck_id] = deck
+    return deck
 
 
 def print_deck(deck_pool):
@@ -92,3 +93,31 @@ def print_deck(deck_pool):
         print("  {}x {}".format(grouped[card], card))
 
 
+def deepsearch_blob_for_ids(blob, ids_only=True):
+    full_res = {}
+    if isinstance(blob, dict):
+        for key in blob.keys():
+            my_res = deepsearch_blob_for_ids(blob[key])
+            for key in my_res:
+                full_res[key] = my_res[key]
+        return full_res
+    elif isinstance(blob, list):
+        for item in blob:
+            my_res = deepsearch_blob_for_ids(item)
+            for key in my_res:
+                full_res[key] = my_res[key]
+        return full_res
+    else:
+        search_res = all_mtga_cards.search(blob)
+        is_number = False
+        try:
+            _unused_number = int(blob)
+            is_number = True
+        except (ValueError, TypeError):
+            pass
+        if search_res and blob and (not ids_only or is_number):
+            return {blob: search_res}
+        return {}
+
+
+import app.mtga_app as mtga_app
