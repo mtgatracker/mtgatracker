@@ -25,13 +25,14 @@ def dispatch_jsonrpc_method(blob):
 
     :param blob: dict, must contain "method" as top level key
     """
+    from app.mtga_app import mtga_watch_app
     dont_care_rpc_methods = ['Event.DeckSelect', "Log.Info", "Deck.GetDeckLists", "Quest.CompletePlayerQuest"]
     current_method = blob['method']
     if current_method in dont_care_rpc_methods:
         pass
     elif current_method == "Event.JoinQueue":
-        parsers.parse_event_joinqueue(blob)
-        # TODO mtga_watch_app.logger.debug("got an info block, ignoring")
+        intend_to_join = parsers.parse_event_joinqueue(blob)
+        mtga_watch_app.intend_to_join_game_with = intend_to_join
     elif current_method == "PlayerInventory.GetPlayerInventory":
         # TODO: keep an eye on this one. currently empty, but maybe it will show up sometime
         pass

@@ -24,6 +24,7 @@ class MTGAWatchApplication(object):
         os.makedirs(self._log_dir, exist_ok=True)
         self._log_bit_count = 1
         self.player_id = None
+        self.intend_to_join_game_with = None
         self.player_decks = {}
 
     def make_logchunk_file(self, filename, output, print_to_stdout=True):
@@ -51,6 +52,8 @@ def check_game_state_forever():
                 print("{} hand: {}".format(mtga_watch_app.game.opponent.player_name, mtga_watch_app.game.opponent.hand))
                 print("{}  lib: {}".format(mtga_watch_app.game.opponent.player_name, mtga_watch_app.game.opponent.library))
                 print("~!~"*30)
+                if mtga_watch_app.game.hero.hand.cards:
+                    mtga_watch_app.game.hero.calculate_draw_odds()
             else:
                 print("check_game_state: no data yet, but {} :(".format(id(mtga_watch_app.game)))
         time.sleep(1)

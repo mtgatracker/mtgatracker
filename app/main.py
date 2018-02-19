@@ -1,5 +1,6 @@
 import threading
 
+import functools
 import tailer
 
 from app import tasks, queues
@@ -12,6 +13,12 @@ if __name__ == "__main__":
 
     watch = threading.Thread(target=check_game_state_forever)
     watch.start()
+
+    from app.flask_app import http_app
+    partial = functools.partial(http_app.run, port=8080)
+    flask_thread = threading.Thread(target=partial)
+    flask_thread.start()
+    print("running")
 
     json_watch_process = threading.Thread(target=tasks.json_blob_reader_task, args=(queues.json_blob_queue, queues.json_blob_queue, ))
     json_watch_process.start()

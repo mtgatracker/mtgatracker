@@ -150,19 +150,9 @@ class Library(Deck, Zone):
         super().__init__(pool_name, deck_id)
         self.owner_seat_id = owner_seat_id
         self.zone_id = zone_id
-        self.original_decklist = self.generate_original_decklist()
-
-    def generate_original_decklist(self):
-        from app import mtga_app
-        # if self.deck_id in mtga_app.mtga_watch_app.player_decks:
-        #     pass
 
     def set_seat_id(self, seat_id):
         self.owner_seat_id = seat_id
         for card in self.cards:
             assert isinstance(card, GameCard)
             card.owner_seat_id = seat_id
-
-    @property
-    def measurable(self):
-        return True if self.original_decklist else False

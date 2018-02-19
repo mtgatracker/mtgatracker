@@ -164,11 +164,7 @@ def parse_gameroomstatechangedevent(blob):
             opponent = player1
         hero.is_hero = True
         if mtga_app.mtga_watch_app.intend_to_join_game_with:
-            old_zone_id = hero.library.zone_id
-            hero.library = mtga_app.mtga_watch_app.intend_to_join_game_with.generate_library()
-            hero.library.zone_id = old_zone_id
-            for card in hero.library.cards:
-                card.owner_seat_id = hero.seat
+            hero.original_deck = mtga_app.mtga_watch_app.intend_to_join_game_with
         mtga_app.mtga_watch_app.game = Game(hero, opponent, shared_battlefield, shared_exile, shared_limbo,
                                             shared_stack)
 

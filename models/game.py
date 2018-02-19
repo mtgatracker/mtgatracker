@@ -1,5 +1,7 @@
 import models.set as mset
 from models.card import GameCard
+from models.set import Deck
+from util import all_mtga_cards
 
 
 class Player(object):
@@ -16,6 +18,7 @@ class Player(object):
         self.battlefield = battlefield
         self.stack = stack
         self.is_hero = False
+        self.original_deck = None
 
         self.private_zones = [self.library, self.hand, self.graveyard]
         self.shared_zones = [self.exile, self.battlefield, self.limbo, self.stack]
@@ -54,8 +57,6 @@ class Player(object):
         return None, None
 
     def put_instance_id_in_zone(self, instance_id, owner_id, zone):
-        if instance_id in [222, 224]:
-            print(342)
         card, current_zone = self.get_location_of_instance(instance_id)
         if current_zone:
             if current_zone != zone:
@@ -65,6 +66,49 @@ class Player(object):
             unknown_card = GameCard("unknown", -1, -1, -1, owner_id, instance_id)
             print("-- iid {} => {}".format(instance_id, unknown_card))
             zone.cards.append(unknown_card)
+
+    @property
+    def draw_odds_measurable(self):
+        return True if self.original_deck else False
+
+    def calculate_draw_odds(self):
+        try:
+            cards_not_in_library = []
+            for zone in self.all_zones:
+                if zone != self.library:
+                    for card in zone.cards:
+                        assert isinstance(card, GameCard)
+                        if card.owner_seat_id == self.seat and card.mtga_id != -1:  # don't bother for unknown cards; they're unknown!
+                            cards_not_in_library.append(card)
+            assert isinstance(self.original_deck, Deck)
+            current_list = self.original_deck.cards.copy()
+            for card in cards_not_in_library:
+                simple_card = all_mtga_cards.find_one(card.mtga_id)
+                current_list.remove(simple_card)
+            odds = {}
+            for card in current_list:
+                if card.mtga_id not in odds.keys():
+                    odds[card.mtga_id] = {
+                        "card": card.name,
+                        "count_in_deck": 0,
+                        "odds": 0,
+                        "odds_of_draw": 0,
+                    }
+                odds[card.mtga_id]["count_in_deck"] += 1
+                odds[card.mtga_id]["odds"] = 100 * odds[card.mtga_id]["count_in_deck"] / len(current_list)
+                odds[card.mtga_id]["odds_of_draw"] = "{:.2f}".format(odds[card.mtga_id]["odds"])
+            odds_list = [odds[k] for k in odds.keys()]
+            odds_list.sort(key=lambda x: x["odds"])
+            info = {
+                "stats": list(reversed(odds_list)),
+                "deck_name": self.original_deck.pool_name,
+                "total_cards_in_deck": len(current_list)
+            }
+            return info
+        except Exception as e:
+            import traceback
+            traceback = traceback.format_tb(e.__traceback__)
+            pass
 
 
 class Game(object):
