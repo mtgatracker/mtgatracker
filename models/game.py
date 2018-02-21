@@ -48,6 +48,8 @@ class Player(object):
             return self.limbo
         elif name == "ZoneType_Stack":
             return self.stack
+        elif name == "ZoneType_Battlefield":
+            return self.battlefield
 
     def get_location_of_instance(self, instance_id):
         for zone in self.all_zones:
@@ -60,55 +62,56 @@ class Player(object):
         card, current_zone = self.get_location_of_instance(instance_id)
         if current_zone:
             if current_zone != zone:
-                print("-- iid {} => {}".format(instance_id, card))
+                # print("-- iid {} => {}".format(instance_id, card))
                 current_zone.transfer_card_to(card, zone)
         else:
-            unknown_card = GameCard("unknown", -1, -1, -1, owner_id, instance_id)
-            print("-- iid {} => {}".format(instance_id, unknown_card))
+            unknown_card = GameCard("unknown", "unknown", "", "", "", -1, -1, -1, owner_id, instance_id)
+            # print("-- iid {} => {}".format(instance_id, unknown_card))
             zone.cards.append(unknown_card)
 
     @property
     def draw_odds_measurable(self):
         return True if self.original_deck else False
 
-    def calculate_draw_odds(self):
-        try:
-            cards_not_in_library = []
-            for zone in self.all_zones:
-                if zone != self.library:
-                    for card in zone.cards:
-                        assert isinstance(card, GameCard)
-                        if card.owner_seat_id == self.seat and card.mtga_id != -1:  # don't bother for unknown cards; they're unknown!
-                            cards_not_in_library.append(card)
-            assert isinstance(self.original_deck, Deck)
-            current_list = self.original_deck.cards.copy()
-            for card in cards_not_in_library:
-                simple_card = all_mtga_cards.find_one(card.mtga_id)
-                current_list.remove(simple_card)
-            odds = {}
-            for card in current_list:
-                if card.mtga_id not in odds.keys():
-                    odds[card.mtga_id] = {
-                        "card": card.name,
-                        "count_in_deck": 0,
-                        "odds": 0,
-                        "odds_of_draw": 0,
-                    }
-                odds[card.mtga_id]["count_in_deck"] += 1
-                odds[card.mtga_id]["odds"] = 100 * odds[card.mtga_id]["count_in_deck"] / len(current_list)
-                odds[card.mtga_id]["odds_of_draw"] = "{:.2f}".format(odds[card.mtga_id]["odds"])
-            odds_list = [odds[k] for k in odds.keys()]
-            odds_list.sort(key=lambda x: x["odds"])
-            info = {
-                "stats": list(reversed(odds_list)),
-                "deck_name": self.original_deck.pool_name,
-                "total_cards_in_deck": len(current_list)
-            }
-            return info
-        except Exception as e:
-            import traceback
-            traceback = traceback.format_tb(e.__traceback__)
-            pass
+    def calculate_draw_odds(self, ignored_iids=None):
+        if ignored_iids is None:
+            ignored_iids = set()
+        cards_not_in_library = set()
+        for zone in self.all_zones:
+            if zone != self.library:
+                for card in zone.cards:
+                    assert isinstance(card, GameCard)
+                    if card.owner_seat_id == self.seat and card.mtga_id != -1:  # don't bother for unknown cards; they're unknown!
+                        if card.game_id not in ignored_iids:
+                            cards_not_in_library.add(card)
+        assert isinstance(self.original_deck, Deck)
+        current_list = self.original_deck.cards.copy()
+        for card in cards_not_in_library:
+            simple_card = all_mtga_cards.find_one(card.mtga_id)
+            current_list.remove(simple_card)
+        odds = {}
+        for card in current_list:
+            if card.mtga_id not in odds.keys():
+                odds[card.mtga_id] = {
+                    "card": card.pretty_name,
+                    "colors": card.colors,
+                    "card_type": card.card_type,
+                    "card_subtype": card.sub_types,
+                    "count_in_deck": 0,
+                    "odds": 0,
+                    "odds_of_draw": 0,
+                }
+            odds[card.mtga_id]["count_in_deck"] += 1
+            odds[card.mtga_id]["odds"] = 100 * odds[card.mtga_id]["count_in_deck"] / len(current_list)
+            odds[card.mtga_id]["odds_of_draw"] = "{:.2f}".format(odds[card.mtga_id]["odds"])
+        odds_list = [odds[k] for k in odds.keys()]
+        odds_list.sort(key=lambda x: x["odds"])
+        info = {
+            "stats": list(reversed(odds_list)),
+            "deck_name": self.original_deck.pool_name,
+            "total_cards_in_deck": len(current_list)
+        }
+        return info
 
 
 class Game(object):

@@ -3,6 +3,8 @@
 generally stuff that is useful but just hasn't quite found a home elswhere in the project yet. Anything here is subject
 to being moved at random! """
 import os
+import pprint
+
 import models.set as set
 import set_data.xln as xln
 import set_data.rix as rix
@@ -118,6 +120,16 @@ def deepsearch_blob_for_ids(blob, ids_only=True):
         if search_res and blob and (not ids_only or is_number):
             return {blob: search_res}
         return {}
+
+
+def dense_log(json_recieved):
+    import app.mtga_app as mtga_app
+    cards = deepsearch_blob_for_ids(json_recieved)
+    with mtga_app.mtga_watch_app.game_lock:
+        if cards:
+            output = "{}\n{}\n{}".format(pprint.pformat(cards), "-" * 30, pprint.pformat(json_recieved))
+            filename = "card"
+            mtga_app.mtga_watch_app.make_logchunk_file(filename, output, False)
 
 
 import app.mtga_app as mtga_app

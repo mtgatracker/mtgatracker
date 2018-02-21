@@ -10,6 +10,9 @@ import app.dispatchers as dispatchers
 def block_watch_task(in_queue, out_queue):
     while True:
         block_recieved = in_queue.get()
+        if block_recieved is None:
+            out_queue.put(None)
+            break
         block_lines = block_recieved.split("\n")
         first_line = block_lines[0].strip()
         second_line = None
@@ -36,40 +39,31 @@ def block_watch_task(in_queue, out_queue):
             except:
                 print("----- ERROR parsing normal json blob :( `{}`".format(json_blob))
 
-        if block_recieved is None:
-            break
 
-
-def dense_log(json_recieved):
-    import app.mtga_app as mtga_app
-    cards = util.deepsearch_blob_for_ids(json_recieved)
-    with mtga_app.mtga_watch_app.game_lock:
-        if cards:
-            output = "{}\n{}\n{}".format(pprint.pformat(cards), "-" * 30, pprint.pformat(json_recieved))
-            filename = "card"
-            mtga_app.mtga_watch_app.make_logchunk_file(filename, output, False)
-
-
-def check_for_client_id(blob):
-    import app.mtga_app as mtga_app
-    if "clientId" in blob:
-        with mtga_app.mtga_watch_app.game_lock:
-            mtga_app.mtga_watch_app.player_id = blob['clientId']
-
-
-# slash of talons
 def json_blob_reader_task(in_queue, out_queue):
+
+    def check_for_client_id(blob):
+        import app.mtga_app as mtga_app
+        if "clientId" in blob:
+            with mtga_app.mtga_watch_app.game_lock:
+                mtga_app.mtga_watch_app.player_id = blob['clientId']
+
     last_blob = None
     while True:
         json_recieved = in_queue.get()
+
+        if json_recieved is None:
+            out_queue.put(None)
+            break
+
         if last_blob == json_recieved:
             continue  # don't double fire
-        dense_log(json_recieved)
+
+        util.dense_log(json_recieved)
         check_for_client_id(json_recieved)
         dispatchers.dispatch_blob(json_recieved)
 
         last_blob = json_recieved
-        if json_recieved is None:
-            break
+
 
 

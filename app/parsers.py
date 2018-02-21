@@ -1,10 +1,7 @@
 import pprint
-
 import time
-
-from models.card import GameCard
-from models.game import Game, Player
 import util
+from models.game import Game, Player
 from models.set import Zone
 
 
@@ -29,15 +26,45 @@ def parse_event_joinqueue(blob):
 
 def parse_game_state_message(message):
     import app.mtga_app as mtga_app
-    if 'gameObjects' in message.keys():
-        game_objects = message['gameObjects']
-        for object in game_objects:
-            card_id = object['grpId']
-            instance_id = object['instanceId']
-            owner = object['controllerSeatId']
-            type = object["type"]
-            zone = object['zoneId']
-            with mtga_app.mtga_watch_app.game_lock:
+    with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
+        if 'annotations' in message.keys():
+            for annotation in message['annotations']:
+                annotation_type = annotation['type'][0]
+                if annotation_type == 'AnnotationType_ObjectIdChanged':
+                    try:
+                        original_id = None
+                        new_id = None
+                        details = annotation['details']
+                        for detail in details:
+                            if detail['key'] == "orig_id":
+                                original_id = detail["valueInt32"][0]
+                                mtga_app.mtga_watch_app.game.ignored_iids.add(original_id)
+                            elif detail['key'] == "new_id":
+                                new_id = detail["valueInt32"][0]
+                        card_with_iid = mtga_app.mtga_watch_app.game.find_card_by_iid(original_id)
+                        if not card_with_iid:  # no one has ref'd yet, we don't care
+                            continue
+                        new_card_already_exists = mtga_app.mtga_watch_app.game.find_card_by_iid(new_id)
+                        if new_card_already_exists:  # just wipe the old card, the new card is already there
+                            assert new_card_already_exists.mtga_id == card_with_iid.mtga_id or -1 in [new_card_already_exists.mtga_id, card_with_iid.mtga_id], "{} / {}".format(new_card_already_exists.mtga_id , card_with_iid.mtga_id)
+                            card_with_iid.mtga_id = -1
+                        else:
+                            card_with_iid.game_id = new_id
+
+                        # print("IGNORING IID {}, NOW {}".format(original_id, new_id))
+                    except:
+                        raise
+                        pass        # 99 , 344
+        if 'gameObjects' in message.keys():
+            game_objects = message['gameObjects']
+            for object in game_objects:
+                card_id = object['grpId']
+                instance_id = object['instanceId']
+                if instance_id in mtga_app.mtga_watch_app.game.ignored_iids:
+                    continue
+                owner = object['controllerSeatId']
+                type = object["type"]
+                zone = object['zoneId']
                 if type != "GameObjectType_Card":
                     mtga_app.mtga_watch_app.game.ignored_iids.add(instance_id)
                 else:
@@ -49,55 +76,54 @@ def parse_game_state_message(message):
                         assert isinstance(player, Player)
                         player.put_instance_id_in_zone(instance_id, owner, zone)
                         zone.match_game_id_to_card(instance_id, card_id)
-    if 'zones' in message.keys():
-        for zone in message['zones']:
-            try:
-                parse_zone(zone)
-            except:
-                pprint.pprint(zone)
-                time.sleep(1)
-                raise
+        if 'zones' in message.keys():
+            for zone in message['zones']:
+                try:
+                    parse_zone(zone)
+                except:
+                    pprint.pprint(zone)
+                    time.sleep(1)
+                    raise
 
 
 def parse_zone(zone_blob):
     import app.mtga_app as mtga_app
     trackable_zones = ["ZoneType_Hand", "ZoneType_Library", "ZoneType_Graveyard", "ZoneType_Exile", "ZoneType_Limbo",
-                       "ZoneType_Stack"]
+                       "ZoneType_Stack", "ZoneType_Battlefield"]
     zone_type = zone_blob["type"]
     if zone_type not in trackable_zones:
         return
-    with mtga_app.mtga_watch_app.game_lock:
-        mtga_app.mtga_watch_app.game.register_zone(zone_blob)  # make sure we will find the zone later
-        zone_id = zone_blob["zoneId"]
-        player, zone = mtga_app.mtga_watch_app.game.get_owner_zone_tup(zone_id)
-        if not zone:
-            if "ownerSeatId" in zone_blob:
+    mtga_app.mtga_watch_app.game.register_zone(zone_blob)  # make sure we will find the zone later
+    zone_id = zone_blob["zoneId"]
+    player, zone = mtga_app.mtga_watch_app.game.get_owner_zone_tup(zone_id)
+    if not zone:
+        if "ownerSeatId" in zone_blob:
+            owner_seat = zone_blob["ownerSeatId"]
+            player = mtga_app.mtga_watch_app.game.get_player_in_seat(owner_seat)
+            zone = player.get_zone_by_name(zone_type)
+            zone.zone_id = zone_id
+    if zone and not player:
+        # we don't care if there is no owner (i.e. a shared zone), we just need a player to reference
+        player = mtga_app.mtga_watch_app.game.hero
+    if 'objectInstanceIds' in zone_blob:
+        for instance_id in zone_blob['objectInstanceIds']:
+            if instance_id in mtga_app.mtga_watch_app.game.ignored_iids:
+                continue
+            if "ownerSeatId" not in zone_blob:
+                card = mtga_app.mtga_watch_app.game.find_card_by_iid(instance_id)
+                owner_seat = card.owner_seat_id
+            else:
                 owner_seat = zone_blob["ownerSeatId"]
-                player = mtga_app.mtga_watch_app.game.get_player_in_seat(owner_seat)
-                zone = player.get_zone_by_name(zone_type)
-                zone.zone_id = zone_id
-        if zone and not player:
-            # we don't care if there is no owner (i.e. a shared zone), we just need a player to reference
-            player = mtga_app.mtga_watch_app.game.hero
-        if 'objectInstanceIds' in zone_blob:
-            for instance_id in zone_blob['objectInstanceIds']:
-                if instance_id in mtga_app.mtga_watch_app.game.ignored_iids:
-                    continue
-                if "ownerSeatId" not in zone_blob:
-                    print("handling {}".format(instance_id))
-                    card = mtga_app.mtga_watch_app.game.find_card_by_iid(instance_id)
-                    owner_seat = card.owner_seat_id
-                else:
-                    owner_seat = zone_blob["ownerSeatId"]
-                print("adding {} to {}".format(instance_id, zone))
-                player.put_instance_id_in_zone(instance_id, owner_seat,  zone)
-            cards_to_remove_from_zone = []
-            for card in zone.cards:
-                if card.game_id not in zone_blob['objectInstanceIds']:
-                    cards_to_remove_from_zone.append(card)
-            for card in cards_to_remove_from_zone:
-                print("removing {} from {}".format(card, zone))
-                zone.cards.remove(card)
+            # TODO: logging
+            # print("adding {} to {}".format(instance_id, zone))
+            player.put_instance_id_in_zone(instance_id, owner_seat,  zone)
+        cards_to_remove_from_zone = []
+        for card in zone.cards:
+            if card.game_id not in zone_blob['objectInstanceIds']:
+                cards_to_remove_from_zone.append(card)
+        for card in cards_to_remove_from_zone:
+            # print("removing {} from {}".format(card, zone))
+            zone.cards.remove(card)
 
 
 def parse_mulligan_response(blob):
@@ -117,7 +143,13 @@ def parse_accept_hand(blob):
                                                                      mtga_app.mtga_watch_app.game.hero.hand)
 
 
-def parse_gameroomstatechangedevent(blob):
+def parse_match_complete(blob):
+    # MatchGameRoomStateType_MatchCompleted
+    pass
+
+
+def parse_match_playing(blob):
+    # MatchGameRoomStateType_Playing
     import app.mtga_app as mtga_app
     temp_players = {
         1: {},
@@ -167,12 +199,3 @@ def parse_gameroomstatechangedevent(blob):
             hero.original_deck = mtga_app.mtga_watch_app.intend_to_join_game_with
         mtga_app.mtga_watch_app.game = Game(hero, opponent, shared_battlefield, shared_exile, shared_limbo,
                                             shared_stack)
-
-
-""" simple map: take keys of a dict, and keep digging until you find a callable
-
-# I already realized this won't work, but let's just track stuff here til we have a better solution"""
-# log_handler_map = {
-#     ["matchGameRoomStateChangedEvent"]: parse_gameroomstatechangedevent,
-# }
-

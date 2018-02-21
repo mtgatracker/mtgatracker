@@ -1,7 +1,4 @@
-import pprint
-
 import app.parsers as parsers
-
 
 # HIGHEST LEVEL DISPATCHERS: any json blob
 
@@ -16,10 +13,18 @@ def dispatch_blob(blob):
     elif "Deck.GetDeckLists" in blob:  # this looks like it's a response to a jsonrpc method
         parsers.parse_get_decklists(blob)
     elif "matchGameRoomStateChangedEvent" in blob:
-        parsers.parse_gameroomstatechangedevent(blob)
+        dispatch_match_gametoom_state_change(blob)
 
 
 # MID-LEVER DISPATCHERS: first depth level of a blob
+def dispatch_match_gametoom_state_change(blob):
+    state_type = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']['stateType']
+    if state_type == "MatchGameRoomStateType_Playing":
+        parsers.parse_match_playing(blob)
+    elif state_type == "MatchGameRoomStateType_MatchCompleted":
+        parsers.parse_match_complete(blob)
+
+
 def dispatch_jsonrpc_method(blob):
     """ route what parser to run on this jsonrpc methoc blob
 

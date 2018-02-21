@@ -3,6 +3,7 @@ import re
 
 default_delta = 2  # card ID goes up by 2, to account for... foils, I guess?
 
+
 def add_cardIDs_to_cardset(cardset, start_id):
     for card in cardset["cards"]:
         card["number_ab"] = None
@@ -52,8 +53,22 @@ Ixalan = Set("ixalan", cards=clsmembers)
             card_name_class_cased_suffixed = card_name_class_cased + str(card_suffix)
             card_suffix += 1
         card_name_snake_cased = re.sub('[^0-9a-zA-Z_]', '', card["name"].lower().replace(" ", "_"))
-        ixw.write('{} = Card("{}", "XLN", {}, {})\n'.format(
-            card_name_class_cased_suffixed, card_name_snake_cased, card["number_int"], card["mtga_id"])
+        mana_cost = ""
+        if "manaCost" in card.keys():
+            mana_cost = card["manaCost"]
+        card_type = card["type"].replace(" — ", "-")
+        subtype = ""
+        if "-" in card_type:
+            card_type, subtype = card_type.split("-")
+        ixw.write('{} = Card("{}", "{}", "{}", "{}", "{}", "XLN", {}, {})\n'.format(
+            card_name_class_cased_suffixed,
+            card_name_snake_cased,
+            card["name"],
+            mana_cost,
+            card_type,
+            subtype,
+            card["number_int"],
+            card["mtga_id"])
         )
         already_written.add(card_name_class_cased_suffixed)
     ixw.write("{}\n".format(footer))
@@ -80,8 +95,22 @@ RivalsOfIxalan = Set("rivals_of_ixalan", cards=clsmembers)
             card_name_class_cased_suffixed = card_name_class_cased + str(card_suffix)
             card_suffix += 1
         card_name_snake_cased = re.sub('[^0-9a-zA-Z_]', '', card["name"].lower().replace(" ", "_"))
-        ixw.write('{} = Card("{}", "RIX", {}, {})\n'.format(
-            card_name_class_cased_suffixed, card_name_snake_cased, card["number_int"], card["mtga_id"])
+        mana_cost = ""
+        if "manaCost" in card.keys():
+            mana_cost = card["manaCost"]
+        card_type = card["type"].replace(" — ", "-")
+        subtype = ""
+        if "-" in card_type:
+            card_type, subtype = card_type.split("-")
+        ixw.write('{} = Card("{}", "{}", "{}", "{}", "{}", "RIX", {}, {})\n'.format(
+            card_name_class_cased_suffixed,
+            card_name_snake_cased,
+            card["name"],
+            mana_cost,
+            card_type,
+            subtype,
+            card["number_int"],
+            card["mtga_id"])
         )
         already_written.add(card_name_class_cased_suffixed)
     ixw.write("{}\n".format(footer))
