@@ -1,0 +1,25 @@
+{
+  "name": "mtga-tracker",
+  "version": "1.0.0",
+  "description": "Application to track MTGA decks in-game",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/shawkinsl/mtga-tools",
+  "keywords": [
+    "Electron",
+    "Python",
+    "flask",
+    "deck",
+    "mtg",
+    "mtga"
+  ],
+  "author": "shawkins",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^1.7.6",
+    "electron-packager": "^9.0.1"
+  }
+}

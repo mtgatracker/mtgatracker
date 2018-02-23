@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>MTGA Tracker</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  <!-- TODO: https://github.com/magarena/magarena/tree/master/resources/cardbuilder/fonts -->
+  </head>
+  <body>
+    <div id="floating-eye">
+      <img src="hide-512.png" width="30px" height="30px">
+    </div>
+    <div id="container">
+      <h1 class="deck-title">{ deck_name }</h1>
+      <p class="header-warning" rv-show="cant_connect">Haven't heard from game in { last_connect_as_seconds } seconds...</p>
+      <h3>{ total_cards_in_deck } cards in deck</h3>
+      <div class="card" rv-each-stat="draw_stats" rv-card_color="stat.colors">
+        <div class="card-text">
+          <b>{ stat.odds_of_draw }</b> { stat.count_in_deck }x <i>{ stat.card }</i>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+  <!--https://github.com/mikeric/rivets/issues/699-->
+  <!--<script type="text/javascript" src="jquery.js"></script>-->
+  <script type="text/javascript" src="rivets.bundled.min.js"></script>
+  <script>
+    let $ = require("./jquery.js")
+    let renderer = require('./renderer.js')
+  </script>
+  <script>if (window.module) module = window.module;</script>
+</html>
