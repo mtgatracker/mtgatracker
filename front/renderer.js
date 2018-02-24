@@ -61,7 +61,7 @@ var setAppData = function() {
 
 var updateData = function(currentUpdateInterval) {
     request.get({
-        url: "http://localhost:8080/",
+        url: "http://localhost:8089/",
         json: true,
         headers: {'User-Agent': 'request'}
       }, (err, res, data) => {

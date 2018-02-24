@@ -19,6 +19,7 @@ let pyPort = null
 
 let debug = false;
 let no_server = false;
+let server_killed = false;
 global.debug = debug;
 
 const guessPackaged = () => {
@@ -37,23 +38,48 @@ const getScriptPath = () => {
 }
 
 const getPyBinPath = () => {
+  if (process.platform === 'win32') {
     return path.join(__dirname, "..", "venv", "Scripts", "python.exe")
+  } else {
+    return path.join(__dirname, "..", "venv", "bin", "python")
+  }
+}
+
+const getLogFilePath = () => {
+    // TODO: make this cmd-line configurable
+    return path.join(__dirname, "..", "example_logs", "output_log.txt")
 }
 
 const selectPort = () => {
-  pyPort = 8080
+  pyPort = 8089
   return pyPort
 }
 
 port = selectPort()
+logPath = getLogFilePath()
+noFollow = false;
+readFullFile = true;
+
+const generateArgs = () => {
+    var args = ["-p", port, "-i", logPath]
+    if (noFollow) {
+        args.push('-nf')
+    }
+    if (readFullFile) {
+        args.push('-f')
+    }
+    return args
+}
+
 
 const createPyProc = () => {
   let script = getScriptPath()
 
   if (guessPackaged()) {
-    pyProc = require('child_process').execFile(script, [port])
+    pyProc = require('child_process').execFile(script, generateArgs())
   } else {
-    pyProc = require('child_process').spawn(getPyBinPath(), [script], {shell: true})
+    pyProc = require('child_process').spawn(getPyBinPath(), [script].concat(generateArgs()), {shell: true})
+    console.log(getPyBinPath(), [script].concat(generateArgs()))
   }
 
   if (pyProc != null) {
@@ -109,13 +135,11 @@ const createWindow = () => {
   })
 }
 
-app.on('ready', createWindow)
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-   if (!no_server) {
+const killServer = () => {
+    if (!no_server && !server_killed) {
+       console.log("killing server")
        request.get({
-        url: "http://localhost:8080/die",
+        url: "http://localhost:8089/die",
         json: true,
         headers: {'User-Agent': 'request'}
       }, (err, res, data) => {
@@ -126,10 +150,25 @@ app.on('window-all-closed', () => {
         pyPort = null
         app.quit()
       })
-   } else {
-    app.quit()
-   }
-  }
+    } else {
+        app.quit()
+    }
+}
+
+app.on('ready', createWindow)
+
+app.on('before-quit', function() {
+  console.log("boutta quit")
+  killServer()
+})
+
+app.on('will-quit', function() {
+  console.log("quitting")
+  killServer()
+})
+
+app.on('window-all-closed', () => {
+    killServer()
 })
 
 app.on('activate', () => {

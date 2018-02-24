@@ -1,14 +1,11 @@
 import json
-import pprint
-
-import time
-
 import util
 import app.dispatchers as dispatchers
+from app.queues import all_die_queue
 
 
 def block_watch_task(in_queue, out_queue):
-    while True:
+    while all_die_queue.empty():
         block_recieved = in_queue.get()
         if block_recieved is None:
             out_queue.put(None)
@@ -49,7 +46,7 @@ def json_blob_reader_task(in_queue, out_queue):
                 mtga_app.mtga_watch_app.player_id = blob['clientId']
 
     last_blob = None
-    while True:
+    while all_die_queue.empty():
         json_recieved = in_queue.get()
 
         if json_recieved is None:

@@ -27,14 +27,7 @@ if __name__ == "__main__":
         res = requests.get("http://localhost:8080")
         time.sleep(1)
 
-    with open("../example_logs/single_game.txt", 'r') as rf:
-        all_lines = rf.readlines()
-        for idx, line in enumerate(all_lines):
-            if line.strip() == "":
-                queues.block_read_queue.put(current_block)
-                current_block = ""
-            else:
-                current_block += line.strip() + "\n"
+
     queues.block_read_queue.put(None)
     block_watch_process.join()
     json_watch_process.join()

@@ -2,10 +2,6 @@ import threading
 import os
 import datetime
 
-appdata_roaming = os.getenv("APPDATA")
-wotc_locallow_path = os.path.join(appdata_roaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA")
-output_log = os.path.join(wotc_locallow_path, "output_log.txt")
-
 
 class MTGAWatchApplication(object):
     def __init__(self):

@@ -2,20 +2,14 @@
 
 generally stuff that is useful but just hasn't quite found a home elswhere in the project yet. Anything here is subject
 to being moved at random! """
-import os
 import pprint
+import time
 
 import models.set as set
 import set_data.xln as xln
 import set_data.rix as rix
 import set_data.weird as weird
-
-appdata_roaming = os.getenv("APPDATA")
-wotc_locallow_path = os.path.join(appdata_roaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA")
-output_log = os.path.join(wotc_locallow_path, "output_log.txt")
-
-my_documents_log_path = os.path.join(os.path.expanduser("~"), "Documents", "MTGA", "Logs")
-my_documents_logs = os.listdir(my_documents_log_path)
+from tailer import Tailer
 
 all_mtga_cards = set.Pool.from_sets("mtga_cards", sets=[rix.RivalsOfIxalan, xln.Ixalan, weird.WeirdLands])
 
@@ -130,6 +124,50 @@ def dense_log(json_recieved):
             output = "{}\n{}\n{}".format(pprint.pformat(cards), "-" * 30, pprint.pformat(json_recieved))
             filename = "card"
             mtga_app.mtga_watch_app.make_logchunk_file(filename, output, False)
+
+
+class KillableTailer(Tailer):
+
+    def __init__(self, file, kill_queue):
+        """ based on tailer.Tailer
+
+        :param file: file to tail
+        :param kill_queue: put anything in here to kill tailer
+        """
+        self.kill_queue = kill_queue
+        super().__init__(file)
+
+    def follow(self, delay=1.0):
+        """\
+        Iterator generator that returns lines as data is added to the file.
+
+        Based on: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/157035
+        """
+        trailing = True
+
+        while self.kill_queue.empty():
+            where = self.file.tell()
+            line = self.file.readline()
+            if line:
+                if trailing and line in self.line_terminators:
+                    # This is just the line terminator added to the end of the file
+                    # before a new line, ignore.
+                    trailing = False
+                    continue
+
+                if line[-1] in self.line_terminators:
+                    line = line[:-1]
+                    if line[-1:] == '\r\n' and '\r\n' in self.line_terminators:
+                        # found crlf
+                        line = line[:-1]
+
+                trailing = False
+                yield line
+            else:
+                trailing = True
+                self.seek(where)
+                time.sleep(delay)
+        return
 
 
 import app.mtga_app as mtga_app
