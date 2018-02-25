@@ -9,6 +9,7 @@ const request = require('request');
 let { remote } = require('electron')
 let win = remote.getCurrentWindow()
 var debug = remote.getGlobal('debug');
+var ws = remote.getGlobal('ws');
 
 var appData = {
     deck_name: "loading...",
@@ -59,67 +60,6 @@ var setAppData = function() {
     console.log(appData)
 }
 
-var updateData = function(currentUpdateInterval) {
-    request.get({
-        url: "http://localhost:8089/",
-        json: true,
-        headers: {'User-Agent': 'request'}
-      }, (err, res, data) => {
-        if (err) {
-          appData.cant_connect = true;
-          appData.last_connect += currentUpdateInterval;
-          appData.last_connect_as_seconds = appData.last_connect / 1000;
-          currentUpdateInterval = Math.min(currentUpdateInterval + 100, 3000)
-          console.log('Error:', err, " backing off to ", currentUpdateInterval, " / ");
-          setTimeout(function() {
-            updateData(currentUpdateInterval);
-          }, currentUpdateInterval);
-        } else if (res.statusCode !== 200) {
-          appData.cant_connect = true;
-          appData.last_connect += currentUpdateInterval;
-          appData.last_connect_as_seconds = appData.last_connect / 1000;
-          console.log('Status: ', res.statusCode);
-          setTimeout(function() {
-            updateData(currentUpdateInterval);
-          }, currentUpdateInterval);
-        } else {
-          appData.cant_connect = false;
-          appData.last_connect = 0;
-          appData.last_connect_as_seconds = 0;
-          // data is already parsed as JSON:
-          console.log(data);
-          if (data.stats) {
-            console.log("updated")
-            appData.draw_stats = data.stats;
-            appData.deck_name = data.deck_name;
-            appData.total_cards_in_deck = data.total_cards_in_deck;
-          } else {
-            console.log("not updating yet.")
-          }
-
-          setTimeout(function() {
-            updateData(1000); // reset failure wait to 1000
-          }, 500); // but on success poll hard
-        }
-    });
-    var total = 0;
-    $.each($(".card"), function(i, c) {
-        total += c.offsetHeight;
-    })
-    console.log("offsetHeight", total)
-    container = document.getElementById("container")
-    starting_height = 118;
-    current_height = $(container).height();
-    new_height = starting_height + total
-    container.style.height = "" + new_height + "px";
-    bounds = win.getBounds()
-    win_offset = 30;
-    bounds.height = new_height + win_offset;
-    if (!debug) {
-        win.setBounds(bounds)
-    }
-}
-
 let all_hidden = false;
 var hideTimeoutId;
 
@@ -150,9 +90,37 @@ document.getElementById("floating-eye").addEventListener("click", function() {
     }, 10000)
 })
 
-// kick off the setTimeout loop. I HATE THIS. setInterval feels way more appropriate,
-// but The Internet says this is the right way. so.
-updateData(1000);
+ws.onmessage = function (event){
+    appData.cant_connect = false;
+    appData.last_connect = 0;
+    appData.last_connect_as_seconds = 0;
+    // data is already parsed as JSON:
+    data = JSON.parse(event.data)
+    console.log(data);
+    if (data.stats) {
+        appData.draw_stats = data.stats;
+        appData.deck_name = data.deck_name;
+        appData.total_cards_in_deck = data.total_cards_in_deck;
+    } else {
+        console.log("not updating yet.")
+    }
+
+    var total = 0;
+    $.each($(".card"), function(i, c) {
+        total += c.offsetHeight;
+    })
+
+    container = document.getElementById("container")
+    starting_height = 118;
+    current_height = $(container).height();
+    new_height = starting_height + total
+    container.style.height = "" + new_height + "px";
+    bounds = win.getBounds()
+    win_offset = 30;
+    bounds.height = new_height + win_offset;
+    if (!debug) {
+        win.setBounds(bounds)
+    }
+}
 
 console.timeEnd('init')
-

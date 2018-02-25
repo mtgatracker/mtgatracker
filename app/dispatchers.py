@@ -1,4 +1,5 @@
 import app.parsers as parsers
+import app.mtga_app
 
 # HIGHEST LEVEL DISPATCHERS: any json blob
 
@@ -72,7 +73,7 @@ def dispatch_client_to_gre(blob):
         # TODO: log ?
         pass
     else:
-        print("WARNING: unknown clientToGreMessage type: {}".format(message_type))
+        app.mtga_app.mtga_logger.info("WARNING: unknown clientToGreMessage type: {}".format(message_type))
 
 
 # LOWER LEVEL DISPATCHERS: a message or game object (?)

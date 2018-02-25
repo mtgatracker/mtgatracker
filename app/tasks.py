@@ -1,6 +1,9 @@
 import json
+import pprint
+
 import util
 import app.dispatchers as dispatchers
+from app.mtga_app import mtga_watch_app, mtga_logger
 from app.queues import all_die_queue
 
 
@@ -24,7 +27,7 @@ def block_watch_task(in_queue, out_queue):
                 blob = json.loads(list_blob)
                 out_queue.put(blob)
             except:
-                print("----- ERROR parsing list json blob  :( `{}`".format(list_blob))
+                mtga_logger.info("----- ERROR parsing list json blob  :( `{}`".format(list_blob))
         elif first_line and first_line[-1] == "{" or second_line and second_line == "{":
             idx_first_bracket = block_recieved.index("{")
             idx_last_bracket = block_recieved.rindex("}") + 1
@@ -34,18 +37,21 @@ def block_watch_task(in_queue, out_queue):
                 blob = json.loads(json_blob)
                 out_queue.put(blob)
             except:
-                print("----- ERROR parsing normal json blob :( `{}`".format(json_blob))
+                mtga_logger.info("----- ERROR parsing normal json blob :( `{}`".format(json_blob))
 
 
 def json_blob_reader_task(in_queue, out_queue):
 
     def check_for_client_id(blob):
-        import app.mtga_app as mtga_app
         if "clientId" in blob:
-            with mtga_app.mtga_watch_app.game_lock:
-                mtga_app.mtga_watch_app.player_id = blob['clientId']
+            with mtga_watch_app.game_lock:
+                if mtga_watch_app.player_id != blob['clientId']:
+                    mtga_watch_app.player_id = blob['clientId']
+                    mtga_logger.debug("got new clientId")
+                    mtga_watch_app.save_settings()
 
     last_blob = None
+    error_count = 0
     while all_die_queue.empty():
         json_recieved = in_queue.get()
 
@@ -55,10 +61,22 @@ def json_blob_reader_task(in_queue, out_queue):
 
         if last_blob == json_recieved:
             continue  # don't double fire
-
-        util.dense_log(json_recieved)
-        check_for_client_id(json_recieved)
-        dispatchers.dispatch_blob(json_recieved)
+        try:
+            util.dense_log(json_recieved)
+            check_for_client_id(json_recieved)
+            dispatchers.dispatch_blob(json_recieved)
+            mtga_watch_app.last_blob = json_recieved
+            error_count = 0
+        except:
+            import traceback
+            exc = traceback.format_exc()
+            stack = traceback.format_stack()
+            error_count += 1
+            mtga_logger.error(exc)
+            mtga_logger.error(stack)
+            if error_count > 5:
+                mtga_logger.error("error count too high; exiting")
+                return
 
         last_blob = json_recieved
 

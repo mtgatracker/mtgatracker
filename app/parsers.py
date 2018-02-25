@@ -3,6 +3,7 @@ import time
 import util
 from models.game import Game, Player
 from models.set import Zone
+import app.mtga_app
 
 
 def parse_jsonrpc_blob(blob):
@@ -51,7 +52,7 @@ def parse_game_state_message(message):
                         else:
                             card_with_iid.game_id = new_id
 
-                        # print("IGNORING IID {}, NOW {}".format(original_id, new_id))
+                        # mtga_logger.info("IGNORING IID {}, NOW {}".format(original_id, new_id))
                     except:
                         raise
                         pass        # 99 , 344
@@ -81,7 +82,8 @@ def parse_game_state_message(message):
                 try:
                     parse_zone(zone)
                 except:
-                    pprint.pprint(zone)
+                    app.mtga_app.mtga_logger.error("error parsing zone:")
+                    app.mtga_app.mtga_logger.error(pprint.pformat(zone))
                     time.sleep(1)
                     raise
 
@@ -115,14 +117,14 @@ def parse_zone(zone_blob):
             else:
                 owner_seat = zone_blob["ownerSeatId"]
             # TODO: logging
-            # print("adding {} to {}".format(instance_id, zone))
+            # mtga_logger.info("adding {} to {}".format(instance_id, zone))
             player.put_instance_id_in_zone(instance_id, owner_seat,  zone)
         cards_to_remove_from_zone = []
         for card in zone.cards:
             if card.game_id not in zone_blob['objectInstanceIds']:
                 cards_to_remove_from_zone.append(card)
         for card in cards_to_remove_from_zone:
-            # print("removing {} from {}".format(card, zone))
+            # mtga_logger.info("removing {} from {}".format(card, zone))
             zone.cards.remove(card)
 
 

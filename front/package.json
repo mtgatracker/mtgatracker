@@ -17,7 +17,9 @@
   ],
   "author": "shawkins",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "ws": "4.1.0"
+  },
   "devDependencies": {
     "electron": "^1.7.6",
     "electron-packager": "^9.0.1"

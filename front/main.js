@@ -4,6 +4,7 @@ const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const console = require('console');
 const request = require('request');
+var WebSocket = require('ws')
 
 
 /*************************************************************
@@ -20,7 +21,9 @@ let pyPort = null
 let debug = false;
 let no_server = false;
 let server_killed = false;
+var ws = new WebSocket("ws://127.0.0.1:5678/")
 global.debug = debug;
+global.ws = ws;
 
 const guessPackaged = () => {
   const fullPath = path.join(__dirname, PY_DIST_FOLDER)
@@ -58,10 +61,10 @@ const selectPort = () => {
 port = selectPort()
 logPath = getLogFilePath()
 noFollow = false;
-readFullFile = true;
+readFullFile = false;
 
 const generateArgs = () => {
-    var args = ["-p", port, "-i", logPath]
+    var args = ["-p", port]
     if (noFollow) {
         args.push('-nf')
     }
@@ -134,23 +137,19 @@ const createWindow = () => {
     console.timeEnd('init')
   })
 }
-
+function freeze(time) {
+    const stop = new Date().getTime() + time;
+    while(new Date().getTime() < stop);
+}
 const killServer = () => {
-    if (!no_server && !server_killed) {
-       console.log("killing server")
-       request.get({
-        url: "http://localhost:8089/die",
-        json: true,
-        headers: {'User-Agent': 'request'}
-      }, (err, res, data) => {
-        console.log("doop");
-        console.log(err, res, data)
+    if (!server_killed && !no_server) {
+        server_killed = true;
+        console.log("sending die")
+        ws.send("die")
+        freeze(3000)  // no way to verify is die was sent, so let's just wait a little
         pyProc.kill()
         pyProc = null
         pyPort = null
-        app.quit()
-      })
-    } else {
         app.quit()
     }
 }

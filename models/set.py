@@ -117,6 +117,7 @@ class Zone(Pool):
         self.zone_id = zone_id
 
     def match_game_id_to_card(self, instance_id, card_id):
+        from app.mtga_app import mtga_logger
         for card in self.cards:
             assert isinstance(card, GameCard)
             if card.game_id == instance_id:
@@ -127,7 +128,7 @@ class Zone(Pool):
             elif card.mtga_id == card_id:
                 # only allowed to set it if it's still -1 (should probably never hit this!)
                 if card.game_id == -1:
-                    print("What the hell?! How'd we get a card ID without an instance ID?")
+                    mtga_logger.info("What the hell?! How'd we get a card ID without an instance ID?")
                     card.game_id = instance_id
 
 
@@ -143,6 +144,20 @@ class Deck(Pool):
             game_card = mcard.GameCard(card.name, card.set, card.set_number, card.mtga_id, owner_id, -1)
             library.cards.append(game_card)
         return library
+
+    def to_serializable(self):
+        return {
+            "deck_id": self.deck_id,
+            "pool_name": self.pool_name,
+            "cards": [c.to_serializable() for c in self.cards]
+        }
+
+    @classmethod
+    def from_dict(cls, obj):
+        deck = Deck(obj["pool_name"], obj["deck_id"])
+        for card in obj["cards"]:
+            deck.cards.append(mcard.Card.from_dict(card))
+        return deck
 
 
 class Library(Deck, Zone):

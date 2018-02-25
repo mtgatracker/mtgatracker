@@ -58,15 +58,17 @@ def card_ids_to_card_list(list_ids):
 
 
 def id_to_card(card_id):
+    import app.mtga_app as mtga_app
     # TODO: this is silly
-        try:
-            return all_mtga_cards.find_one(card_id)
-        except:
-            print("NOOO cant find {} in all_mtga_cards".format(card_id))
-            raise
+    try:
+        return all_mtga_cards.find_one(card_id)
+    except:
+        mtga_app.mtga_logger.info("NOOO cant find {} in all_mtga_cards".format(card_id))
+        raise
 
 
 def process_deck(deck_dict):
+    import app.mtga_app as mtga_app
     deck_id = deck_dict['id']
     deck = set.Deck(deck_dict["name"], deck_id)
     for card_obj in deck_dict["mainDeck"]:
@@ -75,18 +77,23 @@ def process_deck(deck_dict):
             for i in range(card_obj["quantity"]):
                 deck.cards.append(card)
         except:
-            print("NOOO cant find {} in all_mtga_cards".format(card_obj))
+            mtga_app.mtga_logger.info("NOOO cant find {} in all_mtga_cards".format(card_obj))
             raise
     with mtga_app.mtga_watch_app.game_lock:
         mtga_app.mtga_watch_app.player_decks[deck_id] = deck
+        mtga_app.mtga_logger.debug("deck {} is being saved".format(deck_dict["name"]))
+        mtga_app.mtga_watch_app.save_settings()
     return deck
 
 
 def print_deck(deck_pool):
+    import app.mtga_app as mtga_app
     print("Deck: {} ({} cards)".format(deck_pool.pool_name, len(deck_pool.cards)))
+    mtga_app.mtga_logger.info("Deck: {} ({} cards)".format(deck_pool.pool_name, len(deck_pool.cards)))
     grouped = deck_pool.group_cards()
     for card in grouped.keys():
         print("  {}x {}".format(grouped[card], card))
+        mtga_app.mtga_logger.info("  {}x {}".format(grouped[card], card))
 
 
 def deepsearch_blob_for_ids(blob, ids_only=True):
@@ -137,7 +144,7 @@ class KillableTailer(Tailer):
         self.kill_queue = kill_queue
         super().__init__(file)
 
-    def follow(self, delay=1.0):
+    def follow(self, delay=1):
         """\
         Iterator generator that returns lines as data is added to the file.
 

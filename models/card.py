@@ -1,4 +1,5 @@
 import util
+
 COLORMAP = {
     "R": "Red",
     "W": "White",
@@ -41,6 +42,22 @@ class Card(object):
             if not colors:
                 colors = ["Colorless"]
         return colors
+
+    def to_serializable(self):
+        return {
+            "name": self.name,
+            "set": self.set,
+            "pretty_name": self.pretty_name,
+            "cost": self.cost,
+            "card_type": self.card_type,
+            "sub_types": self.sub_types,
+            "set_number": self.set_number,
+            "mtga_id": self.mtga_id
+        }
+
+    @classmethod
+    def from_dict(cls, obj):
+        return util.all_mtga_cards.find_one(obj["mtga_id"])
 
     def is_basic(self):
         import set_data.weird

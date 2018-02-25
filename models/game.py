@@ -62,11 +62,11 @@ class Player(object):
         card, current_zone = self.get_location_of_instance(instance_id)
         if current_zone:
             if current_zone != zone:
-                # print("-- iid {} => {}".format(instance_id, card))
+                # mtga_logger.info("-- iid {} => {}".format(instance_id, card))
                 current_zone.transfer_card_to(card, zone)
         else:
             unknown_card = GameCard("unknown", "unknown", "", "", "", -1, -1, -1, owner_id, instance_id)
-            # print("-- iid {} => {}".format(instance_id, unknown_card))
+            # mtga_logger.info("-- iid {} => {}".format(instance_id, unknown_card))
             zone.cards.append(unknown_card)
 
     @property
@@ -98,18 +98,19 @@ class Player(object):
                     "card_type": card.card_type,
                     "card_subtype": card.sub_types,
                     "count_in_deck": 0,
-                    "odds": 0,
+                    "odds_unf": 0,
                     "odds_of_draw": 0,
                 }
             odds[card.mtga_id]["count_in_deck"] += 1
-            odds[card.mtga_id]["odds"] = 100 * odds[card.mtga_id]["count_in_deck"] / len(current_list)
-            odds[card.mtga_id]["odds_of_draw"] = "{:.2f}".format(odds[card.mtga_id]["odds"])
+            odds[card.mtga_id]["odds_unf"] = 100 * odds[card.mtga_id]["count_in_deck"] / len(current_list)
+            odds[card.mtga_id]["odds_of_draw"] = "{:.2f}".format(odds[card.mtga_id]["odds_unf"])
         odds_list = [odds[k] for k in odds.keys()]
-        odds_list.sort(key=lambda x: x["odds"])
+        odds_list.sort(key=lambda x: x["odds_unf"])
         info = {
             "stats": list(reversed(odds_list)),
             "deck_name": self.original_deck.pool_name,
-            "total_cards_in_deck": len(current_list)
+            "total_cards_in_deck": len(current_list),
+            "hash": sum(hash(o["card"]) for o in odds_list) + len(current_list)
         }
         return info
 
@@ -126,7 +127,7 @@ class Game(object):
         self.stack = shared_stack
 
         self.ignored_iids = set()
-        self.temp = {}
+        self.last_odds_hash = None
 
     def register_zone(self, zone_blob):
         zone_id = zone_blob["zoneId"]
@@ -153,12 +154,13 @@ class Game(object):
         return None, None
 
     def get_player_in_seat(self, seat_id):
+        from app.mtga_app import mtga_logger
         if self.hero.seat == seat_id:
             return self.hero
         elif self.opponent.seat == seat_id:
             return self.opponent
         else:
-            print("NOTHING TO RETURN OH NO")
+            mtga_logger.info("NOTHING TO RETURN OH NO")
 
     def find_card_by_iid(self, instance_id):
         assert isinstance(self.hero, Player)
