@@ -19,15 +19,22 @@
           <b>{ stat.odds_of_draw }</b> { stat.count_in_deck }x <i>{ stat.card }</i>
         </div>
       </div>
+      <h3>Opponent's Hand</h3>
+      <div class="card" rv-each-card="opponent_hand" rv-card_color="card.colors">
+        <div class="card-text">
+          <i>{ card.pretty_name }</i>
+        </div>
+      </div>
     </div>
   </body>
   <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
   <!--https://github.com/mikeric/rivets/issues/699-->
   <!--<script type="text/javascript" src="jquery.js"></script>-->
   <script type="text/javascript" src="rivets.bundled.min.js"></script>
+  <script type="text/javascript" src="renderer.js"></script>
   <script>
     let $ = require("./jquery.js")
-    let renderer = require('./renderer.js')
+    // let renderer = require('./renderer.js')
   </script>
   <script>if (window.module) module = window.module;</script>
 </html>

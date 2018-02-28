@@ -176,5 +176,4 @@ class KillableTailer(Tailer):
                 time.sleep(delay)
         return
 
-
 import app.mtga_app as mtga_app

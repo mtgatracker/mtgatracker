@@ -47,6 +47,7 @@ class Card(object):
         return {
             "name": self.name,
             "set": self.set,
+            "colors": self.colors,
             "pretty_name": self.pretty_name,
             "cost": self.cost,
             "card_type": self.card_type,
@@ -86,6 +87,10 @@ class GameCard(Card):
     def transform_to(self, card_id):
         new_card = util.all_mtga_cards.find_one(card_id)
         self.name = new_card.name
+        self.pretty_name = new_card.pretty_name
+        self.cost = new_card.cost
+        self.card_type = new_card.card_type
+        self.sub_types = new_card.sub_types
         self.set = new_card.set
         self.set_number = new_card.set_number
         self.mtga_id = new_card.mtga_id

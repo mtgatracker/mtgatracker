@@ -1,10 +1,8 @@
 import json
-import pprint
-
 import util
 import app.dispatchers as dispatchers
 from app.mtga_app import mtga_watch_app, mtga_logger
-from app.queues import all_die_queue
+from app.queues import all_die_queue, game_state_change_queue
 
 
 def block_watch_task(in_queue, out_queue):
@@ -62,11 +60,25 @@ def json_blob_reader_task(in_queue, out_queue):
         if last_blob == json_recieved:
             continue  # don't double fire
         try:
+            hero_library_hash = -1
+            opponent_hand_hash = -1
+            if mtga_watch_app.game:
+                hero_library_hash = hash(mtga_watch_app.game.hero.library)
+                opponent_hand_hash = hash(mtga_watch_app.game.opponent.hand)
             util.dense_log(json_recieved)
             check_for_client_id(json_recieved)
             dispatchers.dispatch_blob(json_recieved)
             mtga_watch_app.last_blob = json_recieved
             error_count = 0
+
+            hero_library_hash_post = -1
+            opponent_hand_hash_post = -1
+            if mtga_watch_app.game:
+                hero_library_hash_post = hash(mtga_watch_app.game.hero.library)
+                opponent_hand_hash_post = hash(mtga_watch_app.game.opponent.hand)
+            if hero_library_hash != hero_library_hash_post or opponent_hand_hash != opponent_hand_hash_post:
+                game_state_change_queue.put(mtga_watch_app.game.game_state())
+                print("putting to queue {}".format(game_state_change_queue.qsize()))
         except:
             import traceback
             exc = traceback.format_exc()

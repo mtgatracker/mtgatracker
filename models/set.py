@@ -32,6 +32,13 @@ class Pool(object):
     def __repr__(self):
         return "<Pool {}: {} cards>".format(self.pool_name, len(self.cards))
 
+    def __hash__(self):
+        _hash = 0
+        for idx, element in enumerate(self.cards):
+            hashable = element.name + str(idx)
+            _hash += hash(hashable)
+        return _hash
+
     @property
     def total_count(self):
         return len(self.cards)

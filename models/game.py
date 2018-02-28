@@ -1,4 +1,5 @@
 import models.set as mset
+from app.queues import json_blob_queue, block_read_queue, collection_state_change_queue
 from models.card import GameCard
 from models.set import Deck
 from util import all_mtga_cards
@@ -110,7 +111,8 @@ class Player(object):
             "stats": list(reversed(odds_list)),
             "deck_name": self.original_deck.pool_name,
             "total_cards_in_deck": len(current_list),
-            "hash": sum(hash(o["card"]) for o in odds_list) + len(current_list)
+            "library_contents": [c.to_serializable() for c in current_list],
+            "last_drawn": None
         }
         return info
 
@@ -127,7 +129,13 @@ class Game(object):
         self.stack = shared_stack
 
         self.ignored_iids = set()
-        self.last_odds_hash = None
+        self.last_hero_library_hash = None
+        self.last_opponent_hand_hash = None
+
+    def game_state(self):
+        game_state = {"draw_odds": self.hero.calculate_draw_odds(self.ignored_iids),
+                      "opponent_hand": [c.to_serializable() for c in self.opponent.hand.cards]}
+        return game_state
 
     def register_zone(self, zone_blob):
         zone_id = zone_blob["zoneId"]

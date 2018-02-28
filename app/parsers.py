@@ -84,7 +84,6 @@ def parse_game_state_message(message):
                 except:
                     app.mtga_app.mtga_logger.error("error parsing zone:")
                     app.mtga_app.mtga_logger.error(pprint.pformat(zone))
-                    time.sleep(1)
                     raise
 
 

@@ -18,12 +18,13 @@ const PY_MODULE = 'main' // without .py suffix
 let pyProc = null
 let pyPort = null
 
-let debug = false;
-let no_server = false;
+let debug = true;
+let no_server = true;
+let kill_server = true;
 let server_killed = false;
-var ws = new WebSocket("ws://127.0.0.1:5678/")
-global.debug = debug;
-global.ws = ws;
+let noFollow = false;
+let readFullFile = false;
+let debugFile = false;
 
 const guessPackaged = () => {
   const fullPath = path.join(__dirname, PY_DIST_FOLDER)
@@ -60,11 +61,13 @@ const selectPort = () => {
 
 port = selectPort()
 logPath = getLogFilePath()
-noFollow = false;
-readFullFile = false;
 
 const generateArgs = () => {
     var args = ["-p", port]
+    if (debugFile) {
+        args.push("-i")
+        args.push(logPath)
+    }
     if (noFollow) {
         args.push('-nf')
     }
@@ -91,8 +94,14 @@ const createPyProc = () => {
 }
 
 if (!no_server) {
-    app.on('ready', createPyProc)
+    createPyProc()
 }
+
+
+var ws = new WebSocket("ws://127.0.0.1:5678/")
+
+global.debug = debug;
+global.ws = ws;
 
 
 /*************************************************************
@@ -142,12 +151,13 @@ function freeze(time) {
     while(new Date().getTime() < stop);
 }
 const killServer = () => {
-    if (!server_killed && !no_server) {
+    if (!server_killed && kill_server) {
         server_killed = true;
         console.log("sending die")
         ws.send("die")
         freeze(3000)  // no way to verify is die was sent, so let's just wait a little
-        pyProc.kill()
+        if (!no_server)
+            pyProc.kill()
         pyProc = null
         pyPort = null
         app.quit()

@@ -17,7 +17,8 @@ var appData = {
     last_connect: 0,
     last_connect_as_seconds: 0,
     total_cards_in_deck: "0",
-    draw_stats: []
+    draw_stats: [],
+    opponent_hand: [],
 }
 rivets.bind(document.getElementById('container'), appData)
 
@@ -97,14 +98,10 @@ ws.onmessage = function (event){
     // data is already parsed as JSON:
     data = JSON.parse(event.data)
     console.log(data);
-    if (data.stats) {
-        appData.draw_stats = data.stats;
-        appData.deck_name = data.deck_name;
-        appData.total_cards_in_deck = data.total_cards_in_deck;
-    } else {
-        console.log("not updating yet.")
-    }
-
+    appData.draw_stats = data.draw_odds.stats;
+    appData.deck_name = data.draw_odds.deck_name;
+    appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
+    appData.opponent_hand = data.opponent_hand
     var total = 0;
     $.each($(".card"), function(i, c) {
         total += c.offsetHeight;
