@@ -11,11 +11,12 @@ COLORMAP = {
 
 class Card(object):
 
-    def __init__(self, name, pretty_name, cost, card_type, sub_types, set_id, set_number, mtga_id):
+    def __init__(self, name, pretty_name, cost, color_identity, card_type, sub_types, set_id, set_number, mtga_id):
         self.name = name
         self.set = set_id
         self.pretty_name = pretty_name
         self.cost = cost
+        self.color_identity = color_identity
         self.card_type = card_type
         self.sub_types = sub_types
         self.set_number = set_number
@@ -25,7 +26,7 @@ class Card(object):
     def colors(self):
         colors = []
         for color_key in COLORMAP.keys():
-            if color_key in self.cost:
+            if color_key in self.cost or color_key in self.color_identity:
                 colors.append(COLORMAP[color_key])
         if not colors:
             if self.card_type == "Basic Land":
@@ -50,6 +51,7 @@ class Card(object):
             "colors": self.colors,
             "pretty_name": self.pretty_name,
             "cost": self.cost,
+            "color_identity": self.color_identity,
             "card_type": self.card_type,
             "sub_types": self.sub_types,
             "set_number": self.set_number,
@@ -73,8 +75,8 @@ class Card(object):
 
 class GameCard(Card):
 
-    def __init__(self, name, pretty_name, cost, card_type, sub_types, set_id, set_number, mtga_id, owner_seat_id, game_id=-1):
-        super().__init__(name, pretty_name, cost, card_type, sub_types, set_id, set_number, mtga_id)
+    def __init__(self, name, pretty_name, cost, color_identity, card_type, sub_types, set_id, set_number, mtga_id, owner_seat_id, game_id=-1):
+        super().__init__(name, pretty_name, cost, color_identity, card_type, sub_types, set_id, set_number, mtga_id)
         self.game_id = game_id
         self.owner_seat_id = owner_seat_id
 

@@ -66,7 +66,7 @@ class Player(object):
                 # mtga_logger.info("-- iid {} => {}".format(instance_id, card))
                 current_zone.transfer_card_to(card, zone)
         else:
-            unknown_card = GameCard("unknown", "unknown", "", "", "", -1, -1, -1, owner_id, instance_id)
+            unknown_card = GameCard("unknown", "unknown", [], [], "", "", -1, -1, -1, owner_id, instance_id)
             # mtga_logger.info("-- iid {} => {}".format(instance_id, unknown_card))
             zone.cards.append(unknown_card)
 

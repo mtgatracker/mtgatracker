@@ -46,17 +46,18 @@ rivets.binders.mana = function(el, value) {
 rivets.binders.card_color = function(el, value) {
   el.classList.remove("card-b")
   el.classList.remove("card-bw")
+  el.classList.remove("card-m")
   el.classList.remove("card-g")
   el.classList.remove("card-r")
   el.classList.remove("card-w")
   el.classList.remove("card-u")
   el.classList.remove("card-c")
-  if (value.includes("Black")) {
-    if (value.includes("White")) {
+
+  if (value.includes("Black") && value.includes("White")) {
         el.classList.add("card-bw")
-    } else {
-        el.classList.add("card-b")
-    }
+        el.classList.add("card-m")
+  } else if (value.includes("Black")) {
+    el.classList.add("card-b")
   } else if (value.includes("White")) {
     el.classList.add("card-w")
   } else if (value.includes("Blue")) {

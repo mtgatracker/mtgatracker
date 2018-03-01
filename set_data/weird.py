@@ -3,7 +3,7 @@ import models.set as set
 import set_data.rix as rix
 import set_data.xln as xln
 
-CinderBarrens = mcard.Card("cinder_barrens", "Cinder Barrens", "", "Land", "", "OGW", -1, 62499)
+CinderBarrens = mcard.Card("cinder_barrens", "Cinder Barrens", [], ["B", "R"], "Land", "", "OGW", -1, 62499)
 
 WeirdLands = set.Set("rivals_of_ixalan", cards=[CinderBarrens])
 

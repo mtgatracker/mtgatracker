@@ -53,18 +53,21 @@ Ixalan = Set("ixalan", cards=clsmembers)
             card_name_class_cased_suffixed = card_name_class_cased + str(card_suffix)
             card_suffix += 1
         card_name_snake_cased = re.sub('[^0-9a-zA-Z_]', '', card["name"].lower().replace(" ", "_"))
-        mana_cost = []
+        mana_cost, color_identity = [], []
         if "manaCost" in card.keys():
             mana_cost = [m for m in re.split("[{}]", card["manaCost"]) if m]
+        if "colorIdentity" in card.keys():
+            color_identity = card["colorIdentity"]
         card_type = card["type"].replace(" — ", "-")
         subtype = ""
         if "-" in card_type:
             card_type, subtype = card_type.split("-")
-        ixw.write('{} = Card("{}", "{}", {}, "{}", "{}", "XLN", {}, {})\n'.format(
+        ixw.write('{} = Card("{}", "{}", {}, {}, "{}", "{}", "XLN", {}, {})\n'.format(
             card_name_class_cased_suffixed,
             card_name_snake_cased,
             card["name"],
             mana_cost,
+            color_identity,
             card_type,
             subtype,
             card["number_int"],
@@ -95,18 +98,21 @@ RivalsOfIxalan = Set("rivals_of_ixalan", cards=clsmembers)
             card_name_class_cased_suffixed = card_name_class_cased + str(card_suffix)
             card_suffix += 1
         card_name_snake_cased = re.sub('[^0-9a-zA-Z_]', '', card["name"].lower().replace(" ", "_"))
-        mana_cost = []
+        mana_cost, color_identity = [], []
         if "manaCost" in card.keys():
-            mana_cost =  [m for m in re.split("[{}]", card["manaCost"]) if m]
+            mana_cost = [m for m in re.split("[{}]", card["manaCost"]) if m]
+        if "colorIdentity" in card.keys():
+            color_identity = card["colorIdentity"]
         card_type = card["type"].replace(" — ", "-")
         subtype = ""
         if "-" in card_type:
             card_type, subtype = card_type.split("-")
-        ixw.write('{} = Card("{}", "{}", {}, "{}", "{}", "RIX", {}, {})\n'.format(
+        ixw.write('{} = Card("{}", "{}", {}, {}, "{}", "{}", "RIX", {}, {})\n'.format(
             card_name_class_cased_suffixed,
             card_name_snake_cased,
             card["name"],
             mana_cost,
+            color_identity,
             card_type,
             subtype,
             card["number_int"],

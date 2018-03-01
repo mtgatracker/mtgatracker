@@ -18,8 +18,8 @@ const PY_MODULE = 'main' // without .py suffix
 let pyProc = null
 let pyPort = null
 
-let debug = true;
-let no_server = true;
+let debug = false;
+let no_server = false;
 let kill_server = true;
 let server_killed = false;
 let noFollow = false;
