@@ -22,6 +22,26 @@ var appData = {
 }
 rivets.bind(document.getElementById('container'), appData)
 
+rivets.binders.mana = function(el, value) {
+    mi_class = "mi-" + value.toLowerCase()
+    el.classList.remove("mi-w")
+    el.classList.remove("mi-b")
+    el.classList.remove("mi-g")
+    el.classList.remove("mi-u")
+    el.classList.remove("mi-r")
+    el.classList.remove("mi-1")
+    el.classList.remove("mi-2")
+    el.classList.remove("mi-3")
+    el.classList.remove("mi-4")
+    el.classList.remove("mi-5")
+    el.classList.remove("mi-6")
+    el.classList.remove("mi-7")
+    el.classList.remove("mi-8")
+    el.classList.remove("mi-9")
+    el.classList.remove("mi-10")
+    el.classList.add(mi_class)
+}
+
 // TODO: finish this
 rivets.binders.card_color = function(el, value) {
   el.classList.remove("card-b")
@@ -31,7 +51,6 @@ rivets.binders.card_color = function(el, value) {
   el.classList.remove("card-w")
   el.classList.remove("card-u")
   el.classList.remove("card-c")
-  console.log("binding ", value, " to ", el)
   if (value.includes("Black")) {
     if (value.includes("White")) {
         el.classList.add("card-bw")

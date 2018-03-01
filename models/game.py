@@ -96,6 +96,7 @@ class Player(object):
                 odds[card.mtga_id] = {
                     "card": card.pretty_name,
                     "colors": card.colors,
+                    "cost": card.cost,
                     "card_type": card.card_type,
                     "card_subtype": card.sub_types,
                     "count_in_deck": 0,

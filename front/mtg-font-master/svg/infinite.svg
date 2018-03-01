@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="6.89958mm"
+   height="3.154093mm"
+   viewBox="0 0 24.447332 11.175921"
+   id="svg3845"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="infinite.svg">
+  <defs
+     id="defs3847">
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-0" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-2" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-7" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-4" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-6" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-1" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="-328.81725"
+     inkscape:cy="75.037238"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     units="px"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata3850">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-725.54822,-580.02221)">
+    <path
+       inkscape:connector-curvature="0"
+       id="path3449"
+       d="m 737.7613,584.27668 c 2.03197,-2.83631 4.27564,-4.25447 6.77328,-4.25447 1.67217,0 2.98447,0.508 3.9793,1.52399 0.99484,1.01599 1.48167,2.34948 1.48167,4.02165 0,1.65097 -0.48683,3.00564 -1.48167,4.06394 -0.99483,1.05834 -2.30714,1.56634 -3.93697,1.56634 -2.4553,0 -4.72014,-1.41817 -6.81561,-4.25448 -2.159,2.83631 -4.40264,4.25448 -6.75211,4.25448 -1.651,0 -2.98449,-0.508 -3.97932,-1.54517 -0.99482,-1.03714 -1.48165,-2.39181 -1.48165,-4.06394 0,-1.651 0.48683,-3.00566 1.48165,-4.02165 0.99483,-1.03716 2.32832,-1.54516 3.97932,-1.54516 2.39181,0 4.63544,1.41816 6.75211,4.25447 z m -1.05833,1.35467 c -1.90497,-2.6035 -3.83114,-3.91582 -5.75728,-3.91582 -1.16417,0 -2.07433,0.35983 -2.75166,1.07949 -0.69849,0.71966 -1.03716,1.651 -1.03716,2.794 0,1.16413 0.33867,2.09547 1.03716,2.85747 0.67733,0.74083 1.58749,1.10066 2.75166,1.10066 1.82031,0 3.74647,-1.29116 5.75728,-3.9158 z m 2.07433,0 c 1.98964,2.62464 3.93694,3.9158 5.84194,3.9158 1.12184,0 2.01081,-0.35983 2.68814,-1.0795 0.67734,-0.71966 1.016,-1.651 1.016,-2.79397 0,-1.2065 -0.33866,-2.159 -1.016,-2.87866 -0.67733,-0.71966 -1.58747,-1.07949 -2.7728,-1.07949 -1.16417,0 -2.26481,0.40217 -3.30197,1.24882 -0.635,0.508 -1.43934,1.397 -2.45531,2.667 z"
+       style="fill:#0d0f0f;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+  </g>
+</svg>

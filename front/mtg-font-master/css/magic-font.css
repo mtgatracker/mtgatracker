@@ -1,0 +1,527 @@
+/*!
+ *  MTG Font 0.1.0 by Alexandre Arpin - http://alexandrearpin.com/mtg-font
+ *  Based off Font Awesome's CSS - http://fontawesome.io/license (CSS: MIT License)
+ *  CSS Classes and the associated HTML are subject to change
+ */
+ 
+/* Font uses by Magic the Gathering
+ * magic-font => Custom font that contains the MtG symbols
+ * Mplantin => Font used for the text description in the card and for mana costs inside the mana symbol circles
+ * Matrix Bold => Font used for the card name and card types (Card headers)
+ * -------------------------- */
+@font-face {
+  font-family: 'magic-font';
+  src:url("../fonts/magic-font.eot");
+  src:url("../fonts/magic-font.eot?#iefix") format("embedded-opentype"),
+      url("../fonts/magic-font.woff") format("woff"),
+      url("../fonts/magic-font.ttf") format("truetype"),
+      url("../fonts/magic-font.svg#magic-font") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Matrix-Bold";
+  src: url("../fonts/Matrix-Bold.eot");
+  src: url("../fonts/Matrix-Bold.eot") format("embedded-opentype"), 
+       url("../fonts/Matrix-Bold.woff") format("woff"), 
+       url("../fonts/Matrix-Bold.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Mplantin';
+  src: url('../fonts/Mplantin.eot');
+  src: url('../fonts/Mplantin.woff') format('woff'), 
+       url('../fonts/Mplantin.ttf') format('truetype'), 
+       url('../fonts/Mplantin.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Container setup and utility classes
+ * Default font icon is magic-font, anything inside .mi is considered to be magic-font
+ * This behavior is overriden on certain use-cases where we want to use alphanumerics
+ * Ex: colorless mana <i class='mi mi-mana'>1</i>
+ * -------------------------- */
+.mi, .mi:before{
+  display: inline-block;
+  font: normal normal normal 14px/1 magic-font;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* makes the font 33% larger relative to the icon container */
+.mi-lg {
+  font-size: 1.33333333em;
+  line-height: 0.75em;
+  vertical-align: -15%;
+}
+.mi-2x {
+  font-size: 2em;
+}
+.mi-3x {
+  font-size: 3em;
+}
+.mi-4x {
+  font-size: 4em;
+}
+.mi-5x {
+  font-size: 5em;
+}
+
+.mi-fw {
+  width: 1.28571429em;
+  text-align: center;
+}
+
+.mi-rotate-90 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+  -webkit-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+.mi-rotate-180 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+.mi-rotate-270 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  -webkit-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  transform: rotate(270deg);
+}
+.mi-flip-horizontal {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1);
+  -webkit-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  transform: scale(-1, 1);
+}
+.mi-flip-vertical {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1);
+  -webkit-transform: scale(1, -1);
+  -ms-transform: scale(1, -1);
+  transform: scale(1, -1);
+}
+:root .fa-rotate-90,
+:root .fa-rotate-180,
+:root .fa-rotate-270,
+:root .fa-flip-horizontal,
+:root .fa-flip-vertical {
+  filter: none;
+}
+
+/*Symbols*/
+.mi-w:before {
+  content: "\e000";
+}
+.mi-u:before {
+  content: "\e001";
+}
+.mi-b:before {
+  content: "\e002";
+}
+.mi-r:before {
+  content: "\e003";
+}
+.mi-g:before {
+  content: "\e004";
+}
+.mi-p:before, .mi-phyrexian {
+  content: "\e005";
+}
+.mi-s:before {
+  content: "\e006";
+}
+.mi-chaos:before {
+  content: "\e007";
+}
+.mi-t:before, .mi-tap:before, .mi-q:before, .mi-untap:before {
+  content: "\e008";
+}
+.mi-artifact:before {
+  content: "\e009";
+}
+.mi-creature:before {
+  content: "\e00a";
+}
+.mi-enchantment:before {
+  content: "\e00b";
+}
+.mi-instant:before {
+  content: "\e00c";
+}
+.mi-land:before {
+  content: "\e00d";
+}
+.mi-multiple:before {
+  content: "\e00e";
+}
+.mi-planeswalker:before {
+  content: "\e00f";
+}
+.mi-sorcery:before {
+  content: "\e010";
+}
+.mi-tombstone:before {
+  content: "\e011";
+}
+.mi-infinite:before {
+  content: "\e012";
+}
+.mi-planeswalk:before {
+  content: "\e013";
+}
+.mi-c:before {
+  content: "\e014";
+}
+.mi-q:before, .mi-untap:before{
+  /* Untap is a mirror'd Tap symbol */
+  -ms-transform: rotate(270deg) scale(1, -1);
+  -webkit-transform: rotate(270deg) scale(1, -1);
+  transform: rotate(270deg) scale(1, -1);
+}
+
+.mi-0:before{
+  content: "0";
+  font-family: Mplantin;
+}
+.mi-1:before{
+  content: "1";
+  font-family: Mplantin;
+}
+.mi-2:before{
+  content: "2";
+  font-family: Mplantin;
+}
+.mi-3:before{
+  content: "3";
+  font-family: Mplantin;
+}
+.mi-4:before{
+  content: "4";
+  font-family: Mplantin;
+}
+.mi-5:before{
+  content: "5";
+  font-family: Mplantin;
+}
+.mi-6:before{
+  content: "6";
+  font-family: Mplantin;
+}
+.mi-7:before{
+  content: "7";
+  font-family: Mplantin;
+}
+.mi-8:before{
+  content: "8";
+  font-family: Mplantin;
+}
+.mi-9:before{
+  content: "9";
+  font-family: Mplantin;
+}
+.mi-10:before{
+  content: "10";
+  font-family: Mplantin;
+}
+.mi-11:before{
+  content: "11";
+  font-family: Mplantin;
+}
+.mi-12:before{
+  content: "12";
+  font-family: Mplantin;
+}
+.mi-13:before{
+  content: "13";
+  font-family: Mplantin;
+}
+.mi-14:before{
+  content: "14";
+  font-family: Mplantin;
+}
+.mi-15:before{
+  content: "15";
+  font-family: Mplantin;
+}
+.mi-16:before{
+  content: "16";
+  font-family: Mplantin;
+}
+.mi-17:before{
+  content: "17";
+  font-family: Mplantin;
+}
+.mi-18:before{
+  content: "18";
+  font-family: Mplantin;
+}
+.mi-19:before{
+  content: "19";
+  font-family: Mplantin;
+}
+.mi-x:before{
+  content: "X";
+  font-family: Mplantin;
+}
+.mi-y:before{
+  content: "Y";
+  font-family: Mplantin;
+}
+.mi-z:before{
+  content: "Z";
+  font-family: Mplantin;
+}
+
+/* Mana
+ * Default behaviour is to create a round circle and compound css selector to show a symbol
+ * Ex: colorless mana <i class='mi mi-mana mi-2'></i>
+ * -------------------------- */
+.mi-mana,  .mi-mana-w, .mi-mana-u, .mi-mana-b, .mi-mana-r, .mi-mana-g{
+  width: 1em;
+  height:0;
+  padding-bottom: 1em;
+  text-align: center;
+  color: rgb(13,15,15);
+  background:rgb(202,197,192);
+  border-radius: 100%;
+}
+
+/* WUBRG Mana (Forest, Mountain, etc...)
+ * Ex: Red Mana <i class='mi mi-mana mi-r'></i>
+ * -------------------------- */
+.mi-mana:before{
+  position:relative;
+  font-size: 0.8em;
+  top: -0.05em;
+}
+
+.mi-mana.mi-w:before{
+  top: -0.1em;
+}
+.mi-mana.mi-u:before{
+  top: -0.1em;
+} 
+.mi-mana.mi-b:before{
+  top: -0.1em;
+}
+.mi-mana.mi-r:before{
+  left: 0.05em;
+  top: -0.1em;
+} 
+.mi-mana.mi-g:before{
+  top: -0.08em;
+}
+.mi-mana.mi-c:before{
+  font-size: 1em;
+  top: 0.01em;
+}
+.mi-mana.mi-s:before{
+  font-size: 0.85em;
+}
+
+/* Colorless Mana
+ * Ex: 2 Colorless Mana <i class='mi mi-mana mi-2'></i>
+ * -------------------------- */
+.mi-mana.mi-0:before,
+.mi-mana.mi-1:before,
+.mi-mana.mi-2:before,
+.mi-mana.mi-3:before,
+.mi-mana.mi-4:before,
+.mi-mana.mi-5:before,
+.mi-mana.mi-6:before,
+.mi-mana.mi-7:before,
+.mi-mana.mi-8:before,
+.mi-mana.mi-9:before{
+  font-size: 1.1em;
+  top: -0.125em;
+  left: 0.015em;
+}
+
+.mi-mana.mi-10:before,
+.mi-mana.mi-11:before,
+.mi-mana.mi-12:before,
+.mi-mana.mi-13:before,
+.mi-mana.mi-14:before,
+.mi-mana.mi-15:before,
+.mi-mana.mi-16:before,
+.mi-mana.mi-17:before,
+.mi-mana.mi-18:before,
+.mi-mana.mi-19:before{
+  font-size: 0.8em;
+  top: -0.3em;
+}
+
+.mi-mana.mi-x:before,
+.mi-mana.mi-y:before,
+.mi-mana.mi-z:before{
+  font-size: 0.90em;
+  top: -0.2em;
+}
+
+/* Phyrexian Mana (Phyrexian symbol + Mana background color)
+ * Ex: Phyrexian White Mana <i class='mi mi-p mi-mana-w'></i>
+ * -------------------------- */
+.mi-mana.mi-phyrexian:before , .mi-mana.mi-p:before,
+.mi-mana-w.mi-phyrexian:before , .mi-mana-w.mi-p:before,
+.mi-mana-u.mi-phyrexian:before , .mi-mana-u.mi-p:before,
+.mi-mana-b.mi-phyrexian:before , .mi-mana-b.mi-p:before,
+.mi-mana-r.mi-phyrexian:before , .mi-mana-r.mi-p:before,
+.mi-mana-g.mi-phyrexian:before , .mi-mana-g.mi-p:before{
+  font-size: 0.95em;
+}
+
+/* Tap/Untap (Tap symbol + Colorless Mana background color)
+ * Ex: Tap <i class="mi mi-tap mi-mana"></i>
+ * -------------------------- */
+.mi-mana.mi-tap:before, .mi-mana.mi-t:before{
+  font-size: 0.65em;
+  top: -0.2em;
+  left: 0.05em;
+}
+.mi-mana.mi-untap:before, .mi-mana.mi-q:before{
+  font-size: 0.6em;
+  top: -0.35em;
+}
+
+/* Mana Shadows - Mana symbols on card headers have a slight drop shadow
+ * This class mimics that
+ * Ex: Red mana symbol with shadow <i class="mi mi-mana mi-r mi-shadow"></i>
+ * -------------------------- */
+.mi-mana.mi-shadow,
+.mi-mana-w.mi-shadow,
+.mi-mana-u.mi-shadow,
+.mi-mana-b.mi-shadow,
+.mi-mana-r.mi-shadow,
+.mi-mana-g.mi-shadow
+{
+  box-shadow: -0.02em 0.04em 0.02em #000;
+}
+
+/* Split Mana - Mana that can be paid two different ways
+ * This is done by wrapping 2 mana symbols in a split div
+ * The idea is to make 2 half circle with the symbols or mana cost, rotate them 45', and then unrotate the symbols
+ * Ex: Red/Green mana symbol <div class="mi-split"><i class="mi mi-r"></i><i class="mi mi-g"></i></div>
+ * -------------------------- */
+.mi-split{
+  display:inline-block;
+  -ms-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.mi-split .mi{
+  background:rgb(202,197,192);
+  border-radius: 100% / 50%;
+}
+
+.mi-split .mi:nth-child(1){
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.mi-split .mi:nth-child(2){
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* Split Mana with Mana Symbols */
+.mi-split .mi:before{
+  display:inline-block;
+  position:relative;
+  font-size:0.44em;
+  margin:0.08em;
+  -ms-transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+.mi-split .mi:nth-child(1).mi:before{
+  top:-0.7em;
+  left:0.05em;
+  right:0;
+  bottom:0;
+}
+
+.mi-split .mi:nth-child(2).mi:before{
+  top:-0.55em;
+}
+
+/* Split Mana with Letters/Numbers
+ * Work in Progress - The CSS required to generate the split mana with the current dom is pretty ugly
+ * I don't believe this works on all browser and scales.
+ * Ex: 2/Green mana symbol <div class="mi-split mi-shadow"><i class="mi mi"><span>2</span></i><i class="mi mi-g"></i></div>
+ * -------------------------- */
+.mi-split .mi-0:before,
+.mi-split .mi-1:before,
+.mi-split .mi-2:before,
+.mi-split .mi-3:before,
+.mi-split .mi-4:before,
+.mi-split .mi-5:before,
+.mi-split .mi-6:before,
+.mi-split .mi-7:before,
+.mi-split .mi-8:before,
+.mi-split .mi-9:before{
+  width: 1em;
+  font-family: Mplantin;
+  font-size: 0.58em;
+  margin: -0.08em;
+  left: 0.15em !important;
+}
+
+/* Split Mana Shadow
+ * Work in Progress - The behaviour isn't perfect because the shadow leaks in the middle seperator
+ * Ex: Red/Green mana symbol <div class="mi-split mi-shadow"><i class="mi mi-r"></i><i class="mi mi-g"></i></div>
+ * -------------------------- */
+.mi-split.mi-shadow .mi:nth-child(1){
+  box-shadow: 0em 0.03em 0.02em #000;
+}
+.mi-split.mi-shadow .mi:nth-child(2){
+  box-shadow: 0em 0.03em 0.02em #000;
+}
+
+/* Mana Color Background - Enforce the right color
+ * Ex: Red mana background symbol <i class="mi mi-mana-r"></i>
+ * -------------------------- */
+.mi-mana-b, 
+.mi-b.mi-mana, 
+.mi-split .mi-b{
+  background:rgb(186,177,171) !important;
+}
+
+.mi-mana-g, 
+.mi-g.mi-mana, 
+.mi-split .mi-g{
+  background:rgb(163,192,149) !important;
+}
+.mi-mana-r, 
+.mi-r.mi-mana, 
+.mi-split .mi-r{
+  background:rgb(228,153,119) !important;
+}
+
+.mi-mana-u, 
+.mi-u.mi-mana, 
+.mi-split .mi-u{
+  background:rgb(193,215,233) !important;
+}
+
+.mi-mana-w, 
+.mi-w.mi-mana, 
+.mi-split .mi-w {
+  background:rgb(248,246,216) !important;
+}
+
+.mi-mana.mi-untap, .mi-mana.mi-q{
+  background:rgb(0,0,0);
+}
+.mi-mana.mi-untap:before{
+  color: rgb(255,255,255);
+}

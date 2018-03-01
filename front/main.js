@@ -111,15 +111,17 @@ global.ws = ws;
 let mainWindow = null
 
 let window_width = 354;
+let window_height = 200;
 if (debug) {
     window_width = 1220;
+    window_height = 700;
 }
 if (!debug) {
     app.disableHardwareAcceleration()
 }
 const createWindow = () => {
   mainWindow = new BrowserWindow({width: window_width,
-                                  height: 200,
+                                  height: window_height,
                                   show: false,
                                   transparent: !debug,
                                   resizable: debug,
