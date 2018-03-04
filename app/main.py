@@ -7,7 +7,6 @@ sys.path.append(path_to_root)
 
 import threading
 import argparse
-import logging
 from app import tasks, queues
 from util import KillableTailer
 import asyncio
@@ -17,13 +16,6 @@ import websockets
 import time
 from app.queues import all_die_queue, game_state_change_queue
 
-
-now = datetime.datetime.now()
-access_log_file = "access_log-{}_{}_{}-{}_{}_{}.log".format(now.month, now.day, now.year, now.hour, now.minute, now.second)
-file_handler = logging.FileHandler(access_log_file)
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.INFO)
-log.addHandler(file_handler)
 
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument('-i', '--log_file', default=None)
