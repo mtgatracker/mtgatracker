@@ -51,7 +51,7 @@ def dispatch_gre_to_client(blob):
         message_type = message["type"]
         if message_type in dont_care_types:
             pass
-        elif message_type == "GREMessageType_GameStateMessage":
+        elif message_type in ["GREMessageType_GameStateMessage", "GREMessageType_QueuedGameStateMessage"]:
             game_state_message = message['gameStateMessage']
             parsers.parse_game_state_message(game_state_message)
 

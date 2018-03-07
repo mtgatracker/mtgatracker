@@ -26,7 +26,7 @@
       <h3>Opponent's Hand</h3>
       <div class="card" rv-each-card="opponent_hand" rv-card_color="card.colors">
         <div class="card-text">
-          <span class="card-text-limit"><i>{ card.pretty_name }</i></span>
+          <span class="card-text-limit"><b rv-show="debug">{ card.iid }</b> <i>{ card.pretty_name }</i></span>
           <span class="cost">
             <i rv-each-mana="card.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
           </span>

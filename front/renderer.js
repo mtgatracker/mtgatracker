@@ -14,6 +14,7 @@ var ws = remote.getGlobal('ws');
 var appData = {
     deck_name: "loading...",
     cant_connect: false,
+    debug: debug,
     last_connect: 0,
     last_connect_as_seconds: 0,
     total_cards_in_deck: "0",

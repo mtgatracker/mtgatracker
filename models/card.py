@@ -78,7 +78,14 @@ class GameCard(Card):
     def __init__(self, name, pretty_name, cost, color_identity, card_type, sub_types, set_id, set_number, mtga_id, owner_seat_id, game_id=-1):
         super().__init__(name, pretty_name, cost, color_identity, card_type, sub_types, set_id, set_number, mtga_id)
         self.game_id = game_id
+        self.previous_iids = []
         self.owner_seat_id = owner_seat_id
+
+    def to_serializable(self):
+        serial = super(GameCard, self).to_serializable()
+        serial["iid"] = self.game_id
+        serial["owner_seat_id"] = self.owner_seat_id
+        return serial
 
     def __repr__(self):
         if self.mtga_id != -1:

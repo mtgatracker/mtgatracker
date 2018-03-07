@@ -76,9 +76,8 @@ def json_blob_reader_task(in_queue, out_queue):
             if mtga_watch_app.game:
                 hero_library_hash_post = hash(mtga_watch_app.game.hero.library)
                 opponent_hand_hash_post = hash(mtga_watch_app.game.opponent.hand)
-            if hero_library_hash != hero_library_hash_post or opponent_hand_hash != opponent_hand_hash_post:
-                game_state_change_queue.put(mtga_watch_app.game.game_state())
-                print("putting to queue {}".format(game_state_change_queue.qsize()))
+                if hero_library_hash != hero_library_hash_post or opponent_hand_hash != opponent_hand_hash_post:
+                    game_state_change_queue.put(mtga_watch_app.game.game_state())  # TODO: BREAKPOINT HERE
         except:
             import traceback
             exc = traceback.format_exc()

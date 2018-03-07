@@ -55,7 +55,7 @@ class Player(object):
     def get_location_of_instance(self, instance_id):
         for zone in self.all_zones:
             for card in zone.cards:
-                if card.game_id == instance_id:
+                if card.game_id == instance_id or instance_id in card.previous_iids:
                     return card, zone
         return None, None
 
@@ -85,16 +85,20 @@ class Player(object):
                     if card.owner_seat_id == self.seat and card.mtga_id != -1:  # don't bother for unknown cards; they're unknown!
                         if card.game_id not in ignored_iids:
                             cards_not_in_library.add(card)
-        assert isinstance(self.original_deck, Deck)
+        assert isinstance(self.original_deck, Deck), "{} {}".format(self.original_deck, type(self.original_deck))
         current_list = self.original_deck.cards.copy()
         for card in cards_not_in_library:
             simple_card = all_mtga_cards.find_one(card.mtga_id)
-            current_list.remove(simple_card)
+            try:
+                current_list.remove(simple_card)
+            except:
+                pass
         odds = {}
         for card in current_list:
             if card.mtga_id not in odds.keys():
                 odds[card.mtga_id] = {
                     "card": card.pretty_name,
+                    "iid": None,
                     "colors": card.colors,
                     "cost": card.cost,
                     "card_type": card.card_type,
@@ -103,6 +107,9 @@ class Player(object):
                     "odds_unf": 0,
                     "odds_of_draw": 0,
                 }
+                if isinstance(card, GameCard):
+                    odds[card.mtga_id]['iid'] = card.game_id
+
             odds[card.mtga_id]["count_in_deck"] += 1
             odds[card.mtga_id]["odds_unf"] = 100 * odds[card.mtga_id]["count_in_deck"] / len(current_list)
             odds[card.mtga_id]["odds_of_draw"] = "{:.2f}".format(odds[card.mtga_id]["odds_unf"])

@@ -50,6 +50,7 @@ def parse_game_state_message(message):
                             assert new_card_already_exists.mtga_id == card_with_iid.mtga_id or -1 in [new_card_already_exists.mtga_id, card_with_iid.mtga_id], "{} / {}".format(new_card_already_exists.mtga_id , card_with_iid.mtga_id)
                             card_with_iid.mtga_id = -1
                         else:
+                            card_with_iid.previous_iids.append(original_id)
                             card_with_iid.game_id = new_id
 
                         # mtga_logger.info("IGNORING IID {}, NOW {}".format(original_id, new_id))
@@ -78,13 +79,22 @@ def parse_game_state_message(message):
                         player.put_instance_id_in_zone(instance_id, owner, zone)
                         zone.match_game_id_to_card(instance_id, card_id)
         if 'zones' in message.keys():
+            cards_to_remove_from_zones = {}
             for zone in message['zones']:
                 try:
-                    parse_zone(zone)
+                    removable = parse_zone(zone)
+                    if removable:
+                        cards_to_remove_from_zones[zone["zoneId"]] = removable
                 except:
                     app.mtga_app.mtga_logger.error("error parsing zone:")
                     app.mtga_app.mtga_logger.error(pprint.pformat(zone))
                     raise
+            for zone_id in cards_to_remove_from_zones.keys():
+                remove_these = cards_to_remove_from_zones[zone_id]
+                player, zone = mtga_app.mtga_watch_app.game.get_owner_zone_tup(zone_id)
+                for card in remove_these:
+                    if card in zone.cards:
+                        zone.cards.remove(card)
 
 
 def parse_zone(zone_blob):
@@ -93,7 +103,7 @@ def parse_zone(zone_blob):
                        "ZoneType_Stack", "ZoneType_Battlefield"]
     zone_type = zone_blob["type"]
     if zone_type not in trackable_zones:
-        return
+        return []
     mtga_app.mtga_watch_app.game.register_zone(zone_blob)  # make sure we will find the zone later
     zone_id = zone_blob["zoneId"]
     player, zone = mtga_app.mtga_watch_app.game.get_owner_zone_tup(zone_id)
@@ -122,9 +132,7 @@ def parse_zone(zone_blob):
         for card in zone.cards:
             if card.game_id not in zone_blob['objectInstanceIds']:
                 cards_to_remove_from_zone.append(card)
-        for card in cards_to_remove_from_zone:
-            # mtga_logger.info("removing {} from {}".format(card, zone))
-            zone.cards.remove(card)
+        return cards_to_remove_from_zone
 
 
 def parse_mulligan_response(blob):
@@ -145,7 +153,7 @@ def parse_accept_hand(blob):
 
 
 def parse_match_complete(blob):
-    # MatchGameRoomStateType_MatchCompleted
+    # TODO: MatchGameRoomStateType_MatchCompleted
     pass
 
 
