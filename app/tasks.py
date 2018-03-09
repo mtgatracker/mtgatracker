@@ -11,6 +11,40 @@ def block_watch_task(in_queue, out_queue):
         if block_recieved is None:
             out_queue.put(None)
             break
+        if "[" not in block_recieved and "{" not in block_recieved:
+            continue
+        square_index = block_recieved.index("[") if "[" in block_recieved else -1
+        curly_index = block_recieved.index("{") if "{" in block_recieved else -1
+        if square_index != -1 and (square_index < curly_index or curly_index == -1):
+            # TODO: this, but better
+            """ 
+            found a log with a block that looked like this:
+
+            ```
+            Unloading 6 Unused Serialized files (Serialized files now loaded: 46)
+            3/6/2018 9:35:53 PM: Match to 6A250A78F6933705: GreToClientEvent
+            {
+              "greToClientEvent": {
+               ...
+            ```
+
+            so it misses the elif clause below. I guess delete the crap in front of it? shrugggg
+            """
+            # try list first
+            pre_block = block_recieved[:square_index]
+            if " " in pre_block:
+                block_title = pre_block.split(" ")[-2]
+                block_recieved = block_title + " " + block_recieved[square_index:]
+            else:
+                block_recieved = block_recieved[square_index:]
+        if curly_index != -1 and (curly_index < square_index or square_index == -1):
+            pre_block = block_recieved[:curly_index]
+            if " " in pre_block:
+                block_title = pre_block.split(" ")[-2]
+                block_recieved = block_title + " " + block_recieved[curly_index:]
+            else:
+                block_recieved = block_recieved[curly_index:]
+            # try object parsing
         block_lines = block_recieved.split("\n")
         first_line = block_lines[0].strip()
         second_line = None
