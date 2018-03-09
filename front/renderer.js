@@ -45,30 +45,50 @@ rivets.binders.mana = function(el, value) {
 
 // TODO: finish this
 rivets.binders.card_color = function(el, value) {
+
   el.classList.remove("card-b")
-  el.classList.remove("card-bw")
-  el.classList.remove("card-m")
   el.classList.remove("card-g")
   el.classList.remove("card-r")
-  el.classList.remove("card-w")
   el.classList.remove("card-u")
-  el.classList.remove("card-c")
+  el.classList.remove("card-w")
 
-  if (value.includes("Black") && value.includes("White")) {
-        el.classList.add("card-bw")
-        el.classList.add("card-m")
-  } else if (value.includes("Black")) {
-    el.classList.add("card-b")
-  } else if (value.includes("White")) {
-    el.classList.add("card-w")
-  } else if (value.includes("Blue")) {
-    el.classList.add("card-u")
-  } else if (value.includes("Green")) {
-    el.classList.add("card-g")
-  } else if (value.includes("Red")) {
-    el.classList.add("card-r")
-  } else if (value.includes("Colorless")) {
-    el.classList.add("card-c")
+  el.classList.remove("card-c")  // colorless
+  el.classList.remove("card-m")  // multicolor, not mountain
+  let atLeastOneColor = false;
+
+  if (value.length > 1) {
+    // card-m sets the fade color
+    el.classList.add("card-m")
+  }
+
+  if (value.length > 2) {
+    // card-m-back sets the background image to generic 3-color background
+    el.classList.add("card-m-back")
+  } else {
+
+      if (value.includes("Black")) {
+        el.classList.add("card-b")
+        atLeastOneColor = true
+      }
+      if (value.includes("White")) {
+        el.classList.add("card-w")
+        atLeastOneColor = true
+      }
+      if (value.includes("Blue")) {
+        el.classList.add("card-u")
+        atLeastOneColor = true
+      }
+       if (value.includes("Green")) {
+        el.classList.add("card-g")
+        atLeastOneColor = true
+      }
+       if (value.includes("Red")) {
+        el.classList.add("card-r")
+        atLeastOneColor = true
+      }
+      if (value.includes("Colorless") || !atLeastOneColor) {
+        el.classList.add("card-c")
+      }
   }
 }
 
