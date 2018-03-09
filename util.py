@@ -123,16 +123,6 @@ def deepsearch_blob_for_ids(blob, ids_only=True):
         return {}
 
 
-def dense_log(json_recieved):
-    import app.mtga_app as mtga_app
-    cards = deepsearch_blob_for_ids(json_recieved)
-    with mtga_app.mtga_watch_app.game_lock:
-        if cards:
-            output = "{}\n{}\n{}".format(pprint.pformat(cards), "-" * 30, pprint.pformat(json_recieved))
-            filename = "card"
-            mtga_app.mtga_watch_app.make_logchunk_file(filename, output, False)
-
-
 class KillableTailer(Tailer):
 
     def __init__(self, file, kill_queue):

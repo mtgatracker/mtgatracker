@@ -1,23 +1,24 @@
 import json
 import threading
 import os
-import logging
-
+import logging.handlers
 import sys
-
 from models.set import Deck
-import datetime
 
 
-now = datetime.datetime.now()
-log_file = "mtga_watch-{}_{}_{}-{}_{}_{}.log".format(now.month, now.day, now.year, now.hour, now.minute, now.second)
+log_file = "mtga_watch.log"
 mtga_logger = logging.getLogger("mtga_watch")
 stdout_handler = logging.StreamHandler(sys.stdout)
-file_handler = logging.FileHandler(log_file)
+must_rollover = False
+if os.path.exists(log_file):  # check before creating the handler, which creates the file
+    must_rollover = True
+rotating_handler = logging.handlers.RotatingFileHandler(log_file, backupCount=10)
+if must_rollover:
+    rotating_handler.doRollover()
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-file_handler.setFormatter(formatter)
+rotating_handler.setFormatter(formatter)
 stdout_handler.setFormatter(formatter)
-mtga_logger.addHandler(file_handler)
+mtga_logger.addHandler(rotating_handler)
 mtga_logger.setLevel(logging.DEBUG)
 
 
@@ -25,11 +26,6 @@ class MTGAWatchApplication(object):
     def __init__(self):
         self.game = None
         self.game_lock = threading.Lock()
-        now = datetime.datetime.now()
-        self._log_dir = "mtga_app_logs/{}_{}_{}-{}_{}_{}".format(now.month, now.day, now.year,
-                                                                 now.hour, now.minute, now.second)
-
-        os.makedirs(self._log_dir, exist_ok=True)
         self._log_bit_count = 1
         self.player_id = None
         self.intend_to_join_game_with = None
@@ -40,14 +36,6 @@ class MTGAWatchApplication(object):
         self._settings_path = os.path.join(home_path, ".mtga_tracker")
         self._settings_json_path = os.path.join(self._settings_path, "settings.json")
         self.load_settings()
-
-    def make_logchunk_file(self, filename, output, print_to_stdout=True):
-        logchunk_filename = "{}_{}.txt".format(os.path.join(self._log_dir, str(self._log_bit_count)), filename)
-        with open(logchunk_filename, 'w') as wf:
-            wf.write(str(output))
-            self._log_bit_count += 1
-        if print_to_stdout:
-            mtga_logger.info("created logchunk at {}".format(logchunk_filename))
 
     def load_settings(self):
         mtga_logger.debug("loading settings")
