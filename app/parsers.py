@@ -1,5 +1,4 @@
 import pprint
-import time
 import util
 from models.game import Game, Player
 from models.set import Zone
@@ -52,11 +51,11 @@ def parse_game_state_message(message):
                         else:
                             card_with_iid.previous_iids.append(original_id)
                             card_with_iid.game_id = new_id
-
-                        # mtga_logger.info("IGNORING IID {}, NOW {}".format(original_id, new_id))
                     except:
-                        raise
-                        pass        # 99 , 344
+                        app.mtga_app.mtga_logger.error("Exception @ count {}".format(app.mtga_app.mtga_watch_app.error_count))
+                        app.mtga_app.mtga_logger.error("error parsing annotation:")
+                        app.mtga_app.mtga_logger.error(pprint.pformat(annotation))
+                        app.mtga_app.mtga_watch_app.send_error("Exception during parse annotation. Check log for more details")
         if 'gameObjects' in message.keys():
             game_objects = message['gameObjects']
             for object in game_objects:
@@ -86,8 +85,10 @@ def parse_game_state_message(message):
                     if removable:
                         cards_to_remove_from_zones[zone["zoneId"]] = removable
                 except:
+                    app.mtga_app.mtga_logger.error("Exception @ count {}".format(app.mtga_app.mtga_watch_app.error_count))
                     app.mtga_app.mtga_logger.error("error parsing zone:")
                     app.mtga_app.mtga_logger.error(pprint.pformat(zone))
+                    app.mtga_app.mtga_watch_app.send_error("Exception during parse zone. Check log for more details")
                     raise
             for zone_id in cards_to_remove_from_zones.keys():
                 remove_these = cards_to_remove_from_zones[zone_id]

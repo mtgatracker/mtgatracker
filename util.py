@@ -11,6 +11,8 @@ import set_data.rix as rix
 import set_data.weird as weird
 from tailer import Tailer
 
+from app.queues import general_output_queue
+
 all_mtga_cards = set.Pool.from_sets("mtga_cards", sets=[rix.RivalsOfIxalan, xln.Ixalan, weird.WeirdLands])
 
 example_deck = {
@@ -63,8 +65,8 @@ def id_to_card(card_id):
     try:
         return all_mtga_cards.find_one(card_id)
     except:
-        mtga_app.mtga_logger.info("NOOO cant find {} in all_mtga_cards".format(card_id))
-        raise
+        mtga_app.mtga_logger.error("Unknown mtga_id: {}".format(card_id))
+        mtga_app.mtga_watch_app.send_error("Unknown mtga_id: {}".format(card_id))
 
 
 def process_deck(deck_dict):
@@ -77,8 +79,8 @@ def process_deck(deck_dict):
             for i in range(card_obj["quantity"]):
                 deck.cards.append(card)
         except:
-            mtga_app.mtga_logger.info("NOOO cant find {} in all_mtga_cards".format(card_obj))
-            raise
+            mtga_app.mtga_logger.error("Unknown mtga_id: {}".format(card_obj))
+            mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck_dict["name"], card_obj))
     with mtga_app.mtga_watch_app.game_lock:
         mtga_app.mtga_watch_app.player_decks[deck_id] = deck
         mtga_app.mtga_logger.debug("deck {} is being saved".format(deck_dict["name"]))

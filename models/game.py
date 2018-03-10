@@ -1,4 +1,5 @@
 import models.set as mset
+from app.mtga_app import mtga_watch_app
 from app.queues import json_blob_queue, block_read_queue, collection_state_change_queue
 from models.card import GameCard
 from models.set import Deck
@@ -92,7 +93,7 @@ class Player(object):
             try:
                 current_list.remove(simple_card)
             except:
-                pass
+                mtga_watch_app.send_error("Card wasn't in library to remove?")
         odds = {}
         for card in current_list:
             if card.mtga_id not in odds.keys():

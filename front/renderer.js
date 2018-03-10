@@ -9,12 +9,17 @@ const request = require('request');
 let { remote } = require('electron')
 let win = remote.getCurrentWindow()
 var debug = remote.getGlobal('debug');
+var showIIDs = remote.getGlobal('showIIDs');
 var ws = remote.getGlobal('ws');
 
 var appData = {
     deck_name: "loading...",
     cant_connect: false,
+    show_error: false,
+    last_error: "",
+    error_count: 0,
     debug: debug,
+    show_iids: showIIDs,
     last_connect: 0,
     last_connect_as_seconds: 0,
     total_cards_in_deck: "0",
@@ -133,31 +138,40 @@ document.getElementById("floating-eye").addEventListener("click", function() {
 })
 
 ws.onmessage = function (event){
-    appData.cant_connect = false;
-    appData.last_connect = 0;
-    appData.last_connect_as_seconds = 0;
     // data is already parsed as JSON:
     data = JSON.parse(event.data)
     console.log(data);
-    appData.draw_stats = data.draw_odds.stats;
-    appData.deck_name = data.draw_odds.deck_name;
-    appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
-    appData.opponent_hand = data.opponent_hand
-    var total = 0;
-    $.each($(".card"), function(i, c) {
-        total += c.offsetHeight;
-    })
 
-    container = document.getElementById("container")
-    starting_height = 118;
-    current_height = $(container).height();
-    new_height = starting_height + total
-    container.style.height = "" + new_height + "px";
-    bounds = win.getBounds()
-    win_offset = 30;
-    bounds.height = new_height + win_offset;
-    if (!debug) {
-        win.setBounds(bounds)
+    if(data.data_type == "game_state") {
+
+        appData.draw_stats = data.draw_odds.stats;
+        appData.deck_name = data.draw_odds.deck_name;
+        appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
+        appData.opponent_hand = data.opponent_hand
+        var total = 0;
+        $.each($(".card"), function(i, c) {
+            total += c.offsetHeight;
+        })
+
+        container = document.getElementById("container")
+        starting_height = 118;
+        current_height = $(container).height();
+        new_height = starting_height + total
+        container.style.height = "" + new_height + "px";
+        bounds = win.getBounds()
+        win_offset = 30;
+        bounds.height = new_height + win_offset;
+        if (!debug) {
+            win.setBounds(bounds)
+        }
+    } else if (data.data_type == "message") {
+        console.log("got message:")
+        console.log(data)
+        if (data.count) {
+            appData.error_count = data.count;
+        }
+        appData.last_error = data.msg;
+        appData.show_error = true;
     }
 }
 

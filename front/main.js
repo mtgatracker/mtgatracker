@@ -19,6 +19,7 @@ let pyProc = null
 let pyPort = null
 
 let debug = false;
+let showIIDs = true;
 let no_server = false;
 let kill_server = true;
 let server_killed = false;
@@ -95,12 +96,14 @@ const createPyProc = () => {
 
 if (!no_server) {
     createPyProc()
+    freeze(5000)
 }
 
 
 var ws = new WebSocket("ws://127.0.0.1:5678/")
 
 global.debug = debug;
+global.showIIDs = showIIDs;
 global.ws = ws;
 
 

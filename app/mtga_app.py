@@ -3,6 +3,8 @@ import threading
 import os
 import logging.handlers
 import sys
+
+from app.queues import general_output_queue
 from models.set import Deck
 
 
@@ -31,11 +33,19 @@ class MTGAWatchApplication(object):
         self.intend_to_join_game_with = None
         self.player_decks = {}
         self.last_blob = None
+        self.error_count = 0
 
         home_path = os.path.expanduser("~")
         self._settings_path = os.path.join(home_path, ".mtga_tracker")
         self._settings_json_path = os.path.join(self._settings_path, "settings.json")
         self.load_settings()
+
+    def send_error(self, error):
+        self.error_count += 1
+        general_output_queue.put({"color": "red", "msg": error, "count": self.error_count})
+
+    def send_message(self, message):
+        general_output_queue.put({"color": "black", "msg": message})
 
     def load_settings(self):
         mtga_logger.debug("loading settings")
@@ -48,6 +58,7 @@ class MTGAWatchApplication(object):
                 settings = json.load(rp)
         except:
             mtga_logger.error("had to move settings.json -> settings.json.bak, trying again...")
+            mtga_watch_app.send_error("Error loading settings; had to move settings.json -> settings.json.bak")
             os.rename(self._settings_json_path, self._settings_json_path + ".bak")
             return self.load_settings()
         if "player_id" in settings and settings["player_id"]:

@@ -59,7 +59,8 @@ def block_watch_task(in_queue, out_queue):
                 blob = json.loads(list_blob)
                 out_queue.put(blob)
             except:
-                mtga_logger.info("----- ERROR parsing list json blob  :( `{}`".format(list_blob))
+                mtga_logger.error("Could not parse list_blob {}".format(list_blob))
+                mtga_watch_app.send_error("Could not parse list_blob {}".format(list_blob))
         elif first_line and first_line[-1] == "{" or second_line and second_line == "{":
             idx_first_bracket = block_recieved.index("{")
             idx_last_bracket = block_recieved.rindex("}") + 1
@@ -69,7 +70,8 @@ def block_watch_task(in_queue, out_queue):
                 blob = json.loads(json_blob)
                 out_queue.put(blob)
             except:
-                mtga_logger.info("----- ERROR parsing normal json blob :( `{}`".format(json_blob))
+                mtga_logger.error("Could not parse json_blob {}".format(json_blob))
+                mtga_watch_app.send_error("Could not parse json_blob {}".format(json_blob))
 
 
 def json_blob_reader_task(in_queue, out_queue):
@@ -116,9 +118,10 @@ def json_blob_reader_task(in_queue, out_queue):
             import traceback
             exc = traceback.format_exc()
             stack = traceback.format_stack()
-            error_count += 1
+            mtga_logger.error("Exception @ count {}".format(mtga_watch_app.error_count))
             mtga_logger.error(exc)
             mtga_logger.error(stack)
+            mtga_watch_app.send_error("Exception during check game state. Check log for more details")
             if error_count > 5:
                 mtga_logger.error("error count too high; exiting")
                 return
