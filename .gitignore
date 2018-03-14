@@ -101,3 +101,5 @@ ENV/
 .mypy_cache/
 
 secrets
+webtasks/secrets
+webtasks/node_modules

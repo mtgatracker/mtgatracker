@@ -1,0 +1,19 @@
+{
+  "name": "mtga-tracker-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mtga-tracker-game.js",
+  "scripts": {
+    "start": "wt create --bundle --watch --secrets-file=secrets ."
+  },
+  "keywords": [],
+  "author": "shawkins",
+  "dependencies": {
+    "backbone": "^1.3.3",
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "mongodb": "^3.0.4",
+    "webtask-tools": "^3.2.0"
+  },
+  "license": "MIT"
+}
