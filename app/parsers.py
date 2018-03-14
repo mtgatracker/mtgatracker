@@ -1,7 +1,7 @@
 import pprint
 import util
-from models.game import Game, Player
-from models.set import Zone
+from app.models.game import Game, Player
+from app.models.set import Zone
 import app.mtga_app
 
 

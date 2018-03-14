@@ -2,16 +2,13 @@
 
 generally stuff that is useful but just hasn't quite found a home elswhere in the project yet. Anything here is subject
 to being moved at random! """
-import pprint
 import time
 
-import models.set as set
-import set_data.xln as xln
-import set_data.rix as rix
-import set_data.weird as weird
+import app.models.set as set
+from app import set_data as xln
+import app.set_data.rix as rix
+import app.set_data.weird as weird
 from tailer import Tailer
-
-from app.queues import general_output_queue
 
 all_mtga_cards = set.Pool.from_sets("mtga_cards", sets=[rix.RivalsOfIxalan, xln.Ixalan, weird.WeirdLands])
 
@@ -168,4 +165,3 @@ class KillableTailer(Tailer):
                 time.sleep(delay)
         return
 
-import app.mtga_app as mtga_app

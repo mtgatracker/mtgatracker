@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>MTGA Tracker</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="mtg-font-master/css/magic-font.css">
+  <!-- TODO: https://github.com/magarena/magarena/tree/master/resources/cardbuilder/fonts -->
+  </head>
+  <body>
+    <div id="floating-eye">
+      <img src="hide-512.png" width="30px" height="30px">
+    </div>
+    <div id="container">
+      <h1 class="deck-title">{ deck_name }</h1>
+      <p class="header-warning" rv-show="show_error">{last_error} / {error_count}</p>
+      <h3>{ total_cards_in_deck } cards in deck</h3>
+      <div class="card" rv-each-stat="draw_stats" rv-card_color="stat.colors">
+        <div class="card-text">
+          <span class="card-text-limit"><i>{ stat.card.iid }</i><b>{ stat.odds_of_draw }</b> { stat.count_in_deck }x <i>{ stat.card }</i></span>
+          <span class="cost">
+            <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
+          </span>
+        </div>
+      </div>
+      <h3>Opponent's Hand</h3>
+      <div class="card" rv-each-card="opponent_hand" rv-card_color="card.colors">
+        <div class="card-text">
+          <span class="card-text-limit"><b rv-show="show_iids">{ card.iid }</b> <i>{ card.pretty_name }</i></span>
+          <span class="cost">
+            <i rv-each-mana="card.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+  <!--https://github.com/mikeric/rivets/issues/699-->
+  <!--<script type="text/javascript" src="jquery.js"></script>-->
+  <script type="text/javascript" src="rivets.bundled.min.js"></script>
+  <script type="text/javascript" src="renderer.js"></script>
+  <script>
+    let $ = require("./jquery.js")
+    // let renderer = require('./renderer.js')
+  </script>
+  <script>if (window.module) module = window.module;</script>
+</html>

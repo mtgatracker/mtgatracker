@@ -5,7 +5,7 @@ import logging.handlers
 import sys
 
 from app.queues import general_output_queue
-from models.set import Deck
+from app.models.set import Deck
 
 
 log_file = "mtga_watch.log"
