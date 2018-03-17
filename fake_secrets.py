@@ -1,1 +1,3 @@
+import sys
+
 COOL_SECRET="8V1onPOpp7lqZEMf6EWJU8w2TZMmnlG7JjLXzrEDBY8="
