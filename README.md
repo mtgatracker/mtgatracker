@@ -3,7 +3,8 @@ MTGA Tracker is an electron-based app that helps you track your MTGA decks!
 
 ## I'm not reading anything else until you tell me how to use it
 
-I figured as much.
+I figured as much. I know this doc is long, please at least take a moment and scroll to [disclaimers](#disclaimers)
+before continuing, though.
 
 ### Run from a release
 
