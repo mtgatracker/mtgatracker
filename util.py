@@ -5,7 +5,7 @@ to being moved at random! """
 import time
 
 import app.models.set as set
-from app import set_data as xln
+import app.set_data.xln as xln
 import app.set_data.rix as rix
 import app.set_data.weird as weird
 from tailer import Tailer

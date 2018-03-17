@@ -4,6 +4,8 @@ const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const console = require('console');
 const request = require('request');
+const fs = require('fs');
+const findProcess = require('find-process');
 
 
 /*************************************************************
@@ -17,9 +19,9 @@ const PY_MODULE = 'main' // without .py suffix
 let pyProc = null
 let pyPort = null
 
-let debug = true;
+let debug = false;
 let showIIDs = true;
-let no_server = true;
+let no_server = false;
 let kill_server = true;
 let server_killed = false;
 let noFollow = false;
@@ -28,7 +30,7 @@ let debugFile = false;
 
 const guessPackaged = () => {
   const fullPath = path.join(__dirname, PY_DIST_FOLDER)
-  return require('fs').existsSync(fullPath)
+  return fs.existsSync(fullPath)
 }
 
 const getScriptPath = () => {
@@ -36,16 +38,23 @@ const getScriptPath = () => {
     return path.join(__dirname, "..", PY_FOLDER, PY_MODULE + '.py')
   }
   if (process.platform === 'win32') {
-    return path.join(__dirname, "..", "..", PY_DIST_FOLDER, PY_MODULE, PY_MODULE + '.exe')
+    return path.join(__dirname, "..", PY_DIST_FOLDER, PY_MODULE, PY_MODULE + '.exe') // TODO: verify this
   }
-  return path.join(__dirname, "..", "..", PY_DIST_FOLDER, PY_MODULE, PY_MODULE)
+  return path.join(__dirname, "..", PY_DIST_FOLDER, PY_MODULE, PY_MODULE)
 }
 
 const getPyBinPath = () => {
   if (process.platform === 'win32') {
-    return path.join(__dirname, "..", "venv", "Scripts", "python.exe")
-  } else {
-    return path.join(__dirname, "..", "venv", "bin", "python")
+    venv_path_win = path.join(__dirname, "..", "venv", "Scripts", "python.exe")
+    venv_path_x = path.join(__dirname, "..", "venv", "Scripts", "python")
+    fallback_path = "python"
+    if (fs.existsSync(venv_path_win)) {
+        return venv_path_win + " -u"
+    } else if (fs.existsSync(venv_path_x)) {
+        return venv_path_x + " -u"
+    } else {
+        return fallback_path + " -u" // ? shrug
+    }
   }
 }
 
@@ -77,6 +86,18 @@ const generateArgs = () => {
     return args
 }
 
+const cleanupOldPyProc = (cb)  => {
+    findProcess('port', 5678)
+      .then(function (list) {
+        list.forEach(function(proc) {
+            console.log("leftover python process @ " + proc.pid + ", killing...")
+            process.kill(proc.pid)
+        })
+        cb()
+      }, function (err) {
+        console.log(err.stack || err);
+      })
+}
 
 const createPyProc = () => {
   let script = getScriptPath()
@@ -85,17 +106,25 @@ const createPyProc = () => {
     pyProc = require('child_process').execFile(script, generateArgs())
   } else {
     pyProc = require('child_process').spawn(getPyBinPath(), [script].concat(generateArgs()), {shell: true})
-    console.log(getPyBinPath(), [script].concat(generateArgs()))
   }
 
   if (pyProc != null) {
     console.log('child process success on port ' + port)
+    pyProc.stderr.on('data', function(data) {
+      console.log("err: " + data.toString());
+    });
+    pyProc.stdout.on('data', function(data) {
+      console.log("out:" + data.toString());
+    });
+    pyProc.on('exit', function(code) {
+      console.log(`python exited with code ${code}`);
+      server_killed = true;
+    });
   }
 }
 
 if (!no_server) {
-    createPyProc()
-    freeze(5000)
+    cleanupOldPyProc(createPyProc)
 }
 
 global.debug = debug;
@@ -153,18 +182,19 @@ const createWindow = () => {
     console.timeEnd('init')
   })
 }
+
 function freeze(time) {
     const stop = new Date().getTime() + time;
     while(new Date().getTime() < stop);
 }
+
 const killServer = () => {
     if (!server_killed && kill_server) {
         server_killed = true;
-        console.log("sending die")
-        ws.send("die")
-        freeze(3000)  // no way to verify is die was sent, so let's just wait a little
-        if (!no_server)
-            pyProc.kill()
+        if (!no_server) {
+            freeze(2000)
+            process.kill(pyProc.pid)
+        }
         pyProc = null
         pyPort = null
         app.quit()
@@ -186,13 +216,6 @@ app.on('will-quit', function() {
 app.on('window-all-closed', () => {
     killServer()
 })
-
-//app.on('activate', () => {
-//  if (mainWindow === null) {
-//    createWindow()
-//
-//  }
-//})
 
 app.on('beforeunload', (e) => {
     console.log("onbeforeunload app")

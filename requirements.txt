@@ -2,3 +2,4 @@ beautifulsoup4
 requests
 tailer
 flask
+websockets

@@ -7,10 +7,16 @@ const http = require('http')
 const request = require('request')
 
 const WebSocket = require('ws')
-const ReconnectingWebSocket = require('reconnecting-websocket')
+const ReconnectingWebSocket = require('./rws.js')
+const fs = require('fs')
 
 let { remote } = require('electron')
-let win = remote.getCurrentWindow()
+let browserWindow = remote.getCurrentWindow()
+
+window.addEventListener('beforeunload', function() {
+    ws.send("die")
+})
+
 var debug = remote.getGlobal('debug');
 var showIIDs = remote.getGlobal('showIIDs');
 
@@ -30,6 +36,7 @@ var appData = {
     draw_stats: [],
     opponent_hand: [],
 }
+
 rivets.bind(document.getElementById('container'), appData)
 
 rivets.binders.mana = function(el, value) {
@@ -149,57 +156,44 @@ ws.addEventListener('open', () => {
     })
 });
 
-function freeze(time) {
-    const stop = new Date().getTime() + time;
-    while(new Date().getTime() < stop);
-}
-const app = require('electron').remote.app
 
-app.on('onbeforeunload', () => {
-    console.log("!!!!!!!!!!!!!!!!!")
-    console.log("!!!!!!!!!!!!!!!!!")
-    console.log("!!!!!!!!!!!!!!!!!")
-    ws.send("die")
-    freeze(3000)
-})
-//
-//ws.onmessage = (data) => {
-//    // data is already parsed as JSON:
-//    data = JSON.parse(event.data)
-//    console.log("hello onmessage")
-//    console.log(data);
-//
-//    if(data.data_type == "game_state") {
-//
-//        appData.draw_stats = data.draw_odds.stats;
-//        appData.deck_name = data.draw_odds.deck_name;
-//        appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
-//        appData.opponent_hand = data.opponent_hand
-//        var total = 0;
-//        $.each($(".card"), function(i, c) {
-//            total += c.offsetHeight;
-//        })
-//
-//        container = document.getElementById("container")
-//        starting_height = 118;
-//        current_height = $(container).height();
-//        new_height = starting_height + total
-//        container.style.height = "" + new_height + "px";
-//        bounds = win.getBounds()
-//        win_offset = 30;
-//        bounds.height = new_height + win_offset;
-//        if (!debug) {
-//            win.setBounds(bounds)
-//        }
-//    } else if (data.data_type == "message") {
-//        console.log("got message:")
-//        console.log(data)
-//        if (data.count) {
-//            appData.error_count = data.count;
-//        }
-//        appData.last_error = data.msg;
-//        appData.show_error = true;
-//    }
-//}
+ws.onmessage = (data) => {
+    // data is already parsed as JSON:
+    data = JSON.parse(event.data)
+    console.log("hello onmessage")
+    console.log(data);
+
+    if(data.data_type == "game_state") {
+
+        appData.draw_stats = data.draw_odds.stats;
+        appData.deck_name = data.draw_odds.deck_name;
+        appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
+        appData.opponent_hand = data.opponent_hand
+        var total = 0;
+        $.each($(".card"), function(i, c) {
+            total += c.offsetHeight;
+        })
+
+        container = document.getElementById("container")
+        starting_height = 118;
+        current_height = $(container).height();
+        new_height = starting_height + total
+        container.style.height = "" + new_height + "px";
+        bounds = browserWindow.getBounds()
+        win_offset = 30;
+        bounds.height = new_height + win_offset;
+        if (!debug) {
+            browserWindow.setBounds(bounds)
+        }
+    } else if (data.data_type == "message") {
+        console.log("got message:")
+        console.log(data)
+        if (data.count) {
+            appData.error_count = data.count;
+        }
+        appData.last_error = data.msg;
+        appData.show_error = true;
+    }
+}
 
 console.timeEnd('init')

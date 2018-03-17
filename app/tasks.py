@@ -1,8 +1,8 @@
 import json
-import util
 import app.dispatchers as dispatchers
 from app.mtga_app import mtga_watch_app, mtga_logger
 from app.queues import all_die_queue, game_state_change_queue
+from util import deepsearch_blob_for_ids
 
 
 def block_watch_task(in_queue, out_queue):

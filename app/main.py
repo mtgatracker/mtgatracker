@@ -1,20 +1,17 @@
 import sys
 import os
-from queue import Empty
-
 path_to_root = os.path.abspath(os.path.join(__file__, "..", ".."))
 sys.path.append(path_to_root)
-
 import threading
 import argparse
 from app import tasks, queues
 from util import KillableTailer
+from queue import Empty
 import asyncio
 import datetime
 import json
 import websockets
 import time
-
 from app.queues import all_die_queue, game_state_change_queue, general_output_queue
 
 arg_parser = argparse.ArgumentParser()
@@ -35,6 +32,8 @@ async def stats(websocket):
         game_state["now"] = now
         game_state["data_type"] = "game_state"
         await websocket.send(json.dumps(game_state))
+    else:
+        await websocket.send('{"no": "data"}')
     await asyncio.sleep(0.5)
 
 
@@ -55,6 +54,8 @@ async def consumer_handler(websocket):
     async for message in websocket:
         if message == "die":
             all_die_queue.put("DIE")
+        else:
+            print("ack {}".format(message))
         await websocket.send("ack {}".format(message))
 
 
@@ -75,7 +76,6 @@ async def handler(websocket, _):
     loop.stop()
 
 if args.log_file is None:  # assume we're on windows for now # TODO
-
     appdata_roaming = os.getenv("APPDATA")
     wotc_locallow_path = os.path.join(appdata_roaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA")
     output_log = os.path.join(wotc_locallow_path, "output_log.txt")
@@ -127,3 +127,5 @@ if __name__ == "__main__":
     json_watch_process.join()
     websocket_thread.join()
     start_server.ws_server.close()
+    while queues.json_blob_queue.qsize():
+        queues.json_blob_queue.get()

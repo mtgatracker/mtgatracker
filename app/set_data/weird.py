@@ -1,7 +1,7 @@
 import app.models.card as mcard
 import app.models.set as set
 import app.set_data.rix as rix
-from app import set_data as xln
+import app.set_data.xln as xln
 
 CinderBarrens = mcard.Card("cinder_barrens", "Cinder Barrens", [], ["B", "R"], "Land", "", "OGW", -1, 62499)
 TranquilExpanse = mcard.Card("tranquil_expanse", "Tranquil Expanse", [], ["G", "W"], "Land", "", "OGW", -1, 62523)
