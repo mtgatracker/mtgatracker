@@ -4,9 +4,7 @@ console.time('init')
 // TODO: where did ^this comment come from? what does it mean?
 const https = require('https')
 const http = require('http')
-const request = require('request')
 
-const WebSocket = require('ws')
 const ReconnectingWebSocket = require('./rws.js')
 const fs = require('fs')
 

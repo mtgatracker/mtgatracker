@@ -100,7 +100,13 @@ ENV/
 # mypy
 .mypy_cache/
 
+.idea/
+mtga_watch.log*
 */mtga_watch.log*
 secrets
-webtasks/secrets
+**/secrets
 webtasks/node_modules
+node_modules
+appdist/
+MTGATracker-*
+app/example_logs

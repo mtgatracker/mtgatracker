@@ -1,7 +1,7 @@
 
 import sys
-from models.card import Card
-from models.set import Set
+from app.models.card import Card
+from app.models.set import Set
 import inspect
 
 

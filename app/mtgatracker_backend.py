@@ -79,6 +79,8 @@ if args.log_file is None:  # assume we're on windows for now # TODO
     appdata_roaming = os.getenv("APPDATA")
     wotc_locallow_path = os.path.join(appdata_roaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA")
     output_log = os.path.join(wotc_locallow_path, "output_log.txt")
+    if not os.path.exists(output_log):
+        output_log = None
     args.log_file = output_log
 
 if __name__ == "__main__":
@@ -95,7 +97,6 @@ if __name__ == "__main__":
 
     websocket_thread = threading.Thread(target=asyncio.get_event_loop().run_forever)
     websocket_thread.start()
-
     if args.read_full_log:
         print("WARNING: known issue with reading full log!")
         print("For some reason, reading the full log causes the python process to never exit.")
@@ -110,18 +111,24 @@ if __name__ == "__main__":
                     current_block += line.strip() + "\n"
                 if not all_die_queue.empty():
                     break
+    count = 0
     if not args.no_follow and all_die_queue.empty():
-        with open(args.log_file) as log_file:
-            kt = KillableTailer(log_file, queues.all_die_queue)
-            kt.seek_end()
-            for line in kt.follow(1):
-                if line.strip() == "":
-                    queues.block_read_queue.put(current_block)
-                    current_block = ""
-                else:
-                    current_block += line.strip() + "\n"
-                if not all_die_queue.empty():
-                    break
+        if args.log_file:
+            with open(args.log_file) as log_file:
+                kt = KillableTailer(log_file, queues.all_die_queue)
+                kt.seek_end()
+                for line in kt.follow(1):
+                    if line.strip() == "":
+                        if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
+                                                  # which is likely the slowest
+                            queues.block_read_queue.put(current_block)
+                        current_block = ""
+                    else:
+                        current_block += line.strip() + "\n"
+                    if not all_die_queue.empty():
+                        break
+        else:
+            general_output_queue.put({"color": "red", "msg": "No log file present. Please run MTGA at least once before launching MTGA Tracker.", "count": 1})
     queues.block_read_queue.put(None)
     block_watch_process.join()
     json_watch_process.join()

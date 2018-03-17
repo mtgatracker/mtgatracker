@@ -1,20 +1,20 @@
 const electron = require('electron')
-const app = electron.app
-const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 const console = require('console');
-const request = require('request');
 const fs = require('fs');
 const findProcess = require('find-process');
+
+const app = electron.app
+const BrowserWindow = electron.BrowserWindow
 
 
 /*************************************************************
  * py process
  *************************************************************/
 
-const PY_DIST_FOLDER = 'mtgatracker_dist'
+const PY_DIST_FOLDER = 'appdist'
 const PY_FOLDER = 'app'
-const PY_MODULE = 'main' // without .py suffix
+const PY_MODULE = 'mtgatracker_backend' // without .py suffix
 
 let pyProc = null
 let pyPort = null
@@ -29,7 +29,7 @@ let readFullFile = false;
 let debugFile = false;
 
 const guessPackaged = () => {
-  const fullPath = path.join(__dirname, PY_DIST_FOLDER)
+  const fullPath = path.join(__dirname, "..", PY_DIST_FOLDER)
   return fs.existsSync(fullPath)
 }
 
@@ -86,17 +86,31 @@ const generateArgs = () => {
     return args
 }
 
-const cleanupOldPyProc = (cb)  => {
-    findProcess('port', 5678)
-      .then(function (list) {
-        list.forEach(function(proc) {
-            console.log("leftover python process @ " + proc.pid + ", killing...")
-            process.kill(proc.pid)
+const cleanupPyProc = (cb)  => {
+    finishedCount = 0;
+    p1 = findProcess('name', "mtgatracker_backend.exe")
+    p2 = findProcess('port', 5678)
+    Promise.all([p1, p2]).then(function(vals) {
+        nameList = vals[0]
+        portList = vals[1]
+        killedList = []
+        nameList.forEach(function(proc) {
+            if (proc.pid != 0 && !killedList.includes(proc.pid)) {
+                console.log("leftover python process (name) @ " + proc.pid + ", killing...")
+                process.kill(proc.pid)
+                killedList.push(proc.pid)
+            }
         })
-        cb()
-      }, function (err) {
-        console.log(err.stack || err);
-      })
+        portList.forEach(function(proc) {
+            if (proc.pid != 0 && !killedList.includes(proc.pid)) {
+                console.log("leftover python process (port) @ " + proc.pid + ", killing...")
+                process.kill(proc.pid)
+                killedList.push(proc.pid)
+            }
+        })
+      cb()
+    })
+
 }
 
 const createPyProc = () => {
@@ -124,7 +138,7 @@ const createPyProc = () => {
 }
 
 if (!no_server) {
-    cleanupOldPyProc(createPyProc)
+    cleanupPyProc(createPyProc)
 }
 
 global.debug = debug;
@@ -193,7 +207,7 @@ const killServer = () => {
         server_killed = true;
         if (!no_server) {
             freeze(2000)
-            process.kill(pyProc.pid)
+            cleanupPyProc(() => {})
         }
         pyProc = null
         pyPort = null

@@ -47,6 +47,14 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
     ./node_modules/.bin/electron .
     ```
     And the decktracker UI should launch!
+    
+### Building
+
+Building from windows? Try `sh build.sh` . If that doesn't work, get in touch with @shawkinsl to figure it out.
+
+Output will end up in `MTGATracker-<os>-<arch>` .
+
+Building is probably not supported on OSX yet. (But then again, neither is MTGA, so what are you even doing?)
 
 ## Docs
 
