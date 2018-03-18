@@ -62,7 +62,7 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
 
 Building from windows? Try `sh build.sh` from git bash. If that doesn't work, get in touch with @shawkinsl to figure it
 out. There's an open issue to improve this process--help us get CI/CD set up? See
-[Contributing](https://github.com/shawkinsl/mtga-tracker#contributing) ;)
+[contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors) ;)
 
 Output will end up in `MTGATracker-<os>-<arch>` .
 
@@ -71,8 +71,8 @@ Building is probably not supported on OSX yet. (But then again, neither is MTGA,
 ### Native App
 **Backend**
 
-The back end is at it's core a python log parser project. There's a websockets app tacked on top to communicate state with
-the frontend.
+The back end is at it's core a python log parser project. There's a websockets app tacked on top to communicate state
+with the frontend.
 
 **Front end**
 
@@ -88,7 +88,7 @@ The front end of MTGA Tracker is an electron app that uses node / websocket to c
 
 `webtasks` - node.js / webtask.io code for webapp and app to talk to
 
-`webapp` - code for mtga-tracker.com
+`docs` - code for mtga-tracker.com (called docs for github pages)
 
 ### Contributing
 
@@ -97,50 +97,13 @@ by forking, making changes in the fork, and submitting PR's. The rules for becom
 
 #### Contribution workflow
 
-1. Create an issue for your changes. (Skip this step if changes are trivial).
-1. Create a fork (or branch, if collaborator+)
-1. Make your changes
-    - If you created an issue, reference it in your commit (see: [github docs](https://help.github.com/articles/closing-issues-using-keywords/))
-1. Create a pull request
-    - All checks ~~and tests~~ (see: [#41](https://github.com/shawkinsl/mtga-tracker/issues/41), [#42](https://github.com/shawkinsl/mtga-tracker/issues/41)) must pass
-
-#### Core contributors
-
-Core contributors are allowed to approve pull requests into master + collaborator permissions.
-Core contributors must meet one of the following criteria:
-
-- Have merged 3+ approved pull requests with no work needed
-- Have merged 10+ approved pull requests (with or without work needed)
-- Have contributed actionable input in 10+ approved pull requests
-- Have merged 300+ total LOC changed
-- Have made significant contributions otherwise (at the discretion of other core contributors)
-
-And must meet all of the following criteria:
-
-- Have been active in at least 1 code review / pull request in the last year
-- Have approval from at least one other core-contributor
-
-#### Collaborators
-
-Collaborators are allowed to make branches directly within the mtga-tracker repo. They are encouraged to participate in
-pull requests, but a Collaborator's approval is not sufficient to merge into master without a core-contributor's
-approval. Collaborators must meet one of the following criteria:
-
-- Have merged 1+ approved pull request with no work needed
-- Have merged 3+ approved pull requests (with or without work needed)
-- Have contributed actionable input in 3+ approved pull requests
-- Have merged 50+ LOC total LOC changed
-- Have made contributions otherwise (at the discretion of core contributors)
-
-And must meet all of the following criteria:
-
-- Have been active in at least 1 code review / pull request in the last year
-- Have approval from at least one other collaborator
+See [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
 
 ### Signing code
 
-Currently MTGATracker is self-signed, which I know doesn't really do anything. Did you know that code-signing certs cost
-over $100 a year?! I didn't. So MTGATracker will likely go unsigned unless / until it gets at least $100 in donations ;)
+Currently MTGATracker is self-signed, which I know doesn't really do anything. (Did you know that code-signing certs
+cost over $100 a year?! I didn't.) So MTGATracker will likely go unsigned unless / until it gets at least $100 in
+donations ;)
  
 Anyways, under the guidance of this [stackoverflow question](https://stackoverflow.com/questions/84847/how-do-i-create-a-self-signed-certificate-for-code-signing-on-windows),
 use the following commands to self-sign binaries (not really that useful, but good practice in case MTGATracker ever
@@ -171,8 +134,8 @@ Number of errors: 0
 ## Disclaimers
 
 Use MTGA Tracker at your own risk. Your account may be banned for using this software; MTGA Tracker and its developers
-are not responsible if this happens. Note that this outcome seems unlikely, but Wizards has yet to acknowledge this project in
-any setting. Here are the attempts we've made to get comments from wizards:
+are not responsible if this happens. Note that this outcome seems unlikely, but Wizards has yet to acknowledge this
+project in any setting. Here are the attempts we've made to get comments from wizards:
 [beta forums 1](https://mtgarena.community.gl/forums/threads/14685)
 / [beta forums 2](https://mtgarena.community.gl/forums/threads/12269)
 / [beta forums 2](https://mtgarena.community.gl/forums/threads/12269)
@@ -203,6 +166,10 @@ are property of Wizards of the Coast. ©Wizards of the Coast LLC.
 MTGA Tracker is built with many free / oss libraries, in general listed in the various manifest files.
 MTGA Tracker is mainly built using [JetBrains' PyCharm](https://www.jetbrains.com/pycharm/), [cmder](http://cmder.net/),
 [Electron](https://electronjs.org/), [Python](https://www.python.org/), and many other libraries and tools.
+
+Thanks to Auth0 for both the [webtask.io](https://webtask.io) serverless platform, which drives any web-based
+interactions MTGA Tracker has, as well as [repo-supervisor](https://github.com/auth0/repo-supervisor), which helps keep
+secrets safe, even in an open-source project.
 
 Special shoutout to [fyears/electron-python-example](https://github.com/fyears/electron-python-example) for providing
 a truly excellent tutotial to launchpad off of!
