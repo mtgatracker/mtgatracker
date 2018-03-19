@@ -1,4 +1,16 @@
 # MTGA Tracker
+
+[![Travis](https://img.shields.io/travis/shawkinsl/weeky_challenges.svg)](https://travis-ci.org/shawkinsl/weeky_challenges)
+[![Discord](https://img.shields.io/discord/425145310684250112.svg)](https://discordapp.com/channels/425145310684250112/425145310684250114)
+[![Coveralls github](https://img.shields.io/coveralls/github/shawkinsl/mtga-tracker.svg)](https://coveralls.io) <!-- TODO: this -->
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/shawkinsl/mtga-tracker/latest/total.svg)](https://github.com/shawkinsl/mtga-tracker/releases/latest)
+[![Github All Releases](https://img.shields.io/github/downloads/shawkinsl/mtga-tracker/total.svg)](https://github.com/shawkinsl/mtga-tracker/releases)
+[![Beerpay](https://img.shields.io/beerpay/hashdog/scrapfy-chrome-extension.svg)]()
+[![Code Climate](https://img.shields.io/codeclimate/shawkinsl/mtga-tracker/flow.svg)](https://codeclimate.com/github/shawkinsl/mtga-tracker)
+![GitHub repo size in bytes](https://img.shields.io/github/repo-size/shawkinsl/mtga-tracker.svg)
+[![serverless](http://public.serverless.com/badges/v3.svg)](https://webtask.io/)
+
+
 MTGA Tracker is an electron-based app that helps you track your MTGA decks!
 
 ## I'm not reading anything else until you tell me how to use it
@@ -95,9 +107,7 @@ The front end of MTGA Tracker is an electron app that uses node / websocket to c
 All changes by non core-contributors must go through a code-review process. For non-contributors, this is accomplished
 by forking, making changes in the fork, and submitting PR's. The rules for becoming a contributor are as follows:
 
-#### Contribution workflow
-
-See [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
+For more info, see [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
 
 ### Signing code
 
