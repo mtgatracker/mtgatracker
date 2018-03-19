@@ -1,5 +1,15 @@
 # Contribution
 
+## Looking for a way to contribute?
+
+Check out our [open issues](https://github.com/shawkinsl/mtga-tracker/issues) (consider using the filter for 
+["good for first issue" issues](https://github.com/shawkinsl/mtga-tracker/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22),
+our [current projects](https://github.com/shawkinsl/mtga-tracker/projects), or our [code climate smells / issues](). Not a programmer? Consider [buying us a beer](https://beerpay.io/shawkinsl/mtga-tracker),
+[![GitHub stars](https://img.shields.io/github/stars/shawkinsl/mtga-tracker.svg?logo=github&label=Starring%20our%20project)](https://github.com/shawkinsl/mtga-tracker/stargazers)
+, and/or following / subscribing to
+[our core contributors](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yml) to keep us
+motivated to keep working on this :)
+
 ## Contribution workflow
 
 1. Create an issue for your changes. (Skip this step if changes are trivial).
@@ -8,6 +18,7 @@
     - If you created an issue, reference it in your commit (see: [github docs](https://help.github.com/articles/closing-issues-using-keywords/))
 1. Create a pull request
     - All checks ~~and tests~~ (see: [#41](https://github.com/shawkinsl/mtga-tracker/issues/41), [#42](https://github.com/shawkinsl/mtga-tracker/issues/41)) must pass
+
 
 #### Core contributors
 

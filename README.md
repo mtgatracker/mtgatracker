@@ -178,12 +178,12 @@ MTGA Tracker is licensed under the [MIT License](https://opensource.org/licenses
 
 #### Core contributors
 
-If this list gets too heavy, please refer to [contributors/core.yaml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yaml)
+If this list gets too heavy, please refer to [contributors/core.yml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yml)
 
 - [shawkinsl](https://github.com/shawkinsl)
 
 #### Collaborators
 
-If this list gets too heavy, please refer to [contributors/collab.yaml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yaml)
+If this list gets too heavy, please refer to [contributors/collab.yml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yml)
 
 - [daphpunk](https://github.com/daphpunk)
