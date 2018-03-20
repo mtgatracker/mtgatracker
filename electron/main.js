@@ -172,7 +172,7 @@ const createWindow = () => {
                                   titlebar: false,
                                   title: false,
                                   maximizable: false,
-                                  icon: "img/icon.ico"})
+                                  icon: "img/icon_small.ico"})
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
