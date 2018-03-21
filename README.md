@@ -91,14 +91,12 @@ The front end of MTGA Tracker is an electron app that uses node / websocket to c
 
 `docs` - code for mtga-tracker.com (called docs for github pages)
 
-### Contributing
+## Contributing
 
 All changes by non core-contributors must go through a code-review process. For non-contributors, this is accomplished
-by forking, making changes in the fork, and submitting PR's. The rules for becoming a contributor are as follows:
+by forking, making changes in the fork, and submitting PR's.
 
-#### Contribution workflow
-
-See [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
+For more information, see [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
 
 ### Signing code
 
@@ -162,7 +160,7 @@ In accordance with the [MTG Fan Art policy](http://company.wizards.com/fanconten
 Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used
 are property of Wizards of the Coast. ©Wizards of the Coast LLC.
 
-Please take a moment to read our [privacy policy](https://github.com/shawkinsl/mtga-tracker/privacy.md).
+Please take a moment to read our [privacy policy](https://github.com/shawkinsl/mtga-tracker/blob/master/privacy.md).
 The use of MTGATracker is considered an implicit agreement to this policy.
 
 ### Credits, License
