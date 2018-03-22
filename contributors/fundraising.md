@@ -1,7 +1,7 @@
 # Fundraising goals
 
 Contribute to our project at [beerpay](https://beerpay.io/shawkinsl/mtga-tracker) to help us
-accomplish these goals that cost real-world money! (We think you can conate in bitcoin, even?)
+accomplish these goals that cost real-world money! (We think you can donate in bitcoin, even?)
 
 [![Beerpay](https://img.shields.io/beerpay/shawkinsl/mtga-tracker.svg)](https://beerpay.io/shawkinsl/mtga-tracker)
 
