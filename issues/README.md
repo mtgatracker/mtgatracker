@@ -1,7 +1,7 @@
 # Reporting Issues
 
 Before reporting issues, please take a quick look at our
-[open issues](http://github.com/shawkinsl/mtga-tracker/issues).If there is already an open issue
+[open issues](http://github.com/shawkinsl/mtga-tracker/issues). If there is already an open issue
 for whatever you're experiencing, please feel free to like, comment, or bump the issue thread--this
 helps us know it's a wanted feature--but please _do not_ create a duplicate issue.
 
@@ -20,8 +20,9 @@ When reporting bugs, please always include (whenever possible):
 - `output_log.txt` from MTGA containing gameplay for your issue
 	- Located at: `%APPDATA%/../LocalLow/Wizards of the Coast/MTGA` (you can paste this into Windows Explorer)
 - `mtga_watch.log` from MTGATracker's install directory
+- a zipped copy of all files in the MTGA Tracker settings directory (`~/.mtga_tracker`)
 - Video / gif evidence of the issue with _both_ MTGA Tracker _and_ MTGA visible
-(you may need to upload to a 3rd party, like youtube or vimeo)
+(you may need to upload to a 3rd party, like youtube or vimeo). In general, 2 or 3 game-state changing events before and after the issue should be recorded (somewhere between 30 seconds and a minute on either end).
 
 ~~Note that you can also use the "report an issue" button from within MTGA Tracker to automatically
 send the first two bullets to us. You will be presented with a reference id; please note it in
