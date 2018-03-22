@@ -107,13 +107,7 @@ rivets.binders.card_color = function(el, value) {
 }
 
 rivets.formatters.as_seconds = function(value) {
-    console.log("called formatter!")
     return value / 100;
-}
-
-var setAppData = function() {
-    console.log("called setAppData")
-    console.log(appData)
 }
 
 let all_hidden = false;
@@ -121,10 +115,8 @@ var hideTimeoutId;
 
 var updateOpacity = function() {
     if (all_hidden) {
-        console.log("hide", all_hidden)
         document.getElementById("container").style.opacity = "0.1";
     } else {
-        console.log("unhide", all_hidden)
         document.getElementById("container").style.opacity = "1";
         if (hideTimeoutId) {
             clearTimeout(hideTimeoutId)
@@ -158,11 +150,7 @@ ws.addEventListener('open', () => {
 ws.onmessage = (data) => {
     // data is already parsed as JSON:
     data = JSON.parse(event.data)
-    console.log("hello onmessage")
-    console.log(data);
-
     if(data.data_type == "game_state") {
-
         appData.draw_stats = data.draw_odds.stats;
         appData.deck_name = data.draw_odds.deck_name;
         appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
@@ -173,19 +161,21 @@ ws.onmessage = (data) => {
         })
 
         container = document.getElementById("container")
-        starting_height = 118;
-        current_height = $(container).height();
-        new_height = starting_height + total
-        container.style.height = "" + new_height + "px";
+
+        let totalHeight = 10;
+
+        $("#container").children().each(function(c, e){
+            totalHeight += $(e).outerHeight(true);
+        });
         bounds = browserWindow.getBounds()
-        win_offset = 30;
-        bounds.height = new_height + win_offset;
+        bounds.height = parseInt(totalHeight);
         if (!debug) {
+            container.style.height = "" + parseInt(totalHeight) + "px"
             browserWindow.setBounds(bounds)
+        } else {
+            // console.log("would set height: " + totalHeight)
         }
     } else if (data.data_type == "message") {
-        console.log("got message:")
-        console.log(data)
         if (data.count) {
             appData.error_count = data.count;
         }
