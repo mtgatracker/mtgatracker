@@ -13,6 +13,10 @@ For bug reports, please file a [Github Issue](http://github.com/shawkinsl/mtga-t
 following the [reporting guidelines](#reporting-guidelines) below. If you do not
 have a github account, you can also email us, though this may take longer for us to triage.
 
+## **If you are reporting an ``Unknown mtga_id`` issue, please use the following guidelines**
+
+You do not need to follow the reporting guidelines below. Please open a github issue, attach a copy of the exported deck, as well as a screenshot of the tracker. Please label the issue "missing-cards" . Thanks for helping us find cards we missed!
+
 ## Reporting Guidelines
 
 When reporting bugs, please always include (whenever possible):
@@ -23,6 +27,7 @@ When reporting bugs, please always include (whenever possible):
 - a zipped copy of all files in the MTGA Tracker settings directory (`~/.mtga_tracker`)
 - Video / gif evidence of the issue with _both_ MTGA Tracker _and_ MTGA visible
 (you may need to upload to a 3rd party, like youtube or vimeo). In general, 2 or 3 game-state changing events before and after the issue should be recorded (somewhere between 30 seconds and a minute on either end).
+
 
 ~~Note that you can also use the "report an issue" button from within MTGA Tracker to automatically
 send the first two bullets to us. You will be presented with a reference id; please note it in
