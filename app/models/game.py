@@ -127,6 +127,9 @@ class Player(object):
 
 class Game(object):
     def __init__(self, hero, opponent, shared_battlefield, shared_exile, shared_limbo, shared_stack):
+        self.final = False
+        self.winner = None
+
         self.hero = hero
         assert isinstance(self.hero, Player)
         self.opponent = opponent

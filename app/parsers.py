@@ -155,7 +155,20 @@ def parse_accept_hand(blob):
 
 def parse_match_complete(blob):
     # TODO: MatchGameRoomStateType_MatchCompleted
-    pass
+    import app.mtga_app as mtga_app
+    print("mc")
+    game_room_info = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']
+    final_match_result = game_room_info['finalMatchResult']
+    result_list = final_match_result["resultList"]
+    match_id = game_room_info['gameRoomConfig']['matchId']
+    for result in result_list:
+        scope = result["scope"]
+        if scope == 'MatchScope_Match':  # TODO: with BO3, check games too. (might be in a different event type)
+            winning_team = result["winningTeamId"]
+            with mtga_app.mtga_watch_app.game_lock:
+                mtga_app.mtga_watch_app.game.final = True
+                mtga_app.mtga_watch_app.game.winner = mtga_app.mtga_watch_app.game.get_player_in_seat(winning_team)
+    # TODO: upload result
 
 
 def parse_match_playing(blob):
