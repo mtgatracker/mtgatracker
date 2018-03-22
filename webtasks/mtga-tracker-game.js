@@ -18,6 +18,7 @@ const Game = backbone.Model.extend({
     let winnerFound = false
     attr.players.forEach(function(player, idx) {
       if (player.name === undefined) err.push("players[" + idx + "] must have a name")
+      if (player.userID === undefined) err.push("players[" + idx + "] must have a userID")
       if (player.deck === undefined) err.push("players[" + idx + "] must have a deck")
       if (player.name === attr.winner) winnerFound = true
     })
@@ -49,6 +50,36 @@ server.get('/games', (req, res, next) => {
   })
 })
 
+server.get('/games/user/:username', (req, res, next) => {
+  const { MONGO_URL } = req.webtaskContext.secrets;
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    const { username } = req.params ;
+    if (connectErr) return next(connectErr);
+    let collection = client.db(database).collection(gameCollection)
+    let cursor = collection.find({'players.name': username}, {limit: 5});  // hard-limit to 5 records for example
+    cursor.toArray((cursorErr, docs) => {
+      if (cursorErr) return next(cursorErr);
+      res.status(200).send(docs);
+      client.close()
+    })
+  })
+})
+
+server.get('/games/userID/:userID', (req, res, next) => {
+  const { MONGO_URL } = req.webtaskContext.secrets;
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    const { userID } = req.params ;
+    if (connectErr) return next(connectErr);
+    let collection = client.db(database).collection(gameCollection)
+    let cursor = collection.find({'players.userID': userID}, {limit: 5});  // hard-limit to 5 records for example
+    cursor.toArray((cursorErr, docs) => {
+      if (cursorErr) return next(cursorErr);
+      res.status(200).send(docs);
+      client.close()
+    })
+  })
+})
+
 server.get('/game/_id/:_id', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.secrets;
   MongoClient.connect(MONGO_URL, (err, client) => {
@@ -73,6 +104,25 @@ server.get('/game/gameID/:gid', (req, res, next) => {
       if (err) return next(err);
       if (result !== null) res.status(200).send(result)
       else res.status(404).send(result)
+    });
+  });
+});
+
+server.post('/danger/reset/all', (req, res, next) => {
+  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
+  const { debug_password } = req.body;
+  if (debug_password != DEBUG_PASSWORD) {
+    res.status(400).send({error: "debug password incorrect"})
+    return
+  }
+  MongoClient.connect(MONGO_URL, (err, client) => {
+    if (err) return next(err);
+    client.db(database).collection(gameCollection).drop(null, (err, result) => {
+      if (err) return next(err);
+      if (result !== null) res.status(200).send(result)
+      else res.status(400).send(result)
+      client.close();
+//      res.status(200).send({success: "database wiped"})
     });
   });
 });
