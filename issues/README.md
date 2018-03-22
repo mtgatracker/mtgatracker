@@ -24,6 +24,10 @@ When reporting bugs, please always include (whenever possible):
 - Video / gif evidence of the issue with _both_ MTGA Tracker _and_ MTGA visible
 (you may need to upload to a 3rd party, like youtube or vimeo). In general, 2 or 3 game-state changing events before and after the issue should be recorded (somewhere between 30 seconds and a minute on either end).
 
+## **If you are reporting a "card ID could not be found" issue, please use the following guidelines**
+
+You do not need to follow the guidelines above. Please open a github issue, attach a copy of the exported deck, as well as a screenshot of the tracker. Please label the issue "missing-cards" . Thanks for helping us find cards we missed!
+
 ~~Note that you can also use the "report an issue" button from within MTGA Tracker to automatically
 send the first two bullets to us. You will be presented with a reference id; please note it in
 any additional bug reports.~~ (not yet implemented, see: #52 )
