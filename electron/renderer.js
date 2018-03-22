@@ -1,7 +1,5 @@
 console.time('init')
 
-//wait for loaded event
-// TODO: where did ^this comment come from? what does it mean?
 const https = require('https')
 const http = require('http')
 
@@ -58,7 +56,6 @@ rivets.binders.mana = function(el, value) {
     el.classList.add(mi_class)
 }
 
-// TODO: finish this
 rivets.binders.card_color = function(el, value) {
 
   el.classList.remove("card-b")

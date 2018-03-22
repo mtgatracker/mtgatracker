@@ -154,7 +154,6 @@ def parse_accept_hand(blob):
 
 
 def parse_match_complete(blob):
-    # TODO: MatchGameRoomStateType_MatchCompleted
     import app.mtga_app as mtga_app
     print("mc")
     game_room_info = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']
