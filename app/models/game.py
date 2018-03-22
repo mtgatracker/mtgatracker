@@ -126,9 +126,9 @@ class Player(object):
 
     def seen_cards_to_min_json(self):
         known_cards = {}
-        for zone in self.private_zones:
+        for zone in self.all_zones:
             for card in zone.cards:
-                if card.mtga_id:
+                if card.owner_seat_id == self.seat and card.mtga_id:
                     if card.mtga_id not in known_cards:
                         known_cards[card.mtga_id] = 0
                     known_cards[card.mtga_id] += 1
