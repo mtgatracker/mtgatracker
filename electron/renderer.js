@@ -17,6 +17,7 @@ window.addEventListener('beforeunload', function() {
 
 var debug = remote.getGlobal('debug');
 var showIIDs = remote.getGlobal('showIIDs');
+var zoom = 0.8;
 
 var ws = new ReconnectingWebSocket("ws://127.0.0.1:5678/", null, {constructor: WebSocket})
 
@@ -183,5 +184,16 @@ ws.onmessage = (data) => {
         appData.show_error = true;
     }
 }
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    $("#zoom-out").click(() => {
+        zoom -= 0.1
+        browserWindow.webContents.setZoomFactor(zoom)
+    })
+    $("#zoom-in").click(() => {
+        zoom += 0.1
+        browserWindow.webContents.setZoomFactor(zoom)
+    })
+});
 
 console.timeEnd('init')
