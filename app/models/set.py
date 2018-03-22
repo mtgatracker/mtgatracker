@@ -160,6 +160,14 @@ class Deck(Pool):
             "cards": [c.to_serializable() for c in self.cards]
         }
 
+    def to_min_json(self):
+        min_deck = {}
+        for card in self.cards:
+            if card.mtga_id not in min_deck:
+                min_deck[card.mtga_id] = 0
+            min_deck[card.mtga_id] += 1
+        return {"deckID": self.deck_id, "poolName": self.pool_name, "cards": min_deck}
+
     @classmethod
     def from_dict(cls, obj):
         deck = Deck(obj["pool_name"], obj["deck_id"])

@@ -94,12 +94,20 @@ server.get('/game/_id/:_id', (req, res, next) => {
   });
 });
 
+let getGameById = (client, gameID, callback) => {
+    console.log({ gameID: gameID })
+    client.db(database).collection(gameCollection).findOne({ gameID: gameID }, null, (err, result) => {
+      console.log(err)
+      console.log(result)
+      callback(result, err)
+    });
+}
+
 server.get('/game/gameID/:gid', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.secrets;
   MongoClient.connect(MONGO_URL, (err, client) => {
     const gid = parseInt(req.params.gid);
-    if (err) return next(err);
-    client.db(database).collection(gameCollection).findOne({ gameID: gid }, null, (err, result) => {
+    getGameById(client, gid, (result, err) => {
       client.close();
       if (err) return next(err);
       if (result !== null) res.status(200).send(result)
@@ -122,7 +130,6 @@ server.post('/danger/reset/all', (req, res, next) => {
       if (result !== null) res.status(200).send(result)
       else res.status(400).send(result)
       client.close();
-//      res.status(200).send({success: "database wiped"})
     });
   });
 });
@@ -136,14 +143,21 @@ server.post('/game', (req, res, next) => {
     res.status(400).send({error: game.validationError})
     return;
   }
-
   MongoClient.connect(MONGO_URL, (err, client) => {
     if (err) return next(err);
-    client.db(database).collection(gameCollection).insertOne(model, (err, result) => {
-      client.close();
-      if (err) return next(err);
-      res.status(201).send(result);
-    });
+    getGameById(client, game.get("gameID"), (result, err) => {
+      if (result !== null) {
+        res.status(400).send({error: "game already exists", game: result});
+        return;
+      }
+      client.db(database).collection(gameCollection).insertOne(model, (err, result) => {
+        client.close();
+        if (err) return next(err);
+        res.status(201).send(result);
+      });
+    })
   });
 });
+
+
 module.exports = Webtask.fromExpress(server);

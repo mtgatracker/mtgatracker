@@ -168,7 +168,11 @@ def parse_match_complete(blob):
             with mtga_app.mtga_watch_app.game_lock:
                 mtga_app.mtga_watch_app.game.final = True
                 mtga_app.mtga_watch_app.game.winner = mtga_app.mtga_watch_app.game.get_player_in_seat(winning_team)
-    # TODO: upload result
+                if match_id == mtga_app.mtga_watch_app.game.match_id:
+                    mtga_app.mtga_watch_app.web_api.save_game_result(mtga_app.mtga_watch_app.game.to_json())
+                else:
+                    fstr = "match_id {} ended, but doesn't match current game object ({})!"
+                    raise Exception(fstr.format(match_id, mtga_app.mtga_watch_app.game.match_id))
 
 
 def parse_match_playing(blob):
@@ -178,6 +182,7 @@ def parse_match_playing(blob):
         1: {},
         2: {}
     }
+    match_id = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']['gameRoomConfig']['matchId']
     game_room_info = blob["matchGameRoomStateChangedEvent"]["gameRoomInfo"]
     game_room_players = game_room_info["players"]
 
@@ -220,5 +225,5 @@ def parse_match_playing(blob):
         hero.is_hero = True
         if mtga_app.mtga_watch_app.intend_to_join_game_with:
             hero.original_deck = mtga_app.mtga_watch_app.intend_to_join_game_with
-        mtga_app.mtga_watch_app.game = Game(hero, opponent, shared_battlefield, shared_exile, shared_limbo,
+        mtga_app.mtga_watch_app.game = Game(match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo,
                                             shared_stack)

@@ -3,6 +3,7 @@ import threading
 import os
 import logging.handlers
 import sys
+import requests
 
 from app.queues import general_output_queue
 from app.models.set import Deck
@@ -34,6 +35,7 @@ class MTGAWatchApplication(object):
         self.player_decks = {}
         self.last_blob = None
         self.error_count = 0
+        self.web_api = WebAPI()
 
         home_path = os.path.expanduser("~")
         self._settings_path = os.path.join(home_path, ".mtga_tracker")
@@ -75,6 +77,16 @@ class MTGAWatchApplication(object):
                 "player_id": self.player_id
             }
             json.dump(write_obj, wp)
+
+
+class WebAPI(object):
+
+    def __init__(self, api_url="https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game"):
+        self.api_url = api_url
+
+    def save_game_result(self, game):
+        url = self.api_url + "/game"
+        print(requests.post(url, json=game).json())
 
 
 mtga_watch_app = MTGAWatchApplication()

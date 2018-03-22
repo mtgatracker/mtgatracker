@@ -124,9 +124,24 @@ class Player(object):
         }
         return info
 
+    def seen_cards_to_min_json(self):
+        known_cards = {}
+        for zone in self.private_zones:
+            for card in zone.cards:
+                if card.mtga_id:
+                    if card.mtga_id not in known_cards:
+                        known_cards[card.mtga_id] = 0
+                    known_cards[card.mtga_id] += 1
+        return {
+            "deckID": "unknown",
+            "poolName": "{}'s visible cards".format(self.player_name),
+            "cards": known_cards
+        }
+
 
 class Game(object):
-    def __init__(self, hero, opponent, shared_battlefield, shared_exile, shared_limbo, shared_stack):
+    def __init__(self, match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo, shared_stack):
+        self.match_id = match_id
         self.final = False
         self.winner = None
 
@@ -190,3 +205,47 @@ class Game(object):
         if card:
             return card
         return None
+
+    def to_json(self):
+        """
+        const Game = backbone.Model.extend({
+          validate: function(attr) {
+            let err = []
+            if (attr.players === undefined) err.push("must have players")
+            if (attr.winner === undefined) err.push("must have a winner")
+            if (attr.gameID === undefined) err.push("must have a gameID")
+            if (!Array.isArray(attr.players)) err.push("players must be an array")
+            if(err.length) return err  // checkpoint
+            if (attr.players.length === 0) err.push("players must not be empty")
+            let winnerFound = false
+            attr.players.forEach(function(player, idx) {
+              if (player.name === undefined) err.push("players[" + idx + "] must have a name")
+              if (player.userID === undefined) err.push("players[" + idx + "] must have a userID")
+              if (player.deck === undefined) err.push("players[" + idx + "] must have a deck")
+              if (player.name === attr.winner) winnerFound = true
+            })
+            if (!winnerFound) err.push("winner " + attr.winner + " not found in players")
+            if(err.length) return err  // checkpoint
+          }
+        })
+
+        :return:
+        """
+        assert isinstance(self.hero, Player)
+        assert isinstance(self.opponent, Player)
+        print(self.hero.original_deck)
+        hero_obj = {
+            "name": self.hero.player_name,
+            "userID": self.hero.player_id,
+            "deck": self.hero.original_deck.to_min_json()
+        }
+        opponent_obj = {
+            "name": self.opponent.player_name,
+            "userID": self.opponent.player_id,
+            "deck": self.opponent.seen_cards_to_min_json()
+        }
+        return {
+            "players": [hero_obj, opponent_obj],
+            "winner": self.winner.player_name,
+            "gameID": self.match_id,
+        }
