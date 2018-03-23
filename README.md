@@ -105,13 +105,6 @@ The front end of MTGA Tracker is an electron app that uses node / websocket to c
 
 `docs` - code for mtga-tracker.com (called docs for github pages)
 
-### Contributing
-
-All changes by non core-contributors must go through a code-review process. For non-contributors, this is accomplished
-by forking, making changes in the fork, and submitting PR's. The rules for becoming a contributor are as follows:
-
-For more info, see [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
-
 ### Signing code
 
 Currently MTGATracker ~~is self-signed.~~ (Edit: since this doesn't do anything, we won't bother until
