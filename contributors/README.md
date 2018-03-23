@@ -4,9 +4,10 @@
 
 Check out our [open issues](https://github.com/shawkinsl/mtga-tracker/issues) (consider using the filter for 
 ["good for first issue" issues](https://github.com/shawkinsl/mtga-tracker/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22),
-our [current projects](https://github.com/shawkinsl/mtga-tracker/projects), or our [code climate smells / issues](). Not a programmer? Consider [buying us a beer](https://beerpay.io/shawkinsl/mtga-tracker),
-[![GitHub stars](https://img.shields.io/github/stars/shawkinsl/mtga-tracker.svg?logo=github&label=Starring%20our%20project)](https://github.com/shawkinsl/mtga-tracker/stargazers)
-, and/or following / subscribing to
+our [current projects](https://github.com/shawkinsl/mtga-tracker/projects), or our [code climate smells / issues](https://codeclimate.com/github/shawkinsl/mtga-tracker/issues).
+Not a programmer? Consider [buying us a beer](https://beerpay.io/shawkinsl/mtga-tracker),
+[![Starring our project](https://img.shields.io/github/stars/shawkinsl/mtga-tracker.svg?logo=github&label=Starring%20our%20project)](https://github.com/shawkinsl/mtga-tracker/stargazers),
+and/or following / subscribing to
 [our core contributors](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yml) to keep us
 motivated to keep working on this :)
 
