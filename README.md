@@ -1,17 +1,16 @@
 # MTGA Tracker
 
-[![Travis](https://img.shields.io/travis/shawkinsl/weeky_challenges.svg)](https://travis-ci.org/shawkinsl/weeky_challenges)
 [![Discord](https://img.shields.io/discord/425145310684250112.svg)](https://discordapp.com/channels/425145310684250112/425145310684250114)
 [![Coveralls github](https://img.shields.io/coveralls/github/shawkinsl/mtga-tracker.svg)](https://coveralls.io) <!-- TODO: this -->
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/shawkinsl/mtga-tracker/latest/total.svg)](https://github.com/shawkinsl/mtga-tracker/releases/latest)
 [![Github All Releases](https://img.shields.io/github/downloads/shawkinsl/mtga-tracker/total.svg)](https://github.com/shawkinsl/mtga-tracker/releases)
-[![Beerpay](https://img.shields.io/beerpay/hashdog/scrapfy-chrome-extension.svg)]()
-[![Code Climate](https://img.shields.io/codeclimate/shawkinsl/mtga-tracker/flow.svg)](https://codeclimate.com/github/shawkinsl/mtga-tracker)
+[![Beerpay](https://img.shields.io/beerpay/shawkinsl/mtga-tracker.svg)](https://beerpay.io/shawkinsl/mtga-tracker)
 ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/shawkinsl/mtga-tracker.svg)
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://webtask.io/)
 
-
 MTGA Tracker is an electron-based app that helps you track your MTGA decks!
+
+<!-- [![Travis](https://img.shields.io/travis/shawkinsl/mtga-tracker.svg)](https://travis-ci.org/shawkinsl/mtga-tracker) --><!-- TODO: this -->
+<!-- [![Code Climate](https://img.shields.io/codeclimate/shawkinsl/mtga-tracker.svg)](https://codeclimate.com/github/shawkinsl/mtga-tracker) --><!-- TODO: this -->
 
 ## I'm not reading anything else until you tell me how to use it
 
