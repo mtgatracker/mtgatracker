@@ -23,8 +23,9 @@ Download the latest release from the "releases" link above (or
 [right here](https://github.com/shawkinsl/mtga-tracker/releases)). Use your favorite md5 tool to verify what you
 downloaded is legitimate.
 
-Note that you may have to tell windows to allow it to run despite being unsigned code, and your antivirus will likely
-want to scan it the first few times you run it. I promise it's ok to do this, see more in the "Signing" section below.
+Note that you may have to tell Windows Defender to allow MTGA Tracker to run, as MTGA Tracker is currently
+unsigned. Your antivirus will likely also want to scan it the first few times you run it. I promise both of
+these things are ok. See more in the [Signing section](https://github.com/shawkinsl/mtga-tracker#signing-code) below.
 
 ### Run from source
 
@@ -48,7 +49,7 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
     $ npm --version
     5.6.0
     ```
-1. Run these commands # TODO: verify this
+1. Run these commands
     ```bash
     cd /c/path/where/you/want/the/code
     git clone https://github.com/shawkinsl/mtga-tracker.git
@@ -68,6 +69,9 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
     ./node_modules/.bin/electron .
     ```
     And the decktracker UI should launch!
+    
+    Note: check out debug flags, which can be set directly in
+    [main.js](https://github.com/shawkinsl/mtga-tracker/blob/master/electron/main.js#L22)
     
 ### Building
 
@@ -110,11 +114,12 @@ For more info, see [contributors](https://github.com/shawkinsl/mtga-tracker/tree
 
 ### Signing code
 
-Currently MTGATracker is self-signed, which I know doesn't really do anything. (Did you know that code-signing certs
-cost over $100 a year?! I didn't.) So MTGATracker will likely go unsigned unless / until it gets at least $100 in
-donations ;)
+Currently MTGATracker ~~is self-signed.~~ (Edit: since this doesn't do anything, we won't bother until
+we get a real cert. Did you know that code-signing certs cost over $100 a year?! We didn't.)
+So MTGATracker will likely go unsigned unless / until it gets at least a few hundred
+[in donations](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/fundraising.md) ;)
  
-Anyways, under the guidance of this [stackoverflow question](https://stackoverflow.com/questions/84847/how-do-i-create-a-self-signed-certificate-for-code-signing-on-windows),
+Regardless, under the guidance of this [stackoverflow question](https://stackoverflow.com/questions/84847/how-do-i-create-a-self-signed-certificate-for-code-signing-on-windows),
 use the following commands to self-sign binaries (not really that useful, but good practice in case MTGATracker ever
 does get a real cert).
 
@@ -139,6 +144,13 @@ Number of files successfully Signed: 1
 Number of warnings: 0
 Number of errors: 0
 ```
+
+## Contributing
+
+All changes by non core-contributors must go through a code-review process. For non-contributors, this is accomplished
+by forking, making changes in the fork, and submitting PR's.
+
+For more information, see [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
 
 ## Disclaimers
 
@@ -169,6 +181,9 @@ this project: [This GitHub project (toss us a star!)](https://github.com/shawkin
 In accordance with the [MTG Fan Art policy](http://company.wizards.com/fancontentpolicy): MTGA Tracker is unofficial
 Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used
 are property of Wizards of the Coast. ©Wizards of the Coast LLC.
+
+Please take a moment to read our [privacy policy](https://github.com/shawkinsl/mtga-tracker/blob/master/privacy.md).
+The use of MTGATracker is considered an implicit agreement to this policy.
 
 ### Credits, License
 

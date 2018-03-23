@@ -24,6 +24,7 @@
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
 
     <!-- Custom styles for this template -->
     <link href="cover.css" rel="stylesheet">
@@ -43,12 +44,13 @@
       </header>
 
       <main role="main" class="inner cover">
-        <img class="logo" src="icon.png">
+        <img class="logo" src="icon_large.png">
         <h1 class="cover-heading">MTGA Tracker</h1>
         <p class="lead">MTGA Tracker tracks your deck! Available for Windows, and OSX<br>(once MTGA is available for OSX, that is)</p>
         <p class="lead">
-          <a href="https://github.com/shawkinsl/mtga-tracker/releases" class="btn btn-lg btn-secondary">Download latest</a>
-        </p>
+          <button type="button" class="btn btn-lg btn-secondary" data-toggle="modal" data-target="#exampleModal">
+            Download Latest &nbsp;&nbsp;<i class="fab fa-github"></i>
+          </button></p>
       </main>
 
       <footer class="mastfoot mt-auto">
@@ -57,6 +59,27 @@
           <p class="small">MTGA Tracker is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
         </div>
       </footer>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Before you download...</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            We're excited to share MTGATracker with you! Before you download, please take a moment to
+            read our <a href="https://github.com/shawkinsl/mtga-tracker#disclaimers">disclaimers.</a>
+          </div>
+          <div class="modal-footer">
+            <a type="button" class="btn btn-primary" href="https://github.com/shawkinsl/mtga-tracker/releases">OK, take me to the download already!</a>
+          </div>
+        </div>
+      </div>
     </div>
 
 

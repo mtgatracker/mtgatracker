@@ -16,7 +16,7 @@ motivated to keep working on this :)
 1. Create an issue for your changes. (Skip this step if changes are trivial).
 1. Create a fork (or branch, if collaborator+)
 1. Make your changes
-    - If you created an issue, reference it in your commit (see: [github docs](https://help.github.com/articles/closing-issues-using-keywords/))
+    - If you created an issue, or are resolving an existing issue, reference it in your commit (see: [github docs](https://help.github.com/articles/closing-issues-using-keywords/))
 1. Create a pull request
     - All checks ~~and tests~~ (see: [#41](https://github.com/shawkinsl/mtga-tracker/issues/41), [#42](https://github.com/shawkinsl/mtga-tracker/issues/41)) must pass
 

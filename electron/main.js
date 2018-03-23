@@ -28,6 +28,10 @@ let noFollow = false;
 let readFullFile = false;
 let debugFile = false;
 
+if (!debug) {
+    app.disableHardwareAcceleration()
+}
+
 const guessPackaged = () => {
   const fullPath = path.join(__dirname, "..", PY_DIST_FOLDER)
   return fs.existsSync(fullPath)
@@ -157,9 +161,7 @@ if (debug) {
     window_width = 1220;
     window_height = 700;
 }
-if (!debug) {
-    app.disableHardwareAcceleration()
-}
+
 const createWindow = () => {
   mainWindow = new BrowserWindow({width: window_width,
                                   height: window_height,
@@ -172,7 +174,8 @@ const createWindow = () => {
                                   titlebar: false,
                                   title: false,
                                   maximizable: false,
-                                  icon: "img/icon.ico"})
+                                  icon: "img/icon_small.ico"})
+
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
@@ -194,6 +197,7 @@ const createWindow = () => {
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
     console.timeEnd('init')
+    mainWindow.webContents.setZoomFactor(0.8)
   })
 }
 

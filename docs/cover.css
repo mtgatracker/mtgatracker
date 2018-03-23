@@ -111,3 +111,26 @@ body {
 .mastfoot {
   color: rgba(255, 255, 255, .5);
 }
+
+.modal-header {
+    border-bottom: 1px solid #666;
+}
+
+.modal-footer {
+    border-top: 1px solid #666;
+}
+
+.modal-content {
+    background-color: #444;
+    color: rgba(255, 255, 255, .5);
+}
+
+.close {
+    color: rgba(255, 255, 255, .5);;
+}
+
+.close:focus, .close:hover {
+    color: white;
+    text-decoration: none;
+    opacity: .75;
+}

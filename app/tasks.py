@@ -2,7 +2,6 @@ import json
 import app.dispatchers as dispatchers
 from app.mtga_app import mtga_watch_app, mtga_logger
 from app.queues import all_die_queue, game_state_change_queue
-from util import deepsearch_blob_for_ids
 
 
 def block_watch_task(in_queue, out_queue):
@@ -101,7 +100,7 @@ def json_blob_reader_task(in_queue, out_queue):
             if mtga_watch_app.game:
                 hero_library_hash = hash(mtga_watch_app.game.hero.library)
                 opponent_hand_hash = hash(mtga_watch_app.game.opponent.hand)
-            util.dense_log(json_recieved)
+
             check_for_client_id(json_recieved)
             dispatchers.dispatch_blob(json_recieved)
             mtga_watch_app.last_blob = json_recieved

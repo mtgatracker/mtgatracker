@@ -1,0 +1,6124 @@
+{
+  "name": "Hour of Devastation",
+  "code": "HOU",
+  "magicCardsInfoCode": "hou",
+  "releaseDate": "2017-07-14",
+  "border": "black",
+  "block": "Amonkhet",
+  "type": "expansion",
+  "booster": [
+    [
+      "rare",
+      "mythic rare"
+    ],
+    "uncommon",
+    "uncommon",
+    "uncommon",
+    "common",
+    "common",
+    "common",
+    "common",
+    "common",
+    "common",
+    "common",
+    "common",
+    "common",
+    "common",
+    "land",
+    "marketing"
+  ],
+  "cards": [
+    {
+      "artist": "Magali Villeneuve",
+      "cmc": 2,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "\"On every plane, there are those who run toward danger.\"\n—Gideon Jura",
+      "id": "83e36c2e95707b969774480aec06acf90fb2435e",
+      "imageName": "act of heroism",
+      "layout": "normal",
+      "manaCost": "{1}{W}",
+      "mciNumber": "1",
+      "multiverseid": 430690,
+      "name": "Act of Heroism",
+      "number": "1",
+      "rarity": "Common",
+      "text": "Untap target creature. It gets +2/+2 until end of turn and can block an additional creature this turn.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Slawomir Maniak",
+      "cmc": 2,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "13b2e582c6074c5df03865000291b2a66f76ce1c",
+      "imageName": "adorned pouncer",
+      "layout": "normal",
+      "manaCost": "{1}{W}",
+      "mciNumber": "2",
+      "multiverseid": 430691,
+      "name": "Adorned Pouncer",
+      "number": "2",
+      "power": "1",
+      "rarity": "Rare",
+      "subtypes": [
+        "Cat"
+      ],
+      "text": "Double strike\nEternalize {3}{W}{W} ({3}{W}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Cat with no mana cost. Eternalize only as a sorcery.)",
+      "toughness": "1",
+      "type": "Creature — Cat",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Slawomir Maniak",
+      "cmc": 4,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "e39817d1fd20240b5fed17ef9de5c5846532d008",
+      "imageName": "angel of condemnation",
+      "layout": "normal",
+      "manaCost": "{2}{W}{W}",
+      "mciNumber": "3",
+      "multiverseid": 430692,
+      "name": "Angel of Condemnation",
+      "number": "3",
+      "power": "3",
+      "rarity": "Rare",
+      "subtypes": [
+        "Angel"
+      ],
+      "text": "Flying, vigilance\n{2}{W}, {T}: Exile another target creature. Return that card to the battlefield under its owner's control at the beginning of the next end step.\n{2}{W}, {T}, Exert Angel of Condemnation: Exile another target creature until Angel of Condemnation leaves the battlefield. (An exerted creature won't untap during your next untap step.)",
+      "toughness": "3",
+      "type": "Creature — Angel",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "E. M. Gist",
+      "cmc": 6,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "The angels did not deceive. From the start, they were clear their allegiance was to the God-Pharaoh and to him alone.",
+      "id": "2c09adb53c82324f5b83967245dfc30c72d36b4c",
+      "imageName": "angel of the god-pharaoh",
+      "layout": "normal",
+      "manaCost": "{4}{W}{W}",
+      "mciNumber": "4",
+      "multiverseid": 430693,
+      "name": "Angel of the God-Pharaoh",
+      "number": "4",
+      "power": "4",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Angel"
+      ],
+      "text": "Flying\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "toughness": "4",
+      "type": "Creature — Angel",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "James Ryman",
+      "cmc": 5,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "\"This storm will calm. We must believe that.\"",
+      "id": "549f289107b42218f27d2418d0434662c17c04d4",
+      "imageName": "aven of enduring hope",
+      "layout": "normal",
+      "manaCost": "{4}{W}",
+      "mciNumber": "5",
+      "multiverseid": 430694,
+      "name": "Aven of Enduring Hope",
+      "number": "5",
+      "power": "3",
+      "rarity": "Common",
+      "subtypes": [
+        "Bird",
+        "Cleric"
+      ],
+      "text": "Flying\nWhen Aven of Enduring Hope enters the battlefield, you gain 3 life.",
+      "toughness": "3",
+      "type": "Creature — Bird Cleric",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Lucas Graciano",
+      "cmc": 5,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "\"It is evidence that some pure corner of the world must still exist.\"\n—Djeru, former Tah-crop initiate",
+      "id": "a2d6d636aa0524e3224cf07ec443764f56d5a7b5",
+      "imageName": "crested sunmare",
+      "layout": "normal",
+      "manaCost": "{3}{W}{W}",
+      "mciNumber": "6",
+      "multiverseid": 430695,
+      "name": "Crested Sunmare",
+      "number": "6",
+      "power": "5",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "Horse"
+      ],
+      "text": "Other Horses you control have indestructible.\nAt the beginning of each end step, if you gained life this turn, create a 5/5 white Horse creature token.",
+      "toughness": "5",
+      "type": "Creature — Horse",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Zack Stella",
+      "cmc": 3,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "In the chaos brought by the new gods, swift-winged aven served as pathfinders, leading the last of the people away from the ruins of Naktamun.",
+      "id": "811c971ee9acebc295e584922f1c576f188199ff",
+      "imageName": "dauntless aven",
+      "layout": "normal",
+      "manaCost": "{2}{W}",
+      "mciNumber": "7",
+      "multiverseid": 430696,
+      "name": "Dauntless Aven",
+      "number": "7",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Bird",
+        "Warrior"
+      ],
+      "text": "Flying\nWhenever Dauntless Aven attacks, untap target creature you control.",
+      "toughness": "1",
+      "type": "Creature — Bird Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Sara Winters",
+      "cmc": 3,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "ea3b4800b2c3ebad31ec5aefacc23f4c2b6a4aa5",
+      "imageName": "desert's hold",
+      "layout": "normal",
+      "manaCost": "{2}{W}",
+      "mciNumber": "8",
+      "multiverseid": 430697,
+      "name": "Desert's Hold",
+      "number": "8",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Aura"
+      ],
+      "text": "Enchant creature\nWhen Desert's Hold enters the battlefield, if you control a Desert or there is a Desert card in your graveyard, you gain 3 life.\nEnchanted creature can't attack or block, and its activated abilities can't be activated.",
+      "type": "Enchantment — Aura",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "artist": "Gabor Szikszai",
+      "cmc": 3,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "Without the viziers to oversee their actions, some anointed went to extreme lengths to fulfill their directives.",
+      "id": "aa94589fba38ede593e2ceb69914d23f4f30b049",
+      "imageName": "disposal mummy",
+      "layout": "normal",
+      "manaCost": "{2}{W}",
+      "mciNumber": "9",
+      "multiverseid": 430698,
+      "name": "Disposal Mummy",
+      "number": "9",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie",
+        "Jackal"
+      ],
+      "text": "When Disposal Mummy enters the battlefield, exile target card from an opponent's graveyard.",
+      "toughness": "3",
+      "type": "Creature — Zombie Jackal",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Kieran Yanner",
+      "cmc": 5,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "335871458e7b4c7c576b8d1f7eb4d16049a9cdfc",
+      "imageName": "djeru, with eyes open",
+      "layout": "normal",
+      "manaCost": "{3}{W}{W}",
+      "mciNumber": "10",
+      "multiverseid": 430699,
+      "name": "Djeru, With Eyes Open",
+      "number": "10",
+      "power": "4",
+      "rarity": "Rare",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "Vigilance\nWhen Djeru, With Eyes Open enters the battlefield, you may search your library for a planeswalker card, reveal it, put it into your hand, then shuffle your library.\nIf a source would deal damage to a planeswalker you control, prevent 1 of that damage.",
+      "toughness": "3",
+      "type": "Legendary Creature — Human Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Kieran Yanner",
+      "cmc": 2,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "\"I was promised an afterlife, not this. Samut was right. The God-Pharaoh lied.\"\n—Djeru, former Tah-crop initiate",
+      "id": "4147781bce70b8af2510d296506cc1760f8b17e4",
+      "imageName": "djeru's renunciation",
+      "layout": "normal",
+      "manaCost": "{1}{W}",
+      "mciNumber": "11",
+      "multiverseid": 430700,
+      "name": "Djeru's Renunciation",
+      "number": "11",
+      "rarity": "Common",
+      "text": "Tap up to two target creatures.\nCycling {W} ({W}, Discard this card: Draw a card.)",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Volkan Baga",
+      "cmc": 4,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "Buildings crumbled and monuments fell. The river bled and the sky wept tears of fire. All the while, servants silently continued their work, oblivious to it all.",
+      "id": "58943b48254bdc157718c38ab60ee8ecb8b7bf74",
+      "imageName": "dutiful servants",
+      "layout": "normal",
+      "manaCost": "{3}{W}",
+      "mciNumber": "12",
+      "multiverseid": 430701,
+      "name": "Dutiful Servants",
+      "number": "12",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": "5",
+      "type": "Creature — Zombie",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Kieran Yanner",
+      "cmc": 1,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "\"Gideon, how easy it must be to play the protector when you think yourself untouchable. How wrong you are.\"\n—Nicol Bolas",
+      "id": "858ce8374b5cec9e33b99288d28667fb7730856c",
+      "imageName": "gideon's defeat",
+      "layout": "normal",
+      "manaCost": "{W}",
+      "mciNumber": "13",
+      "multiverseid": 430702,
+      "name": "Gideon's Defeat",
+      "number": "13",
+      "rarity": "Uncommon",
+      "text": "Exile target white creature that's attacking or blocking. If it was a Gideon planeswalker, you gain 5 life.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Bastien L. Deharme",
+      "cmc": 1,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "\"This is the final trial! Rejoice, for the God-Pharaoh soars among us!\"",
+      "id": "120adf6ecc1213b620f3764343ce7d0abb8d0a8c",
+      "imageName": "god-pharaoh's faithful",
+      "layout": "normal",
+      "manaCost": "{W}",
+      "mciNumber": "14",
+      "multiverseid": 430703,
+      "name": "God-Pharaoh's Faithful",
+      "number": "14",
+      "power": "0",
+      "rarity": "Common",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "text": "Whenever you cast a blue, black, or red spell, you gain 1 life.",
+      "toughness": "4",
+      "type": "Creature — Human Wizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Raymond Swanland",
+      "cmc": 6,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "In the first moments, the gate to the afterlife opened, and the people were prostrate in the light of the God-Pharaoh.",
+      "id": "094b47ac41744e30f456fad8f2ea025be1507cf0",
+      "imageName": "hour of revelation",
+      "layout": "normal",
+      "manaCost": "{3}{W}{W}{W}",
+      "mciNumber": "15",
+      "multiverseid": 430704,
+      "name": "Hour of Revelation",
+      "number": "15",
+      "rarity": "Rare",
+      "text": "Hour of Revelation costs {3} less to cast if there are ten or more nonland permanents on the battlefield.\nDestroy all nonland permanents.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ],
+      "watermark": "Planeswalker"
+    },
+    {
+      "artist": "Josu Hernaiz",
+      "cmc": 2,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "\"It appears some mummies have begun to observe a hierarchy all their own.\"\n—Elekh, vizier of embalming",
+      "id": "a736466bb4b592b5543ffe1b2e95c9f3af41c49b",
+      "imageName": "mummy paramount",
+      "layout": "normal",
+      "manaCost": "{1}{W}",
+      "mciNumber": "16",
+      "multiverseid": 430705,
+      "name": "Mummy Paramount",
+      "number": "16",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie"
+      ],
+      "text": "Whenever another Zombie enters the battlefield under your control, Mummy Paramount gets +1/+1 until end of turn.",
+      "toughness": "2",
+      "type": "Creature — Zombie",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Anthony Palumbo",
+      "cmc": 2,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "\"Oketra's arrow is my spear, and her love my shield.\"",
+      "id": "8971673ceef02bb0f8a6fd1a12c84b7ff0a7be9d",
+      "imageName": "oketra's avenger",
+      "layout": "normal",
+      "manaCost": "{1}{W}",
+      "mciNumber": "17",
+      "multiverseid": 430706,
+      "name": "Oketra's Avenger",
+      "number": "17",
+      "power": "3",
+      "rarity": "Common",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "text": "You may exert Oketra's Avenger as it attacks. When you do, prevent all combat damage that would be dealt to it this turn. (An exerted creature won't untap during your next untap step.)",
+      "toughness": "1",
+      "type": "Creature — Human Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Howard Lyon",
+      "cmc": 3,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "To the end, all Oketra did was for others.",
+      "id": "5c74c58794ef0de94b12fdc90ce32cd777d3c4d3",
+      "imageName": "oketra's last mercy",
+      "layout": "normal",
+      "manaCost": "{1}{W}{W}",
+      "mciNumber": "18",
+      "multiverseid": 430707,
+      "name": "Oketra's Last Mercy",
+      "number": "18",
+      "rarity": "Rare",
+      "text": "Your life total becomes equal to your starting life total. Lands you control don't untap during your next untap step.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Richard Wright",
+      "cmc": 8,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "8e3e02eec3eb01fbe178b3909c9f2e36e313086c",
+      "imageName": "overwhelming splendor",
+      "layout": "normal",
+      "manaCost": "{6}{W}{W}",
+      "mciNumber": "19",
+      "multiverseid": 430708,
+      "name": "Overwhelming Splendor",
+      "number": "19",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "Aura",
+        "Curse"
+      ],
+      "text": "Enchant player\nCreatures enchanted player controls lose all abilities and have base power and toughness 1/1.\nEnchanted player can't activate abilities that aren't mana abilities or loyalty abilities.",
+      "type": "Enchantment — Aura Curse",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "artist": "Seb McKinnon",
+      "cmc": 3,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "The sands of Amonkhet can be as much a boon as a bane. It depends entirely on which way the wind blows.",
+      "id": "80030d4aaaff044fb5be7dbc03b418b9d6af5aff",
+      "imageName": "sandblast",
+      "layout": "normal",
+      "manaCost": "{2}{W}",
+      "mciNumber": "20",
+      "multiverseid": 430709,
+      "name": "Sandblast",
+      "number": "20",
+      "rarity": "Common",
+      "text": "Sandblast deals 5 damage to target attacking or blocking creature.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "McLean Kendree",
+      "cmc": 2,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "e43aacb9551b25597dae11113348878f516623a4",
+      "imageName": "saving grace",
+      "layout": "normal",
+      "manaCost": "{1}{W}",
+      "mciNumber": "21",
+      "multiverseid": 430710,
+      "name": "Saving Grace",
+      "number": "21",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Aura"
+      ],
+      "text": "Flash\nEnchant creature you control\nWhen Saving Grace enters the battlefield, all damage that would be dealt this turn to you and permanents you control is dealt to enchanted creature instead.\nEnchanted creature gets +0/+3.",
+      "type": "Enchantment — Aura",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "artist": "Greg Opalinski",
+      "cmc": 3,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "The arrival of the God-Pharaoh marked a betrayal of both gods and mortals.",
+      "id": "736947ebb8c8cd43e2d8c419563b8a0b4a65d7b3",
+      "imageName": "solemnity",
+      "layout": "normal",
+      "manaCost": "{2}{W}",
+      "mciNumber": "22",
+      "multiverseid": 430711,
+      "name": "Solemnity",
+      "number": "22",
+      "rarity": "Rare",
+      "text": "Players can't get counters.\nCounters can't be put on artifacts, creatures, enchantments, or lands.",
+      "type": "Enchantment",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "artist": "Aaron Miller",
+      "cmc": 3,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "Deserts are inhospitable, not uninhabitable.",
+      "id": "12778af7bdac1e6563fe16f7334a2a69be47497a",
+      "imageName": "solitary camel",
+      "layout": "normal",
+      "manaCost": "{2}{W}",
+      "mciNumber": "23",
+      "multiverseid": 430712,
+      "name": "Solitary Camel",
+      "number": "23",
+      "power": "3",
+      "rarity": "Common",
+      "subtypes": [
+        "Camel"
+      ],
+      "text": "Solitary Camel has lifelink as long as you control a Desert or there is a Desert card in your graveyard. (Damage dealt by this creature also causes you to gain that much life.)",
+      "toughness": "2",
+      "type": "Creature — Camel",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Karl Kopinski",
+      "cmc": 4,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "869ee41a0d1867fdd3a069a056742909e96d5470",
+      "imageName": "steadfast sentinel",
+      "layout": "normal",
+      "manaCost": "{3}{W}",
+      "mciNumber": "24",
+      "multiverseid": 430713,
+      "name": "Steadfast Sentinel",
+      "number": "24",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "text": "Vigilance\nEternalize {4}{W}{W} ({4}{W}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Human Cleric with no mana cost. Eternalize only as a sorcery.)",
+      "toughness": "3",
+      "type": "Creature — Human Cleric",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Sara Winters",
+      "cmc": 2,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "In the midst of disaster, heroic acts became almost ordinary, and ordinary warriors became heroes.",
+      "id": "49c960bfdc82a8ad24f028ae786b04289efae08d",
+      "imageName": "steward of solidarity",
+      "layout": "normal",
+      "manaCost": "{1}{W}",
+      "mciNumber": "25",
+      "multiverseid": 430714,
+      "name": "Steward of Solidarity",
+      "number": "25",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "text": "{T}, Exert Steward of Solidarity: Create a 1/1 white Warrior creature token with vigilance. (An exerted creature won't untap during your next untap step.)",
+      "toughness": "2",
+      "type": "Creature — Human Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Josu Hernaiz",
+      "cmc": 3,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "1517852607b6182707e98a1a0dbd08e5aab6fd19",
+      "imageName": "sunscourge champion",
+      "layout": "normal",
+      "manaCost": "{2}{W}",
+      "mciNumber": "26",
+      "multiverseid": 430715,
+      "name": "Sunscourge Champion",
+      "number": "26",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "text": "When Sunscourge Champion enters the battlefield, you gain life equal to its power.\nEternalize—{2}{W}{W}, Discard a card. ({2}{W}{W}, Discard a card, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Human Wizard with no mana cost. Eternalize only as a sorcery.)",
+      "toughness": "3",
+      "type": "Creature — Human Wizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Jason Felix",
+      "cmc": 3,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "0644cf685321fca5f310641520ff06e4455dba9b",
+      "imageName": "unconventional tactics",
+      "layout": "normal",
+      "manaCost": "{2}{W}",
+      "mciNumber": "27",
+      "multiverseid": 430716,
+      "name": "Unconventional Tactics",
+      "number": "27",
+      "rarity": "Uncommon",
+      "text": "Target creature gets +3/+3 and gains flying until end of turn.\nWhenever a Zombie enters the battlefield under your control, you may pay {W}. If you do, return Unconventional Tactics from your graveyard to your hand.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Ryan Alexander Lee",
+      "cmc": 4,
+      "colorIdentity": [
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "flavor": "Outnumbered, but not outmatched.",
+      "id": "7efb46d7262bbbc89c20b91e6254c6d5aaea02a4",
+      "imageName": "vizier of the true",
+      "layout": "normal",
+      "manaCost": "{3}{W}",
+      "mciNumber": "28",
+      "multiverseid": 430717,
+      "name": "Vizier of the True",
+      "number": "28",
+      "power": "3",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "text": "You may exert Vizier of the True as it attacks. (It won't untap during your next untap step.)\nWhenever you exert a creature, tap target creature an opponent controls.",
+      "toughness": "2",
+      "type": "Creature — Human Cleric",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Sidharth Chaturvedi",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "\"Kefnet taught us to turn obstacles into advantages.\"\n—Neponem, vizier of Kefnet",
+      "id": "0edb8d7ceb1ba68a6d03c4c1efbdd29b51b67f11",
+      "imageName": "aerial guide",
+      "layout": "normal",
+      "manaCost": "{2}{U}",
+      "mciNumber": "29",
+      "multiverseid": 430718,
+      "name": "Aerial Guide",
+      "number": "29",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Drake"
+      ],
+      "text": "Flying\nWhenever Aerial Guide attacks, another target attacking creature gains flying until end of turn.",
+      "toughness": "2",
+      "type": "Creature — Drake",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Scott Murphy",
+      "cmc": 4,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "\"Our best chance against the Eternals will be tactics they've never seen and styles they've never trained in.\"",
+      "id": "5edf1a6540eeba567c09f8b43f61906716421999",
+      "imageName": "aven reedstalker",
+      "layout": "normal",
+      "manaCost": "{3}{U}",
+      "mciNumber": "30",
+      "multiverseid": 430719,
+      "name": "Aven Reedstalker",
+      "number": "30",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Bird",
+        "Warrior"
+      ],
+      "text": "Flash\nFlying",
+      "toughness": "3",
+      "type": "Creature — Bird Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Even Amundsen",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "a3183251ec69290dd0cad081c260a9fd787572d8",
+      "imageName": "champion of wits",
+      "layout": "normal",
+      "manaCost": "{2}{U}",
+      "mciNumber": "31",
+      "multiverseid": 430720,
+      "name": "Champion of Wits",
+      "number": "31",
+      "power": "2",
+      "rarity": "Rare",
+      "subtypes": [
+        "Naga",
+        "Wizard"
+      ],
+      "text": "When Champion of Wits enters the battlefield, you may draw cards equal to its power. If you do, discard two cards.\nEternalize {5}{U}{U} ({5}{U}{U}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Naga Wizard with no mana cost. Eternalize only as a sorcery.)",
+      "toughness": "1",
+      "type": "Creature — Naga Wizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Tyler Jacobson",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "The Eternals had long since mastered every technique taught during the trials.",
+      "id": "2236d0221dfc451f2c45ed321dd1eabdc720b7c7",
+      "imageName": "countervailing winds",
+      "layout": "normal",
+      "manaCost": "{2}{U}",
+      "mciNumber": "32",
+      "multiverseid": 430721,
+      "name": "Countervailing Winds",
+      "number": "32",
+      "rarity": "Common",
+      "text": "Counter target spell unless its controller pays {1} for each card in your graveyard.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Zoltan Boros",
+      "cmc": 2,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "Initiates who had been through the Trial of Knowledge learned to see everything as pieces of a larger puzzle.",
+      "id": "d39b74299e5e2ddee64a0735cac5eaae3b69ab9b",
+      "imageName": "cunning survivor",
+      "layout": "normal",
+      "manaCost": "{1}{U}",
+      "mciNumber": "33",
+      "multiverseid": 430722,
+      "name": "Cunning Survivor",
+      "number": "33",
+      "power": "1",
+      "rarity": "Common",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "text": "Whenever you cycle or discard a card, Cunning Survivor gets +1/+0 until end of turn and can't be blocked this turn.",
+      "toughness": "3",
+      "type": "Creature — Human Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Izzy",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "\"If creating the Eternals was Bolas's plan here, what is his plan for the Eternals?\"\n—Jace Beleren",
+      "id": "ef6990940d8d6ab4ccbf8bfd694824ccc04e750c",
+      "imageName": "eternal of harsh truths",
+      "layout": "normal",
+      "manaCost": "{2}{U}",
+      "mciNumber": "34",
+      "multiverseid": 430723,
+      "name": "Eternal of Harsh Truths",
+      "number": "34",
+      "power": "1",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Zombie",
+        "Cleric"
+      ],
+      "text": "Afflict 2 (Whenever this creature becomes blocked, defending player loses 2 life.)\nWhenever Eternal of Harsh Truths attacks and isn't blocked, draw a card.",
+      "toughness": "3",
+      "type": "Creature — Zombie Cleric",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Ryan Alexander Lee",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "Those wound tightest are first to unravel.",
+      "id": "7c1e4a8d98f8f1ff4498a3576feafba2e39666cf",
+      "imageName": "fraying sanity",
+      "layout": "normal",
+      "manaCost": "{2}{U}",
+      "mciNumber": "35",
+      "multiverseid": 430724,
+      "name": "Fraying Sanity",
+      "number": "35",
+      "rarity": "Rare",
+      "subtypes": [
+        "Aura",
+        "Curse"
+      ],
+      "text": "Enchant player\nAt the beginning of each end step, enchanted player puts the top X cards of his or her library into his or her graveyard, where X is the number of cards put into that graveyard from anywhere this turn.",
+      "type": "Enchantment — Aura Curse",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "artist": "Tyler Jacobson",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "To serve as an eternal is the afterlife granted to the worthy.",
+      "id": "d8b7d4b19e771d6fb4c1e0c87a441c602fda2e93",
+      "imageName": "hour of eternity",
+      "layout": "normal",
+      "manaCost": "{X}{X}{U}{U}{U}",
+      "mciNumber": "36",
+      "multiverseid": 430725,
+      "name": "Hour of Eternity",
+      "number": "36",
+      "rarity": "Rare",
+      "text": "Exile X target creature cards from your graveyard. For each card exiled this way, create a token that's a copy of that card, except it's a 4/4 black Zombie.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ],
+      "watermark": "Planeswalker"
+    },
+    {
+      "artist": "Magali Villeneuve",
+      "cmc": 4,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "Liliana always knew Jace's illusions would come in handy.",
+      "id": "ff291e0db1eb6669ca341db329556eeec94b1d7a",
+      "imageName": "imaginary threats",
+      "layout": "normal",
+      "manaCost": "{2}{U}{U}",
+      "mciNumber": "37",
+      "multiverseid": 430726,
+      "name": "Imaginary Threats",
+      "number": "37",
+      "rarity": "Uncommon",
+      "text": "Creatures target opponent controls attack this turn if able. During that player's next untap step, creatures he or she controls don't untap.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Kieran Yanner",
+      "cmc": 2,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "\"I had hoped for more from you, Jace. But I expected as much.\"\n—Nicol Bolas",
+      "id": "40a805afbc1d44f9ec7a225fead7cf889dd43919",
+      "imageName": "jace's defeat",
+      "layout": "normal",
+      "manaCost": "{1}{U}",
+      "mciNumber": "38",
+      "multiverseid": 430727,
+      "name": "Jace's Defeat",
+      "number": "38",
+      "rarity": "Uncommon",
+      "text": "Counter target blue spell. If it was a Jace planeswalker spell, scry 2.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Clint Cearley",
+      "cmc": 4,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "In his final moments, Kefnet reached into the minds of those around him, desperate for logic within the consuming chaos.",
+      "id": "a356edfdf5cc204581ebd49926709f19306d6f68",
+      "imageName": "kefnet's last word",
+      "layout": "normal",
+      "manaCost": "{2}{U}{U}",
+      "mciNumber": "39",
+      "multiverseid": 430728,
+      "name": "Kefnet's Last Word",
+      "number": "39",
+      "rarity": "Rare",
+      "text": "Gain control of target artifact, creature, or enchantment. Lands you control don't untap during your next untap step.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Shreya Shetty",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "16f873f2d98cc62cef5f31356f8d9cc93030b7ff",
+      "imageName": "nimble obstructionist",
+      "layout": "normal",
+      "manaCost": "{2}{U}",
+      "mciNumber": "40",
+      "multiverseid": 430729,
+      "name": "Nimble Obstructionist",
+      "number": "40",
+      "power": "3",
+      "rarity": "Rare",
+      "subtypes": [
+        "Bird",
+        "Wizard"
+      ],
+      "text": "Flash\nFlying\nCycling {2}{U} ({2}{U}, Discard this card: Draw a card.)\nWhen you cycle Nimble Obstructionist, counter target activated or triggered ability you don't control.",
+      "toughness": "1",
+      "type": "Creature — Bird Wizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Lars Grant-West",
+      "cmc": 5,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "The sphinxes began to speak only after the Second Sun aligned. They whispered dire warnings, though no one listened.",
+      "id": "62cbcc63d19427e363db5bc73bf4c9ac723319cf",
+      "imageName": "ominous sphinx",
+      "layout": "normal",
+      "manaCost": "{3}{U}{U}",
+      "mciNumber": "41",
+      "multiverseid": 430730,
+      "name": "Ominous Sphinx",
+      "number": "41",
+      "power": "4",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "text": "Flying\nWhenever you cycle or discard a card, target creature an opponent controls gets -2/-0 until end of turn.",
+      "toughness": "4",
+      "type": "Creature — Sphinx",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Clint Cearley",
+      "cmc": 1,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "\"It's not wise to keep glory waiting.\"",
+      "id": "973baefe2990e0b20fd1f1b4d329b81f04f18a66",
+      "imageName": "proven combatant",
+      "layout": "normal",
+      "manaCost": "{U}",
+      "mciNumber": "42",
+      "multiverseid": 430731,
+      "name": "Proven Combatant",
+      "number": "42",
+      "power": "1",
+      "rarity": "Common",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "text": "Eternalize {4}{U}{U} ({4}{U}{U}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Human Warrior with no mana cost. Eternalize only as a sorcery.)",
+      "toughness": "1",
+      "type": "Creature — Human Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Steve Argyle",
+      "cmc": 2,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "730032550a6f81cbc596832261e4eb2031166573",
+      "imageName": "riddleform",
+      "layout": "normal",
+      "manaCost": "{1}{U}",
+      "mciNumber": "43",
+      "multiverseid": 430732,
+      "name": "Riddleform",
+      "number": "43",
+      "rarity": "Uncommon",
+      "text": "Whenever you cast a noncreature spell, you may have Riddleform become a 3/3 Sphinx creature with flying in addition to its other types until end of turn.\n{2}{U}: Scry 1.",
+      "type": "Enchantment",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "artist": "Sara Winters",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "\"The truth? It's been here all along. The Hours as we understood them are lies.\"",
+      "id": "10c5b1fc596ebd1c1e242599c931da6891953341",
+      "imageName": "seer of the last tomorrow",
+      "layout": "normal",
+      "manaCost": "{2}{U}",
+      "mciNumber": "44",
+      "multiverseid": 430733,
+      "name": "Seer of the Last Tomorrow",
+      "number": "44",
+      "power": "1",
+      "rarity": "Common",
+      "subtypes": [
+        "Naga",
+        "Cleric"
+      ],
+      "text": "{U}, {T}, Discard a card: Target player puts the top three cards of his or her library into his or her graveyard.",
+      "toughness": "4",
+      "type": "Creature — Naga Cleric",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Svetlin Velinov",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "3480f52aec77fc4a0d75e26859b27eeffa9c0c5f",
+      "imageName": "sinuous striker",
+      "layout": "normal",
+      "manaCost": "{2}{U}",
+      "mciNumber": "45",
+      "multiverseid": 430734,
+      "name": "Sinuous Striker",
+      "number": "45",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Naga",
+        "Warrior"
+      ],
+      "text": "{U}: Sinuous Striker gets +1/-1 until end of turn.\nEternalize—{3}{U}{U}, Discard a card. ({3}{U}{U}, Discard a card, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Naga Warrior with no mana cost. Eternalize only as a sorcery.)",
+      "toughness": "2",
+      "type": "Creature — Naga Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Jason Felix",
+      "cmc": 2,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "\"They were once our brothers and sisters.\"\n—Etha, former Rhet-crop initiate",
+      "id": "21cabe83e6cfd0aa1e5976af8821829eb8081de7",
+      "imageName": "spellweaver eternal",
+      "layout": "normal",
+      "manaCost": "{1}{U}",
+      "mciNumber": "46",
+      "multiverseid": 430735,
+      "name": "Spellweaver Eternal",
+      "number": "46",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie",
+        "Naga",
+        "Wizard"
+      ],
+      "text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nAfflict 2 (Whenever this creature becomes blocked, defending player loses 2 life.)",
+      "toughness": "1",
+      "type": "Creature — Zombie Naga Wizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Matt Stewart",
+      "cmc": 2,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "\"Bolas remade this place in his image. He has the advantage here. We must approach carefully.\"\n—Jace Beleren",
+      "id": "b5da503262d835bb310f80fbc2ee15e41e26874f",
+      "imageName": "strategic planning",
+      "layout": "normal",
+      "manaCost": "{1}{U}",
+      "mciNumber": "47",
+      "multiverseid": 430736,
+      "name": "Strategic Planning",
+      "number": "47",
+      "rarity": "Common",
+      "text": "Look at the top three cards of your library. Put one of them into your hand and the rest into your graveyard.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Craig J Spearing",
+      "cmc": 7,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "The denizens of the Luxa River woke angry on the currents of blood.",
+      "id": "5a33121c185629e04a642a7a23af5af125d837ac",
+      "imageName": "striped riverwinder",
+      "layout": "normal",
+      "manaCost": "{6}{U}",
+      "mciNumber": "48",
+      "multiverseid": 430737,
+      "name": "Striped Riverwinder",
+      "number": "48",
+      "power": "5",
+      "rarity": "Common",
+      "subtypes": [
+        "Serpent"
+      ],
+      "text": "Hexproof (This creature can't be the target of spells or abilities your opponents control.)\nCycling {U} ({U}, Discard this card: Draw a card.)",
+      "toughness": "5",
+      "type": "Creature — Serpent",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Alayna Danner",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "47ce26ca873544d7b8235be244acb5007eecd7f1",
+      "imageName": "supreme will",
+      "layout": "normal",
+      "manaCost": "{2}{U}",
+      "mciNumber": "49",
+      "multiverseid": 430738,
+      "name": "Supreme Will",
+      "number": "49",
+      "rarity": "Uncommon",
+      "text": "Choose one —\n• Counter target spell unless its controller pays {3}.\n• Look at the top four cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Daniel Ljunggren",
+      "cmc": 7,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "The Locust God's children were numberless, relentlessly eating away every trace of the city's protection.",
+      "id": "f78daecc88774b8d4a0517790d48823f49e2aeca",
+      "imageName": "swarm intelligence",
+      "layout": "normal",
+      "manaCost": "{6}{U}",
+      "mciNumber": "50",
+      "multiverseid": 430739,
+      "name": "Swarm Intelligence",
+      "number": "50",
+      "rarity": "Rare",
+      "text": "Whenever you cast an instant or sorcery spell, you may copy that spell. You may choose new targets for the copy.",
+      "type": "Enchantment",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "artist": "Joseph Meehan",
+      "cmc": 3,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "Though Kefnet's followers feverishly searched his last words for some final riddle, they found only the gurgles of a dying god.",
+      "id": "4244ca32817fc7e04fb0208defad20be1f56d137",
+      "imageName": "tragic lesson",
+      "layout": "normal",
+      "manaCost": "{2}{U}",
+      "mciNumber": "51",
+      "multiverseid": 430740,
+      "name": "Tragic Lesson",
+      "number": "51",
+      "rarity": "Common",
+      "text": "Draw two cards. Then discard a card unless you return a land you control to its owner's hand.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Adrian Majkrzak",
+      "cmc": 6,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "a9d86489ae2cdf34b015718502819ffb7e2f743e",
+      "imageName": "unesh, criosphinx sovereign",
+      "layout": "normal",
+      "manaCost": "{4}{U}{U}",
+      "mciNumber": "52",
+      "multiverseid": 430741,
+      "name": "Unesh, Criosphinx Sovereign",
+      "number": "52",
+      "power": "4",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "Sphinx"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "Flying\nSphinx spells you cast cost {2} less to cast.\nWhenever Unesh, Criosphinx Sovereign or another Sphinx enters the battlefield under your control, reveal the top four cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other into your graveyard.",
+      "toughness": "4",
+      "type": "Legendary Creature — Sphinx",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Jeremy Wilson",
+      "cmc": 2,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "efbdb98b5bee8a5f503f489fe2d3a1f006cc3e2d",
+      "imageName": "unquenchable thirst",
+      "layout": "normal",
+      "manaCost": "{1}{U}",
+      "mciNumber": "53",
+      "multiverseid": 430742,
+      "name": "Unquenchable Thirst",
+      "number": "53",
+      "rarity": "Common",
+      "subtypes": [
+        "Aura"
+      ],
+      "text": "Enchant creature\nWhen Unquenchable Thirst enters the battlefield, if you control a Desert or there is a Desert card in your graveyard, tap enchanted creature.\nEnchanted creature doesn't untap during its controller's untap step.",
+      "type": "Enchantment — Aura",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "artist": "Nils Hamm",
+      "cmc": 1,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "flavor": "Skills mastered by initiates are preserved within cartouches, so Eternals remain adept at their preferred combat styles.",
+      "id": "86d155a9d343001bcbe7caeefc0642407ad70f91",
+      "imageName": "unsummon",
+      "layout": "normal",
+      "manaCost": "{U}",
+      "mciNumber": "54",
+      "multiverseid": 430743,
+      "name": "Unsummon",
+      "number": "54",
+      "rarity": "Common",
+      "text": "Return target creature to its owner's hand.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Jakub Kasper",
+      "cmc": 4,
+      "colorIdentity": [
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "7c1421f61663b58dbdc536188f39d25ccc66c60d",
+      "imageName": "vizier of the anointed",
+      "layout": "normal",
+      "manaCost": "{3}{U}",
+      "mciNumber": "55",
+      "multiverseid": 430744,
+      "name": "Vizier of the Anointed",
+      "number": "55",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "text": "When Vizier of the Anointed enters the battlefield, you may search your library for a creature card with eternalize or embalm, put that card into your graveyard, then shuffle your library.\nWhenever you activate an eternalize or embalm ability, draw a card.",
+      "toughness": "4",
+      "type": "Creature — Human Cleric",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Victor Adame Minguez",
+      "cmc": 4,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "id": "4d7c7072a05c0e476f0ec76251a6fce927bfed6b",
+      "imageName": "accursed horde",
+      "layout": "normal",
+      "manaCost": "{3}{B}",
+      "mciNumber": "56",
+      "multiverseid": 430745,
+      "name": "Accursed Horde",
+      "number": "56",
+      "power": "3",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Zombie"
+      ],
+      "text": "{1}{B}: Target attacking Zombie gains indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it. If its toughness is 0 or less, it's still put into its owner's graveyard.)",
+      "toughness": "3",
+      "type": "Creature — Zombie",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Mike Bierek",
+      "cmc": 3,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "id": "0394e48ccf31dc1926657ebb36996181865b2ed1",
+      "imageName": "ammit eternal",
+      "layout": "normal",
+      "manaCost": "{2}{B}",
+      "mciNumber": "57",
+      "multiverseid": 430746,
+      "name": "Ammit Eternal",
+      "number": "57",
+      "power": "5",
+      "rarity": "Rare",
+      "subtypes": [
+        "Zombie",
+        "Crocodile",
+        "Demon"
+      ],
+      "text": "Afflict 3 (Whenever this creature becomes blocked, defending player loses 3 life.)\nWhenever an opponent casts a spell, put a -1/-1 counter on Ammit Eternal.\nWhenever Ammit Eternal deals combat damage to a player, remove all -1/-1 counters from it.",
+      "toughness": "5",
+      "type": "Creature — Zombie Crocodile Demon",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Piotr Jabłoński",
+      "cmc": 6,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "id": "2003477e2d730794e3db6e1ff4f848d0c5866e22",
+      "imageName": "apocalypse demon",
+      "layout": "normal",
+      "manaCost": "{4}{B}{B}",
+      "mciNumber": "58",
+      "multiverseid": 430747,
+      "name": "Apocalypse Demon",
+      "number": "58",
+      "power": "*",
+      "rarity": "Rare",
+      "subtypes": [
+        "Demon"
+      ],
+      "text": "Flying\nApocalypse Demon's power and toughness are each equal to the number of cards in your graveyard.\nAt the beginning of your upkeep, tap Apocalypse Demon unless you sacrifice another creature.",
+      "toughness": "*",
+      "type": "Creature — Demon",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Scott Murphy",
+      "cmc": 3,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "\"If I die, it will not be alone.\"",
+      "id": "926d5012c5ed86a5a3fa45b3aab203184f2896e9",
+      "imageName": "banewhip punisher",
+      "layout": "normal",
+      "manaCost": "{2}{B}",
+      "mciNumber": "59",
+      "multiverseid": 430748,
+      "name": "Banewhip Punisher",
+      "number": "59",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "text": "When Banewhip Punisher enters the battlefield, you may put a -1/-1 counter on target creature.\n{B}, Sacrifice Banewhip Punisher: Destroy target creature that has a -1/-1 counter on it.",
+      "toughness": "2",
+      "type": "Creature — Human Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Victor Adame Minguez",
+      "cmc": 3,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "To the last, Bontu wanted only to be first among the God-Pharaoh's subjects.",
+      "id": "1271cc2b3e0bf6a4650886543869bca8414fcbd5",
+      "imageName": "bontu's last reckoning",
+      "layout": "normal",
+      "manaCost": "{1}{B}{B}",
+      "mciNumber": "60",
+      "multiverseid": 430749,
+      "name": "Bontu's Last Reckoning",
+      "number": "60",
+      "rarity": "Rare",
+      "text": "Destroy all creatures. Lands you control don't untap during your next untap step.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Tomasz Jedruszek",
+      "cmc": 4,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "The banished have come home to roost.",
+      "id": "5fd640fefc6c7c6a5134ad8546a77044f882d2af",
+      "imageName": "carrion screecher",
+      "layout": "normal",
+      "manaCost": "{3}{B}",
+      "mciNumber": "61",
+      "multiverseid": 430750,
+      "name": "Carrion Screecher",
+      "number": "61",
+      "power": "3",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie",
+        "Bird"
+      ],
+      "text": "Flying",
+      "toughness": "1",
+      "type": "Creature — Zombie Bird",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Darek Zabrocki",
+      "cmc": 3,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "\"This place has outlived its usefulness.\"\n—Nicol Bolas",
+      "id": "5bbb6888b0cc06a08cfc7ea4705fd0409b526066",
+      "imageName": "doomfall",
+      "layout": "normal",
+      "manaCost": "{2}{B}",
+      "mciNumber": "62",
+      "multiverseid": 430751,
+      "name": "Doomfall",
+      "number": "62",
+      "rarity": "Uncommon",
+      "text": "Choose one —\n• Target opponent exiles a creature he or she controls.\n• Target opponent reveals his or her hand. You choose a nonland card from it. Exile that card.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Yongjae Choi",
+      "cmc": 3,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "id": "93b679b31dabc5c254bcc47bd05f805621649a50",
+      "imageName": "dreamstealer",
+      "layout": "normal",
+      "manaCost": "{2}{B}",
+      "mciNumber": "63",
+      "multiverseid": 430752,
+      "name": "Dreamstealer",
+      "number": "63",
+      "power": "1",
+      "rarity": "Rare",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "text": "Menace\nWhenever Dreamstealer deals combat damage to a player, that player discards that many cards.\nEternalize {4}{B}{B} ({4}{B}{B}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Human Wizard with no mana cost. Eternalize only as a sorcery.)",
+      "toughness": "2",
+      "type": "Creature — Human Wizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Seb McKinnon",
+      "cmc": 3,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "No cartouches to earn. No afterlife to enter. Only the glory of a well-struck blow and the growing pile of felled enemies at her feet.",
+      "id": "70a5bb4b28ab586b116a01d6853235c692bf8fbc",
+      "imageName": "grisly survivor",
+      "layout": "normal",
+      "manaCost": "{2}{B}",
+      "mciNumber": "64",
+      "multiverseid": 430753,
+      "name": "Grisly Survivor",
+      "number": "64",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Minotaur",
+        "Warrior"
+      ],
+      "text": "Whenever you cycle or discard a card, Grisly Survivor gets +2/+0 until end of turn.",
+      "toughness": "3",
+      "type": "Creature — Minotaur Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Svetlin Velinov",
+      "cmc": 4,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "The gods of the trials also faced the opportunity to prove themselves worthy.",
+      "id": "0d33b21acf88cc649dad908254fb8d7d9027663e",
+      "imageName": "hour of glory",
+      "layout": "normal",
+      "manaCost": "{3}{B}",
+      "mciNumber": "65",
+      "multiverseid": 430754,
+      "name": "Hour of Glory",
+      "number": "65",
+      "rarity": "Rare",
+      "text": "Exile target creature. If that creature was a God, its controller reveals his or her hand and exiles all cards from it with the same name as that creature.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ],
+      "watermark": "Planeswalker"
+    },
+    {
+      "artist": "Tomasz Jedruszek",
+      "cmc": 2,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "For many years, servant mummies toiled in the mines to extract lazotep. The emergence of the Eternals revealed the sacred substance's true purpose.",
+      "id": "2ae5ee7fd33d9aaf4c7b499b58784d8e7aadc2b5",
+      "imageName": "khenra eternal",
+      "layout": "normal",
+      "manaCost": "{1}{B}",
+      "mciNumber": "66",
+      "multiverseid": 430755,
+      "name": "Khenra Eternal",
+      "number": "66",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie",
+        "Jackal",
+        "Warrior"
+      ],
+      "text": "Afflict 1 (Whenever this creature becomes blocked, defending player loses 1 life.)",
+      "toughness": "2",
+      "type": "Creature — Zombie Jackal Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Randy Vargas",
+      "cmc": 3,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "Initiates once believed defeat was the worst fate possible—a sentiment they quickly abandoned.",
+      "id": "805d12d3020ee728cc16bb5601ca86ac45d74c8a",
+      "imageName": "lethal sting",
+      "layout": "normal",
+      "manaCost": "{2}{B}",
+      "mciNumber": "67",
+      "multiverseid": 430756,
+      "name": "Lethal Sting",
+      "number": "67",
+      "rarity": "Common",
+      "text": "As an additional cost to cast Lethal Sting, put a -1/-1 counter on a creature you control.\nDestroy target creature.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Kieran Yanner",
+      "cmc": 1,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "\"All the power you have gathered for yourself, Liliana, I can take away.\"\n—Nicol Bolas",
+      "id": "83740afa51106ddffdb5509f5d217fbb2663b04b",
+      "imageName": "liliana's defeat",
+      "layout": "normal",
+      "manaCost": "{B}",
+      "mciNumber": "68",
+      "multiverseid": 430757,
+      "name": "Liliana's Defeat",
+      "number": "68",
+      "rarity": "Uncommon",
+      "text": "Destroy target black creature or black planeswalker. If that permanent was a Liliana planeswalker, her controller loses 3 life.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Jason A. Engle",
+      "cmc": 4,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "The dead that swept across Naktamun came in all shapes and sizes.",
+      "id": "121b532d0b32976db41102ba8cd115d85ba3e19d",
+      "imageName": "lurching rotbeast",
+      "layout": "normal",
+      "manaCost": "{3}{B}",
+      "mciNumber": "69",
+      "multiverseid": 430758,
+      "name": "Lurching Rotbeast",
+      "number": "69",
+      "power": "4",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie",
+        "Beast"
+      ],
+      "text": "Cycling {B} ({B}, Discard this card: Draw a card.)",
+      "toughness": "2",
+      "type": "Creature — Zombie Beast",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Victor Adame Minguez",
+      "cmc": 3,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "With the Hekma destroyed, the wandering dead that sought entrance to Naktamun had free rein to lay waste to the city.",
+      "id": "5133a7c2aeace99bf7493d9ee885ae0b5fed2a32",
+      "imageName": "marauding boneslasher",
+      "layout": "normal",
+      "manaCost": "{2}{B}",
+      "mciNumber": "70",
+      "multiverseid": 430759,
+      "name": "Marauding Boneslasher",
+      "number": "70",
+      "power": "3",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie",
+        "Minotaur"
+      ],
+      "text": "Marauding Boneslasher can't block unless you control another Zombie.",
+      "toughness": "3",
+      "type": "Creature — Zombie Minotaur",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Mathias Kollros",
+      "cmc": 3,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "\"My work here is complete. The people have done everything required of them.\"\n—Nicol Bolas",
+      "id": "a4ec61f52020be31730b7cfbe889333cf6d51f6e",
+      "imageName": "merciless eternal",
+      "layout": "normal",
+      "manaCost": "{2}{B}",
+      "mciNumber": "71",
+      "multiverseid": 430760,
+      "name": "Merciless Eternal",
+      "number": "71",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Zombie",
+        "Cleric"
+      ],
+      "text": "Afflict 2 (Whenever this creature becomes blocked, defending player loses 2 life.)\n{2}{B}, Discard a card: Merciless Eternal gets +2/+2 until end of turn.",
+      "toughness": "2",
+      "type": "Creature — Zombie Cleric",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Piotr Jabłoński",
+      "cmc": 3,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "Before the monuments, before the first trials, before Naktamun itself, Bolas culled the plane of its adults in order to rebuild it for his own designs.",
+      "id": "a09a6452305a5d993267328141c73595a14bb92e",
+      "imageName": "moaning wall",
+      "layout": "normal",
+      "manaCost": "{2}{B}",
+      "mciNumber": "72",
+      "multiverseid": 430761,
+      "name": "Moaning Wall",
+      "number": "72",
+      "power": "0",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie",
+        "Wall"
+      ],
+      "text": "Defender\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "toughness": "5",
+      "type": "Creature — Zombie Wall",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Chris Rallis",
+      "cmc": 8,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "Liliana insisted on coming to Amonkhet to confront one of the two remaining demons to whom she is bound.",
+      "id": "fd76dc19ca17adec9693b2d19cbff189f142b4b7",
+      "imageName": "razaketh, the foulblooded",
+      "layout": "normal",
+      "manaCost": "{5}{B}{B}{B}",
+      "mciNumber": "73",
+      "multiverseid": 430762,
+      "name": "Razaketh, the Foulblooded",
+      "number": "73",
+      "power": "8",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "Demon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "Flying, trample\nPay 2 life, Sacrifice another creature: Search your library for a card and put that card into your hand. Then shuffle your library.",
+      "toughness": "8",
+      "type": "Legendary Creature — Demon",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Izzy",
+      "cmc": 5,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "\"The blood ritual is complete. The end approaches.\"",
+      "id": "9a11aef6749517c117fe8d8d6a035d2f32bf4abf",
+      "imageName": "razaketh's rite",
+      "layout": "normal",
+      "manaCost": "{3}{B}{B}",
+      "mciNumber": "74",
+      "multiverseid": 430763,
+      "name": "Razaketh's Rite",
+      "number": "74",
+      "rarity": "Uncommon",
+      "text": "Search your library for a card and put that card into your hand. Then shuffle your library.\nCycling {B} ({B}, Discard this card: Draw a card.)",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Shreya Shetty",
+      "cmc": 2,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "From every shadow came the dull scratch of teeth on bones.",
+      "id": "7814226c1af3051f6925b9905b8a00001a1e2e98",
+      "imageName": "ruin rat",
+      "layout": "normal",
+      "manaCost": "{1}{B}",
+      "mciNumber": "75",
+      "multiverseid": 430764,
+      "name": "Ruin Rat",
+      "number": "75",
+      "power": "1",
+      "rarity": "Common",
+      "subtypes": [
+        "Rat"
+      ],
+      "text": "Deathtouch\nWhen Ruin Rat dies, exile target card from an opponent's graveyard.",
+      "toughness": "1",
+      "type": "Creature — Rat",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Zezhou Chen",
+      "cmc": 5,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "Yell for help, and that may answer.",
+      "id": "515d3351bbca21ff8c7c31caabdde8ed315cc385",
+      "imageName": "scrounger of souls",
+      "layout": "normal",
+      "manaCost": "{4}{B}",
+      "mciNumber": "76",
+      "multiverseid": 430765,
+      "name": "Scrounger of Souls",
+      "number": "76",
+      "power": "3",
+      "rarity": "Common",
+      "subtypes": [
+        "Horror"
+      ],
+      "text": "Lifelink (Damage dealt by this creature also causes you to gain that much life.)",
+      "toughness": "4",
+      "type": "Creature — Horror",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Grzegorz Rutkowski",
+      "cmc": 2,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "\"Your God-Pharaoh has returned.\"",
+      "id": "d5872ccbcc68c5c2c3ea3be02d92d8a6068d93d6",
+      "imageName": "torment of hailfire",
+      "layout": "normal",
+      "manaCost": "{X}{B}{B}",
+      "mciNumber": "77",
+      "multiverseid": 430766,
+      "name": "Torment of Hailfire",
+      "number": "77",
+      "rarity": "Rare",
+      "text": "Repeat the following process X times. Each opponent loses 3 life unless that player sacrifices a nonland permanent or discards a card.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Bastien L. Deharme",
+      "cmc": 4,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "Like a carpet unrolling for their god, the scarabs poured out from the necropolis.",
+      "id": "4c0461c45258a32f367903901db11a1ae8ce9744",
+      "imageName": "torment of scarabs",
+      "layout": "normal",
+      "manaCost": "{3}{B}",
+      "mciNumber": "78",
+      "multiverseid": 430767,
+      "name": "Torment of Scarabs",
+      "number": "78",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Aura",
+        "Curse"
+      ],
+      "text": "Enchant player\nAt the beginning of enchanted player's upkeep, that player loses 3 life unless he or she sacrifices a nonland permanent or discards a card.",
+      "type": "Enchantment — Aura Curse",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "artist": "Johann Bodin",
+      "cmc": 4,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "The Scorpion God's sting sends venom strong enough to poison blood, bone, and spirit.",
+      "id": "56aeecadd732287e3e48f0f3ee6f9cdea312af0e",
+      "imageName": "torment of venom",
+      "layout": "normal",
+      "manaCost": "{2}{B}{B}",
+      "mciNumber": "79",
+      "multiverseid": 430768,
+      "name": "Torment of Venom",
+      "number": "79",
+      "rarity": "Common",
+      "text": "Put three -1/-1 counters on target creature. Its controller loses 3 life unless he or she sacrifices another nonland permanent or discards a card.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Jason Felix",
+      "cmc": 2,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "The glyphs writhed and twisted, spewing out dark, vengeful magic.",
+      "id": "49414edd5415ab39f429833f3c243bf074ab0e95",
+      "imageName": "vile manifestation",
+      "layout": "normal",
+      "manaCost": "{1}{B}",
+      "mciNumber": "80",
+      "multiverseid": 430769,
+      "name": "Vile Manifestation",
+      "number": "80",
+      "power": "0",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Horror"
+      ],
+      "text": "Vile Manifestation gets +1/+0 for each card with cycling in your graveyard.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "toughness": "4",
+      "type": "Creature — Horror",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Alex Konstad",
+      "cmc": 2,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "id": "e7ada3ee0547672e77d87d473fbad521966ab381",
+      "imageName": "without weakness",
+      "layout": "normal",
+      "manaCost": "{1}{B}",
+      "mciNumber": "81",
+      "multiverseid": 430770,
+      "name": "Without Weakness",
+      "number": "81",
+      "rarity": "Common",
+      "text": "Target creature you control gains indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it. If its toughness is 0 or less, it's still put into its owner's graveyard.)\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Dan Scott",
+      "cmc": 2,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "Perfectly adapted to cross the wastes in life, they bring the wastes with them in death.",
+      "id": "aa65581b1b599cf3a24a4329c8c12b92ebaec96f",
+      "imageName": "wretched camel",
+      "layout": "normal",
+      "manaCost": "{1}{B}",
+      "mciNumber": "82",
+      "multiverseid": 430771,
+      "name": "Wretched Camel",
+      "number": "82",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie",
+        "Camel"
+      ],
+      "text": "When Wretched Camel dies, if you control a Desert or there is a Desert card in your graveyard, target player discards a card.",
+      "toughness": "1",
+      "type": "Creature — Zombie Camel",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Jonas De Ro",
+      "cmc": 2,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "The desert is a voracious beast, devouring both flesh and stone.",
+      "id": "c26cd58d036b513f2affd96e9a4dce60e72bf87e",
+      "imageName": "abrade",
+      "layout": "normal",
+      "manaCost": "{1}{R}",
+      "mciNumber": "83",
+      "multiverseid": 430772,
+      "name": "Abrade",
+      "number": "83",
+      "rarity": "Uncommon",
+      "text": "Choose one —\n• Abrade deals 3 damage to target creature.\n• Destroy target artifact.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Anna Steinbauer",
+      "cmc": 2,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "Samut battled her way through the hordes, shouting the names of those who'd died in her crop and those she hoped yet to save.",
+      "id": "d1006246a0fe9d64b83588391777b3c34c55caa4",
+      "imageName": "blur of blades",
+      "layout": "normal",
+      "manaCost": "{1}{R}",
+      "mciNumber": "84",
+      "multiverseid": 430773,
+      "name": "Blur of Blades",
+      "number": "84",
+      "rarity": "Common",
+      "text": "Put a -1/-1 counter on target creature. Blur of Blades deals 2 damage to that creature's controller.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Matt Stewart",
+      "cmc": 2,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "\"There is no afterlife. Not for me, and not for you. So think again before getting in my way.\"",
+      "id": "e4fb512d42ef546ecc41b3f217d2f13edfe1c97f",
+      "imageName": "burning-fist minotaur",
+      "layout": "normal",
+      "manaCost": "{1}{R}",
+      "mciNumber": "85",
+      "multiverseid": 430774,
+      "name": "Burning-Fist Minotaur",
+      "number": "85",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Minotaur",
+        "Wizard"
+      ],
+      "text": "First strike\n{1}{R}, Discard a card: Burning-Fist Minotaur gets +2/+0 until end of turn.",
+      "toughness": "1",
+      "type": "Creature — Minotaur Wizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Kieran Yanner",
+      "cmc": 1,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "\"Fire? Is that your only trick, Chandra?\"\n—Nicol Bolas",
+      "id": "e19c8b559410fede3f05696ad7211137270dac3a",
+      "imageName": "chandra's defeat",
+      "layout": "normal",
+      "manaCost": "{R}",
+      "mciNumber": "86",
+      "multiverseid": 430775,
+      "name": "Chandra's Defeat",
+      "number": "86",
+      "rarity": "Uncommon",
+      "text": "Chandra's Defeat deals 5 damage to target red creature or red planeswalker. If that permanent is a Chandra planeswalker, you may discard a card. If you do, draw a card.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Steve Argyle",
+      "cmc": 7,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "The food chain doesn't end at sandwurms.",
+      "id": "33aef592c8347c515cbe61b48467ceca2ececbbd",
+      "imageName": "chaos maw",
+      "layout": "normal",
+      "manaCost": "{5}{R}{R}",
+      "mciNumber": "87",
+      "multiverseid": 430776,
+      "name": "Chaos Maw",
+      "number": "87",
+      "power": "6",
+      "rarity": "Rare",
+      "subtypes": [
+        "Hellion"
+      ],
+      "text": "When Chaos Maw enters the battlefield, it deals 3 damage to each other creature.",
+      "toughness": "6",
+      "type": "Creature — Hellion",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Izzy",
+      "cmc": 1,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "\"We have to get out of the city, Djeru. All of us! Gather as many as you can.\"\n—Samut, former Tah-crop initiate",
+      "id": "7724f42071929493325e337fed55429ee893d815",
+      "imageName": "crash through",
+      "layout": "normal",
+      "manaCost": "{R}",
+      "mciNumber": "88",
+      "multiverseid": 430777,
+      "name": "Crash Through",
+      "number": "88",
+      "rarity": "Common",
+      "text": "Creatures you control gain trample until end of turn.\nDraw a card.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "David Palumbo",
+      "cmc": 2,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "There were those who saw the death of the gods and the city's collapse as a final test of worth. Some believed it meant the God-Pharaoh had been killed. Only a few realized they had been deceived.",
+      "id": "82436d5f2fcca847e98db28cd48328e23d70a1b0",
+      "imageName": "defiant khenra",
+      "layout": "normal",
+      "manaCost": "{1}{R}",
+      "mciNumber": "89",
+      "multiverseid": 430778,
+      "name": "Defiant Khenra",
+      "number": "89",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Jackal",
+        "Warrior"
+      ],
+      "toughness": "2",
+      "type": "Creature — Jackal Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Jason A. Engle",
+      "cmc": 2,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "id": "0369b59df88dab352007adac7e7b1635c81c273e",
+      "imageName": "earthshaker khenra",
+      "layout": "normal",
+      "manaCost": "{1}{R}",
+      "mciNumber": "90",
+      "multiverseid": 430779,
+      "name": "Earthshaker Khenra",
+      "number": "90",
+      "power": "2",
+      "rarity": "Rare",
+      "subtypes": [
+        "Jackal",
+        "Warrior"
+      ],
+      "text": "Haste\nWhen Earthshaker Khenra enters the battlefield, target creature with power less than or equal to Earthshaker Khenra's power can't block this turn.\nEternalize {4}{R}{R} ({4}{R}{R}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Jackal Warrior with no mana cost. Eternalize only as a sorcery.)",
+      "toughness": "1",
+      "type": "Creature — Jackal Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Matt Stewart",
+      "cmc": 3,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "\"Everyone here is a honed fighter. We'll respond the only way we know how.\"",
+      "id": "409b8d263c2de8270a244f04168184e050767737",
+      "imageName": "fervent paincaster",
+      "layout": "normal",
+      "manaCost": "{2}{R}",
+      "mciNumber": "91",
+      "multiverseid": 430780,
+      "name": "Fervent Paincaster",
+      "number": "91",
+      "power": "3",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "text": "{T}: Fervent Paincaster deals 1 damage to target player.\n{T}, Exert Fervent Paincaster: It deals 1 damage to target creature. (An exerted creature won't untap during your next untap step.)",
+      "toughness": "1",
+      "type": "Creature — Human Wizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "John Stanko",
+      "cmc": 2,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "A word of vengeance, and her arrows awaken in flame.",
+      "id": "ca59c28acccf4534078188f23c7a7d752c557346",
+      "imageName": "firebrand archer",
+      "layout": "normal",
+      "manaCost": "{1}{R}",
+      "mciNumber": "92",
+      "multiverseid": 430781,
+      "name": "Firebrand Archer",
+      "number": "92",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Human",
+        "Archer"
+      ],
+      "text": "Whenever you cast a noncreature spell, Firebrand Archer deals 1 damage to each opponent.",
+      "toughness": "1",
+      "type": "Creature — Human Archer",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Tommy Arnold",
+      "cmc": 4,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "The God-Pharaoh's benevolence concealed the factory he created to produce an army of Eternals.",
+      "id": "7e00388e1cc243bdff641d7c810dfc6c7b783b22",
+      "imageName": "frontline devastator",
+      "layout": "normal",
+      "manaCost": "{3}{R}",
+      "mciNumber": "93",
+      "multiverseid": 430782,
+      "name": "Frontline Devastator",
+      "number": "93",
+      "power": "3",
+      "rarity": "Common",
+      "subtypes": [
+        "Zombie",
+        "Minotaur",
+        "Warrior"
+      ],
+      "text": "Afflict 2 (Whenever this creature becomes blocked, defending player loses 2 life.)\n{1}{R}: Frontline Devastator gets +1/+0 until end of turn.",
+      "toughness": "3",
+      "type": "Creature — Zombie Minotaur Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Matt Stewart",
+      "cmc": 5,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "The plating of its horns is a token of honor from Hazoret, who favors creatures with great hearts.",
+      "id": "2247785adea31c952d46fa21b12c9b9266a58542",
+      "imageName": "gilded cerodon",
+      "layout": "normal",
+      "manaCost": "{4}{R}",
+      "mciNumber": "94",
+      "multiverseid": 430783,
+      "name": "Gilded Cerodon",
+      "number": "94",
+      "power": "4",
+      "rarity": "Common",
+      "subtypes": [
+        "Beast"
+      ],
+      "text": "Whenever Gilded Cerodon attacks, if you control a Desert or there is a Desert card in your graveyard, target creature can't block this turn.",
+      "toughness": "4",
+      "type": "Creature — Beast",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Yohann Schepacz",
+      "cmc": 6,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "\"That one's not mine. Run!\"\n—Nissa Revane",
+      "id": "4ef06dbe9bc624c02cb6df12c8fb6c7190a71968",
+      "imageName": "granitic titan",
+      "layout": "normal",
+      "manaCost": "{4}{R}{R}",
+      "mciNumber": "95",
+      "multiverseid": 430784,
+      "name": "Granitic Titan",
+      "number": "95",
+      "power": "5",
+      "rarity": "Common",
+      "subtypes": [
+        "Elemental"
+      ],
+      "text": "Menace\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "toughness": "4",
+      "type": "Creature — Elemental",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Victor Adame Minguez",
+      "cmc": 6,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "id": "4480ac3e4c25038abef1c53ece1eb898bdd738ba",
+      "imageName": "hazoret's undying fury",
+      "layout": "normal",
+      "manaCost": "{4}{R}{R}",
+      "mciNumber": "96",
+      "multiverseid": 430785,
+      "name": "Hazoret's Undying Fury",
+      "number": "96",
+      "rarity": "Rare",
+      "text": "Shuffle your library, then exile the top four cards. You may cast any number of nonland cards with converted mana cost 5 or less from among them without paying their mana costs. Lands you control don't untap during your next untap step.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Simon Dominic",
+      "cmc": 5,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "\"Everything here exists or perishes at my whim. Including you, Gatewatch.\"\n—Nicol Bolas",
+      "id": "7e920f2d08947384e1cb27340e30b9c000d3f606",
+      "imageName": "hour of devastation",
+      "layout": "normal",
+      "manaCost": "{3}{R}{R}",
+      "multiverseid": 430786,
+      "name": "Hour of Devastation",
+      "number": "97",
+      "rarity": "Rare",
+      "text": "All creatures lose indestructible until end of turn. Hour of Devastation deals 5 damage to each creature and each non-Bolas planeswalker.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ],
+      "watermark": "Planeswalker"
+    },
+    {
+      "artist": "Daniel Ljunggren",
+      "cmc": 3,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "id": "0f2470a145ef60dc206a7d123f49fb986ee28a7a",
+      "imageName": "imminent doom",
+      "layout": "normal",
+      "manaCost": "{2}{R}",
+      "mciNumber": "98",
+      "multiverseid": 430787,
+      "name": "Imminent Doom",
+      "number": "98",
+      "rarity": "Rare",
+      "text": "Imminent Doom enters the battlefield with a doom counter on it.\nWhenever you cast a spell with converted mana cost equal to the number of doom counters on Imminent Doom, Imminent Doom deals that much damage to target creature or player. Then put a doom counter on Imminent Doom.",
+      "type": "Enchantment",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "artist": "Jakub Kasper",
+      "cmc": 6,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "\"When the whole world is crazy, it's important to find something you can rely on.\"",
+      "id": "fc40837be8b7e1645da478cad67589f40b7b1132",
+      "imageName": "inferno jet",
+      "layout": "normal",
+      "manaCost": "{5}{R}",
+      "mciNumber": "99",
+      "multiverseid": 430788,
+      "name": "Inferno Jet",
+      "number": "99",
+      "rarity": "Uncommon",
+      "text": "Inferno Jet deals 6 damage to target opponent.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Jesper Ejsing",
+      "cmc": 3,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "\"There is no tomorrow, so hold nothing back.\"",
+      "id": "5b895a383ee7d2ae2c89d14f5ede1ec17f39fb40",
+      "imageName": "khenra scrapper",
+      "layout": "normal",
+      "manaCost": "{2}{R}",
+      "mciNumber": "100",
+      "multiverseid": 430789,
+      "name": "Khenra Scrapper",
+      "number": "100",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Jackal",
+        "Warrior"
+      ],
+      "text": "Menace\nYou may exert Khenra Scrapper as it attacks. When you do, it gets +2/+0 until end of turn. (An exerted creature won't untap during your next untap step.)",
+      "toughness": "3",
+      "type": "Creature — Jackal Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Craig J Spearing",
+      "cmc": 1,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "The minotaur stared at the Eternal bearing down on him—the embodiment of deadly skill he had aspired to become.",
+      "id": "f6a5bdd2d46a5f22d8a5cab678dc98d9720f7d99",
+      "imageName": "kindled fury",
+      "layout": "normal",
+      "manaCost": "{R}",
+      "mciNumber": "101",
+      "multiverseid": 430790,
+      "name": "Kindled Fury",
+      "number": "101",
+      "rarity": "Common",
+      "text": "Target creature gets +1/+0 and gains first strike until end of turn.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Yeong-Hao Han",
+      "cmc": 4,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "Sand into glass and flesh into ash—such are the markers of its domain.",
+      "id": "2ccc1c1d6b8fbd1b97db24d7b9d7c3c68e4959a7",
+      "imageName": "magmaroth",
+      "layout": "normal",
+      "manaCost": "{3}{R}",
+      "mciNumber": "102",
+      "multiverseid": 430791,
+      "name": "Magmaroth",
+      "number": "102",
+      "power": "5",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Elemental"
+      ],
+      "text": "At the beginning of your upkeep, put a -1/-1 counter on Magmaroth.\nWhenever you cast a noncreature spell, remove a -1/-1 counter from Magmaroth.",
+      "toughness": "5",
+      "type": "Creature — Elemental",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Yeong-Hao Han",
+      "cmc": 5,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "While most Eternals were initiates who completed the trials, Bolas had plans for some of Amonkhet's other denizens.",
+      "id": "9adee788228489fee842306bba2d010a30f96de3",
+      "imageName": "manticore eternal",
+      "layout": "normal",
+      "manaCost": "{3}{R}{R}",
+      "mciNumber": "103",
+      "multiverseid": 430792,
+      "name": "Manticore Eternal",
+      "number": "103",
+      "power": "5",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Zombie",
+        "Manticore"
+      ],
+      "text": "Afflict 3 (Whenever this creature becomes blocked, defending player loses 3 life.)\nManticore Eternal attacks each combat if able.",
+      "toughness": "4",
+      "type": "Creature — Zombie Manticore",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Chris Rahn",
+      "cmc": 5,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "\"This is what glory looks like.\"\n—Nicol Bolas",
+      "id": "d379e0e90d255d2c84d2883fb4c144c2346b06f0",
+      "imageName": "neheb, the eternal",
+      "layout": "normal",
+      "manaCost": "{3}{R}{R}",
+      "mciNumber": "104",
+      "multiverseid": 430793,
+      "name": "Neheb, the Eternal",
+      "number": "104",
+      "power": "4",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "Zombie",
+        "Minotaur",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "Afflict 3 (Whenever this creature becomes blocked, defending player loses 3 life.)\nAt the beginning of your postcombat main phase, add {R} to your mana pool for each 1 life your opponents have lost this turn.",
+      "toughness": "6",
+      "type": "Legendary Creature — Zombie Minotaur Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Jason Kang",
+      "cmc": 3,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "Some khenra archers fashion their arrows with a personal touch.",
+      "id": "dc8444205d8e24989f89973b3010112a71416a09",
+      "imageName": "open fire",
+      "layout": "normal",
+      "manaCost": "{2}{R}",
+      "mciNumber": "105",
+      "multiverseid": 430794,
+      "name": "Open Fire",
+      "number": "105",
+      "rarity": "Common",
+      "text": "Open Fire deals 3 damage to target creature or player.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Eric Deschamps",
+      "cmc": 4,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "\"Neither the false God-Pharaoh nor his bugs will decide our fate.\"\n—Samut, former Tah-crop initiate",
+      "id": "5b454ab6abbdbe95d812df011bdf74d9f230a10c",
+      "imageName": "puncturing blow",
+      "layout": "normal",
+      "manaCost": "{2}{R}{R}",
+      "mciNumber": "106",
+      "multiverseid": 430795,
+      "name": "Puncturing Blow",
+      "number": "106",
+      "rarity": "Common",
+      "text": "Puncturing Blow deals 5 damage to target creature. If that creature would die this turn, exile it instead.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Aaron Miller",
+      "cmc": 4,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "The bombardment of sand disorients, chokes, and ultimately tenderizes its prey.",
+      "id": "35f29d42fbcf4d6cdc9a01117260a47ffbef0c5d",
+      "imageName": "sand strangler",
+      "layout": "normal",
+      "manaCost": "{3}{R}",
+      "mciNumber": "107",
+      "multiverseid": 430796,
+      "name": "Sand Strangler",
+      "number": "107",
+      "power": "3",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Beast"
+      ],
+      "text": "When Sand Strangler enters the battlefield, if you control a Desert or there is a Desert card in your graveyard, you may have Sand Strangler deal 3 damage to target creature.",
+      "toughness": "3",
+      "type": "Creature — Beast",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "James Paick",
+      "cmc": 3,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "Those who fled the destruction of the city stumbled into the territory of their prickly neighbors.",
+      "id": "8e2f185d5bd46d1035a59a52929f76b69f6cb23b",
+      "imageName": "thorned moloch",
+      "layout": "normal",
+      "manaCost": "{2}{R}",
+      "mciNumber": "108",
+      "multiverseid": 430797,
+      "name": "Thorned Moloch",
+      "number": "108",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Lizard"
+      ],
+      "text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nThorned Moloch has first strike as long as it's attacking.",
+      "toughness": "2",
+      "type": "Creature — Lizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Magali Villeneuve",
+      "cmc": 4,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "id": "db3e5f7c50a0cfe8fe37682b7756e6a14a59459b",
+      "imageName": "wildfire eternal",
+      "layout": "normal",
+      "manaCost": "{3}{R}",
+      "mciNumber": "109",
+      "multiverseid": 430798,
+      "name": "Wildfire Eternal",
+      "number": "109",
+      "power": "1",
+      "rarity": "Rare",
+      "subtypes": [
+        "Zombie",
+        "Jackal",
+        "Cleric"
+      ],
+      "text": "Afflict 4 (Whenever this creature becomes blocked, defending player loses 4 life.)\nWhenever Wildfire Eternal attacks and isn't blocked, you may cast an instant or sorcery card from your hand without paying its mana cost.",
+      "toughness": "4",
+      "type": "Creature — Zombie Jackal Cleric",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Kev Walker",
+      "cmc": 3,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"Spent a lifetime learning from predators. Picked up a few tricks.\"",
+      "id": "76754c066ac17e45befcbf806eb44fcd34c72352",
+      "imageName": "ambuscade",
+      "layout": "normal",
+      "manaCost": "{2}{G}",
+      "mciNumber": "110",
+      "multiverseid": 430799,
+      "name": "Ambuscade",
+      "number": "110",
+      "rarity": "Common",
+      "text": "Target creature you control gets +1/+0 until end of turn. It deals damage equal to its power to target creature an opponent controls.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Magali Villeneuve",
+      "cmc": 3,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "Though buried and muffled, nature's whisper still called to Nissa.",
+      "id": "16e1e05f59632d12cdf3ac5a1eaefb7b914bdb56",
+      "imageName": "beneath the sands",
+      "layout": "normal",
+      "manaCost": "{2}{G}",
+      "mciNumber": "111",
+      "multiverseid": 430800,
+      "name": "Beneath the Sands",
+      "number": "111",
+      "rarity": "Common",
+      "text": "Search your library for a basic land card, put it onto the battlefield tapped, then shuffle your library.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Bram Sels",
+      "cmc": 5,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"Remember, brother, the eyes are always vulnerable.\"\n\"I never forgot.\"",
+      "id": "5c119dbf8167f72dc1cfed10c784df592f555dba",
+      "imageName": "bitterbow sharpshooters",
+      "layout": "normal",
+      "manaCost": "{4}{G}",
+      "mciNumber": "112",
+      "multiverseid": 430801,
+      "name": "Bitterbow Sharpshooters",
+      "number": "112",
+      "power": "4",
+      "rarity": "Common",
+      "subtypes": [
+        "Jackal",
+        "Archer"
+      ],
+      "text": "Vigilance, reach",
+      "toughness": "4",
+      "type": "Creature — Jackal Archer",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Yeong-Hao Han",
+      "cmc": 3,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "When Rhonas fell, his followers stirred with newfound strength—a final gift from a god they thought indomitable.",
+      "id": "75e4801b4e4e8707cd7bd9dee980fae6c465dfc4",
+      "imageName": "devotee of strength",
+      "layout": "normal",
+      "manaCost": "{2}{G}",
+      "mciNumber": "113",
+      "multiverseid": 430802,
+      "name": "Devotee of Strength",
+      "number": "113",
+      "power": "3",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Naga",
+        "Wizard"
+      ],
+      "text": "{4}{G}: Target creature gets +2/+2 until end of turn.",
+      "toughness": "2",
+      "type": "Creature — Naga Wizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Min Yum",
+      "cmc": 3,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "The desert had once been a place of endless horror. It was now the last refuge as the city of Naktamun fell.",
+      "id": "d9833dc385e8bb0560ae9cebf6ae1496babdeb02",
+      "imageName": "dune diviner",
+      "layout": "normal",
+      "manaCost": "{2}{G}",
+      "mciNumber": "114",
+      "multiverseid": 430803,
+      "name": "Dune Diviner",
+      "number": "114",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Naga",
+        "Cleric"
+      ],
+      "text": "{1}, Tap an untapped Desert you control: You gain 1 life.",
+      "toughness": "3",
+      "type": "Creature — Naga Cleric",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Ben Wootten",
+      "cmc": 2,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "Once favored companions, many cats were left to fend for themselves.",
+      "id": "206bbc111c9102ea84ef6d2d6a37e2ab1b856ec5",
+      "imageName": "feral prowler",
+      "layout": "normal",
+      "manaCost": "{1}{G}",
+      "mciNumber": "115",
+      "multiverseid": 430804,
+      "name": "Feral Prowler",
+      "number": "115",
+      "power": "1",
+      "rarity": "Common",
+      "subtypes": [
+        "Cat"
+      ],
+      "text": "When Feral Prowler dies, draw a card.",
+      "toughness": "3",
+      "type": "Creature — Cat",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Zezhou Chen",
+      "cmc": 1,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "It basks atop the rubble of Rhonas's monument, which still pulses with latent power.",
+      "id": "c7074e020ff446f5449e0aa4b432c61f353178e0",
+      "imageName": "frilled sandwalla",
+      "layout": "normal",
+      "manaCost": "{G}",
+      "mciNumber": "116",
+      "multiverseid": 430805,
+      "name": "Frilled Sandwalla",
+      "number": "116",
+      "power": "1",
+      "rarity": "Common",
+      "subtypes": [
+        "Lizard"
+      ],
+      "text": "{1}{G}: Frilled Sandwalla gets +2/+2 until end of turn. Activate this ability only once each turn.",
+      "toughness": "1",
+      "type": "Creature — Lizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Kieran Yanner",
+      "cmc": 2,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"What greater testament can there be to Rhonas's lessons?\"",
+      "id": "a805f4c64f7d9362cf38c8fd3372e00db32e87d3",
+      "imageName": "gift of strength",
+      "layout": "normal",
+      "manaCost": "{1}{G}",
+      "mciNumber": "117",
+      "multiverseid": 430806,
+      "name": "Gift of Strength",
+      "number": "117",
+      "rarity": "Common",
+      "text": "Target creature gets +3/+3 and gains reach until end of turn.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Filip Burburan",
+      "cmc": 3,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "She trusts that the potent poisons of her darts will reach the enemy before the enemy reaches her.",
+      "id": "55dda7096332c094306c6d8c1662605eed24e8e6",
+      "imageName": "harrier naga",
+      "layout": "normal",
+      "manaCost": "{2}{G}",
+      "mciNumber": "118",
+      "multiverseid": 430807,
+      "name": "Harrier Naga",
+      "number": "118",
+      "power": "3",
+      "rarity": "Common",
+      "subtypes": [
+        "Naga",
+        "Warrior"
+      ],
+      "toughness": "3",
+      "type": "Creature — Naga Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Magali Villeneuve",
+      "cmc": 2,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "Some refused to leave their shattered homes, vowing to rebuild at any cost.",
+      "id": "ba700033d117d07b42889a3e1c63ab9e6b86f630",
+      "imageName": "hope tender",
+      "layout": "normal",
+      "manaCost": "{1}{G}",
+      "mciNumber": "119",
+      "multiverseid": 430808,
+      "name": "Hope Tender",
+      "number": "119",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "text": "{1}, {T}: Untap target land.\n{1}, {T}, Exert Hope Tender: Untap two target lands. (An exerted creature won't untap during your next untap step.)",
+      "toughness": "2",
+      "type": "Creature — Human Druid",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Jonas De Ro",
+      "cmc": 5,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "With the Hekma breached and its protection removed, the deserts swept in.",
+      "id": "0d01ef93a63150628b80d5745ea34b30c30e8eb5",
+      "imageName": "hour of promise",
+      "layout": "normal",
+      "manaCost": "{4}{G}",
+      "mciNumber": "120",
+      "multiverseid": 430809,
+      "name": "Hour of Promise",
+      "number": "120",
+      "rarity": "Rare",
+      "text": "Search your library for up to two land cards, put them onto the battlefield tapped, then shuffle your library. Then if you control three or more Deserts, create two 2/2 black Zombie creature tokens.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ],
+      "watermark": "Planeswalker"
+    },
+    {
+      "artist": "Daarken",
+      "cmc": 1,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"If you believe the God-Pharaoh tests you, charge with me to prove yourself. If you believe he betrayed us all, join with me to fight for tomorrow!\"\n—Samut, former Tah-crop initiate",
+      "id": "bc68e621a65bef9eed328af437ca72755f8c8825",
+      "imageName": "life goes on",
+      "layout": "normal",
+      "manaCost": "{G}",
+      "mciNumber": "121",
+      "multiverseid": 430810,
+      "name": "Life Goes On",
+      "number": "121",
+      "rarity": "Common",
+      "text": "You gain 4 life. If a creature died this turn, you gain 8 life instead.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Randy Vargas",
+      "cmc": 5,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "id": "42cae570375a1b6017c15015d807e6d86dbbb6f5",
+      "imageName": "majestic myriarch",
+      "layout": "normal",
+      "manaCost": "{4}{G}",
+      "mciNumber": "122",
+      "multiverseid": 430811,
+      "name": "Majestic Myriarch",
+      "number": "122",
+      "power": "*",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "Chimera"
+      ],
+      "text": "Majestic Myriarch's power and toughness are each equal to twice the number of creatures you control.\nAt the beginning of each combat, Majestic Myriarch gains flying until end of turn if you control a creature with flying. The same is true for first strike, double strike, deathtouch, haste, hexproof, indestructible, lifelink, menace, reach, trample, and vigilance.",
+      "toughness": "*",
+      "type": "Creature — Chimera",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Kieran Yanner",
+      "cmc": 3,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"The soul of this world is gone, Nissa, and I would gladly kill it again.\"\n—Nicol Bolas",
+      "id": "3cfe3ba0c686c204e55ecfc9b6579524dbe7068d",
+      "imageName": "nissa's defeat",
+      "layout": "normal",
+      "manaCost": "{2}{G}",
+      "mciNumber": "123",
+      "multiverseid": 430812,
+      "name": "Nissa's Defeat",
+      "number": "123",
+      "rarity": "Uncommon",
+      "text": "Destroy target Forest, green enchantment, or green planeswalker. If that permanent was a Nissa planeswalker, draw a card.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Josu Hernaiz",
+      "cmc": 4,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"It's only the end if we allow it.\"",
+      "id": "091b7e81b9eda14203a22847c5673a00917c0c99",
+      "imageName": "oasis ritualist",
+      "layout": "normal",
+      "manaCost": "{3}{G}",
+      "mciNumber": "124",
+      "multiverseid": 430813,
+      "name": "Oasis Ritualist",
+      "number": "124",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Naga",
+        "Druid"
+      ],
+      "text": "{T}: Add one mana of any color to your mana pool.\n{T}, Exert Oasis Ritualist: Add two mana of any one color to your mana pool. (An exerted creature won't untap during your next untap step.)",
+      "toughness": "4",
+      "type": "Creature — Naga Druid",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Craig J Spearing",
+      "cmc": 5,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"Forward! Until the horizon is ours!\"\n—Khemses, charioteer",
+      "id": "0975b590610b3cc19727d9975693b6445a93eac5",
+      "imageName": "overcome",
+      "layout": "normal",
+      "manaCost": "{3}{G}{G}",
+      "mciNumber": "125",
+      "multiverseid": 430814,
+      "name": "Overcome",
+      "number": "125",
+      "rarity": "Uncommon",
+      "text": "Creatures you control get +2/+2 and gain trample until end of turn.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Ryan Yee",
+      "cmc": 3,
+      "colorIdentity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "id": "bbfa90c740160b88afbaae797b8b76aa8463f650",
+      "imageName": "pride sovereign",
+      "layout": "normal",
+      "manaCost": "{2}{G}",
+      "mciNumber": "126",
+      "multiverseid": 430815,
+      "name": "Pride Sovereign",
+      "number": "126",
+      "power": "2",
+      "rarity": "Rare",
+      "subtypes": [
+        "Cat"
+      ],
+      "text": "Pride Sovereign gets +1/+1 for each other Cat you control.\n{W}, {T}, Exert Pride Sovereign: Create two 1/1 white Cat creature tokens with lifelink. (An exerted creature won't untap during your next untap step.)",
+      "toughness": "2",
+      "type": "Creature — Cat",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Mike Burns",
+      "cmc": 5,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"The ruin of the past is the topsoil of the future.\"\n—Sokar, former Nef-crop initiate",
+      "id": "934087209df7bcf48babf0f11688f5d6b12d8221",
+      "imageName": "quarry beetle",
+      "layout": "normal",
+      "manaCost": "{4}{G}",
+      "mciNumber": "127",
+      "multiverseid": 430816,
+      "name": "Quarry Beetle",
+      "number": "127",
+      "power": "4",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Insect"
+      ],
+      "text": "When Quarry Beetle enters the battlefield, you may return target land card from your graveyard to the battlefield.",
+      "toughness": "5",
+      "type": "Creature — Insect",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Aaron Miller",
+      "cmc": 6,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"Respect is earned through deeds—or the capacity to bite someone in half.\"\n—Sana, former Ahn-crop initiate",
+      "id": "388cf7fdd96837d314039742579df9ab04304553",
+      "imageName": "rampaging hippo",
+      "layout": "normal",
+      "manaCost": "{4}{G}{G}",
+      "mciNumber": "128",
+      "multiverseid": 430817,
+      "name": "Rampaging Hippo",
+      "number": "128",
+      "power": "5",
+      "rarity": "Common",
+      "subtypes": [
+        "Hippo"
+      ],
+      "text": "Trample\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "toughness": "6",
+      "type": "Creature — Hippo",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Mark Behm",
+      "cmc": 3,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"This world was once so much more than the confines of Naktamun.\"",
+      "id": "e7484a09f1878c41b265c69de74430d6465bc04b",
+      "imageName": "ramunap excavator",
+      "layout": "normal",
+      "manaCost": "{2}{G}",
+      "mciNumber": "129",
+      "multiverseid": 430818,
+      "name": "Ramunap Excavator",
+      "number": "129",
+      "power": "2",
+      "rarity": "Rare",
+      "subtypes": [
+        "Naga",
+        "Cleric"
+      ],
+      "text": "You may play land cards from your graveyard.",
+      "toughness": "3",
+      "type": "Creature — Naga Cleric",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Mike Burns",
+      "cmc": 4,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "id": "ab73d119cee6c8278abbd6522dd4484889bbd82a",
+      "imageName": "ramunap hydra",
+      "layout": "normal",
+      "manaCost": "{3}{G}",
+      "mciNumber": "130",
+      "multiverseid": 430819,
+      "name": "Ramunap Hydra",
+      "number": "130",
+      "power": "3",
+      "rarity": "Rare",
+      "subtypes": [
+        "Snake",
+        "Hydra"
+      ],
+      "text": "Vigilance, reach, trample\nRamunap Hydra gets +1/+1 as long as you control a Desert.\nRamunap Hydra gets +1/+1 as long as there is a Desert card in your graveyard.",
+      "toughness": "3",
+      "type": "Creature — Snake Hydra",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Svetlin Velinov",
+      "cmc": 2,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "id": "e48254b4aff80e5eda8640f8a32d1b1bfdb7264a",
+      "imageName": "resilient khenra",
+      "layout": "normal",
+      "manaCost": "{1}{G}",
+      "mciNumber": "131",
+      "multiverseid": 430820,
+      "name": "Resilient Khenra",
+      "number": "131",
+      "power": "2",
+      "rarity": "Rare",
+      "subtypes": [
+        "Jackal",
+        "Wizard"
+      ],
+      "text": "When Resilient Khenra enters the battlefield, you may have target creature get +X/+X until end of turn, where X is Resilient Khenra's power.\nEternalize {4}{G}{G} ({4}{G}{G}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Jackal Wizard with no mana cost. Eternalize only as a sorcery.)",
+      "toughness": "2",
+      "type": "Creature — Jackal Wizard",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Winona Nelson",
+      "cmc": 2,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "Rhonas continued to fight until his last breath and even beyond.",
+      "id": "c93edfbb0b476135db4070a069312b7e2f88d545",
+      "imageName": "rhonas's last stand",
+      "layout": "normal",
+      "manaCost": "{G}{G}",
+      "mciNumber": "132",
+      "multiverseid": 430821,
+      "name": "Rhonas's Last Stand",
+      "number": "132",
+      "rarity": "Rare",
+      "text": "Create a 5/4 green Snake creature token. Lands you control don't untap during your next untap step.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Bram Sels",
+      "cmc": 2,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"Give me some room.\"",
+      "id": "fdd265b4cfe196d53fa2943ee727b6963c16d967",
+      "imageName": "rhonas's stalwart",
+      "layout": "normal",
+      "manaCost": "{1}{G}",
+      "mciNumber": "133",
+      "multiverseid": 430822,
+      "name": "Rhonas's Stalwart",
+      "number": "133",
+      "power": "2",
+      "rarity": "Common",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "text": "You may exert Rhonas's Stalwart as it attacks. When you do, it gets +1/+1 until end of turn and can't be blocked by creatures with power 2 or less this turn. (An exerted creature won't untap during your next untap step.)",
+      "toughness": "2",
+      "type": "Creature — Human Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Victor Adame Minguez",
+      "cmc": 3,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"Those who embrace the harsh land rather than fight it find they have a powerful ally.\"\n—Nissa Revane",
+      "id": "bc7a237f56cafd8c18490ca3bfe6eaa834856e78",
+      "imageName": "sidewinder naga",
+      "layout": "normal",
+      "manaCost": "{2}{G}",
+      "mciNumber": "134",
+      "multiverseid": 430823,
+      "name": "Sidewinder Naga",
+      "number": "134",
+      "power": "3",
+      "rarity": "Common",
+      "subtypes": [
+        "Naga",
+        "Warrior"
+      ],
+      "text": "As long as you control a Desert or there is a Desert card in your graveyard, Sidewinder Naga gets +1/+0 and has trample.",
+      "toughness": "2",
+      "type": "Creature — Naga Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Filip Burburan",
+      "cmc": 7,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"Rhonas's monument belongs to the wurms now. Look elsewhere for refuge.\"\n—Arnun, vizier of the menagerie",
+      "id": "e38140016c40134d7e82c4362521ee1555e9cad1",
+      "imageName": "sifter wurm",
+      "layout": "normal",
+      "manaCost": "{5}{G}{G}",
+      "mciNumber": "135",
+      "multiverseid": 430824,
+      "name": "Sifter Wurm",
+      "number": "135",
+      "power": "7",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Wurm"
+      ],
+      "text": "Trample\nWhen Sifter Wurm enters the battlefield, scry 3, then reveal the top card of your library. You gain life equal to that card's converted mana cost.",
+      "toughness": "7",
+      "type": "Creature — Wurm",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Zezhou Chen",
+      "cmc": 4,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "The crocodiles of the Broken Lands, long used to feeding on undead flesh, eagerly flooded into Naktamun for a taste of something fresher.",
+      "id": "ec2a3d61d78bcd9cff23074fef5c1915d24cee3f",
+      "imageName": "tenacious hunter",
+      "layout": "normal",
+      "manaCost": "{2}{G}{G}",
+      "mciNumber": "136",
+      "multiverseid": 430825,
+      "name": "Tenacious Hunter",
+      "number": "136",
+      "power": "4",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Crocodile"
+      ],
+      "text": "As long as a creature has a -1/-1 counter on it, Tenacious Hunter has vigilance and deathtouch.",
+      "toughness": "4",
+      "type": "Creature — Crocodile",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Simon Dominic",
+      "cmc": 2,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "The destruction of Rhonas's monument released his collection upon the city.",
+      "id": "49039b28094aee461842f679a957f043aaee7ad0",
+      "imageName": "uncage the menagerie",
+      "layout": "normal",
+      "manaCost": "{X}{G}{G}",
+      "mciNumber": "137",
+      "multiverseid": 430826,
+      "name": "Uncage the Menagerie",
+      "number": "137",
+      "rarity": "Mythic Rare",
+      "text": "Search your library for up to X creature cards with different names that each have converted mana cost X, reveal them, put them into your hand, then shuffle your library.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Viktor Titov",
+      "cmc": 3,
+      "colorIdentity": [
+        "U",
+        "R"
+      ],
+      "colors": [
+        "Blue",
+        "Red"
+      ],
+      "id": "71f8b8e94e91d7555006f0d44fd71431b9aefbd3",
+      "imageName": "bloodwater entity",
+      "layout": "normal",
+      "manaCost": "{1}{U}{R}",
+      "mciNumber": "138",
+      "multiverseid": 430827,
+      "name": "Bloodwater Entity",
+      "number": "138",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Elemental"
+      ],
+      "text": "Flying\nProwess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nWhen Bloodwater Entity enters the battlefield, you may put target instant or sorcery card from your graveyard on top of your library.",
+      "toughness": "2",
+      "type": "Creature — Elemental",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Lius Lasahido",
+      "cmc": 6,
+      "colorIdentity": [
+        "U",
+        "R"
+      ],
+      "colors": [
+        "Blue",
+        "Red"
+      ],
+      "id": "054092a64d39584c8227f064d6cab0ad99d9aafe",
+      "imageName": "the locust god",
+      "layout": "normal",
+      "manaCost": "{4}{U}{R}",
+      "mciNumber": "139",
+      "multiverseid": 430828,
+      "name": "The Locust God",
+      "number": "139",
+      "power": "4",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "Flying\nWhenever you draw a card, create a 1/1 blue and red Insect creature token with flying and haste.\n{2}{U}{R}: Draw a card, then discard a card.\nWhen The Locust God dies, return it to its owner's hand at the beginning of the next end step.",
+      "toughness": "4",
+      "type": "Legendary Creature — God",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Raymond Swanland",
+      "cmc": 7,
+      "colorIdentity": [
+        "U",
+        "B",
+        "R"
+      ],
+      "colors": [
+        "Blue",
+        "Black",
+        "Red"
+      ],
+      "id": "eccf98d80c08c3a06727565f1b1d834e4d6c8627",
+      "imageName": "nicol bolas, god-pharaoh",
+      "layout": "normal",
+      "loyalty": 7,
+      "manaCost": "{4}{U}{B}{R}",
+      "mciNumber": "140",
+      "multiverseid": 430829,
+      "name": "Nicol Bolas, God-Pharaoh",
+      "number": "140",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "Bolas"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "+2: Target opponent exiles cards from the top of his or her library until he or she exiles a nonland card. Until end of turn, you may cast that card without paying its mana cost.\n+1: Each opponent exiles two cards from his or her hand.\n−4: Nicol Bolas, God-Pharaoh deals 7 damage to target opponent or creature an opponent controls.\n−12: Exile each nonland permanent your opponents control.",
+      "type": "Legendary Planeswalker — Bolas",
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "artist": "YW Tang",
+      "cmc": 3,
+      "colorIdentity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "Black",
+        "Green"
+      ],
+      "id": "18f0859efe90dd3603069434094c683f851ace4d",
+      "imageName": "obelisk spider",
+      "layout": "normal",
+      "manaCost": "{1}{B}{G}",
+      "mciNumber": "141",
+      "multiverseid": 430830,
+      "name": "Obelisk Spider",
+      "number": "141",
+      "power": "1",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Spider"
+      ],
+      "text": "Reach\nWhenever Obelisk Spider deals combat damage to a creature, put a -1/-1 counter on that creature.\nWhenever you put one or more -1/-1 counters on a creature, each opponent loses 1 life and you gain 1 life.",
+      "toughness": "4",
+      "type": "Creature — Spider",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "David Palumbo",
+      "cmc": 3,
+      "colorIdentity": [
+        "W",
+        "R"
+      ],
+      "colors": [
+        "White",
+        "Red"
+      ],
+      "flavor": "\"We are crops no longer. Reap elsewhere.\"",
+      "id": "fc0334e261ee8e82207b1e215c378e2aaac605fc",
+      "imageName": "resolute survivors",
+      "layout": "normal",
+      "manaCost": "{1}{R}{W}",
+      "mciNumber": "142",
+      "multiverseid": 430831,
+      "name": "Resolute Survivors",
+      "number": "142",
+      "power": "3",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "text": "You may exert Resolute Survivors as it attacks. (It won't untap during your next untap step.)\nWhenever you exert a creature, Resolute Survivors deals 1 damage to each opponent and you gain 1 life.",
+      "toughness": "3",
+      "type": "Creature — Human Warrior",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Ryan Pancoast",
+      "cmc": 2,
+      "colorIdentity": [
+        "U",
+        "G"
+      ],
+      "colors": [
+        "Blue",
+        "Green"
+      ],
+      "flavor": "\"It's a cruel thing to give such a sad song to such a colorful creature.\"\n—Sana, former Ahn-crop initiate",
+      "id": "09dee7212c21fd997426494c6dcca2961f68858a",
+      "imageName": "river hoopoe",
+      "layout": "normal",
+      "manaCost": "{G}{U}",
+      "mciNumber": "143",
+      "multiverseid": 430832,
+      "name": "River Hoopoe",
+      "number": "143",
+      "power": "1",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Bird"
+      ],
+      "text": "Flying\n{3}{G}{U}: You gain 2 life and draw a card.",
+      "toughness": "3",
+      "type": "Creature — Bird",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Aleksi Briclot",
+      "cmc": 4,
+      "colorIdentity": [
+        "R",
+        "G"
+      ],
+      "colors": [
+        "Red",
+        "Green"
+      ],
+      "id": "69c30f053ddda2f587e516e1ced39bea2ca15ca1",
+      "imageName": "samut, the tested",
+      "layout": "normal",
+      "loyalty": 4,
+      "manaCost": "{2}{R}{G}",
+      "mciNumber": "144",
+      "multiverseid": 430833,
+      "name": "Samut, the Tested",
+      "number": "144",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "Samut"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "+1: Up to one target creature gains double strike until end of turn.\n−2: Samut, the Tested deals 2 damage divided as you choose among one or two target creatures and/or players.\n−7: Search your library for up to two creature and/or planeswalker cards, put them onto the battlefield, then shuffle your library.",
+      "type": "Legendary Planeswalker — Samut",
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "artist": "Lius Lasahido",
+      "cmc": 5,
+      "colorIdentity": [
+        "U",
+        "B"
+      ],
+      "colors": [
+        "Blue",
+        "Black"
+      ],
+      "id": "592a576deeb5254e598d4347f37215c3cb4a0d98",
+      "imageName": "the scarab god",
+      "layout": "normal",
+      "manaCost": "{3}{U}{B}",
+      "mciNumber": "145",
+      "multiverseid": 430834,
+      "name": "The Scarab God",
+      "number": "145",
+      "power": "5",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "At the beginning of your upkeep, each opponent loses X life and you scry X, where X is the number of Zombies you control.\n{2}{U}{B}: Exile target creature card from a graveyard. Create a token that's a copy of it, except it's a 4/4 black Zombie.\nWhen The Scarab God dies, return it to its owner's hand at the beginning of the next end step.",
+      "toughness": "5",
+      "type": "Legendary Creature — God",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Lius Lasahido",
+      "cmc": 5,
+      "colorIdentity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "Black",
+        "Red"
+      ],
+      "id": "8a20ca25c580a3c123119dcef12ee03add1c291f",
+      "imageName": "the scorpion god",
+      "layout": "normal",
+      "manaCost": "{3}{B}{R}",
+      "mciNumber": "146",
+      "multiverseid": 430835,
+      "name": "The Scorpion God",
+      "number": "146",
+      "power": "6",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "Whenever a creature with a -1/-1 counter on it dies, draw a card.\n{1}{B}{R}: Put a -1/-1 counter on another target creature.\nWhen The Scorpion God dies, return it to its owner's hand at the beginning of the next end step.",
+      "toughness": "5",
+      "type": "Legendary Creature — God",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Tomasz Jedruszek",
+      "cmc": 3,
+      "colorIdentity": [
+        "W",
+        "B"
+      ],
+      "colors": [
+        "White",
+        "Black"
+      ],
+      "flavor": "\"We are no longer in control.\"\n—Elekh, vizier of embalming",
+      "id": "de4eaeb3360b93477f3c12bc622b6659936a6f1f",
+      "imageName": "unraveling mummy",
+      "layout": "normal",
+      "manaCost": "{1}{W}{B}",
+      "mciNumber": "147",
+      "multiverseid": 430836,
+      "name": "Unraveling Mummy",
+      "number": "147",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Zombie"
+      ],
+      "text": "{1}{W}: Target attacking Zombie gains lifelink until end of turn.\n{1}{B}: Target attacking Zombie gains deathtouch until end of turn.",
+      "toughness": "3",
+      "type": "Creature — Zombie",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Victor Adame Minguez",
+      "cmc": 3,
+      "colorIdentity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "5bfaa9b1b70263272141134f3984d1632cb9fcb6",
+      "imageName": "farm",
+      "layout": "aftermath",
+      "manaCost": "{2}{W}",
+      "multiverseid": 430837,
+      "name": "Farm",
+      "names": [
+        "Farm",
+        "Market"
+      ],
+      "number": "148a",
+      "rarity": "Uncommon",
+      "text": "Destroy target attacking or blocking creature.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Victor Adame Minguez",
+      "cmc": 3,
+      "colorIdentity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "c1df353db318e8ea2776c422c396c772eb9edbe6",
+      "imageName": "market",
+      "layout": "aftermath",
+      "manaCost": "{2}{U}",
+      "multiverseid": 430837,
+      "name": "Market",
+      "names": [
+        "Farm",
+        "Market"
+      ],
+      "number": "148b",
+      "rarity": "Uncommon",
+      "text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nDraw two cards, then discard two cards.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Sidharth Chaturvedi",
+      "cmc": 2,
+      "colorIdentity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "17b1bd429672245ddc61e47c5c1190c5d013b53d",
+      "imageName": "consign",
+      "layout": "aftermath",
+      "manaCost": "{1}{U}",
+      "multiverseid": 430838,
+      "name": "Consign",
+      "names": [
+        "Consign",
+        "Oblivion"
+      ],
+      "number": "149a",
+      "rarity": "Uncommon",
+      "text": "Return target nonland permanent to its owner's hand.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Sidharth Chaturvedi",
+      "cmc": 5,
+      "colorIdentity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "id": "8c34b3ed70ea2c700ed197a42286ddadbb8fa215",
+      "imageName": "oblivion",
+      "layout": "aftermath",
+      "manaCost": "{4}{B}",
+      "multiverseid": 430838,
+      "name": "Oblivion",
+      "names": [
+        "Consign",
+        "Oblivion"
+      ],
+      "number": "149b",
+      "rarity": "Uncommon",
+      "text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nTarget opponent discards two cards.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Jason Rainville",
+      "cmc": 1,
+      "colorIdentity": [
+        "R",
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "id": "9b1c5f9145e46545e4166397eb68794f98e6976e",
+      "imageName": "claim",
+      "layout": "aftermath",
+      "manaCost": "{B}",
+      "multiverseid": 430839,
+      "name": "Claim",
+      "names": [
+        "Claim",
+        "Fame"
+      ],
+      "number": "150a",
+      "rarity": "Uncommon",
+      "text": "Return target creature card with converted mana cost 2 or less from your graveyard to the battlefield.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Jason Rainville",
+      "cmc": 2,
+      "colorIdentity": [
+        "R",
+        "B"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "id": "cd05a2ad039e0e65f35dbe14e068074b1471c685",
+      "imageName": "fame",
+      "layout": "aftermath",
+      "manaCost": "{1}{R}",
+      "multiverseid": 430839,
+      "name": "Fame",
+      "names": [
+        "Claim",
+        "Fame"
+      ],
+      "number": "150b",
+      "rarity": "Uncommon",
+      "text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nTarget creature gets +2/+0 and gains haste until end of turn.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Eric Deschamps",
+      "cmc": 3,
+      "colorIdentity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "id": "f39ccfb967cf0ffbc65aa09443c975f661418651",
+      "imageName": "struggle",
+      "layout": "aftermath",
+      "manaCost": "{2}{R}",
+      "multiverseid": 430840,
+      "name": "Struggle",
+      "names": [
+        "Struggle",
+        "Survive"
+      ],
+      "number": "151a",
+      "rarity": "Uncommon",
+      "text": "Struggle deals damage to target creature equal to the number of lands you control.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Eric Deschamps",
+      "cmc": 2,
+      "colorIdentity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "id": "c127e5050cf3a5ec92c0396dd0a2d7bd2959675e",
+      "imageName": "survive",
+      "layout": "aftermath",
+      "manaCost": "{1}{G}",
+      "multiverseid": 430840,
+      "name": "Survive",
+      "names": [
+        "Struggle",
+        "Survive"
+      ],
+      "number": "151b",
+      "rarity": "Uncommon",
+      "text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nEach player shuffles his or her graveyard into his or her library.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Jason Rainville",
+      "cmc": 1,
+      "colorIdentity": [
+        "W",
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "id": "fc13bec99b5d1b342570916d55aad33a4fc9037b",
+      "imageName": "appeal",
+      "layout": "aftermath",
+      "manaCost": "{G}",
+      "multiverseid": 430841,
+      "name": "Appeal",
+      "names": [
+        "Appeal",
+        "Authority"
+      ],
+      "number": "152a",
+      "rarity": "Uncommon",
+      "text": "Until end of turn, target creature gains trample and gets +X/+X, where X is the number of creatures you control.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Jason Rainville",
+      "cmc": 2,
+      "colorIdentity": [
+        "W",
+        "G"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "24cc02e11995a44f6af8c70cfc40d8347aaae6fb",
+      "imageName": "authority",
+      "layout": "aftermath",
+      "manaCost": "{1}{W}",
+      "multiverseid": 430841,
+      "name": "Authority",
+      "names": [
+        "Appeal",
+        "Authority"
+      ],
+      "number": "152b",
+      "rarity": "Uncommon",
+      "text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nTap up to two target creatures your opponents control. Creatures you control gain vigilance until end of turn.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Dan Scott",
+      "cmc": 2,
+      "colorIdentity": [
+        "W",
+        "R"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "e7a94180aa6b194d2a215ab23d489d4003042d3a",
+      "imageName": "leave",
+      "layout": "aftermath",
+      "manaCost": "{1}{W}",
+      "multiverseid": 430842,
+      "name": "Leave",
+      "names": [
+        "Leave",
+        "Chance"
+      ],
+      "number": "153a",
+      "rarity": "Rare",
+      "text": "Return any number of target permanents you own to your hand.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Dan Scott",
+      "cmc": 4,
+      "colorIdentity": [
+        "W",
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "id": "bf1625ea13b7114169865264be079575bc5f86b6",
+      "imageName": "chance",
+      "layout": "aftermath",
+      "manaCost": "{3}{R}",
+      "multiverseid": 430842,
+      "name": "Chance",
+      "names": [
+        "Leave",
+        "Chance"
+      ],
+      "number": "153b",
+      "rarity": "Rare",
+      "text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nDiscard any number of cards, then draw that many cards.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Daarken",
+      "cmc": 1,
+      "colorIdentity": [
+        "U",
+        "G"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "73fd94b0cb2f1f3746a9ca7a4fb04eebb7237771",
+      "imageName": "reason",
+      "layout": "aftermath",
+      "manaCost": "{U}",
+      "multiverseid": 430843,
+      "name": "Reason",
+      "names": [
+        "Reason",
+        "Believe"
+      ],
+      "number": "154a",
+      "rarity": "Rare",
+      "text": "Scry 3.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Daarken",
+      "cmc": 5,
+      "colorIdentity": [
+        "U",
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "id": "50ffb04802fde0d1d3c9ca6cc3800baf6ffb890b",
+      "imageName": "believe",
+      "layout": "aftermath",
+      "manaCost": "{4}{G}",
+      "multiverseid": 430843,
+      "name": "Believe",
+      "names": [
+        "Reason",
+        "Believe"
+      ],
+      "number": "154b",
+      "rarity": "Rare",
+      "text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nLook at the top card of your library. You may put it onto the battlefield if it's a creature card. If you don't, put it into your hand.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Josh Hass",
+      "cmc": 2,
+      "colorIdentity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "id": "d0f0578a3a273db68d3632a0a2c7c62f5f9410bb",
+      "imageName": "grind",
+      "layout": "aftermath",
+      "manaCost": "{1}{B}",
+      "multiverseid": 430844,
+      "name": "Grind",
+      "names": [
+        "Grind",
+        "Dust"
+      ],
+      "number": "155a",
+      "rarity": "Rare",
+      "text": "Put a -1/-1 counter on each of up to two target creatures.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Josh Hass",
+      "cmc": 4,
+      "colorIdentity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "White"
+      ],
+      "id": "7a811fb6973495522ee38c7ccb113e8c3acd8f13",
+      "imageName": "dust",
+      "layout": "aftermath",
+      "manaCost": "{3}{W}",
+      "multiverseid": 430844,
+      "name": "Dust",
+      "names": [
+        "Grind",
+        "Dust"
+      ],
+      "number": "155b",
+      "rarity": "Rare",
+      "text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nExile any number of target creatures that have -1/-1 counters on them.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Yongjae Choi",
+      "cmc": 4,
+      "colorIdentity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "id": "40e3e5d383706d3719d940c20952bff040469b75",
+      "imageName": "refuse",
+      "layout": "aftermath",
+      "manaCost": "{3}{R}",
+      "multiverseid": 430845,
+      "name": "Refuse",
+      "names": [
+        "Refuse",
+        "Cooperate"
+      ],
+      "number": "156a",
+      "rarity": "Rare",
+      "text": "Refuse deals damage to target spell's controller equal to that spell's converted mana cost.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Yongjae Choi",
+      "cmc": 3,
+      "colorIdentity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "Blue"
+      ],
+      "id": "e011410174708e0fd22c4191d038bcd87b105edd",
+      "imageName": "cooperate",
+      "layout": "aftermath",
+      "manaCost": "{2}{U}",
+      "multiverseid": 430845,
+      "name": "Cooperate",
+      "names": [
+        "Refuse",
+        "Cooperate"
+      ],
+      "number": "156b",
+      "rarity": "Rare",
+      "text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nCopy target instant or sorcery spell. You may choose new targets for the copy.",
+      "type": "Instant",
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "artist": "Winona Nelson",
+      "cmc": 2,
+      "colorIdentity": [
+        "G",
+        "B"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "id": "6ef88ed4eb9446f6fd91b12e0cd96f73f26e3653",
+      "imageName": "driven",
+      "layout": "aftermath",
+      "manaCost": "{1}{G}",
+      "multiverseid": 430846,
+      "name": "Driven",
+      "names": [
+        "Driven",
+        "Despair"
+      ],
+      "number": "157a",
+      "rarity": "Rare",
+      "text": "Until end of turn, creatures you control gain trample and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Winona Nelson",
+      "cmc": 2,
+      "colorIdentity": [
+        "G",
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "id": "83189eb27fb47755d9d1d702b271c7692ae2258f",
+      "imageName": "despair",
+      "layout": "aftermath",
+      "manaCost": "{1}{B}",
+      "multiverseid": 430846,
+      "name": "Despair",
+      "names": [
+        "Driven",
+        "Despair"
+      ],
+      "number": "157b",
+      "rarity": "Rare",
+      "text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nUntil end of turn, creatures you control gain menace and \"Whenever this creature deals combat damage to a player, that player discards a card.\"",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Daarken",
+      "cmc": 3,
+      "flavor": "Although long since dead, the banished dissenters finally took their vengeance.",
+      "id": "95b34f44c5b03df8ee793eec2e059179ed4168b3",
+      "imageName": "abandoned sarcophagus",
+      "layout": "normal",
+      "manaCost": "{3}",
+      "mciNumber": "158",
+      "multiverseid": 430847,
+      "name": "Abandoned Sarcophagus",
+      "number": "158",
+      "rarity": "Rare",
+      "text": "You may cast nonland cards with cycling from your graveyard.\nIf a card with cycling would be put into your graveyard from anywhere and it wasn't cycled, exile it instead.",
+      "type": "Artifact",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "artist": "Ben Maier",
+      "cmc": 2,
+      "flavor": "The God-Pharaoh's angels stripped former initiates of their cartouches and the fortifying magic they provided.",
+      "id": "c50b69e532a27aa0549d22ec57f1654f95b7a688",
+      "imageName": "crook of condemnation",
+      "layout": "normal",
+      "manaCost": "{2}",
+      "mciNumber": "159",
+      "multiverseid": 430848,
+      "name": "Crook of Condemnation",
+      "number": "159",
+      "rarity": "Uncommon",
+      "text": "{1}, {T}: Exile target card from a graveyard.\n{1}, Exile Crook of Condemnation: Exile all cards from all graveyards.",
+      "type": "Artifact",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "artist": "Tommy Arnold",
+      "cmc": 2,
+      "id": "3d0bcb8b39a11d1808bf49c92bc8c876baf02e4d",
+      "imageName": "dagger of the worthy",
+      "layout": "normal",
+      "manaCost": "{2}",
+      "mciNumber": "160",
+      "multiverseid": 430849,
+      "name": "Dagger of the Worthy",
+      "number": "160",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Equipment"
+      ],
+      "text": "Equipped creature gets +2/+0 and has afflict 1. (Whenever it becomes blocked, defending player loses 1 life.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "type": "Artifact — Equipment",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 7,
+      "id": "5d4c2b14501b350645425efcdcf0137a386f3145",
+      "imageName": "god-pharaoh's gift",
+      "layout": "normal",
+      "manaCost": "{7}",
+      "mciNumber": "161",
+      "multiverseid": 430850,
+      "name": "God-Pharaoh's Gift",
+      "number": "161",
+      "rarity": "Rare",
+      "text": "At the beginning of combat on your turn, you may exile a creature card from your graveyard. If you do, create a token that's a copy of that card, except it's a 4/4 black Zombie. It gains haste until end of turn.",
+      "type": "Artifact",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "artist": "Igor Kieryluk",
+      "cmc": 3,
+      "flavor": "Ironically, the statues had been constructed as a warning.",
+      "id": "c03b231ef877a0e946abd4e58f62c1958f02ed3c",
+      "imageName": "graven abomination",
+      "layout": "normal",
+      "manaCost": "{3}",
+      "mciNumber": "162",
+      "multiverseid": 430851,
+      "name": "Graven Abomination",
+      "number": "162",
+      "power": "3",
+      "rarity": "Common",
+      "subtypes": [
+        "Horror"
+      ],
+      "text": "Whenever Graven Abomination attacks, exile target card from defending player's graveyard.",
+      "toughness": "1",
+      "type": "Artifact Creature — Horror",
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Anthony Palumbo",
+      "cmc": 5,
+      "flavor": "The embodiment of yearning, forever drifting the deserts to find what had once made it whole.",
+      "id": "56a3e01157c79167cb3ae22dbef472db07bcc13e",
+      "imageName": "hollow one",
+      "layout": "normal",
+      "manaCost": "{5}",
+      "mciNumber": "163",
+      "multiverseid": 430852,
+      "name": "Hollow One",
+      "number": "163",
+      "power": "4",
+      "rarity": "Rare",
+      "subtypes": [
+        "Golem"
+      ],
+      "text": "Hollow One costs {2} less to cast for each card you've cycled or discarded this turn.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "toughness": "4",
+      "type": "Artifact Creature — Golem",
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Ryan Yee",
+      "cmc": 3,
+      "flavor": "\"Though the afterlife, the city, and even the God-Pharaoh himself were one great deception, the ideals championed by the gods remain true.\"\n—Djeru, former Tah-crop initiate",
+      "id": "f3af460784bda13cb412ab304ba20a67b7d199f8",
+      "imageName": "manalith",
+      "layout": "normal",
+      "manaCost": "{3}",
+      "mciNumber": "164",
+      "multiverseid": 430853,
+      "name": "Manalith",
+      "number": "164",
+      "rarity": "Common",
+      "text": "{T}: Add one mana of any color to your mana pool.",
+      "type": "Artifact",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "artist": "Craig J Spearing",
+      "cmc": 3,
+      "flavor": "Most mirrors show your reflection. Others show your potential.",
+      "id": "269e66a695c481da6afffbfd91cf3e691fa36859",
+      "imageName": "mirage mirror",
+      "layout": "normal",
+      "manaCost": "{3}",
+      "mciNumber": "165",
+      "multiverseid": 430854,
+      "name": "Mirage Mirror",
+      "number": "165",
+      "rarity": "Rare",
+      "text": "{2}: Mirage Mirror becomes a copy of target artifact, creature, enchantment, or land until end of turn.",
+      "type": "Artifact",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "artist": "Jonas De Ro",
+      "cmc": 2,
+      "flavor": "Decades to build. Hours to demolish.",
+      "id": "322f4330c6d87f0069208bfd59c82393c99629cd",
+      "imageName": "sunset pyramid",
+      "layout": "normal",
+      "manaCost": "{2}",
+      "mciNumber": "166",
+      "multiverseid": 430855,
+      "name": "Sunset Pyramid",
+      "number": "166",
+      "rarity": "Uncommon",
+      "text": "Sunset Pyramid enters the battlefield with three brick counters on it.\n{2}, {T}, Remove a brick counter from Sunset Pyramid: Draw a card.\n{2}, {T}: Scry 1.",
+      "type": "Artifact",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "artist": "Marco Nelor",
+      "cmc": 1,
+      "flavor": "\"Why wander in search of a new home when the path is laid out before you?\"\n—Pytamun, former Nef-crop initiate",
+      "id": "457e0049a8caf56fcd7011f7889ef805c58f179e",
+      "imageName": "traveler's amulet",
+      "layout": "normal",
+      "manaCost": "{1}",
+      "mciNumber": "167",
+      "multiverseid": 430856,
+      "name": "Traveler's Amulet",
+      "number": "167",
+      "rarity": "Common",
+      "text": "{1}, Sacrifice Traveler's Amulet: Search your library for a basic land card, reveal it, put it into your hand, then shuffle your library.",
+      "type": "Artifact",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "artist": "Igor Kieryluk",
+      "cmc": 2,
+      "id": "4bccfac2bbb074bd578813c365a0b6ae762f7102",
+      "imageName": "wall of forgotten pharaohs",
+      "layout": "normal",
+      "manaCost": "{2}",
+      "mciNumber": "168",
+      "multiverseid": 430857,
+      "name": "Wall of Forgotten Pharaohs",
+      "number": "168",
+      "power": "0",
+      "rarity": "Common",
+      "subtypes": [
+        "Wall"
+      ],
+      "text": "Defender\n{T}: Wall of Forgotten Pharaohs deals 1 damage to target player. Activate this ability only if you control a Desert or there is a Desert card in your graveyard.",
+      "toughness": "4",
+      "type": "Artifact Creature — Wall",
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 0,
+      "colorIdentity": [
+        "U",
+        "B",
+        "R"
+      ],
+      "flavor": "The dead entered as worthy. They exited as Eternals.",
+      "id": "542ea64fcac69334e3870f4492796db6d1fd265f",
+      "imageName": "crypt of the eternals",
+      "layout": "normal",
+      "mciNumber": "169",
+      "multiverseid": 430858,
+      "name": "Crypt of the Eternals",
+      "number": "169",
+      "rarity": "Uncommon",
+      "text": "When Crypt of the Eternals enters the battlefield, you gain 1 life.\n{T}: Add {C} to your mana pool.\n{1}, {T}: Add {U}, {B}, or {R} to your mana pool.",
+      "type": "Land",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 0,
+      "colorIdentity": [
+        "R"
+      ],
+      "id": "adc15b05539cf6ecb21e5ff95df5dafd82de659d",
+      "imageName": "desert of the fervent",
+      "layout": "normal",
+      "mciNumber": "170",
+      "multiverseid": 430859,
+      "name": "Desert of the Fervent",
+      "number": "170",
+      "rarity": "Common",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "Desert of the Fervent enters the battlefield tapped.\n{T}: Add {R} to your mana pool.\nCycling {1}{R} ({1}{R}, Discard this card: Draw a card.)",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Jonas De Ro",
+      "cmc": 0,
+      "colorIdentity": [
+        "B"
+      ],
+      "id": "bbeda78b287893e18d8cfac102ea6111e3270d87",
+      "imageName": "desert of the glorified",
+      "layout": "normal",
+      "mciNumber": "171",
+      "multiverseid": 430860,
+      "name": "Desert of the Glorified",
+      "number": "171",
+      "rarity": "Common",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "Desert of the Glorified enters the battlefield tapped.\n{T}: Add {B} to your mana pool.\nCycling {1}{B} ({1}{B}, Discard this card: Draw a card.)",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "James Paick",
+      "cmc": 0,
+      "colorIdentity": [
+        "G"
+      ],
+      "id": "4b956d115e5fc9f2bd68b64b5e5f3ca9622d1134",
+      "imageName": "desert of the indomitable",
+      "layout": "normal",
+      "mciNumber": "172",
+      "multiverseid": 430861,
+      "name": "Desert of the Indomitable",
+      "number": "172",
+      "rarity": "Common",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "Desert of the Indomitable enters the battlefield tapped.\n{T}: Add {G} to your mana pool.\nCycling {1}{G} ({1}{G}, Discard this card: Draw a card.)",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Christine Choi",
+      "cmc": 0,
+      "colorIdentity": [
+        "U"
+      ],
+      "id": "7917800f9c5a4f2304c32ef1890bbe5b3498a284",
+      "imageName": "desert of the mindful",
+      "layout": "normal",
+      "mciNumber": "173",
+      "multiverseid": 430862,
+      "name": "Desert of the Mindful",
+      "number": "173",
+      "rarity": "Common",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "Desert of the Mindful enters the battlefield tapped.\n{T}: Add {U} to your mana pool.\nCycling {1}{U} ({1}{U}, Discard this card: Draw a card.)",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Jung Park",
+      "cmc": 0,
+      "colorIdentity": [
+        "W"
+      ],
+      "id": "a1def1c22021107451f84d7007ff2405f6406c5c",
+      "imageName": "desert of the true",
+      "layout": "normal",
+      "mciNumber": "174",
+      "multiverseid": 430863,
+      "name": "Desert of the True",
+      "number": "174",
+      "rarity": "Common",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "Desert of the True enters the battlefield tapped.\n{T}: Add {W} to your mana pool.\nCycling {1}{W} ({1}{W}, Discard this card: Draw a card.)",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "E. M. Gist",
+      "cmc": 0,
+      "flavor": "The Curse of Wandering permeated Amonkhet long before Nicol Bolas. He simply harnessed it.",
+      "id": "72e38a8e3c37290ef9a6e34fd259c4039a2cd624",
+      "imageName": "dunes of the dead",
+      "layout": "normal",
+      "mciNumber": "175",
+      "multiverseid": 430864,
+      "name": "Dunes of the Dead",
+      "number": "175",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "{T}: Add {C} to your mana pool.\nWhen Dunes of the Dead is put into a graveyard from the battlefield, create a 2/2 black Zombie creature token.",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Noah Bradley",
+      "cmc": 0,
+      "id": "115bbaa8b3168023915b9f42feb76698d5d3bf86",
+      "imageName": "endless sands",
+      "layout": "normal",
+      "mciNumber": "176",
+      "multiverseid": 430865,
+      "name": "Endless Sands",
+      "number": "176",
+      "rarity": "Rare",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "{T}: Add {C} to your mana pool.\n{2}, {T}: Exile target creature you control.\n{4}, {T}, Sacrifice Endless Sands: Return each creature card exiled with Endless Sands to the battlefield under its owner's control.",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Jonas De Ro",
+      "cmc": 0,
+      "colorIdentity": [
+        "G"
+      ],
+      "id": "fd929c24e1a2f1c615e559bcdc38b045c5966c4a",
+      "imageName": "hashep oasis",
+      "layout": "normal",
+      "mciNumber": "177",
+      "multiverseid": 430866,
+      "name": "Hashep Oasis",
+      "number": "177",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "{T}: Add {C} to your mana pool.\n{T}, Pay 1 life: Add {G} to your mana pool.\n{1}{G}{G}, {T}, Sacrifice a Desert: Target creature gets +3/+3 until end of turn. Activate this ability only any time you could cast a sorcery.",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Josh Hass",
+      "cmc": 0,
+      "flavor": "Amonkhet's desiccated land thirsts for blood.",
+      "id": "18704db2b8d310641a3ddde5a411e4ff2a97e987",
+      "imageName": "hostile desert",
+      "layout": "normal",
+      "mciNumber": "178",
+      "multiverseid": 430867,
+      "name": "Hostile Desert",
+      "number": "178",
+      "rarity": "Rare",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "{T}: Add {C} to your mana pool.\n{2}, Exile a land card from your graveyard: Hostile Desert becomes a 3/4 Elemental creature until end of turn. It's still a land.",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Jonas De Ro",
+      "cmc": 0,
+      "colorIdentity": [
+        "B"
+      ],
+      "id": "a8034d9c572581e05e70e77c5c513dcdf499613d",
+      "imageName": "ifnir deadlands",
+      "layout": "normal",
+      "mciNumber": "179",
+      "multiverseid": 430868,
+      "name": "Ifnir Deadlands",
+      "number": "179",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "{T}: Add {C} to your mana pool.\n{T}, Pay 1 life: Add {B} to your mana pool.\n{2}{B}{B}, {T}, Sacrifice a Desert: Put two -1/-1 counters on target creature an opponent controls. Activate this ability only any time you could cast a sorcery.",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "James Paick",
+      "cmc": 0,
+      "colorIdentity": [
+        "U"
+      ],
+      "id": "a562be051afbb206cca3a5c7abebbcf711bd0f56",
+      "imageName": "ipnu rivulet",
+      "layout": "normal",
+      "mciNumber": "180",
+      "multiverseid": 430869,
+      "name": "Ipnu Rivulet",
+      "number": "180",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "{T}: Add {C} to your mana pool.\n{T}, Pay 1 life: Add {U} to your mana pool.\n{1}{U}, {T}, Sacrifice a Desert: Target player puts the top four cards of his or her library into his or her graveyard.",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Florian de Gesincourt",
+      "cmc": 0,
+      "colorIdentity": [
+        "R"
+      ],
+      "id": "4c917d539d3f14d33bc60673eafd8b76b51f9be2",
+      "imageName": "ramunap ruins",
+      "layout": "normal",
+      "mciNumber": "181",
+      "multiverseid": 430870,
+      "name": "Ramunap Ruins",
+      "number": "181",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "{T}: Add {C} to your mana pool.\n{T}, Pay 1 life: Add {R} to your mana pool.\n{2}{R}{R}, {T}, Sacrifice a Desert: Ramunap Ruins deals 2 damage to each opponent.",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Steven Belledin",
+      "cmc": 0,
+      "flavor": "When the last scrap of flesh is scoured away, the Curse of Wandering ends. Then the dead may sleep.",
+      "id": "1bbc0f5e93060bf8eb91050b7bf9af928cebeef6",
+      "imageName": "scavenger grounds",
+      "layout": "normal",
+      "mciNumber": "182",
+      "multiverseid": 430871,
+      "name": "Scavenger Grounds",
+      "number": "182",
+      "rarity": "Rare",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "{T}: Add {C} to your mana pool.\n{2}, {T}, Sacrifice a Desert: Exile all cards from all graveyards.",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Yeong-Hao Han",
+      "cmc": 0,
+      "colorIdentity": [
+        "W"
+      ],
+      "id": "1af34039edbc71ec5a63d4b47e05edcd3364af09",
+      "imageName": "shefet dunes",
+      "layout": "normal",
+      "mciNumber": "183",
+      "multiverseid": 430872,
+      "name": "Shefet Dunes",
+      "number": "183",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "{T}: Add {C} to your mana pool.\n{T}, Pay 1 life: Add {W} to your mana pool.\n{2}{W}{W}, {T}, Sacrifice a Desert: Creatures you control get +1/+1 until end of turn. Activate this ability only any time you could cast a sorcery.",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Jonas De Ro",
+      "cmc": 0,
+      "flavor": "\"What will happen to us?\" they asked.\nThe vizier paused. \"I think . . . I think that's up to us now.\"",
+      "id": "633a0159ab2bf07e77cd2d7e1ce7cc0c01c37525",
+      "imageName": "survivors' encampment",
+      "layout": "normal",
+      "mciNumber": "184",
+      "multiverseid": 430873,
+      "name": "Survivors' Encampment",
+      "number": "184",
+      "rarity": "Common",
+      "subtypes": [
+        "Desert"
+      ],
+      "text": "{T}: Add {C} to your mana pool.\n{T}, Tap an untapped creature you control: Add one mana of any color to your mana pool.",
+      "type": "Land — Desert",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 0,
+      "colorIdentity": [
+        "W"
+      ],
+      "id": "6d2d25b341254fdb64e757d62836d9193487b7dd",
+      "imageName": "plains1",
+      "layout": "normal",
+      "multiverseid": 430874,
+      "name": "Plains",
+      "number": "185",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Plains"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Plains",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430879,
+        430880
+      ],
+      "watermark": "White"
+    },
+    {
+      "artist": "Richard Wright",
+      "cmc": 0,
+      "colorIdentity": [
+        "U"
+      ],
+      "id": "5cba7d6b77598f5fb9c2f516c1e0f21744e7bc9e",
+      "imageName": "island1",
+      "layout": "normal",
+      "multiverseid": 430875,
+      "name": "Island",
+      "number": "186",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Island"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Island",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430881,
+        430882
+      ],
+      "watermark": "Blue"
+    },
+    {
+      "artist": "Clint Cearley",
+      "cmc": 0,
+      "colorIdentity": [
+        "B"
+      ],
+      "id": "87bc22e3a749b0f4742bd4e3f21988980ee6ba58",
+      "imageName": "swamp1",
+      "layout": "normal",
+      "multiverseid": 430876,
+      "name": "Swamp",
+      "number": "187",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Swamp"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Swamp",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430883,
+        430884
+      ],
+      "watermark": "Black"
+    },
+    {
+      "artist": "Florian de Gesincourt",
+      "cmc": 0,
+      "colorIdentity": [
+        "R"
+      ],
+      "id": "5b68cb907fb7ece908f4f9f0dca255c881ebdd4e",
+      "imageName": "mountain1",
+      "layout": "normal",
+      "multiverseid": 430877,
+      "name": "Mountain",
+      "number": "188",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Mountain"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Mountain",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430885,
+        430886
+      ],
+      "watermark": "Red"
+    },
+    {
+      "artist": "Yeong-Hao Han",
+      "cmc": 0,
+      "colorIdentity": [
+        "G"
+      ],
+      "id": "abb25377c31556c18e059e9dede962484a9e99b8",
+      "imageName": "forest1",
+      "layout": "normal",
+      "multiverseid": 430878,
+      "name": "Forest",
+      "number": "189",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Forest"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Forest",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430887,
+        430888
+      ],
+      "watermark": "Green"
+    },
+    {
+      "artist": "Lars Grant-West",
+      "cmc": 0,
+      "colorIdentity": [
+        "W"
+      ],
+      "id": "e673ac289cec2fa180f632992cc7074dd162eac7",
+      "imageName": "plains2",
+      "layout": "normal",
+      "multiverseid": 430879,
+      "name": "Plains",
+      "number": "190",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Plains"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Plains",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430874,
+        430880
+      ],
+      "watermark": "White"
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 0,
+      "colorIdentity": [
+        "W"
+      ],
+      "id": "1d44f49e64d8ac93fbcbd28c324ae05f4a9b3949",
+      "imageName": "plains3",
+      "layout": "normal",
+      "multiverseid": 430880,
+      "name": "Plains",
+      "number": "191",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Plains"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Plains",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430874,
+        430879
+      ],
+      "watermark": "White"
+    },
+    {
+      "artist": "Lucas Graciano",
+      "cmc": 0,
+      "colorIdentity": [
+        "U"
+      ],
+      "id": "d84fdde4b90691f323a22d2e5f5eda1629c02fc3",
+      "imageName": "island2",
+      "layout": "normal",
+      "multiverseid": 430881,
+      "name": "Island",
+      "number": "192",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Island"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Island",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430875,
+        430882
+      ],
+      "watermark": "Blue"
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 0,
+      "colorIdentity": [
+        "U"
+      ],
+      "id": "ca85481bb404e6bf28b38cf09e60d2b5bb5b9d42",
+      "imageName": "island3",
+      "layout": "normal",
+      "multiverseid": 430882,
+      "name": "Island",
+      "number": "193",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Island"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Island",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430875,
+        430881
+      ],
+      "watermark": "Blue"
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 0,
+      "colorIdentity": [
+        "B"
+      ],
+      "id": "3cabcad77de60bb5b736716d1170c20ea574f51e",
+      "imageName": "swamp2",
+      "layout": "normal",
+      "multiverseid": 430883,
+      "name": "Swamp",
+      "number": "194",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Swamp"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Swamp",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430876,
+        430884
+      ],
+      "watermark": "Black"
+    },
+    {
+      "artist": "Mark Zug",
+      "cmc": 0,
+      "colorIdentity": [
+        "B"
+      ],
+      "id": "a3f0b36e4ae22931b95c0f356e415e8051b2bd6f",
+      "imageName": "swamp3",
+      "layout": "normal",
+      "multiverseid": 430884,
+      "name": "Swamp",
+      "number": "195",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Swamp"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Swamp",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430876,
+        430883
+      ],
+      "watermark": "Black"
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 0,
+      "colorIdentity": [
+        "R"
+      ],
+      "id": "8bb5d8f59524b3edaee5ef10d8fb579aa46cdbbc",
+      "imageName": "mountain2",
+      "layout": "normal",
+      "multiverseid": 430885,
+      "name": "Mountain",
+      "number": "196",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Mountain"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Mountain",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430877,
+        430886
+      ],
+      "watermark": "Red"
+    },
+    {
+      "artist": "Kev Walker",
+      "cmc": 0,
+      "colorIdentity": [
+        "R"
+      ],
+      "id": "6a3175628ed1d070c3312335a5c255c745f0577a",
+      "imageName": "mountain3",
+      "layout": "normal",
+      "multiverseid": 430886,
+      "name": "Mountain",
+      "number": "197",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Mountain"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Mountain",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430877,
+        430885
+      ],
+      "watermark": "Red"
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 0,
+      "colorIdentity": [
+        "G"
+      ],
+      "id": "8f9397777cc66c1a2f16986668c939967909db04",
+      "imageName": "forest2",
+      "layout": "normal",
+      "multiverseid": 430887,
+      "name": "Forest",
+      "number": "198",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Forest"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Forest",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430878,
+        430888
+      ],
+      "watermark": "Green"
+    },
+    {
+      "artist": "Mark Poole",
+      "cmc": 0,
+      "colorIdentity": [
+        "G"
+      ],
+      "id": "a3a19a32956521f8b4012021324eb5961bf3cd03",
+      "imageName": "forest3",
+      "layout": "normal",
+      "multiverseid": 430888,
+      "name": "Forest",
+      "number": "199",
+      "rarity": "Basic Land",
+      "subtypes": [
+        "Forest"
+      ],
+      "supertypes": [
+        "Basic"
+      ],
+      "type": "Basic Land — Forest",
+      "types": [
+        "Land"
+      ],
+      "variations": [
+        430878,
+        430887
+      ],
+      "watermark": "Green"
+    },
+    {
+      "artist": "Chris Rallis",
+      "cmc": 7,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "id": "b41038ae8b9750e76011a06cee041f3d732a158e",
+      "imageName": "nissa, genesis mage",
+      "layout": "normal",
+      "loyalty": 5,
+      "manaCost": "{5}{G}{G}",
+      "mciNumber": "200",
+      "multiverseid": 432879,
+      "name": "Nissa, Genesis Mage",
+      "number": "200",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "Nissa"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "+2: Untap up to two target creatures and up to two target lands.\n−3: Target creature gets +5/+5 until end of turn.\n−10: Look at the top ten cards of your library. You may put any number of creature and/or land cards from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "type": "Legendary Planeswalker — Nissa",
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "artist": "Josu Hernaiz",
+      "cmc": 3,
+      "colorIdentity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "\"All can't be lost. Nissa has shown me that.\"",
+      "id": "4d275c853a78a08959d4a1a969ba603decd2c10e",
+      "imageName": "avid reclaimer",
+      "layout": "normal",
+      "manaCost": "{2}{G}",
+      "mciNumber": "201",
+      "multiverseid": 432880,
+      "name": "Avid Reclaimer",
+      "number": "201",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "text": "{T}: Add {G} or {U} to your mana pool. If you control a Nissa planeswalker, you gain 2 life.",
+      "toughness": "2",
+      "type": "Creature — Human Druid",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Florian de Gesincourt",
+      "cmc": 6,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "flavor": "Life will find a way, or it will make one.",
+      "id": "d412a9ce278edb257ccd3f75f582d4c977bf0b97",
+      "imageName": "brambleweft behemoth",
+      "layout": "normal",
+      "manaCost": "{4}{G}{G}",
+      "mciNumber": "202",
+      "multiverseid": 432881,
+      "name": "Brambleweft Behemoth",
+      "number": "202",
+      "power": "6",
+      "rarity": "Common",
+      "subtypes": [
+        "Elemental"
+      ],
+      "text": "Trample (This creature can deal excess combat damage to defending player or planeswalker while attacking.)",
+      "toughness": "6",
+      "type": "Creature — Elemental",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Tommy Arnold",
+      "cmc": 5,
+      "colorIdentity": [
+        "G"
+      ],
+      "colors": [
+        "Green"
+      ],
+      "id": "9a6511ecde05a8dcd4bdab9ec843f12dd761b29c",
+      "imageName": "nissa's encouragement",
+      "layout": "normal",
+      "manaCost": "{4}{G}",
+      "mciNumber": "203",
+      "multiverseid": 432882,
+      "name": "Nissa's Encouragement",
+      "number": "203",
+      "rarity": "Rare",
+      "text": "Search your library and graveyard for a card named Forest, a card named Brambleweft Behemoth, and a card named Nissa, Genesis Mage. Reveal those cards, put them into your hand, then shuffle your library.",
+      "type": "Sorcery",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "artist": "Florian de Gesincourt",
+      "cmc": 0,
+      "colorIdentity": [
+        "G",
+        "U"
+      ],
+      "flavor": "\"Bolas's power on this plane can't be absolute. Look around you.\"\n—Nissa Revane",
+      "id": "8539578bbd44cd25885ab9b377989b543b5dd6e5",
+      "imageName": "woodland stream",
+      "layout": "normal",
+      "mciNumber": "204",
+      "multiverseid": 432883,
+      "name": "Woodland Stream",
+      "number": "204",
+      "rarity": "Common",
+      "text": "Woodland Stream enters the battlefield tapped.\n{T}: Add {G} or {U} to your mana pool.",
+      "type": "Land",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "artist": "Svetlin Velinov",
+      "cmc": 8,
+      "colorIdentity": [
+        "U",
+        "B",
+        "R"
+      ],
+      "colors": [
+        "Blue",
+        "Black",
+        "Red"
+      ],
+      "id": "ccb50c490737e497fb0fb96eb0dc02f4cbcf112e",
+      "imageName": "nicol bolas, the deceiver",
+      "layout": "normal",
+      "loyalty": 5,
+      "manaCost": "{5}{U}{B}{R}",
+      "mciNumber": "205",
+      "multiverseid": 432884,
+      "name": "Nicol Bolas, the Deceiver",
+      "number": "205",
+      "rarity": "Mythic Rare",
+      "subtypes": [
+        "Bolas"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "text": "+3: Each opponent loses 3 life unless that player sacrifices a nonland permanent or discards a card.\n−3: Destroy target creature. Draw a card.\n−11: Nicol Bolas, the Deceiver deals 7 damage to each opponent. You draw seven cards.",
+      "type": "Legendary Planeswalker — Bolas",
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "artist": "Tomasz Jedruszek",
+      "cmc": 2,
+      "colorIdentity": [
+        "B"
+      ],
+      "colors": [
+        "Black"
+      ],
+      "flavor": "As the Second Sun glided into its final position in the sky, a chorus of wings sounded to herald the return of Nicol Bolas.",
+      "id": "dda23672bfbb49c9ed723b7f491fb73b2894b68c",
+      "imageName": "wasp of the bitter end",
+      "layout": "normal",
+      "manaCost": "{1}{B}",
+      "mciNumber": "206",
+      "multiverseid": 432885,
+      "name": "Wasp of the Bitter End",
+      "number": "206",
+      "power": "2",
+      "rarity": "Uncommon",
+      "subtypes": [
+        "Insect",
+        "Horror"
+      ],
+      "text": "Flying\nWhenever you cast a Bolas planeswalker spell, you may sacrifice Wasp of the Bitter End. If you do, destroy target creature.",
+      "toughness": "1",
+      "type": "Creature — Insect Horror",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Gabor Szikszai",
+      "cmc": 4,
+      "colorIdentity": [
+        "R"
+      ],
+      "colors": [
+        "Red"
+      ],
+      "flavor": "The God-Pharaoh's most devoted took it upon themselves to follow his example.",
+      "id": "03c95573c696d57602d6374703ca3c1618fd3ae8",
+      "imageName": "zealot of the god-pharaoh",
+      "layout": "normal",
+      "manaCost": "{3}{R}",
+      "mciNumber": "207",
+      "multiverseid": 432886,
+      "name": "Zealot of the God-Pharaoh",
+      "number": "207",
+      "power": "4",
+      "rarity": "Common",
+      "subtypes": [
+        "Minotaur",
+        "Archer"
+      ],
+      "text": "{4}{R}: Zealot of the God-Pharaoh deals 2 damage to target opponent.",
+      "toughness": "3",
+      "type": "Creature — Minotaur Archer",
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 4,
+      "colorIdentity": [
+        "U",
+        "B",
+        "R"
+      ],
+      "id": "39379e9cec97bed53c2eb6e65a4e87e0047b2585",
+      "imageName": "visage of bolas",
+      "layout": "normal",
+      "manaCost": "{4}",
+      "mciNumber": "208",
+      "multiverseid": 432887,
+      "name": "Visage of Bolas",
+      "number": "208",
+      "rarity": "Rare",
+      "text": "When Visage of Bolas enters the battlefield, you may search your library and/or graveyard for a card named Nicol Bolas, the Deceiver, reveal it, and put it into your hand. If you search your library this way, shuffle it.\n{T}: Add {U}, {B}, or {R} to your mana pool.",
+      "type": "Artifact",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "artist": "Titus Lunter",
+      "cmc": 0,
+      "colorIdentity": [
+        "B",
+        "R"
+      ],
+      "flavor": "\"I do as I choose with what is mine. And it is all mine.\"\n—Nicol Bolas",
+      "id": "06c44e0bc5c479d8ccf936775bed06e4aa0e34e7",
+      "imageName": "cinder barrens",
+      "layout": "normal",
+      "mciNumber": "209",
+      "multiverseid": 432888,
+      "name": "Cinder Barrens",
+      "number": "209",
+      "rarity": "Common",
+      "text": "Cinder Barrens enters the battlefield tapped.\n{T}: Add {B} or {R} to your mana pool.",
+      "type": "Land",
+      "types": [
+        "Land"
+      ]
+    }
+  ]
+}
