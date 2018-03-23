@@ -37,10 +37,15 @@ server.use(bodyParser.json());
 
 server.get('/games', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.secrets;
+  const { debug_password } = req.body;
+  if (debug_password != DEBUG_PASSWORD) {
+    res.status(400).send({error: "debug password incorrect"})
+    return
+  }
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     if (connectErr) return next(connectErr);
     let collection = client.db(database).collection(gameCollection)
-    let cursor = collection.find({}, {limit: 5});  // hard-limit to 5 records for example
+    let cursor = collection.find({});  // hard-limit to 5 records for example
     cursor.toArray((cursorErr, docs) => {
       if (cursorErr) return next(cursorErr);
       console.log("hello daphne")
@@ -52,6 +57,11 @@ server.get('/games', (req, res, next) => {
 
 server.get('/games/user/:username', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.secrets;
+  const { debug_password } = req.body;
+  if (debug_password != DEBUG_PASSWORD) {
+    res.status(400).send({error: "debug password incorrect"})
+    return
+  }
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     const { username } = req.params ;
     if (connectErr) return next(connectErr);
@@ -67,6 +77,11 @@ server.get('/games/user/:username', (req, res, next) => {
 
 server.get('/games/userID/:userID', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.secrets;
+  const { debug_password } = req.body;
+  if (debug_password != DEBUG_PASSWORD) {
+    res.status(400).send({error: "debug password incorrect"})
+    return
+  }
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     const { userID } = req.params ;
     if (connectErr) return next(connectErr);
@@ -82,6 +97,11 @@ server.get('/games/userID/:userID', (req, res, next) => {
 
 server.get('/game/_id/:_id', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.secrets;
+  const { debug_password } = req.body;
+  if (debug_password != DEBUG_PASSWORD) {
+    res.status(400).send({error: "debug password incorrect"})
+    return
+  }
   MongoClient.connect(MONGO_URL, (err, client) => {
     const { _id } = req.params ;
     if (err) return next(err);
@@ -105,6 +125,11 @@ let getGameById = (client, gameID, callback) => {
 
 server.get('/game/gameID/:gid', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.secrets;
+  const { debug_password } = req.body;
+  if (debug_password != DEBUG_PASSWORD) {
+    res.status(400).send({error: "debug password incorrect"})
+    return
+  }
   MongoClient.connect(MONGO_URL, (err, client) => {
     const gid = parseInt(req.params.gid);
     getGameById(client, gid, (result, err) => {
