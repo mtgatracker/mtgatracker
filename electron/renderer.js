@@ -3,7 +3,7 @@ console.time('init')
 const https = require('https')
 const http = require('http')
 
-const ReconnectingWebSocket = require('./rws.js')
+const ReconnectingWebSocket = require('./vendor/rws.js')
 const fs = require('fs')
 
 let { remote } = require('electron')

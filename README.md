@@ -1,6 +1,16 @@
 # MTGA Tracker
 
+[![Discord](https://img.shields.io/discord/425145310684250112.svg)](https://discordapp.com/channels/425145310684250112/425145310684250114)
+[![Coveralls github](https://img.shields.io/coveralls/github/shawkinsl/mtga-tracker.svg)](https://coveralls.io) <!-- TODO: this -->
+[![Github All Releases](https://img.shields.io/github/downloads/shawkinsl/mtga-tracker/total.svg)](https://github.com/shawkinsl/mtga-tracker/releases)
+[![Beerpay](https://img.shields.io/beerpay/shawkinsl/mtga-tracker.svg)](https://beerpay.io/shawkinsl/mtga-tracker)
+![GitHub repo size in bytes](https://img.shields.io/github/repo-size/shawkinsl/mtga-tracker.svg)
+[![serverless](http://public.serverless.com/badges/v3.svg)](https://webtask.io/)
+
 MTGA Tracker is an electron-based app that helps you track your MTGA decks!
+
+<!-- [![Travis](https://img.shields.io/travis/shawkinsl/mtga-tracker.svg)](https://travis-ci.org/shawkinsl/mtga-tracker) --><!-- TODO: this -->
+<!-- [![Code Climate](https://img.shields.io/codeclimate/shawkinsl/mtga-tracker.svg)](https://codeclimate.com/github/shawkinsl/mtga-tracker) --><!-- TODO: this -->
 
 ## I'm not reading anything else until you tell me how to use it
 
@@ -95,6 +105,13 @@ The front end of MTGA Tracker is an electron app that uses node / websocket to c
 
 `docs` - code for mtga-tracker.com (called docs for github pages)
 
+### Contributing
+
+All changes by non core-contributors must go through a code-review process. For non-contributors, this is accomplished
+by forking, making changes in the fork, and submitting PR's. The rules for becoming a contributor are as follows:
+
+For more info, see [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
+
 ### Signing code
 
 Currently MTGATracker ~~is self-signed.~~ (Edit: since this doesn't do anything, we won't bother until
@@ -185,12 +202,12 @@ MTGA Tracker is licensed under the [MIT License](https://opensource.org/licenses
 
 #### Core contributors
 
-If this list gets too heavy, please refer to [contributors/core.yaml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yaml)
+If this list gets too heavy, please refer to [contributors/core.yml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yml)
 
 - [shawkinsl](https://github.com/shawkinsl)
 
 #### Collaborators
 
-If this list gets too heavy, please refer to [contributors/collab.yaml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yaml)
+If this list gets too heavy, please refer to [contributors/collab.yml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yml)
 
 - [daphpunk](https://github.com/daphpunk)
