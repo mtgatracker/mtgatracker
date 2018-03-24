@@ -13,7 +13,9 @@
     </div>
     <div id="container">
       <h1 class="deck-title">{ deck_name }</h1>
+      <h3 class="zoom-panel"><span id="zoom-out" class="zoom">-</span> / <span id="zoom-in" class="zoom">+</span></h3>
       <p class="header-warning" rv-show="show_error">{last_error} / {error_count}</p>
+      <p class="update-message" rv-show="show_update_message"><a href="http://github.com/shawkinsl/mtga-tracker/releases/latest">{message}</a></p>
       <h3>{ total_cards_in_deck } cards in deck</h3>
       <div class="card" rv-each-stat="draw_stats" rv-card_color="stat.colors">
         <div class="card-text">
@@ -32,7 +34,6 @@
           </span>
         </div>
       </div>
-      <h3 class="zoom-panel"><span id="zoom-out" class="zoom">-</span> / <span id="zoom-in" class="zoom">+</span></h3>
     </div>
   </body>
   <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>

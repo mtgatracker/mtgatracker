@@ -45,7 +45,10 @@ async def output(websocket):
     if message:
         now = datetime.datetime.utcnow().isoformat() + 'Z'
         message['now'] = now
-        message["data_type"] = "message"
+        if isinstance(message, dict) and "error" in message.keys():
+            message["data_type"] = "error"
+        else:
+            message["data_type"] = "message"
         await websocket.send(json.dumps(message))
     await asyncio.sleep(0.5)
 
@@ -97,6 +100,7 @@ if __name__ == "__main__":
 
     websocket_thread = threading.Thread(target=asyncio.get_event_loop().run_forever)
     websocket_thread.start()
+
     if args.read_full_log:
         print("WARNING: known issue with reading full log!")
         print("For some reason, reading the full log causes the python process to never exit.")
@@ -128,7 +132,7 @@ if __name__ == "__main__":
                     if not all_die_queue.empty():
                         break
         else:
-            general_output_queue.put({"color": "red", "msg": "No log file present. Please run MTGA at least once before launching MTGA Tracker.", "count": 1})
+            general_output_queue.put({"error": "NoLogException", "msg": "No log file present. Please run MTGA at least once before launching MTGA Tracker.", "count": 1})
     queues.block_read_queue.put(None)
     block_watch_process.join()
     json_watch_process.join()
