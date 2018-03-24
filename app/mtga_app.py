@@ -44,7 +44,7 @@ class MTGAWatchApplication(object):
 
     def send_error(self, error):
         self.error_count += 1
-        general_output_queue.put({"color": "red", "msg": error, "count": self.error_count})
+        general_output_queue.put({"error": "MTGAWatchError", "msg": error, "count": self.error_count})
 
     def send_message(self, message):
         general_output_queue.put({"color": "black", "msg": message})

@@ -1,30 +1,30 @@
 {
-  "name": "mtga-tracker",
-  "version": "1.0.0",
-  "description": "Application to track MTGA decks in-game",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
-  "repository": "https://github.com/shawkinsl/mtga-tools",
-  "keywords": [
-    "Electron",
-    "Python",
-    "flask",
-    "deck",
-    "mtg",
-    "mtga"
-  ],
-  "author": "shawkins",
-  "license": "MIT",
-  "dependencies": {
-    "find-process": "^1.1.0",
-    "npm": "^5.7.1",
-    "reconnecting-websocket": "^3.2.2",
-    "ws": "4.1.0"
-  },
-  "devDependencies": {
-    "electron": "^1.7.6",
-    "electron-packager": "^9.0.1"
-  }
+    "name": "mtga-tracker",
+    "version": "0.1.0-alpha",
+    "description": "Application to track MTGA decks in-game",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "repository": "https://github.com/shawkinsl/mtga-tools",
+    "keywords": [
+        "Electron",
+        "Python",
+        "flask",
+        "deck",
+        "mtg",
+        "mtga"
+    ],
+    "author": "shawkins",
+    "license": "MIT",
+    "dependencies": {
+        "find-process": "^1.1.0",
+        "npm": "^5.7.1",
+        "reconnecting-websocket": "^3.2.2",
+        "ws": "4.1.0"
+    },
+    "devDependencies": {
+        "electron": "^1.7.6",
+        "electron-packager": "^9.0.1"
+    }
 }

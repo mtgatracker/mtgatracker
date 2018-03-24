@@ -106,13 +106,6 @@ The front end of MTGA Tracker is an electron app that uses node / websocket to c
 
 `docs` - code for mtga-tracker.com (called docs for github pages)
 
-### Contributing
-
-All changes by non core-contributors must go through a code-review process. For non-contributors, this is accomplished
-by forking, making changes in the fork, and submitting PR's. The rules for becoming a contributor are as follows:
-
-For more info, see [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
-
 ### Signing code
 
 Currently MTGATracker ~~is self-signed.~~ (Edit: since this doesn't do anything, we won't bother until
@@ -173,11 +166,9 @@ Wizards know you are sad the project was killed, via Reddit, Twitter, you name i
 please upvote/like/retweet MTGA Tracker announcements at the following places, to publicely let Wizards know you support
 this project: [This GitHub project (toss us a star!)](https://github.com/shawkinsl/mtga-tracker)
 / [beta forums 1](https://mtgarena.community.gl/forums/threads/14685)
-/ [beta forums 2 (TODO: after release post)](#)
-/ [Twitter 1 (TODO: after NDA drops)](#)
-/ [Twitter 2 (TODO: after first binary release)](#)
-/ [reddit 1 (TODO: after NDA drops)](#)
-/ [reddit 2(TODO: after first binary release)](#)
+/ [beta forums 2](https://mtgarena.community.gl/forums/threads/16647)
+/ [Twitter 1](https://twitter.com/MTGATrackerDevs/status/976990691837468673)
+/ [reddit 1](https://www.reddit.com/r/MagicArena/comments/86h1ag/mtgatracker_010alpha_is_out/)
 
 In accordance with the [MTG Fan Art policy](http://company.wizards.com/fancontentpolicy): MTGA Tracker is unofficial
 Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used
