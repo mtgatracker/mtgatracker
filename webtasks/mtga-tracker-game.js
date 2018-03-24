@@ -5,6 +5,7 @@ import express from 'express';
 import Webtask from 'webtask-tools';
 import { MongoClient, ObjectID } from 'mongodb';
 var backbone = require('backbone');
+var request = require('request');
 
 const Game = backbone.Model.extend({
   validate: function(attr) {
@@ -35,29 +36,61 @@ const server = express();
 
 server.use(bodyParser.json());
 
-server.get('/games', (req, res, next) => {
+server.get('/games/count', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.secrets;
-  const { debug_password } = req.body;
+  const { badge } = req.query;
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    if (connectErr) return next(connectErr);
+    let collection = client.db(database).collection(gameCollection)
+    collection.count(null, null, (err, count) => {
+      if (err) return next(err);
+      if (badge) {
+        console.log("return a badge instead")
+        request('https://img.shields.io/badge/Tracked%20Games-' + count + '-brightgreen.svg').pipe(res);
+      } else {
+        res.status(200).send({"game_count": count});
+        client.close()
+      }
+    })
+  })
+})
+
+server.get('/games', (req, res, next) => {
+  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
+  if (req.query.per_page) {
+    var per_page = parseInt(req.query.per_page)
+  } else {
+    var per_page = 10;
+  }
+  const { debug_password, page = 1} = req.query;
+
   if (debug_password != DEBUG_PASSWORD) {
     res.status(400).send({error: "debug password incorrect"})
     return
   }
+
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     if (connectErr) return next(connectErr);
     let collection = client.db(database).collection(gameCollection)
-    let cursor = collection.find({});  // hard-limit to 5 records for example
-    cursor.toArray((cursorErr, docs) => {
+    collection.count(null, null, (err, count) => {
+      let numPages = Math.ceil(count / per_page);
+      let cursor = collection.find().skip((page - 1) * per_page).limit(per_page);
+      cursor.toArray((cursorErr, docs) => {
       if (cursorErr) return next(cursorErr);
-      console.log("hello daphne")
-      res.status(200).send(docs);
+      res.status(200).send({
+          totalPages: numPages,
+          page: page,
+          docs: docs
+        });
+      })
       client.close()
     })
   })
 })
 
 server.get('/games/user/:username', (req, res, next) => {
-  const { MONGO_URL } = req.webtaskContext.secrets;
-  const { debug_password } = req.body;
+  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
+  const { debug_password } = req.query;
   if (debug_password != DEBUG_PASSWORD) {
     res.status(400).send({error: "debug password incorrect"})
     return
@@ -76,8 +109,8 @@ server.get('/games/user/:username', (req, res, next) => {
 })
 
 server.get('/games/userID/:userID', (req, res, next) => {
-  const { MONGO_URL } = req.webtaskContext.secrets;
-  const { debug_password } = req.body;
+  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
+  const { debug_password } = req.query;
   if (debug_password != DEBUG_PASSWORD) {
     res.status(400).send({error: "debug password incorrect"})
     return
@@ -96,8 +129,8 @@ server.get('/games/userID/:userID', (req, res, next) => {
 })
 
 server.get('/game/_id/:_id', (req, res, next) => {
-  const { MONGO_URL } = req.webtaskContext.secrets;
-  const { debug_password } = req.body;
+  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
+  const { debug_password } = req.query;
   if (debug_password != DEBUG_PASSWORD) {
     res.status(400).send({error: "debug password incorrect"})
     return
@@ -124,8 +157,8 @@ let getGameById = (client, gameID, callback) => {
 }
 
 server.get('/game/gameID/:gid', (req, res, next) => {
-  const { MONGO_URL } = req.webtaskContext.secrets;
-  const { debug_password } = req.body;
+  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
+  const { debug_password } = req.query;
   if (debug_password != DEBUG_PASSWORD) {
     res.status(400).send({error: "debug password incorrect"})
     return
@@ -137,24 +170,6 @@ server.get('/game/gameID/:gid', (req, res, next) => {
       if (err) return next(err);
       if (result !== null) res.status(200).send(result)
       else res.status(404).send(result)
-    });
-  });
-});
-
-server.post('/danger/reset/all', (req, res, next) => {
-  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
-  const { debug_password } = req.body;
-  if (debug_password != DEBUG_PASSWORD) {
-    res.status(400).send({error: "debug password incorrect"})
-    return
-  }
-  MongoClient.connect(MONGO_URL, (err, client) => {
-    if (err) return next(err);
-    client.db(database).collection(gameCollection).drop(null, (err, result) => {
-      if (err) return next(err);
-      if (result !== null) res.status(200).send(result)
-      else res.status(400).send(result)
-      client.close();
     });
   });
 });

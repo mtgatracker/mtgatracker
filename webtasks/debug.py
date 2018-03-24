@@ -56,35 +56,36 @@ def _generate_valid_games():
         time.sleep(1)  # self-rate limit
 
 
-def get_all_games():
-    return requests.get(root_url + "/games").json()
+def get_all_games_page(page, per_page):
+    print(root_url + "/games?page={}&per_page=()&debug_password={}".format(page, per_page, debug_password))
+    return requests.get(root_url + "/games?page={}&per_page={}&debug_password={}".format(page, per_page, debug_password)).json()
 
 
 def get_games_user(username):
-    return requests.get(root_url + "/games/user/{}".format(username)).json()
+    return requests.get(root_url + "/games/user/{}?debug_password={}".format(username, debug_password)).json()
 
 
 def get_games_user_id(user_id):
-    return requests.get(root_url + "/games/userID/{}".format(user_id)).json()
+    return requests.get(root_url + "/games/userID/{}?debug_password={}".format(user_id, debug_password)).json()
 
 
 def get_game_by_oid(oid):
-    return requests.get(root_url + "/game/_id/{}".format(oid)).json()
+    return requests.get(root_url + "/game/_id/{}?debug_password={}".format(oid, debug_password)).json()
 
 
 def get_game_by_gid(gid):
-    return requests.get(root_url + "/game/gameID/{}".format(gid)).json()
+    return requests.get(root_url + "/game/gameID/{}?debug_password={}".format(gid, debug_password)).json()
 
-
-def debug_reset_all():
-    if not debug_password:
-        return "no debug password loaded, sorry"
-    are_you_sure = input("are you sure? (y/n): ")
-    if "y" in are_you_sure.lower():
-        return requests.post(root_url + "/danger/reset/all", json={"debug_password": debug_password}).json()
-    else:
-        return "ok, backing out"
-
+#
+# def debug_reset_all():
+#     if not debug_password:
+#         return "no debug password loaded, sorry"
+#     are_you_sure = input("are you sure? (y/n): ")
+#     if "y" in are_you_sure.lower():
+#         return requests.post(root_url + "/danger/reset/all", json={"debug_password": debug_password}).json()
+#     else:
+#         return "ok, backing out"
+#
 
 def put_game(game=None):
     if game is None:
