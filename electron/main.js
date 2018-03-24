@@ -147,6 +147,7 @@ if (!no_server) {
 
 global.debug = debug;
 global.showIIDs = showIIDs;
+global.version = app.getVersion()
 
 
 /*************************************************************

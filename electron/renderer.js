@@ -1,7 +1,6 @@
 console.time('init')
 
-const https = require('https')
-const http = require('http')
+const request = require("request")
 
 const ReconnectingWebSocket = require('./vendor/rws.js')
 const fs = require('fs')
@@ -15,6 +14,7 @@ window.addEventListener('beforeunload', function() {
 
 var debug = remote.getGlobal('debug');
 var showIIDs = remote.getGlobal('showIIDs');
+var version = remote.getGlobal('version');
 var zoom = 0.8;
 
 var ws = new ReconnectingWebSocket("ws://127.0.0.1:5678/", null, {constructor: WebSocket})
@@ -23,6 +23,7 @@ var appData = {
     deck_name: "loading...",
     cant_connect: false,
     show_error: false,
+    show_update_message: false,
     last_error: "",
     error_count: 0,
     debug: debug,
@@ -33,6 +34,20 @@ var appData = {
     draw_stats: [],
     opponent_hand: [],
 }
+
+// check for a newer release
+request.get({
+    url: "https://api.github.com/repos/shawkinsl/mtga-tracker/releases/latest",
+    json: true,
+    headers: {'User-Agent': 'MTGATracker-App'}
+
+}, (err, res, data) => {
+    const latestVersion = data.tag_name;
+    if (version != latestVersion) {
+        appData.message = `A new version (${latestVersion}) is available!`;
+        appData.show_update_message = true;
+    }
+})
 
 rivets.bind(document.getElementById('container'), appData)
 
@@ -173,12 +188,14 @@ ws.onmessage = (data) => {
         } else {
             // console.log("would set height: " + totalHeight)
         }
-    } else if (data.data_type == "message") {
+    } else if (data.data_type == "error") {
         if (data.count) {
             appData.error_count = data.count;
         }
         appData.last_error = data.msg;
         appData.show_error = true;
+    } else if (data.data_type == "message") {
+        // TODO
     }
 }
 
@@ -191,6 +208,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
         zoom += 0.1
         browserWindow.webContents.setZoomFactor(zoom)
     })
+    const shell = require('electron').shell;
+    //open links externally by default
+    $(document).on('click', 'a[href^="http"]', function(event) {
+        event.preventDefault();
+        shell.openExternal(this.href);
+    });
 });
 
 console.timeEnd('init')
