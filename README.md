@@ -3,7 +3,7 @@
 [![Discord](https://img.shields.io/discord/425145310684250112.svg)](https://discordapp.com/channels/425145310684250112/425145310684250114)
 [![Coveralls github](https://img.shields.io/coveralls/github/shawkinsl/mtga-tracker.svg)](https://coveralls.io) <!-- TODO: this -->
 [![Github All Releases](https://img.shields.io/github/downloads/shawkinsl/mtga-tracker/total.svg)](https://github.com/shawkinsl/mtga-tracker/releases)
-[![Github All Releases](https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game/games/count?badge=true)](https://github.com/shawkinsl/mtga-tracker/releases)
+[![Github All Releases](https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game/games/count?badge=true&fixcache)](https://github.com/shawkinsl/mtga-tracker/releases)
 [![Beerpay](https://img.shields.io/beerpay/shawkinsl/mtga-tracker.svg)](https://beerpay.io/shawkinsl/mtga-tracker)
 ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/shawkinsl/mtga-tracker.svg)
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://webtask.io/)

@@ -45,7 +45,7 @@ server.get('/games/count', (req, res, next) => {
     collection.count(null, null, (err, count) => {
       if (err) return next(err);
       if (badge) {
-        console.log("return a badge instead")
+        res.set('Cache-Control', 'no-cache')
         request('https://img.shields.io/badge/Tracked%20Games-' + count + '-brightgreen.svg').pipe(res);
       } else {
         res.status(200).send({"game_count": count});
