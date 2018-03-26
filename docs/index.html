@@ -1,93 +1,406 @@
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115882306-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+<head>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-      gtag('config', 'UA-115882306-1');
-    </script>
+    gtag('config', 'UA-115882306-1');
+  </script>
+  <meta charset="utf-8">
+  <title>MTGA Tracker</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Track your decks in game. Track your games and collection online. Share your decks, and find new ones. Play MTG Arena!">
-    <meta name="keywords" content="mtga,mtg,arena,mtg arena,magic,magic the gathering,magic the gathering arena,decktracker,mtga tracker,mtgatracker,mtga deck tracker,mtgadecktracker">
-    <meta name="robots" content="index,follow">
-    <meta name="author" content="Spencatro">
-    <link rel="icon" href="favicon.ico">
+  <!-- Favicons -->
+  <link href="img/favicon.ico" rel="icon">
+  <link href="img/apple-touch-icon.png" rel="apple-touch-icon">
 
-    <title>MTGA Tracker</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Poppins:300,400,500,700" rel="stylesheet">
 
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+  <!-- Bootstrap CSS File -->
+  <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="cover.css" rel="stylesheet">
-  </head>
+  <!-- Libraries CSS Files -->
+  <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+  <link href="lib/animate/animate.min.css" rel="stylesheet">
 
-  <body class="text-center">
+  <!-- Main Stylesheet File -->
+  <link href="css/style.css" rel="stylesheet">
 
-    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
-      <header class="masthead mb-auto">
-        <div class="inner">
-          <h3 class="masthead-brand">MTGATracker.com</h3>
-          <nav class="nav nav-masthead justify-content-center">
-            <a class="nav-link active" href="/">Home</a>
-            <a class="nav-link" href="https://github.com/shawkinsl/mtga-tracker/tree/master/issues">Report an Issue</a>
-          </nav>
-        </div>
-      </header>
+  <!-- =======================================================
+    Theme Name: Regna
+    Theme URL: https://bootstrapmade.com/regna-bootstrap-onepage-template/
+    Author: BootstrapMade.com
+    License: https://bootstrapmade.com/license/
+  ======================================================= -->
+</head>
 
-      <main role="main" class="inner cover">
-        <img class="logo" src="icon_large.png">
-        <h1 class="cover-heading">MTGA Tracker</h1>
-        <p class="lead">MTGA Tracker tracks your deck! Available for Windows, and OSX<br>(once MTGA is available for OSX, that is)</p>
-        <p class="lead">
-          <button type="button" class="btn btn-lg btn-secondary" data-toggle="modal" data-target="#exampleModal">
-            Download Latest &nbsp;&nbsp;<i class="fab fa-github"></i>
-          </button></p>
-      </main>
+<body>
 
-      <footer class="mastfoot mt-auto">
-        <div class="inner">
-          <p>Created by <a href="https://twitch.tv/spencatro">Spencatro</a>. Find MTGA Tracker on <a href="https://github.com/shawkinsl/mtga-tracker">GitHub</a>.</p>
-          <p class="small">MTGA Tracker is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
-        </div>
-      </footer>
+  <!--==========================
+  Header
+  ============================-->
+  <header id="header">
+    <div class="container">
+
+      <div id="logo" class="pull-left">
+        <h1><a href="http://mtgatracker.com">MTGA Tracker</a></h1>
+        <!-- Uncomment below if you prefer to use a text logo -->
+        <!--<h1><a href="#hero">Regna</a></h1>-->
+      </div>
+
+      <nav id="nav-menu-container">
+        <ul class="nav-menu">
+          <li class="menu-active"><a href="#hero">Home</a></li>
+          <li><a href="#services">Features</a></li>
+          <li><a href="https://github.com/shawkinsl/mtga-tracker">GitHub</a></li>
+          <li><a href="https://twitter.com/mtgatrackerdevs">Twitter</a></li>
+          <li><a href="https://github.com/shawkinsl/mtga-tracker/tree/master/issues">Report an Issue</a></li>
+        </ul>
+      </nav><!-- #nav-menu-container -->
     </div>
+  </header><!-- #header -->
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Before you download...</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+  <!--==========================
+    Hero Section
+  ============================-->
+  <section id="hero">
+    <video autoplay muted loop id="hero-video">
+      <source src="https://s3-us-west-1.amazonaws.com/mtgatracker/banner.mp4" type="video/mp4">
+    </video>
+    <div class="hero-container">
+      <h2>MTGA Tracker tracks your games and decks! Available for Windows and OSX<br /><br />(When MTGA is available for OSX, that is)</h2>
+      <a href="#about" class="btn-get-started">Download Latest&nbsp;&nbsp;<i class="fab fa-github"></i></a>
+    </div>
+  </section><!-- #hero -->
+
+  <main id="main">
+
+    <!--==========================
+      Facts Section
+    ============================-->
+    <section id="facts">
+      <div class="container wow fadeIn">
+        <div class="section-header">
+          <center>
+            <img class="body-logo" src="icon_large.png">
+          </center>
+          <h3 class="section-title">Stats</h3>
+          <p class="section-description">Since it was released, MTGA Tracker has done lots of things!</p>
+        </div>
+        <div class="row counters">
+
+          <div class="col-lg-6 col-6 text-center">
+            <span id="dl-count" data-toggle="counter-up"></span>
+            <p>Total downloads</p>
           </div>
-          <div class="modal-body">
-            We're excited to share MTGATracker with you! Before you download, please take a moment to
-            read our <a href="https://github.com/shawkinsl/mtga-tracker#disclaimers">disclaimers.</a>
+
+          <div class="col-lg-6 col-6 text-center">
+            <span id="tracked-game-count" data-toggle="counter-up"></span>
+            <p>Tracked games</p>
           </div>
-          <div class="modal-footer">
-            <a type="button" class="btn btn-primary" href="https://github.com/shawkinsl/mtga-tracker/releases">OK, take me to the download already!</a>
+
+          <!--<div class="col-lg-4 col-6 text-center">-->
+            <!--<span id="unique-user-count" data-toggle="counter-up"></span>-->
+            <!--<p>Unique users</p>-->
+          <!--</div>-->
+
+      </div>
+      </div>
+    </section><!-- #facts -->
+
+
+    <section id="services">
+      <div class="container wow fadeIn">
+        <div class="section-header">
+          <h3 class="section-title">Features</h3>
+          <p class="section-description"><!-- TODO --></p>
+        </div>
+        <!-- https://gph.is/2pFMSDe
+        https://media.giphy.com/media/dn14eXTeSkEsknWdJp/giphy.gif
+        https://giphy.com/gifs/dn14eXTeSkEsknWdJp/html5
+        -->
+        <div class="row">
+          <div class="col-lg-6 col-md-12 wow fadeIn" data-wow-delay="0.2s">
+            <div class="box">
+              <h4 class="title"><a href="">Real-time deck tracking</a></h4>
+              <a href="https://media.giphy.com/media/dn14eXTeSkEsknWdJp/source.mp4" data-lity><img class="box-img" src="https://media.giphy.com/media/dn14eXTeSkEsknWdJp/giphy.gif"></a>
+            </div>
+          </div>
+          <!-- https://gph.is/2pEJUPl
+          https://media.giphy.com/media/7JytliIKzDLqRuhssv/giphy.gif
+          https://giphy.com/gifs/7JytliIKzDLqRuhssv/html5
+          -->
+          <div class="col-lg-6 col-md-12 wow fadeIn" data-wow-delay="0.2s">
+            <div class="box">
+              <h4 class="title"><a href="">Gets out of the way when you need it to</a></h4>
+              <a href="https://media.giphy.com/media/7JytliIKzDLqRuhssv/source.mp4" data-lity><img class="box-img" src="https://media.giphy.com/media/7JytliIKzDLqRuhssv/giphy.gif"></a>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
+            <div class="box box-fixedheight-md">
+              <h4 class="title"><a href="">Detailed Match History</a></h4>
+              <p class="description"><i>(Coming soon)</i> Keep a record of your entire match history. Play an opponent with a really cool deck, but didn't write down all the cards you saw? Don't worry about it! MTGA Tracker did!</p>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
+            <div class="box box-fixedheight-md">
+              <h4 class="title"><a href="">In-Depth Statistics</a></h4>
+              <p class="description"><i>(Coming soon)</i> Spot your deck's strengths and weaknesses. Do you feel like your pirates <i>always</i> lose to those damn merfolk? Now you can know for sure!</p>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
+            <div class="box box-fixedheight-md">
+              <h4 class="title"><a href="">Collaborative Deck Hub and Meta Report</a></h4>
+              <p class="description"><i>(Coming soon)</i> Brew your craziest ideas together! Want to make that ridiculous Revel and Riches deck, but can't figure out which cards to use? Let the community help you make your best decks better<br>(and your silliest decks sillier)</p>
+            </div>
           </div>
         </div>
       </div>
+    </section>
+    <!--==========================
+      Services Section
+    ============================--> <!--
+    <section id="services">
+      <div class="container wow fadeIn">
+        <div class="section-header">
+          <h3 class="section-title">Services</h3>
+          <p class="section-description">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque</p>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
+            <div class="box">
+              <div class="icon"><a href=""><i class="fa fa-desktop"></i></a></div>
+              <h4 class="title"><a href="">Lorem Ipsum</a></h4>
+              <p class="description">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
+            <div class="box">
+              <div class="icon"><a href=""><i class="fa fa-bar-chart"></i></a></div>
+              <h4 class="title"><a href="">Dolor Sitema</a></h4>
+              <p class="description">Minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat tarad limino ata</p>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
+            <div class="box">
+              <div class="icon"><a href=""><i class="fa fa-paper-plane"></i></a></div>
+              <h4 class="title"><a href="">Sed ut perspiciatis</a></h4>
+              <p class="description">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
+            <div class="box">
+              <div class="icon"><a href=""><i class="fa fa-photo"></i></a></div>
+              <h4 class="title"><a href="">Magni Dolores</a></h4>
+              <p class="description">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.4s">
+            <div class="box">
+              <div class="icon"><a href=""><i class="fa fa-road"></i></a></div>
+              <h4 class="title"><a href="">Nemo Enim</a></h4>
+              <p class="description">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque</p>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.6s">
+            <div class="box">
+              <div class="icon"><a href=""><i class="fa fa-shopping-bag"></i></a></div>
+              <h4 class="title"><a href="">Eiusmod Tempor</a></h4>
+              <p class="description">Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- #services -->
+
+    <!--==========================
+    Call To Action Section
+    ============================-->
+    <section id="call-to-action">
+      <div class="container wow fadeIn">
+        <div class="row">
+          <div class="col-lg-9 text-center text-lg-left">
+            <h3 class="cta-title">Download the latest release<span id="latest-release"></span></h3>
+            <p class="cta-text">Get started tracking your decks and games now! MTGA Tracker is (and always will be) free and open-source. No account required.</p>
+          </div>
+          <div class="col-lg-3 cta-btn-container text-center">
+            <a class="cta-btn align-middle" href="https://github.com/shawkinsl/mtga-tracker/releases/latest">Releases</a>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- #call-to-action -->
+
+    <!--==========================
+      Team Section
+    ============================--><!--
+    <section id="team">
+      <div class="container wow fadeInUp">
+        <div class="section-header">
+          <h3 class="section-title">Development Team</h3>
+          <p class="section-description">Making MTGA Tracker is a lot of work. These are some of the core
+            core contributors who make the project better!</p>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-6">
+            <div class="member">
+              <div class="pic"><img src="img/team-1.jpg" alt=""></div>
+              <h4>Walter White</h4>
+              <span>Chief Executive Officer</span>
+              <div class="social">
+                <a href=""><i class="fa fa-twitter"></i></a>
+                <a href=""><i class="fa fa-facebook"></i></a>
+                <a href=""><i class="fa fa-google-plus"></i></a>
+                <a href=""><i class="fa fa-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-6">
+            <div class="member">
+              <div class="pic"><img src="img/team-2.jpg" alt=""></div>
+              <h4>Sarah Jhinson</h4>
+              <span>Product Manager</span>
+              <div class="social">
+                <a href=""><i class="fa fa-twitter"></i></a>
+                <a href=""><i class="fa fa-facebook"></i></a>
+                <a href=""><i class="fa fa-google-plus"></i></a>
+                <a href=""><i class="fa fa-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- #team -->
+
+    <!--==========================
+      Contact Section
+    ============================--><!--
+    <section id="contact">
+      <div class="container wow fadeInUp">
+        <div class="section-header">
+          <h3 class="section-title">Contact</h3>
+          <p class="section-description">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque</p>
+        </div>
+      </div>
+
+      <div class="container wow fadeInUp">
+        <div class="row justify-content-center">
+
+          <div class="col-lg-3 col-md-4">
+
+            <div class="info">
+
+              <div>
+                <i class="fa fa-envelope"></i>
+                <p>devs.mtgatracker@gmail.com</p>
+              </div>
+            </div>
+
+            <div class="social-links">
+              <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
+            </div>
+
+          </div>
+
+          <div class="col-lg-5 col-md-8">
+            <div class="form">
+              <div id="sendmessage">Your message has been sent. Thank you!</div>
+              <div id="errormessage"></div>
+              <form action="" method="post" role="form" class="contactForm">
+                <div class="form-group">
+                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" />
+                  <div class="validation"></div>
+                </div>
+                <div class="form-group">
+                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" />
+                  <div class="validation"></div>
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" data-rule="minlen:4" data-msg="Please enter at least 8 chars of subject" />
+                  <div class="validation"></div>
+                </div>
+                <div class="form-group">
+                  <textarea class="form-control" name="message" rows="5" data-rule="required" data-msg="Please write something for us" placeholder="Message"></textarea>
+                  <div class="validation"></div>
+                </div>
+                <div class="text-center"><button type="submit">Send Message</button></div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- #contact -->
+
+  </main>
+
+  <!--==========================
+    Footer
+  ============================-->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+
+      </div>
     </div>
 
+    <div class="container">
+      <div class="copyright">
+        <h3>Created by <a href="https://twitch.tv/spencatro">Spencatro</a>. Find MTGA Tracker on <a href="https://github.com/shawkinsl/mtga-tracker">GitHub</a>.</h3>
+        <p>MTGA Tracker is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
+      </div>
+      <div class="credits">
+        <!--
+          All the links in the footer should remain intact.
+          You can delete the links only if you purchased the pro version.
+          Licensing information: https://bootstrapmade.com/license/
+          Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/buy/?theme=Regna
+        -->
+        Bootstrap Templates by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+      </div>
+    </div>
+  </footer><!-- #footer -->
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  </body>
+  <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+  <!-- JavaScript Libraries -->
+  <script src="lib/jquery/jquery.min.js"></script>
+  <script src="lib/jquery/jquery-migrate.min.js"></script>
+  <script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="lib/easing/easing.min.js"></script>
+  <script src="lib/wow/wow.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8HeI8o-c1NppZA-92oYlXakhDPYR7XMY"></script>
+
+  <script src="lib/waypoints/waypoints.min.js"></script>
+  <script src="lib/counterup/counterup.min.js"></script>
+  <script src="lib/superfish/hoverIntent.js"></script>
+  <script src="lib/superfish/superfish.min.js"></script>
+
+  <!-- Lightbox -->
+  <link href="lib/lity/lity.css" rel="stylesheet">
+  <script src="lib/lity/lity.js"></script>
+
+  <!--<link href="lib/lightbox/dist/css/lightbox.min.css" rel="stylesheet">-->
+  <!--<script src="lib/lightbox/dist/js/lightbox.min.js"></script>-->
+
+  <!-- Contact Form JavaScript File -->
+  <script src="contactform/contactform.js"></script>
+
+  <!-- Template Main Javascript File -->
+  <script src="js/main.js"></script>
+
+</body>
 </html>
