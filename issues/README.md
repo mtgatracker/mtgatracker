@@ -7,7 +7,7 @@ helps us know it's a wanted feature--but please _do not_ create a duplicate issu
 
 If your issue has not yet been reported, there are plenty of ways to do so. For simpler questions or issues, we prefer:
 - [Tweeting at us](http://twitter.com/MTGATrackerDevs)
-- [Emailing us](mailto:dev.mtgatracker@gmail.com)
+- [Emailing us](mailto:devs.mtgatracker@gmail.com)
 
 For bug reports, please file a [Github Issue](http://github.com/shawkinsl/mtga-tracker/issues),
 following the [reporting guidelines](#reporting-guidelines) below. If you do not
