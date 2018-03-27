@@ -178,6 +178,10 @@ server.post('/game', (req, res, next) => {
   const { MONGO_URL } = req.webtaskContext.secrets;
   // Do data sanitation here.
   const model = req.body;
+  if (model.date === undefined) {
+    model.date = Date()
+    console.log("had to manually set date")
+  }
   let game = new Game(model)
   if (!game.isValid()) {
     res.status(400).send({error: game.validationError})
