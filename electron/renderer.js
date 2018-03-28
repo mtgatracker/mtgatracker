@@ -14,7 +14,7 @@ window.addEventListener('beforeunload', function() {
 
 var debug = remote.getGlobal('debug');
 var showIIDs = remote.getGlobal('showIIDs');
-var version = remote.getGlobal('version');
+var appVersionStr = remote.getGlobal('version');
 var zoom = 0.8;
 
 var ws = new ReconnectingWebSocket("ws://127.0.0.1:5678/", null, {constructor: WebSocket})
@@ -35,17 +35,39 @@ var appData = {
     opponent_hand: [],
 }
 
+var parseVersionString = (versionStr) => {
+    version = {}
+    version_parts = versionStr.split("-")
+    if (version_parts.length > 1)
+        version.suffix = version_parts[1]
+    version_bits = version_parts[0].split(".")
+    version.major = version_bits[0]
+    version.medium = version_bits[1]
+    version.minor = version_bits[2]
+    return version;
+}
+
 // check for a newer release
 request.get({
     url: "https://api.github.com/repos/shawkinsl/mtga-tracker/releases/latest",
     json: true,
     headers: {'User-Agent': 'MTGATracker-App'}
-
 }, (err, res, data) => {
-    const latestVersion = data.tag_name;
+    const latestVersion = parseVersionString(data.tag_name);
+    const appVersion = parseVersionString(appVersionStr);
     if (version != latestVersion) {
-        appData.message = `A new version (${latestVersion}) is available!`;
-        appData.show_update_message = true;
+        // TODO: if major version bits do not match, stop operation of app
+        if (appVersion.major != latestVersion.major || appVersion.medium != latestVersion.medium) {
+            console.log("no match, major or medium")
+            appData.message = `A new version (${data.tag_name}) is available!`;
+            appData.show_update_message = true;
+        } else if (latestVersion.suffix === undefined && appVersion.suffix !== undefined) {
+            appData.message = `A new version (${data.tag_name}) is available!`;
+            appData.show_update_message = true;
+            console.log("no match, suffix")
+        } else {
+            console.log("close enough")
+        }
     }
 })
 
