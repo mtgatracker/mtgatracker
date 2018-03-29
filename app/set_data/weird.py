@@ -20,15 +20,24 @@ TimberGorgeAKH = mcard.Card("timber_gorge", "Timber Gorge", [], ['R', 'G'], "Lan
 TranquilExpanseAKH = mcard.Card("tranquil_expanse", "Tranquil Expanse", [], ['G', 'W'], "Land", "", "AKH", 286, 65475)
 WoodlandStreamAKH = mcard.Card("woodland_stream", "Woodland Stream", [], ['G', 'U'], "Land", "", "AKH", 287, 65477)
 
+FullArtPlainsAKH = mcard.Card("plains", "Plains", [], ['W'], "Basic Land", "Plains", "AKH", 251, 65433)
+FullArtIslandAKH = mcard.Card("island", "Island", [], ['U'], "Basic Land", "Island", "AKH", 250, 65435)
+FullArtSwampAKH = mcard.Card("swamp", "Swamp", [], ['B'], "Basic Land", "Swamp", "AKH", 252, 65437)
+FullArtMountainAKH = mcard.Card("mountain", "Mountain", [], ['W'], "Basic Land", "Mountain", "AKH", 253, 65439)
+FullArtForestAKH = mcard.Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "AKH", 254, 65441)
+
+
 WeirdLands = set.Set("weird_lands", cards=[CinderBarrens, TranquilExpanse, MeanderingRiver, TimberGorge,
                                                 SubmergedBoneyard, FoulOrchardAKH, CinderBarrensAKH,
                                                 ForsakenSanctuaryAKH, HighlandLakeAKH, MeanderingRiverAKH,
                                                 SubmergedBoneyardAKH, TimberGorgeAKH, TranquilExpanseAKH,
                                                 WoodlandStreamAKH])
 
+
 BasicLands = set.Pool("all_basic_lands", cards=[
     rix.Plains, xln.Plains, xln.Plains2, xln.Plains3, xln.Plains4,
     rix.Swamp, xln.Swamp, xln.Swamp2, xln.Swamp2, xln.Swamp4,
     rix.Forest, xln.Forest, xln.Forest2, xln.Forest3, xln.Forest4,
     rix.Mountain, xln.Mountain, xln.Mountain2, xln.Mountain3, xln.Mountain4,
-    rix.Island, xln.Island, xln.Island2, xln.Island3, xln.Island4])
+    rix.Island, xln.Island, xln.Island2, xln.Island3, xln.Island4,
+    FullArtPlainsAKH, FullArtIslandAKH, FullArtSwampAKH, FullArtMountainAKH, FullArtForestAKH])
