@@ -28,20 +28,23 @@ const Game = backbone.Model.extend({
   }
 })
 
-const database = 'mtgatracker';
 const deckCollection = 'deck';
 const gameCollection = 'game';
 const userCollectionCollection = 'userCollection';
+const errorCollection = 'error';
 const server = express();
+
 
 server.use(bodyParser.json());
 
+// covered: test_games_count
 server.get('/games/count', (req, res, next) => {
-  const { MONGO_URL } = req.webtaskContext.secrets;
+  console.log("/games/count")
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
   const { badge } = req.query;
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     if (connectErr) return next(connectErr);
-    let collection = client.db(database).collection(gameCollection)
+    let collection = client.db(DATABASE).collection(gameCollection)
     collection.count(null, null, (err, count) => {
       if (err) return next(err);
       if (badge) {
@@ -55,8 +58,10 @@ server.get('/games/count', (req, res, next) => {
   })
 })
 
+// covered: test_get_all_games
 server.get('/games', (req, res, next) => {
-  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
+  console.log("/games")
+  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
   if (req.query.per_page) {
     var per_page = parseInt(req.query.per_page)
   } else {
@@ -71,7 +76,7 @@ server.get('/games', (req, res, next) => {
 
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     if (connectErr) return next(connectErr);
-    let collection = client.db(database).collection(gameCollection)
+    let collection = client.db(DATABASE).collection(gameCollection)
     collection.count(null, null, (err, count) => {
       let numPages = Math.ceil(count / per_page);
       let cursor = collection.find().skip((page - 1) * per_page).limit(per_page);
@@ -88,29 +93,52 @@ server.get('/games', (req, res, next) => {
   })
 })
 
+// covered: test_get_user_games
 server.get('/games/user/:username', (req, res, next) => {
-  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
-  const { debug_password } = req.query;
+  console.log("games/user/" + JSON.stringify(req.params))
+  if (req.query.per_page) {
+    var per_page = parseInt(req.query.per_page)
+  } else {
+    var per_page = 10;
+  }
+  const { debug_password, page = 1} = req.query;
+  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
   if (debug_password != DEBUG_PASSWORD) {
     res.status(400).send({error: "debug password incorrect"})
     return
   }
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    const { username } = req.params ;
+    const { username } = req.params;
     if (connectErr) return next(connectErr);
-    let collection = client.db(database).collection(gameCollection)
-    let cursor = collection.find({'players.name': username}, {limit: 5});  // hard-limit to 5 records for example
-    cursor.toArray((cursorErr, docs) => {
-      if (cursorErr) return next(cursorErr);
-      res.status(200).send(docs);
-      client.close()
+    let collection = client.db(DATABASE).collection(gameCollection)
+    let cursor = collection.find({'players.name': username});
+    cursor.count(null, null, (err, count) => {
+      let numPages = Math.ceil(count / per_page);
+      let docCursor = cursor.skip((page - 1) * per_page).limit(per_page);
+
+      docCursor.toArray((cursorErr, docs) => {
+        if (cursorErr) return next(cursorErr);
+        res.status(200).send({
+          totalPages: numPages,
+          page: page,
+          docs: docs
+        });
+        client.close()
+      })
     })
   })
 })
 
+// covered: test_get_users_games_by_user_id
 server.get('/games/userID/:userID', (req, res, next) => {
-  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
-  const { debug_password } = req.query;
+  console.log("games/userID/" + JSON.stringify(req.params))
+  if (req.query.per_page) {
+    var per_page = parseInt(req.query.per_page)
+  } else {
+    var per_page = 10;
+  }
+  const { MONGO_URL, DEBUG_PASSWORD, DATABASE} = req.webtaskContext.secrets;
+  const { debug_password, page = 1} = req.query;
   if (debug_password != DEBUG_PASSWORD) {
     res.status(400).send({error: "debug password incorrect"})
     return
@@ -118,18 +146,28 @@ server.get('/games/userID/:userID', (req, res, next) => {
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     const { userID } = req.params ;
     if (connectErr) return next(connectErr);
-    let collection = client.db(database).collection(gameCollection)
-    let cursor = collection.find({'players.userID': userID}, {limit: 5});  // hard-limit to 5 records for example
-    cursor.toArray((cursorErr, docs) => {
-      if (cursorErr) return next(cursorErr);
-      res.status(200).send(docs);
-      client.close()
+    let collection = client.db(DATABASE).collection(gameCollection)
+    let cursor = collection.find({'players.userID': userID});  // hard-limit to 5 records for example
+    cursor.count(null, null, (err, count) => {
+      let numPages = Math.ceil(count / per_page);
+      let docCursor = cursor.skip((page - 1) * per_page).limit(per_page);
+
+      docCursor.toArray((cursorErr, docs) => {
+        if (cursorErr) return next(cursorErr);
+        res.status(200).send({
+          totalPages: numPages,
+          page: page,
+          docs: docs
+        });
+        client.close()
+      })
     })
   })
 })
 
+// covered: test_get_game
 server.get('/game/_id/:_id', (req, res, next) => {
-  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
+  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
   const { debug_password } = req.query;
   if (debug_password != DEBUG_PASSWORD) {
     res.status(400).send({error: "debug password incorrect"})
@@ -138,7 +176,7 @@ server.get('/game/_id/:_id', (req, res, next) => {
   MongoClient.connect(MONGO_URL, (err, client) => {
     const { _id } = req.params ;
     if (err) return next(err);
-    client.db(database).collection(gameCollection).findOne({ _id: new ObjectID(_id) }, (err, result) => {
+    client.db(DATABASE).collection(gameCollection).findOne({ _id: new ObjectID(_id) }, (err, result) => {
       client.close();
       if (err) return next(err);
       if (result !== null) res.status(200).send(result)
@@ -147,7 +185,7 @@ server.get('/game/_id/:_id', (req, res, next) => {
   });
 });
 
-let getGameById = (client, gameID, callback) => {
+let getGameById = (client, database, gameID, callback) => {
     console.log({ gameID: gameID })
     client.db(database).collection(gameCollection).findOne({ gameID: gameID }, null, (err, result) => {
       console.log(err)
@@ -156,16 +194,23 @@ let getGameById = (client, gameID, callback) => {
     });
 }
 
+let logError = (client, database, error, callback) => {
+    client.db(database).collection(errorCollection).insertOne(error, null, (err, result) => {
+      callback(result, err)
+    });
+}
+
+// covered: test_get_game
 server.get('/game/gameID/:gid', (req, res, next) => {
-  const { MONGO_URL, DEBUG_PASSWORD } = req.webtaskContext.secrets;
+  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
   const { debug_password } = req.query;
   if (debug_password != DEBUG_PASSWORD) {
     res.status(400).send({error: "debug password incorrect"})
     return
   }
   MongoClient.connect(MONGO_URL, (err, client) => {
-    const gid = parseInt(req.params.gid);
-    getGameById(client, gid, (result, err) => {
+    const gid = req.params.gid;
+    getGameById(client, DATABASE, gid, (result, err) => {
       client.close();
       if (err) return next(err);
       if (result !== null) res.status(200).send(result)
@@ -174,8 +219,9 @@ server.get('/game/gameID/:gid', (req, res, next) => {
   });
 });
 
+// covered: test_post_game
 server.post('/game', (req, res, next) => {
-  const { MONGO_URL } = req.webtaskContext.secrets;
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
   // Do data sanitation here.
   const model = req.body;
   if (model.date === undefined) {
@@ -189,12 +235,12 @@ server.post('/game', (req, res, next) => {
   }
   MongoClient.connect(MONGO_URL, (err, client) => {
     if (err) return next(err);
-    getGameById(client, game.get("gameID"), (result, err) => {
+    getGameById(client, DATABASE, game.get("gameID"), (result, err) => {
       if (result !== null) {
         res.status(400).send({error: "game already exists", game: result});
         return;
       }
-      client.db(database).collection(gameCollection).insertOne(model, (err, result) => {
+      client.db(DATABASE).collection(gameCollection).insertOne(model, (err, result) => {
         client.close();
         if (err) return next(err);
         res.status(201).send(result);
@@ -203,5 +249,42 @@ server.post('/game', (req, res, next) => {
   });
 });
 
+// TODO: uncovered!
+server.post('/danger/reset/all', (req, res, next) => {
+  console.log("danger!!!")
+  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
+  const { debug_password } = req.body;
+  if (debug_password != DEBUG_PASSWORD) {
+    res.status(400).send({error: "debug password incorrect"})
+    return
+  }
+  if (DATABASE != "mtga-tracker-staging") {
+    res.status(400).send({error: "not allowed to do this anywhere except staging, sorry"})
+    return
+  }
+  MongoClient.connect(MONGO_URL, (err, client) => {
+    if (err) return next(err);
+    client.db(DATABASE).collection(gameCollection).drop(null, (err, result) => {
+      if (err) return next(err);
+      if (result !== null) res.status(200).send(result)
+      else res.status(400).send(result)
+      client.close();
+    });
+  });
+});
+
+// covered: asd
+server.get('*', function(req, res) {
+  console.log('retrieving page: ' + JSON.stringify(req.params))
+
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
+  MongoClient.connect(MONGO_URL, (err, client) => {
+   logError(client, DATABASE, {error: "unknown access: " +  JSON.stringify(req.params)}, (result, err) => {
+      client.close();
+      if (err) return next(err);
+      res.status(404).send({error: "route is not valid", warning: "this access has been logged; if you are misusing this API, your address may be banned!"})
+   })
+  })
+})
 
 module.exports = Webtask.fromExpress(server);
