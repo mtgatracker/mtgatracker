@@ -28,10 +28,11 @@ FullArtForestAKH = mcard.Card("forest", "Forest", [], ['G'], "Basic Land", "Fore
 
 
 WeirdLands = set.Set("weird_lands", cards=[CinderBarrens, TranquilExpanse, MeanderingRiver, TimberGorge,
-                                                SubmergedBoneyard, FoulOrchardAKH, CinderBarrensAKH,
-                                                ForsakenSanctuaryAKH, HighlandLakeAKH, MeanderingRiverAKH,
-                                                SubmergedBoneyardAKH, TimberGorgeAKH, TranquilExpanseAKH,
-                                                WoodlandStreamAKH])
+                                           SubmergedBoneyard, FoulOrchardAKH, CinderBarrensAKH,
+                                           ForsakenSanctuaryAKH, HighlandLakeAKH, MeanderingRiverAKH,
+                                           SubmergedBoneyardAKH, TimberGorgeAKH, TranquilExpanseAKH,
+                                           WoodlandStreamAKH, FullArtPlainsAKH, FullArtIslandAKH, FullArtSwampAKH,
+                                           FullArtMountainAKH, FullArtForestAKH])
 
 
 BasicLands = set.Pool("all_basic_lands", cards=[
@@ -39,5 +40,4 @@ BasicLands = set.Pool("all_basic_lands", cards=[
     rix.Swamp, xln.Swamp, xln.Swamp2, xln.Swamp2, xln.Swamp4,
     rix.Forest, xln.Forest, xln.Forest2, xln.Forest3, xln.Forest4,
     rix.Mountain, xln.Mountain, xln.Mountain2, xln.Mountain3, xln.Mountain4,
-    rix.Island, xln.Island, xln.Island2, xln.Island3, xln.Island4,
-    FullArtPlainsAKH, FullArtIslandAKH, FullArtSwampAKH, FullArtMountainAKH, FullArtForestAKH])
+    rix.Island, xln.Island, xln.Island2, xln.Island3, xln.Island4])
