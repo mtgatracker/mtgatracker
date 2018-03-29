@@ -148,16 +148,8 @@ For more information, see [contributors](https://github.com/shawkinsl/mtga-track
 
 ## Disclaimers
 
-Use MTGA Tracker at your own risk. Your account may be banned for using this software; MTGA Tracker and its developers
-are not responsible if this happens. Note that this outcome seems unlikely, but Wizards has yet to acknowledge this
-project in any setting. Here are the attempts we've made to get comments from wizards:
-[beta forums 1](https://mtgarena.community.gl/forums/threads/14685)
-/ [beta forums 2](https://mtgarena.community.gl/forums/threads/12269)
-/ [beta forums 2](https://mtgarena.community.gl/forums/threads/12269)
-/ [discord](https://discordapp.com/channels/167375953561911296/356107498778001409?jump=420293602690859029) -
-[screenshot](https://github.com/shawkinsl/mtga-tracker/blob/master/.readme_data/discord.JPG?raw=true)
-/ [reddit (todo after NDA drops)](#) 
-Note that while this outcome is unlikely, it is certainly possible.
+Use MTGA Tracker at your own risk. While it does not seem likely given Wizard's [positive, but unofficial](https://twitter.com/MTGATrackerDevs/status/979112260911034368), comments on MTGATracker, we feel inclined to continue warning users that your account may be banned for using this software. In this unlikely event, MTGA Tracker and its developers
+are not responsible.
 
 It is entirely possible that Wizards of the Coast will disable all logging and completely wreck this project. While 
 we certainly do not hope this will happen, it is worth noting that this project may stop working at any time. In the
