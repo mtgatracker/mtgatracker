@@ -143,14 +143,16 @@ SifterWurm = Card("sifter_wurm", "Sifter Wurm", ['5', 'G', 'G'], ['G'], "Creatur
 TenaciousHunter = Card("tenacious_hunter", "Tenacious Hunter", ['2', 'G', 'G'], ['G'], "Creature", "Crocodile", "HOU", 136, 65749)
 UncagetheMenagerie = Card("uncage_the_menagerie", "Uncage the Menagerie", ['X', 'G', 'G'], ['G'], "Sorcery", "", "HOU", 137, 65751)
 BloodwaterEntity = Card("bloodwater_entity", "Bloodwater Entity", ['1', 'U', 'R'], ['U', 'R'], "Creature", "Elemental", "HOU", 138, 65753)
-TheLocustGod = Card("the_locust_god", "The Locust God", ['4', 'U', 'R'], ['U', 'R'], "Legendary Creature", "God", "HOU", 139, 65755)
-NicolBolasGodPharaoh = Card("nicol_bolas_godpharaoh", "Nicol Bolas, God-Pharaoh", ['4', 'U', 'B', 'R'], ['U', 'B', 'R'], "Legendary Planeswalker", "Bolas", "HOU", 140, 65757)
-ObeliskSpider = Card("obelisk_spider", "Obelisk Spider", ['1', 'B', 'G'], ['B', 'G'], "Creature", "Spider", "HOU", 141, 65759)
-ResoluteSurvivors = Card("resolute_survivors", "Resolute Survivors", ['1', 'R', 'W'], ['W', 'R'], "Creature", "Human Warrior", "HOU", 142, 65761)
-RiverHoopoe = Card("river_hoopoe", "River Hoopoe", ['G', 'U'], ['U', 'G'], "Creature", "Bird", "HOU", 143, 65763)
-SamuttheTested = Card("samut_the_tested", "Samut, the Tested", ['2', 'R', 'G'], ['R', 'G'], "Legendary Planeswalker", "Samut", "HOU", 144, 65765)
-TheScarabGod = Card("the_scarab_god", "The Scarab God", ['3', 'U', 'B'], ['U', 'B'], "Legendary Creature", "God", "HOU", 145, 65767)
-TheScorpionGod = Card("the_scorpion_god", "The Scorpion God", ['3', 'B', 'R'], ['B', 'R'], "Legendary Creature", "God", "HOU", 146, 65769)
+# START God mixup
+TheScorpionGod = Card("the_scorpion_god", "The Scorpion God", ['3', 'B', 'R'], ['B', 'R'], "Legendary Creature", "God", "HOU", 146, 65755)  # WRONG: was 65769
+TheLocustGod = Card("the_locust_god", "The Locust God", ['4', 'U', 'R'], ['U', 'R'], "Legendary Creature", "God", "HOU", 139, 65757)  # WRONG: was 65755
+NicolBolasGodPharaoh = Card("nicol_bolas_godpharaoh", "Nicol Bolas, God-Pharaoh", ['4', 'U', 'B', 'R'], ['U', 'B', 'R'], "Legendary Planeswalker", "Bolas", "HOU", 140, 65759)  # WRONG: was 65757
+ObeliskSpider = Card("obelisk_spider", "Obelisk Spider", ['1', 'B', 'G'], ['B', 'G'], "Creature", "Spider", "HOU", 141, 65761)  # WRONG: was 65759
+ResoluteSurvivors = Card("resolute_survivors", "Resolute Survivors", ['1', 'R', 'W'], ['W', 'R'], "Creature", "Human Warrior", "HOU", 142, 65763)  # WRONG: was 65761
+RiverHoopoe = Card("river_hoopoe", "River Hoopoe", ['G', 'U'], ['U', 'G'], "Creature", "Bird", "HOU", 143, 65765)  # WRONG: was 65763
+SamuttheTested = Card("samut_the_tested", "Samut, the Tested", ['2', 'R', 'G'], ['R', 'G'], "Legendary Planeswalker", "Samut", "HOU", 144, 65767)  # WRONG: was 65765
+TheScarabGod = Card("the_scarab_god", "The Scarab God", ['3', 'U', 'B'], ['U', 'B'], "Legendary Creature", "God", "HOU", 145, 65769)  # WRONG: was 65767
+# END God mixup
 UnravelingMummy = Card("unraveling_mummy", "Unraveling Mummy", ['1', 'W', 'B'], ['W', 'B'], "Creature", "Zombie", "HOU", 147, 65771)
 Farm = Card("farm", "Farm", ['2', 'W'], ['U', 'W'], "Instant", "", "HOU", 148, 65773)
 Market = Card("market", "Market", ['2', 'U'], ['U', 'W'], "Sorcery", "", "HOU", 148, 65776)
