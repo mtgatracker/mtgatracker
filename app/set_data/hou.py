@@ -193,7 +193,9 @@ MirageMirror = Card("mirage_mirror", "Mirage Mirror", ['3'], [], "Artifact", "",
 SunsetPyramid = Card("sunset_pyramid", "Sunset Pyramid", ['2'], [], "Artifact", "", "HOU", 166, 65849)
 TravelersAmulet = Card("travelers_amulet", "Traveler's Amulet", ['1'], [], "Artifact", "", "HOU", 167, 65851)
 WallofForgottenPharaohs = Card("wall_of_forgotten_pharaohs", "Wall of Forgotten Pharaohs", ['2'], [], "Artifact Creature", "Wall", "HOU", 168, 65853)
-CryptoftheEternals = Card("crypt_of_the_eternals", "Crypt of the Eternals", [], ['U', 'B', 'R'], "Land", "", "HOU", 169, 65855)
+# wat
+CryptoftheEternals = Card("crypt_of_the_eternals", "Crypt of the Eternals", [], ['U', 'B', 'R'], "Land", "", "HOU", 169, 65959)
+# end wat
 DesertoftheFervent = Card("desert_of_the_fervent", "Desert of the Fervent", [], ['R'], "Land", "Desert", "HOU", 170, 65857)
 DesertoftheGlorified = Card("desert_of_the_glorified", "Desert of the Glorified", [], ['B'], "Land", "Desert", "HOU", 171, 65859)
 DesertoftheIndomitable = Card("desert_of_the_indomitable", "Desert of the Indomitable", [], ['G'], "Land", "Desert", "HOU", 172, 65861)
@@ -224,16 +226,19 @@ Mountain2 = Card("mountain", "Mountain", [], ['R'], "Basic Land", "Mountain", "H
 Mountain3 = Card("mountain", "Mountain", [], ['R'], "Basic Land", "Mountain", "HOU", 197, 65911)
 Forest2 = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "HOU", 198, 65913)
 Forest3 = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "HOU", 199, 65915)
-NissaGenesisMage = Card("nissa_genesis_mage", "Nissa, Genesis Mage", ['5', 'G', 'G'], ['G'], "Legendary Planeswalker", "Nissa", "HOU", 200, 65917)
-AvidReclaimer = Card("avid_reclaimer", "Avid Reclaimer", ['2', 'G'], ['G', 'U'], "Creature", "Human Druid", "HOU", 201, 65919)
-BrambleweftBehemoth = Card("brambleweft_behemoth", "Brambleweft Behemoth", ['4', 'G', 'G'], ['G'], "Creature", "Elemental", "HOU", 202, 65921)
-NissasEncouragement = Card("nissas_encouragement", "Nissa's Encouragement", ['4', 'G'], ['G'], "Sorcery", "", "HOU", 203, 65923)
-WoodlandStream = Card("woodland_stream", "Woodland Stream", [], ['G', 'U'], "Land", "", "HOU", 204, 65925)
-NicolBolastheDeceiver = Card("nicol_bolas_the_deceiver", "Nicol Bolas, the Deceiver", ['5', 'U', 'B', 'R'], ['U', 'B', 'R'], "Legendary Planeswalker", "Bolas", "HOU", 205, 65927)
-WaspoftheBitterEnd = Card("wasp_of_the_bitter_end", "Wasp of the Bitter End", ['1', 'B'], ['B'], "Creature", "Insect Horror", "HOU", 206, 65929)
-ZealotoftheGodPharaoh = Card("zealot_of_the_godpharaoh", "Zealot of the God-Pharaoh", ['3', 'R'], ['R'], "Creature", "Minotaur Archer", "HOU", 207, 65931)
-VisageofBolas = Card("visage_of_bolas", "Visage of Bolas", ['4'], ['U', 'B', 'R'], "Artifact", "", "HOU", 208, 65933)
-CinderBarrens = Card("cinder_barrens", "Cinder Barrens", [], ['B', 'R'], "Land", "", "HOU", 209, 65935)
+
+# start mixup
+NissaGenesisMage = Card("nissa_genesis_mage", "Nissa, Genesis Mage", ['5', 'G', 'G'], ['G'], "Legendary Planeswalker", "Nissa", "HOU", 200, 65937)
+AvidReclaimer = Card("avid_reclaimer", "Avid Reclaimer", ['2', 'G'], ['G', 'U'], "Creature", "Human Druid", "HOU", 201, 65939)
+BrambleweftBehemoth = Card("brambleweft_behemoth", "Brambleweft Behemoth", ['4', 'G', 'G'], ['G'], "Creature", "Elemental", "HOU", 202, 65941)
+NissasEncouragement = Card("nissas_encouragement", "Nissa's Encouragement", ['4', 'G'], ['G'], "Sorcery", "", "HOU", 203, 65943)
+WoodlandStream = Card("woodland_stream", "Woodland Stream", [], ['G', 'U'], "Land", "", "HOU", 204, 65945)
+NicolBolastheDeceiver = Card("nicol_bolas_the_deceiver", "Nicol Bolas, the Deceiver", ['5', 'U', 'B', 'R'], ['U', 'B', 'R'], "Legendary Planeswalker", "Bolas", "HOU", 205, 65947)
+WaspoftheBitterEnd = Card("wasp_of_the_bitter_end", "Wasp of the Bitter End", ['1', 'B'], ['B'], "Creature", "Insect Horror", "HOU", 206, 65949)
+ZealotoftheGodPharaoh = Card("zealot_of_the_godpharaoh", "Zealot of the God-Pharaoh", ['3', 'R'], ['R'], "Creature", "Minotaur Archer", "HOU", 207, 65951)
+VisageofBolas = Card("visage_of_bolas", "Visage of Bolas", ['4'], ['U', 'B', 'R'], "Artifact", "", "HOU", 208, 65953)
+CinderBarrens = Card("cinder_barrens", "Cinder Barrens", [], ['B', 'R'], "Land", "", "HOU", 209, 65955)
+# end mixup
 
 clsmembers = [card for name, card in inspect.getmembers(sys.modules[__name__]) if isinstance(card, Card)]
 HourOfDevastation = Set("hour_of_devastation", cards=clsmembers)

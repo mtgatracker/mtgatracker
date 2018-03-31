@@ -1,0 +1,66 @@
+1 Disposal Mummy (HOU) 9 (65957)
+1 Djeru, With Eyes Open (HOU) 10 (65495)
+1 Djeru's Renunciation (HOU) 11 (65497)
+1 Dutiful Servants (HOU) 12 (65499)
+
+# unused? 65501
+
+1 Banewhip Punisher (HOU) 59 (65593)
+1 Apocalypse Demon (HOU) 58 (65595)
+
+1 Thorned Moloch (HOU) 108 (65665)
+1 Hazoret's Undying Fury (HOU) 96 (65667)
+1 Hour of Devastation (HOU) 97 (65669)
+1 Imminent Doom (HOU) 98 (65671)
+
+1 Manticore Eternal (HOU) 103 (65681)
+1 Neheb, the Eternal (HOU) 104 (65683)
+1 Open Fire (HOU) 105 (65685)
+1 Puncturing Blow (HOU) 106 (65687)
+1 Sand Strangler (HOU) 107 (65689)
+
+
+1 Granitic Titan (HOU) 95 (65691)
+1 Gilded Cerodon (HOU) 94 (65693)
+1 Inferno Jet (HOU) 99 (65673)
+
+1 Khenra Scrapper (HOU) 100 (65675)
+1 Kindled Fury (HOU) 101 (65677)
+1 Magmaroth (HOU) 102 (65679)
+
+1 Hour of Promise (HOU) 120 (65715)
+1 Hope Tender (HOU) 119 (65717)
+
+=======================================================================
+? 66539
+1 Jace, Ingenious Mind-Mage (XLN) 280 (66541)
+1 Castaway's Despair (XLN) 281 (66543)
+1 Grasping Current (XLN) 282 (66545)
+1 Jace's Sentinel (XLN) 283 (66547)
+1 Woodland Stream (XLN) 284 (66549)
+
+1 Huatli, Dinosaur Knight (XLN) 285 (66551)
+1 Huatli's Snubhorn (XLN) 286 (66553)
+1 Huatli's Spurring (XLN) 287 (66555)
+1 Sun-Blessed Mount (XLN) 288 (66557)
+1 Stone Quarry (XLN) 289 (66559)
+
+=======================================================================
+? 65349 65147
+1 Haze of Pollen (AKH) 171 (65427)
+1 Honored Hydra (AKH) 172 (65141)
+1 Hooded Brawler (AKH) 173 (65143)
+1 Initiate's Companion (AKH) 174 (65145)
+
+1 Cascading Cataracts (AKH) 240 (65431)
+1 Cradle of the Accursed (AKH) 241 (65339)
+
+1 Evolving Wilds (AKH) 242 (65341)
+1 Fetid Pools (AKH) 243 (65343)
+
+1 Grasping Dunes (AKH) 244 (65345)
+1 Irrigated Farmland (AKH) 245 (65347)
+
+
+
+

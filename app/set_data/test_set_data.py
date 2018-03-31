@@ -1,7 +1,7 @@
-import threading
 import time
 import os
-
+import sys
+sys.path.append(os.path.join("..", ".."))
 import datetime
 import pytest
 from pynput.mouse import Controller, Button, Listener
@@ -15,12 +15,6 @@ from app import queues
 from util import KillableTailer
 from queue import Queue, Empty
 from util import all_mtga_cards
-
-
-@pytest.mark.optionalhook
-def pytest_html_results_table_row(report, cells):
-    if report.passed:
-      del cells[:]
 
 
 takeover_q = Queue()
@@ -51,10 +45,11 @@ IMPORT_DECK_OK = 953, 647
 DECKS_ROW_YPOS = 275, 515, 740
 DECKS_COLUMN_XPOS = 245, 530, 830, 1130, 1430,  1700
 
-ONLY_ONE_DECK_LOC = 1106, 272
+ONLY_ONE_DECK_LOC = 1210, 280
 
 WAIT_SHORT = 0.5
 WAIT_LONG = 2
+
 
 
 def watch_for_cards(in_queue, out_queue):
@@ -70,10 +65,10 @@ def watch_for_cards(in_queue, out_queue):
             continue  # don't double fire
         if "Deck.GetDeckLists" in json_recieved:  # this looks like it's a response to a jsonrpc method
             decks = parsers.parse_get_decklists(json_recieved)
+            print(json_recieved)
             for deck in decks:
                 if deck.pool_name == "Imported Deck":
                     log_deck_result_queue.put(deck.cards)
-                    pprint.pprint(deck.cards)
     print("watch_for_cards task finished")
 
 
@@ -129,9 +124,23 @@ def log_watch_thread():
         queues.json_blob_queue.get()
     print("log_watch task finished")
 
+# cards_to_test = [card for card in all_mtga_cards.cards]
+
+
+set_card_counts = {}
+visited_dualside_cards = []
+dual_sided = {}
+
+for card in all_mtga_cards.cards:
+    card_key = card.set + str(card.set_number)
+    set_card_counts[card_key] = set_card_counts.get(card_key, []) + [card]
+
+for card_key in set_card_counts.keys():
+    if len(set_card_counts[card_key]) == 2:
+        dual_sided[card_key] = set_card_counts[card_key]
 
 failed_round1 = []
-with open("failed_round1.txt", 'r') as rf:
+with open("set_data_test_results/failed_pass2_round1.txt", 'r') as rf:
     lines = rf.readlines()
     for line in lines:
         line = line.strip()
@@ -139,45 +148,99 @@ with open("failed_round1.txt", 'r') as rf:
             continue
         line = line.replace("--", "-")
         name, set, set_id = line.split("-")
-        failed_round1.append((name, set, set_id))
+        failed_round1.append((set, set_id))
 
 
-cards_to_test = [card for card in all_mtga_cards.cards if (card.name, card.set.upper(), str(card.set_number)) in failed_round1]
+cards_to_test = []
+for card in all_mtga_cards.cards:
+    card_key = card.set + str(card.set_number)
+    if card_key in dual_sided.keys():
+        if card_key in visited_dualside_cards:
+            continue
+        visited_dualside_cards.append(card_key)
+        front, back = dual_sided[card_key]
+        card_import_string = "1 {} /// {} ({}) {}".format(front.pretty_name, back.pretty_name, front.set, front.set_number)
+        cards = [front, back]
+    else:
+        card_import_string = "1 {} ({}) {}".format(card.pretty_name, card.set.upper(), card.set_number)
+        cards = [card]
+    if (card.set.upper(), str(card.set_number)) in failed_round1:
+       cards_to_test.append((card_import_string, cards))
+
+cards_to_test = cards_to_test
 
 
-@pytest.mark.parametrize("card_model", cards_to_test, ids=["{}-{}-{}".format(c.name, c.set, c.set_number) for c in cards_to_test])
-def test_card(log_watch_thread, mouse_listener_thread, card_model):
-    print(type(card_model))
-    print("testing card: {}".format(card_model.pretty_name))
-    deck_text = "1 {} ({}) {}".format(card_model.pretty_name, card_model.set.upper(), card_model.set_number)
-    print(deck_text)
-    import_deck(deck_text)
+@pytest.mark.parametrize("import_string,card_models", cards_to_test, ids=[str(c) for c in cards_to_test])
+def test_card(log_watch_thread, mouse_listener_thread, import_string, card_models):
+    import_deck(import_string)
     start_dt = datetime.datetime.now()
     decks = []
-    while (datetime.datetime.now() - start_dt).total_seconds() < 10 and len(decks) < 2:
+    while (datetime.datetime.now() - start_dt).total_seconds() < 3 and len(decks) < 2:
         try:
             decks.append(log_deck_result_queue.get(timeout=0.1))
         except Empty:
             pass
+    if "///" in import_string and not decks:  # maybe we got flip order backwards
+        import_string_split = import_string.split(" ")
+        # ["1", "Believe", "///", "Reason", ...]
+        import_string_split[1], import_string_split[3] = import_string_split[3], import_string_split[1]
+        flipped_import_string = " ".join(import_string_split)
+        import_deck(flipped_import_string)
+        start_dt = datetime.datetime.now()
+        decks = []
+        while (datetime.datetime.now() - start_dt).total_seconds() < 3 and len(decks) < 2:
+            try:
+                decks.append(log_deck_result_queue.get(timeout=0.1))
+            except Empty:
+                pass
     assert decks, "no deck showed up in the logs"
     for deck in decks:
+        assert deck, "deck {} showed up empty (tried to import `{}`)".format(deck, import_string)
         for card in deck:
-            assert card.mtga_id == card_model.mtga_id, "id's didn't match: expected ({}, {}), got ({}, {})".format(card_model.pretty_name, card_model.mtga_id, card.pretty_name, card.mtga_id)
-            assert card.pretty_name == card_model.pretty_name, "names didn't match:  expected ({}, {}), got ({}, {})".format(card_model.pretty_name, card_model.mtga_id, card.pretty_name, card.mtga_id)
+            assert card.mtga_id in [c.mtga_id for c in card_models], "id's didn't match: expected to be in ({}), got ({}, {})".format(card_models, card.pretty_name, card.mtga_id)
+            assert card.pretty_name in [c.pretty_name for c in card_models], "names didn't match:  expected to be in ({}), got ({}, {})".format(card_models, card.pretty_name, card.mtga_id)
 
 
 def import_deck(deck_text):
     pyperclip.copy(deck_text)
-    slow_click(*DECKS_LOCATION)
-    slow_click(*IMPORT_DECK)
-    slow_click(*IMPORT_DECK_OK)
-    slow_click(*ONLY_ONE_DECK_LOC)
-    slow_click(*DELETE_DECK)
-    slow_click(*DELETE_DECK_OK)
+    speedy_click(*IMPORT_DECK)
+    spiffy_click(*IMPORT_DECK_OK)
+    speedy_click(*ONLY_ONE_DECK_LOC)
+    speedy_click(*DELETE_DECK)
+    spiffy_click(*DELETE_DECK_OK)
+
+    # may need to delete deck more than once if for some reason extra decks get generated
+    speedy_click(*ONLY_ONE_DECK_LOC)
+    speedy_click(*DELETE_DECK)
+    spiffy_click(*DELETE_DECK_OK)
 
 
-def slow_click(x, y):
+def speedy_click(x, y):
     wait = 1
+    sleeptime = 0.0
+    while wait:
+        try:
+            wait = takeover_q.get_nowait()
+        except Empty:
+            wait = None
+        if wait:
+            if sleeptime < 1:
+                sleeptime += 0.1
+                time.sleep(0.1)
+            else:
+                sleeptime -= 0.1
+    time.sleep(WAIT_SHORT / 8)
+    mouse.position = x, y
+    time.sleep(WAIT_SHORT / 8)
+    mouse.press(Button.left)
+    time.sleep(WAIT_SHORT / 8)
+    mouse.release(Button.left)
+    time.sleep(WAIT_SHORT / 8)
+
+
+def spiffy_click(x, y):
+    wait = 1
+    sleeptime = 0.0
     while wait:
         try:
             wait = takeover_q.get_nowait()
@@ -185,7 +248,35 @@ def slow_click(x, y):
             wait = None
         if wait:
             print("taking over? waiting {} more seconds".format(takeover_q.qsize() / 100))
-            time.sleep(0.1)
+            if sleeptime < 1:
+                sleeptime += 0.1
+                time.sleep(0.1)
+            else:
+                sleeptime -= 0.1
+    time.sleep(WAIT_SHORT / 4)
+    mouse.position = x, y
+    time.sleep(WAIT_SHORT / 2)
+    mouse.press(Button.left)
+    time.sleep(WAIT_SHORT / 2)
+    mouse.release(Button.left)
+    time.sleep(WAIT_SHORT / 4)
+
+
+def slow_click(x, y):
+    wait = 1
+    sleeptime = 0.0
+    while wait:
+        try:
+            wait = takeover_q.get_nowait()
+        except Empty:
+            wait = None
+        if wait:
+            print("taking over? waiting {} more seconds".format(takeover_q.qsize() / 100))
+            if sleeptime < 1:
+                sleeptime += 0.1
+                time.sleep(0.1)
+            else:
+                sleeptime -= 0.1
     time.sleep(WAIT_SHORT / 2)
     mouse.position = x, y
     time.sleep(WAIT_SHORT / 2)
@@ -196,24 +287,27 @@ def slow_click(x, y):
 
 
 def backup_all_decks():
+    lw = log_watch_thread()
+    ml = mouse_listener_thread()
     for xpos in list(DECKS_COLUMN_XPOS):
-        for ypos in list(DECKS_ROW_YPOS):
+        for ypos in list(DECKS_ROW_YPOS[:1]):
             if (xpos, ypos) == (DECKS_COLUMN_XPOS[0], DECKS_ROW_YPOS[0]):
                 continue
-            slow_click(xpos, ypos)
-            slow_click(*EXPORT_DECK)
+            spiffy_click(xpos, ypos)
+            spiffy_click(*EXPORT_DECK)
             deck_contents = pyperclip.paste()
-            slow_click(*EXPORT_OK)
-            slow_click(*EDIT_DECK)
+            spiffy_click(*EXPORT_OK)
+            spiffy_click(*EDIT_DECK)
             time.sleep(WAIT_LONG)
-            slow_click(*DECK_EDIT_NAME)
+            spiffy_click(*DECK_EDIT_NAME)
+            time.sleep(WAIT_SHORT)
             keyboard.press(Key.ctrl_l)
             keyboard.press('c')
             keyboard.release('c')
             keyboard.release(Key.ctrl_l)
             time.sleep(WAIT_SHORT)
             deck_name = pyperclip.paste()
-            slow_click(*DECK_EDIT_DONE)
+            spiffy_click(*DECK_EDIT_DONE)
             deck_name = deck_name.replace(" ", "_")
             deck_name = ''.join(ch for ch in deck_name if ch.isalnum() or ch == "_")
             print("backed up {}".format(deck_name))
@@ -229,30 +323,35 @@ def on_move(x, y):
         return False
 
 
-for i in range(3, 0, -1):
-    print("starting in {}".format(i))
-    time.sleep(1)
-
-
 def watch_mouse():
     with Listener(on_move=on_move) as listener:
         listener.join()
 
 
-# backup_all_decks()
-
-
-
-# 1 Ambuscade (HOU) 110 = 65767
-# 1 Pride Sovereign (HOU) 126
-# 1 Sifter Wurm (HOU) 135
-# 1 Bloodwater Entity (HOU) 138
-# 1 The Locust God (HOU) 139
-# 1 Nicol Bolas, God-Pharaoh (HOU) 140
-# 1 Obelisk Spider (HOU) 141
-# 1 Resolute Survivors (HOU) 142 65761
-# 1 River Hoopoe (HOU) 143
-# 1 Samut, the Tested (HOU) 144 = 65767
-# 1 The Scarab God (HOU) 145 = 65769
-# 1 The Scorpion God (HOU) 146
-# 1 Unraveling Mummy (HOU) 147
+if __name__ == '__main__':
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("!!!!!!!!!!!!!!!!  Do not attempt to run these tests on any screen size besides 1920x1080   !!!!!!!!!!!!!!!!")
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("!!")
+    print("!!  You should back up and remove ALL of your decks before continuing.")
+    print("!!  This script requires that the first deck slot be available, and will repeatedly delete the first")
+    print("!!    saved deck. If you do not want your decks to be deleted, back out now!")
+    print("!!  In any mode chosen, this script will takeover your mouse and perform many clicks.")
+    print("!!  MTGA must be running and fullscreen 1920x1080 on your right-most monitor, on the decks page.")
+    print("!! It may take upwards of 3 hours to perform a full test suite.")
+    print("!! please type 'OK' to continue, 'backup' to perform a deck backup, or anything else to exit.")
+    ok = input("[OK/backup/exit]: ")
+    if ok == "OK":
+        for i in range(3, 0, -1):
+            print("starting in {}".format(i))
+            time.sleep(1)
+        pytest.main(['--html=set_data_report.html'])
+    elif ok == "backup":
+        for i in range(3, 0, -1):
+            print("starting in {}".format(i))
+            time.sleep(1)
+        backup_all_decks()
+    else:
+        print("exiting.")

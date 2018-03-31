@@ -295,16 +295,20 @@ Mountain4 = Card("mountain", "Mountain", [], ['R'], "Basic Land", "Mountain", "A
 Forest2 = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "AKH", 267, 65393)
 Forest3 = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "AKH", 268, 65395)
 Forest4 = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "AKH", 269, 65397)
-GideonMartialParagon = Card("gideon_martial_paragon", "Gideon, Martial Paragon", ['4', 'W'], ['W'], "Legendary Planeswalker", "Gideon", "AKH", 270, 65399)
-CompanionoftheTrials = Card("companion_of_the_trials", "Companion of the Trials", ['2', 'W'], ['W'], "Creature", "Bird Soldier", "AKH", 271, 65401)
-GideonsResolve = Card("gideons_resolve", "Gideon's Resolve", ['4', 'W'], ['W'], "Enchantment", "", "AKH", 272, 65403)
-GracefulCat = Card("graceful_cat", "Graceful Cat", ['2', 'W'], ['W'], "Creature", "Cat", "AKH", 273, 65405)
-StoneQuarry = Card("stone_quarry", "Stone Quarry", [], ['R', 'W'], "Land", "", "AKH", 274, 65407)
-LilianaDeathWielder = Card("liliana_death_wielder", "Liliana, Death Wielder", ['5', 'B', 'B'], ['B'], "Legendary Planeswalker", "Liliana", "AKH", 275, 65409)
-DesiccatedNaga = Card("desiccated_naga", "Desiccated Naga", ['2', 'B'], ['B'], "Creature", "Zombie Naga", "AKH", 276, 65411)
-LilianasInfluence = Card("lilianas_influence", "Liliana's Influence", ['4', 'B', 'B'], ['B'], "Sorcery", "", "AKH", 277, 65413)
-TatteredMummy = Card("tattered_mummy", "Tattered Mummy", ['1', 'B'], ['B'], "Creature", "Zombie Jackal", "AKH", 278, 65415)
 
+# start mixup
+GideonMartialParagon = Card("gideon_martial_paragon", "Gideon, Martial Paragon", ['4', 'W'], ['W'], "Legendary Planeswalker", "Gideon", "AKH", 270, 65443)
+CompanionoftheTrials = Card("companion_of_the_trials", "Companion of the Trials", ['2', 'W'], ['W'], "Creature", "Bird Soldier", "AKH", 271, 65445)
+GideonsResolve = Card("gideons_resolve", "Gideon's Resolve", ['4', 'W'], ['W'], "Enchantment", "", "AKH", 272, 65447)
+GracefulCat = Card("graceful_cat", "Graceful Cat", ['2', 'W'], ['W'], "Creature", "Cat", "AKH", 273, 65449)
+StoneQuarry = Card("stone_quarry", "Stone Quarry", [], ['R', 'W'], "Land", "", "AKH", 274, 65451)
+LilianaDeathWielder = Card("liliana_death_wielder", "Liliana, Death Wielder", ['5', 'B', 'B'], ['B'], "Legendary Planeswalker", "Liliana", "AKH", 275, 65453)
+DesiccatedNaga = Card("desiccated_naga", "Desiccated Naga", ['2', 'B'], ['B'], "Creature", "Zombie Naga", "AKH", 276, 65455)
+LilianasInfluence = Card("lilianas_influence", "Liliana's Influence", ['4', 'B', 'B'], ['B'], "Sorcery", "", "AKH", 277, 65457)
+TatteredMummy = Card("tattered_mummy", "Tattered Mummy", ['1', 'B'], ['B'], "Creature", "Zombie Jackal", "AKH", 278, 65459)
+# end mixup
+# wtf
+# end wtf
 FoulOrchardAKH = Card("foul_orchard", "Foul Orchard", [], ['B', 'G'], "Land", "", "AKH", 279, 65461)
 CinderBarrensAKH = Card("cinder_barrens", "Cinder Barrens", [], ['B', 'R'], "Land", "", "AKH", 280, 65463)
 ForsakenSanctuaryAKH = Card("forsaken_sanctuary", "Forsaken Sanctuary", [], ['W', 'B'], "Land", "", "AKH", 281, 65465)
