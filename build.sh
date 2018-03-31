@@ -16,9 +16,13 @@ yes | pyinstaller.exe app/mtgatracker_backend.py --distpath appdist
 #rm -rf build
 #rm -rf mtgatracker_backend.spec
 
+rm -r MTGATracker-win32-x64 || echo "nothing to remove, moving on"
+
 yes | ./node_modules/.bin/electron-packager electron/ MTGATracker \
   --overwrite --version=$version --electron-version=1.7.6 \
   --ignore="\.git.*" --ignore=".*psd" --ignore="mtga_watch\.log.*" \
   --extra-resource="appdist" \
   --icon="electron/img/icon_small.ico" \
   --asar
+
+mv MTGATracker-win32-x64 MTGATracker-win32-x64_$version
