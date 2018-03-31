@@ -175,10 +175,12 @@ GiftofParadise = Card("gift_of_paradise", "Gift of Paradise", ['2', 'G'], ['G'],
 GreaterSandwurm = Card("greater_sandwurm", "Greater Sandwurm", ['5', 'G', 'G'], ['G'], "Creature", "Wurm", "AKH", 168, 65135)
 HapatrasMark = Card("hapatras_mark", "Hapatra's Mark", ['G'], ['G'], "Instant", "", "AKH", 169, 65137)
 HarvestSeason = Card("harvest_season", "Harvest Season", ['2', 'G'], ['G'], "Sorcery", "", "AKH", 170, 65139)
-HazeofPollen = Card("haze_of_pollen", "Haze of Pollen", ['1', 'G'], ['G'], "Instant", "", "AKH", 171, 65141)
-HonoredHydra = Card("honored_hydra", "Honored Hydra", ['5', 'G'], ['G'], "Creature", "Snake Hydra", "AKH", 172, 65143)
-HoodedBrawler = Card("hooded_brawler", "Hooded Brawler", ['2', 'G'], ['G'], "Creature", "Naga Warrior", "AKH", 173, 65145)
-InitiatesCompanion = Card("initiates_companion", "Initiate's Companion", ['1', 'G'], ['G'], "Creature", "Cat", "AKH", 174, 65147)
+# start mixup
+HazeofPollen = Card("haze_of_pollen", "Haze of Pollen", ['1', 'G'], ['G'], "Instant", "", "AKH", 171, 65427)
+HonoredHydra = Card("honored_hydra", "Honored Hydra", ['5', 'G'], ['G'], "Creature", "Snake Hydra", "AKH", 172, 65141)
+HoodedBrawler = Card("hooded_brawler", "Hooded Brawler", ['2', 'G'], ['G'], "Creature", "Naga Warrior", "AKH", 173, 65143)
+InitiatesCompanion = Card("initiates_companion", "Initiate's Companion", ['1', 'G'], ['G'], "Creature", "Cat", "AKH", 174, 65145)
+# end mixup
 Manglehorn = Card("manglehorn", "Manglehorn", ['2', 'G'], ['G'], "Creature", "Beast", "AKH", 175, 65149)
 NagaVitalist = Card("naga_vitalist", "Naga Vitalist", ['1', 'G'], ['G'], "Creature", "Naga Druid", "AKH", 176, 65151)
 OashraCultivator = Card("oashra_cultivator", "Oashra Cultivator", ['G'], ['G'], "Creature", "Human Druid", "AKH", 177, 65153)
@@ -259,12 +261,16 @@ RhonassMonument = Card("rhonass_monument", "Rhonas's Monument", ['3'], [], "Lege
 ThroneoftheGodPharaoh = Card("throne_of_the_godpharaoh", "Throne of the God-Pharaoh", ['2'], [], "Legendary Artifact", "", "AKH", 237, 65333)
 WatchersoftheDead = Card("watchers_of_the_dead", "Watchers of the Dead", ['2'], [], "Artifact Creature", "Cat", "AKH", 238, 65335)
 CanyonSlough = Card("canyon_slough", "Canyon Slough", [], ['B', 'R'], "Land", "Swamp Mountain", "AKH", 239, 65337)
-CascadingCataracts = Card("cascading_cataracts", "Cascading Cataracts", [], [], "Land", "", "AKH", 240, 65339)
-CradleoftheAccursed = Card("cradle_of_the_accursed", "Cradle of the Accursed", [], [], "Land", "Desert", "AKH", 241, 65341)
-EvolvingWilds = Card("evolving_wilds", "Evolving Wilds", [], [], "Land", "", "AKH", 242, 65343)
-FetidPools = Card("fetid_pools", "Fetid Pools", [], ['U', 'B'], "Land", "Island Swamp", "AKH", 243, 65345)
-GraspingDunes = Card("grasping_dunes", "Grasping Dunes", [], [], "Land", "Desert", "AKH", 244, 65347)
-IrrigatedFarmland = Card("irrigated_farmland", "Irrigated Farmland", [], ['W', 'U'], "Land", "Plains Island", "AKH", 245, 65349)
+# start mixup
+CradleoftheAccursed = Card("cradle_of_the_accursed", "Cradle of the Accursed", [], [], "Land", "Desert", "AKH", 241, 65339)
+CascadingCataracts = Card("cascading_cataracts", "Cascading Cataracts", [], [], "Land", "", "AKH", 240, 65431)
+
+
+EvolvingWilds = Card("evolving_wilds", "Evolving Wilds", [], [], "Land", "", "AKH", 242, 65341)
+FetidPools = Card("fetid_pools", "Fetid Pools", [], ['U', 'B'], "Land", "Island Swamp", "AKH", 243, 65343)
+GraspingDunes = Card("grasping_dunes", "Grasping Dunes", [], [], "Land", "Desert", "AKH", 244, 65345)
+IrrigatedFarmland = Card("irrigated_farmland", "Irrigated Farmland", [], ['W', 'U'], "Land", "Plains Island", "AKH", 245, 65347)
+# end mixup
 PaintedBluffs = Card("painted_bluffs", "Painted Bluffs", [], [], "Land", "Desert", "AKH", 246, 65351)
 ScatteredGroves = Card("scattered_groves", "Scattered Groves", [], ['W', 'G'], "Land", "Forest Plains", "AKH", 247, 65353)
 ShelteredThicket = Card("sheltered_thicket", "Sheltered Thicket", [], ['R', 'G'], "Land", "Mountain Forest", "AKH", 248, 65355)
@@ -298,14 +304,18 @@ LilianaDeathWielder = Card("liliana_death_wielder", "Liliana, Death Wielder", ['
 DesiccatedNaga = Card("desiccated_naga", "Desiccated Naga", ['2', 'B'], ['B'], "Creature", "Zombie Naga", "AKH", 276, 65411)
 LilianasInfluence = Card("lilianas_influence", "Liliana's Influence", ['4', 'B', 'B'], ['B'], "Sorcery", "", "AKH", 277, 65413)
 TatteredMummy = Card("tattered_mummy", "Tattered Mummy", ['1', 'B'], ['B'], "Creature", "Zombie Jackal", "AKH", 278, 65415)
-FoulOrchard = Card("foul_orchard", "Foul Orchard", [], ['B', 'G'], "Land", "", "AKH", 279, 65417)
-CinderBarrens = Card("cinder_barrens", "Cinder Barrens", [], ['B', 'R'], "Land", "", "AKH", 280, 65419)
-ForsakenSanctuary = Card("forsaken_sanctuary", "Forsaken Sanctuary", [], ['W', 'B'], "Land", "", "AKH", 281, 65421)
-HighlandLake = Card("highland_lake", "Highland Lake", [], ['U', 'R'], "Land", "", "AKH", 282, 65423)
-MeanderingRiver = Card("meandering_river", "Meandering River", [], ['W', 'U'], "Land", "", "AKH", 283, 65425)
-SubmergedBoneyard = Card("submerged_boneyard", "Submerged Boneyard", [], ['U', 'B'], "Land", "", "AKH", 284, 65427)
-TimberGorge = Card("timber_gorge", "Timber Gorge", [], ['R', 'G'], "Land", "", "AKH", 285, 65429)
-TranquilExpanse = Card("tranquil_expanse", "Tranquil Expanse", [], ['G', 'W'], "Land", "", "AKH", 286, 65431)
+
+FoulOrchardAKH = Card("foul_orchard", "Foul Orchard", [], ['B', 'G'], "Land", "", "AKH", 279, 65461)
+CinderBarrensAKH = Card("cinder_barrens", "Cinder Barrens", [], ['B', 'R'], "Land", "", "AKH", 280, 65463)
+ForsakenSanctuaryAKH = Card("forsaken_sanctuary", "Forsaken Sanctuary", [], ['W', 'B'], "Land", "", "AKH", 281, 65465)
+HighlandLakeAKH = Card("highland_lake", "Highland Lake", [], ['U', 'R'], "Land", "", "AKH", 282, 65467)
+MeanderingRiverAKH = Card("meandering_river", "Meandering River", [], ['W', 'U'], "Land", "", "AKH", -1, 65469)
+SubmergedBoneyardAKH = Card("submerged_boneyard", "Submerged Boneyard", [], ['U', 'B'], "Land", "", "AKH", 284, 65471)
+TimberGorgeAKH = Card("timber_gorge", "Timber Gorge", [], ['R', 'G'], "Land", "", "AKH", 285, 65473)
+TranquilExpanseAKH = Card("tranquil_expanse", "Tranquil Expanse", [], ['G', 'W'], "Land", "", "AKH", 286, 65475)
+WoodlandStreamAKH = Card("woodland_stream", "Woodland Stream", [], ['G', 'U'], "Land", "", "AKH", 287, 65477)
+
+
 # WoodlandStream = Card("woodland_stream", "Woodland Stream", [], ['G', 'U'], "Land", "", "AKH", 287, 65433)
 
 clsmembers = [card for name, card in inspect.getmembers(sys.modules[__name__]) if isinstance(card, Card)]
