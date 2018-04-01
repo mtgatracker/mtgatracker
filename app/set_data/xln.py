@@ -294,16 +294,19 @@ Forest = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "XLN", 276,
 Forest2 = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "XLN", 277, 66533)
 Forest3 = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "XLN", 278, 66535)
 Forest4 = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "XLN", 279, 66537)
-JaceIngeniousMindMage = Card("jace_ingenious_mindmage", "Jace, Ingenious Mind-Mage", ['4', 'U', 'U'], ['U'], "Legendary Planeswalker", "Jace", "XLN", 280, 66539)
-CastawaysDespair = Card("castaways_despair", "Castaway's Despair", ['3', 'U'], ['U'], "Enchantment", "Aura", "XLN", 281, 66541)
-GraspingCurrent = Card("grasping_current", "Grasping Current", ['4', 'U'], ['U'], "Sorcery", "", "XLN", 282, 66543)
-JacesSentinel = Card("jaces_sentinel", "Jace's Sentinel", ['1', 'U'], ['U'], "Creature", "Merfolk Warrior", "XLN", 283, 66545)
-WoodlandStream = Card("woodland_stream", "Woodland Stream", [], ['G', 'U'], "Land", "", "XLN", 284, 66547)
-HuatliDinosaurKnight = Card("huatli_dinosaur_knight", "Huatli, Dinosaur Knight", ['4', 'R', 'W'], ['W', 'R'], "Legendary Planeswalker", "Huatli", "XLN", 285, 66549)
-HuatlisSnubhorn = Card("huatlis_snubhorn", "Huatli's Snubhorn", ['1', 'W'], ['W'], "Creature", "Dinosaur", "XLN", 286, 66551)
-HuatlisSpurring = Card("huatlis_spurring", "Huatli's Spurring", ['R'], ['R'], "Instant", "", "XLN", 287, 66553)
-SunBlessedMount = Card("sunblessed_mount", "Sun-Blessed Mount", ['3', 'R', 'W'], ['W', 'R'], "Creature", "Dinosaur", "XLN", 288, 66555)
-StoneQuarry = Card("stone_quarry", "Stone Quarry", [], ['R', 'W'], "Land", "", "XLN", 289, 66557)
+
+# start mixup
+JaceIngeniousMindMage = Card("jace_ingenious_mindmage", "Jace, Ingenious Mind-Mage", ['4', 'U', 'U'], ['U'], "Legendary Planeswalker", "Jace", "XLN", 280, 66541)
+CastawaysDespair = Card("castaways_despair", "Castaway's Despair", ['3', 'U'], ['U'], "Enchantment", "Aura", "XLN", 281, 66543)
+GraspingCurrent = Card("grasping_current", "Grasping Current", ['4', 'U'], ['U'], "Sorcery", "", "XLN", 282, 66545)
+JacesSentinel = Card("jaces_sentinel", "Jace's Sentinel", ['1', 'U'], ['U'], "Creature", "Merfolk Warrior", "XLN", 283, 66547)
+WoodlandStream = Card("woodland_stream", "Woodland Stream", [], ['G', 'U'], "Land", "", "XLN", 284, 66549)
+HuatliDinosaurKnight = Card("huatli_dinosaur_knight", "Huatli, Dinosaur Knight", ['4', 'R', 'W'], ['W', 'R'], "Legendary Planeswalker", "Huatli", "XLN", 285, 66551)
+HuatlisSnubhorn = Card("huatlis_snubhorn", "Huatli's Snubhorn", ['1', 'W'], ['W'], "Creature", "Dinosaur", "XLN", 286, 66553)
+HuatlisSpurring = Card("huatlis_spurring", "Huatli's Spurring", ['R'], ['R'], "Instant", "", "XLN", 287, 66555)
+SunBlessedMount = Card("sunblessed_mount", "Sun-Blessed Mount", ['3', 'R', 'W'], ['W', 'R'], "Creature", "Dinosaur", "XLN", 288, 66557)
+StoneQuarry = Card("stone_quarry", "Stone Quarry", [], ['R', 'W'], "Land", "", "XLN", 289, 66559)
+# end mixup
 
 clsmembers = [card for name, card in inspect.getmembers(sys.modules[__name__]) if isinstance(card, Card)]
 Ixalan = Set("ixalan", cards=clsmembers)
