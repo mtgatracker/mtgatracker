@@ -12,7 +12,7 @@ import datetime
 import json
 import websockets
 import time
-from app.queues import all_die_queue, game_state_change_queue, general_output_queue
+from app.queues import all_die_queue, game_state_change_queue, general_output_queue, decklist_change_queue
 
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument('-i', '--log_file', default=None)
@@ -32,9 +32,24 @@ async def stats(websocket):
         game_state["now"] = now
         game_state["data_type"] = "game_state"
         await websocket.send(json.dumps(game_state))
-    else:
-        await websocket.send('{"no": "data"}')
-    await asyncio.sleep(0.5)
+    # else:
+    #     await websocket.send('{"no": "data"}')
+    await asyncio.sleep(0.1)
+
+
+async def decks(websocket):
+    decklist_change = {}
+    try:
+        decks = decklist_change_queue.get(timeout=0.1)
+    except Empty:
+        decks = False
+    if decks:
+        decklist_change["decks"] = decks
+        now = datetime.datetime.utcnow().isoformat() + 'Z'
+        decklist_change["now"] = now
+        decklist_change["data_type"] = "decklist_change"
+        await websocket.send(json.dumps(decklist_change))
+    await asyncio.sleep(0.1)
 
 
 async def output(websocket):
@@ -50,7 +65,7 @@ async def output(websocket):
         else:
             message["data_type"] = "message"
         await websocket.send(json.dumps(message))
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.1)
 
 
 async def consumer_handler(websocket):
@@ -67,8 +82,9 @@ async def handler(websocket, _):
         consumer_task = asyncio.ensure_future(consumer_handler(websocket))
         stats_task = asyncio.ensure_future(stats(websocket))
         output_task = asyncio.ensure_future(output(websocket))
+        decks_task = asyncio.ensure_future(decks(websocket))
         done, pending = await asyncio.wait(
-            [consumer_task, stats_task, output_task],
+            [decks_task, consumer_task, stats_task, output_task],
             return_when=asyncio.FIRST_COMPLETED,
         )
         for task in pending:

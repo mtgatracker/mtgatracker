@@ -30,6 +30,17 @@ var appData = {
     show_iids: showIIDs,
     last_connect: 0,
     last_connect_as_seconds: 0,
+    game_in_progress: false,
+    game_complete: false,
+    game_dismissed: false,
+    show_available_decklists: true,
+    no_decks: false,
+    no_list_selected: true,
+    list_selected: false,
+    selected_list_size: "0",
+    selected_list: [],
+    selected_list_name: "",
+    player_decks: [],
     total_cards_in_deck: "0",
     draw_stats: [],
     opponent_hand: [],
@@ -182,34 +193,69 @@ ws.addEventListener('open', () => {
 });
 
 
+function resizeWindow() {
+    let total = 0;
+    $.each($(".card"), function(i, c) {
+        total += c.offsetHeight;
+    })
+
+    container = document.getElementById("container")
+
+    let totalHeight = 10;
+
+    $("#container").children().each(function(c, e) {
+        if(e.style.display != "none")
+            totalHeight += $(e).outerHeight(true);
+    });
+    bounds = browserWindow.getBounds()
+    bounds.height = parseInt(totalHeight);
+    container.style.height = "" + parseInt(totalHeight) + "px"
+    if (!debug) {
+        browserWindow.setBounds(bounds)
+    } else {
+        // console.log("would set height: " + totalHeight)
+    }
+}
+
+function populateDeck(elem) {
+    deckID = elem.getAttribute('data-deckid')
+    $.each(appData.player_decks, (i, v) => {
+        if (v.deck_id == deckID) {
+            appData.selected_list = v.cards;
+            appData.selected_list_name = v.pool_name;
+            appData.list_selected = true;
+            appData.no_list_selected = false;
+        }
+    })
+    resizeWindow()
+}
+
+function unpopulateDecklist() {
+    appData.list_selected = false;
+    appData.no_list_selected = true;
+    appData.show_available_decklists = true;
+    appData.game_in_progress = false;
+    resizeWindow()
+}
+
+
 ws.onmessage = (data) => {
     // data is already parsed as JSON:
     data = JSON.parse(event.data)
     if(data.data_type == "game_state") {
-        appData.draw_stats = data.draw_odds.stats;
-        appData.deck_name = data.draw_odds.deck_name;
-        appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
-        appData.opponent_hand = data.opponent_hand
-        var total = 0;
-        $.each($(".card"), function(i, c) {
-            total += c.offsetHeight;
-        })
-
-        container = document.getElementById("container")
-
-        let totalHeight = 10;
-
-        $("#container").children().each(function(c, e){
-            totalHeight += $(e).outerHeight(true);
-        });
-        bounds = browserWindow.getBounds()
-        bounds.height = parseInt(totalHeight);
-        if (!debug) {
-            container.style.height = "" + parseInt(totalHeight) + "px"
-            browserWindow.setBounds(bounds)
+        if (data.match_complete) {
+            console.log("match over")
+            appData.game_complete = true;
         } else {
-            // console.log("would set height: " + totalHeight)
+            appData.game_in_progress = true;
+            appData.game_complete = false;
+            appData.show_available_decklists = false;
+            appData.draw_stats = data.draw_odds.stats;
+            appData.deck_name = data.draw_odds.deck_name;
+            appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
+            appData.opponent_hand = data.opponent_hand
         }
+
     } else if (data.data_type == "error") {
         if (data.count) {
             appData.error_count = data.count;
@@ -218,15 +264,31 @@ ws.onmessage = (data) => {
         appData.show_error = true;
     } else if (data.data_type == "message") {
         // TODO
+    } else if (data.data_type=="decklist_change") {
+        console.log("got a dl change")
+        if (data.decks.no_decks_defined) {
+            appData.no_decks = true;
+        } else {
+            new_decks = []
+            $.each(data.decks, (key, value) => {
+                console.log(key)
+                console.log(value)
+                new_decks.push(value)
+            })
+            appData.player_decks = new_decks;
+            appData.no_decks = false;
+            console.log("got decks safvace")
+        }
     }
+    resizeWindow()
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
-    $("#zoom-out").click(() => {
+    $(".zoom-out").click(() => {
         zoom -= 0.1
         browserWindow.webContents.setZoomFactor(zoom)
     })
-    $("#zoom-in").click(() => {
+    $(".zoom-in").click(() => {
         zoom += 0.1
         browserWindow.webContents.setZoomFactor(zoom)
     })

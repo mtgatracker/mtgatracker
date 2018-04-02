@@ -153,12 +153,23 @@ class Deck(Pool):
             library.cards.append(game_card)
         return library
 
-    def to_serializable(self):
-        return {
+    def to_serializable(self, transform_to_counted=False):
+        obj = {
             "deck_id": self.deck_id,
             "pool_name": self.pool_name,
-            "cards": [c.to_serializable() for c in self.cards]
         }
+        if transform_to_counted:
+            card_dict = {}
+            for card in self.cards:
+                card_dict[card.mtga_id] = card_dict.get(card.mtga_id, card.to_serializable())
+                card_dict[card.mtga_id]["count_in_deck"] = card_dict[card.mtga_id].get("count_in_deck", 0) + 1
+            obj["cards"] = [v for v in card_dict.values()]
+            obj["cards"].sort(key=lambda x: x["count_in_deck"])
+            obj["cards"].reverse()
+            obj["cards"] = obj["cards"]
+        else:
+            obj["cards"] = [c.to_serializable() for c in self.cards]
+        return obj
 
     def to_min_json(self):
         min_deck = {}
