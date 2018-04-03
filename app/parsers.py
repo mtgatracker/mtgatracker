@@ -3,6 +3,7 @@ import util
 from app.models.game import Game, Player
 from app.models.set import Zone
 import app.mtga_app
+from app.queues import game_state_change_queue
 
 
 def parse_jsonrpc_blob(blob):
@@ -11,6 +12,8 @@ def parse_jsonrpc_blob(blob):
 
 def parse_get_decklists(blob):
     """ CHECK """
+    import app.mtga_app as mtga_app
+    mtga_app.mtga_watch_app.player_decks = {}
     for deck in blob["Deck.GetDeckLists"]:
         util.process_deck(deck)
 
@@ -155,7 +158,7 @@ def parse_accept_hand(blob):
 
 def parse_match_complete(blob):
     import app.mtga_app as mtga_app
-    print("mc")
+    game_state_change_queue.put({"match_complete": True})
     game_room_info = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']
     final_match_result = game_room_info['finalMatchResult']
     result_list = final_match_result["resultList"]
