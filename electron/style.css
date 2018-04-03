@@ -282,7 +282,7 @@ p {
     cursor: pointer;
 }
 
-.deck-container:nth-child(odd) {
+.deck-container:nth-child(even) {
     background-color: #8a8a8a;
 }
 
