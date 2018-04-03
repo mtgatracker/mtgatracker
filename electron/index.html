@@ -23,7 +23,7 @@
           <div class="card-text">
             <span class="card-text-limit"><i>{ stat.card.iid }</i>{ stat.count_in_deck }x <i>{ stat.card }</i></span>
             <span class="cost">
-              <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>n
+              <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
             </span>
           </div>
         </div>
@@ -33,6 +33,7 @@
         <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
         <div id="decklists-container" rv-show="no_list_selected">
           <h3>Pick a deck, or start a game!</h3>
+          <p class="update-message" rv-show="show_update_message"><a href="http://github.com/shawkinsl/mtga-tracker/releases/latest">{message}</a></p>
           <p class="header-warning" rv-show="no_decks">
             MTGATracker couldn't find any decks. If this is the first time launching MTGATracker, please edit, then save any deck in MTGA now!
           </p>
@@ -45,7 +46,7 @@
           <h1> <i class="fas fa-chevron-left"></i> { selected_list_name }</h1>
           <div class="card" rv-each-stat="selected_list" rv-card_color="stat.colors">
             <div class="card-text">
-              <span class="card-text-limit"><i>{ stat.count_in_deck }x <i>{ stat.pretty_name }</i></span>
+              <span class="card-text-limit">{ stat.count_in_deck }x <i>{ stat.pretty_name }</i></span>
               <span class="cost">
                 <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
               </span>
