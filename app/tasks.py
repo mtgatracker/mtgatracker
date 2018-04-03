@@ -99,7 +99,7 @@ def json_blob_reader_task(in_queue, out_queue):
         # check for decklist changes
         if mtga_watch_app.player_decks != last_decklist:
             last_decklist = mtga_watch_app.player_decks
-            decklist_change_queue.put({k: v.to_serializable() for k, v in last_decklist.items()})
+            decklist_change_queue.put({k: v.to_serializable(transform_to_counted=True) for k, v in last_decklist.items()})
 
         # check for gamestate changes
         try:
