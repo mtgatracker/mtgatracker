@@ -12,6 +12,8 @@ def parse_jsonrpc_blob(blob):
 
 def parse_get_decklists(blob):
     """ CHECK """
+    import app.mtga_app as mtga_app
+    mtga_app.mtga_watch_app.player_decks = {}
     for deck in blob["Deck.GetDeckLists"]:
         util.process_deck(deck)
 
