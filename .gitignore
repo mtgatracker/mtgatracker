@@ -105,6 +105,7 @@ mtga_watch.log*
 */mtga_watch.log*
 secrets
 **/secrets
+**/secrets-staging
 webtasks/node_modules
 node_modules
 appdist/
