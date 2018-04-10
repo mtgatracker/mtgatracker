@@ -50,6 +50,10 @@ h3 {
     padding: 8px;
 }
 
+.beleren {
+    font-family: beleren;
+}
+
 p {
     font-family: beleren;
     padding-left: 8px;
@@ -231,6 +235,7 @@ p {
 
 .card-w .card-text-limit:before {
     background-image: -webkit-linear-gradient(left, rgba(182, 176, 174, 0), #f1f1e1);
+        <h3 class="zoom-panel"><span id="zoom-out" class="zoom">-</span> / <span id="zoom-in" class="zoom">+</span></h3>
     background-image: linear-gradient(left, rgba(182, 176, 174, 0), #f1f1e1);
 }
 
@@ -271,6 +276,14 @@ p {
 
 .card-text-limit b, .card-text-limit i, .card-text-limit {
     text-shadow: 0 0 0;
+}
+
+.link {
+    cursor: pointer;
+}
+
+.deck-container:nth-child(even) {
+    background-color: #8a8a8a;
 }
 
 .cost {

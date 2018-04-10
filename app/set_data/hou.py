@@ -13,10 +13,12 @@ AvenofEnduringHope = Card("aven_of_enduring_hope", "Aven of Enduring Hope", ['4'
 CrestedSunmare = Card("crested_sunmare", "Crested Sunmare", ['3', 'W', 'W'], ['W'], "Creature", "Horse", "HOU", 6, 65489)
 DauntlessAven = Card("dauntless_aven", "Dauntless Aven", ['2', 'W'], ['W'], "Creature", "Bird Warrior", "HOU", 7, 65491)
 DesertsHold = Card("deserts_hold", "Desert's Hold", ['2', 'W'], ['W'], "Enchantment", "Aura", "HOU", 8, 65493)
-DisposalMummy = Card("disposal_mummy", "Disposal Mummy", ['2', 'W'], ['W'], "Creature", "Zombie Jackal", "HOU", 9, 65495)
-DjeruWithEyesOpen = Card("djeru_with_eyes_open", "Djeru, With Eyes Open", ['3', 'W', 'W'], ['W'], "Legendary Creature", "Human Warrior", "HOU", 10, 65497)
-DjerusRenunciation = Card("djerus_renunciation", "Djeru's Renunciation", ['1', 'W'], ['W'], "Instant", "", "HOU", 11, 65499)
-DutifulServants = Card("dutiful_servants", "Dutiful Servants", ['3', 'W'], ['W'], "Creature", "Zombie", "HOU", 12, 65501)
+# mixup start
+DisposalMummy = Card("disposal_mummy", "Disposal Mummy", ['2', 'W'], ['W'], "Creature", "Zombie Jackal", "HOU", 9, 65957)
+DjeruWithEyesOpen = Card("djeru_with_eyes_open", "Djeru, With Eyes Open", ['3', 'W', 'W'], ['W'], "Legendary Creature", "Human Warrior", "HOU", 10, 65495)
+DjerusRenunciation = Card("djerus_renunciation", "Djeru's Renunciation", ['1', 'W'], ['W'], "Instant", "", "HOU", 11, 65497)
+DutifulServants = Card("dutiful_servants", "Dutiful Servants", ['3', 'W'], ['W'], "Creature", "Zombie", "HOU", 12, 65499)
+# mixup end
 GideonsDefeat = Card("gideons_defeat", "Gideon's Defeat", ['W'], ['W'], "Instant", "", "HOU", 13, 65503)
 GodPharaohsFaithful = Card("godpharaohs_faithful", "God-Pharaoh's Faithful", ['W'], ['W'], "Creature", "Human Wizard", "HOU", 14, 65505)
 HourofRevelation = Card("hour_of_revelation", "Hour of Revelation", ['3', 'W', 'W', 'W'], ['W'], "Sorcery", "", "HOU", 15, 65507)
@@ -62,8 +64,10 @@ Unsummon = Card("unsummon", "Unsummon", ['U'], ['U'], "Instant", "", "HOU", 54, 
 VizieroftheAnointed = Card("vizier_of_the_anointed", "Vizier of the Anointed", ['3', 'U'], ['U'], "Creature", "Human Cleric", "HOU", 55, 65587)
 AccursedHorde = Card("accursed_horde", "Accursed Horde", ['3', 'B'], ['B'], "Creature", "Zombie", "HOU", 56, 65589)
 AmmitEternal = Card("ammit_eternal", "Ammit Eternal", ['2', 'B'], ['B'], "Creature", "Zombie Crocodile Demon", "HOU", 57, 65591)
-ApocalypseDemon = Card("apocalypse_demon", "Apocalypse Demon", ['4', 'B', 'B'], ['B'], "Creature", "Demon", "HOU", 58, 65593)
-BanewhipPunisher = Card("banewhip_punisher", "Banewhip Punisher", ['2', 'B'], ['B'], "Creature", "Human Warrior", "HOU", 59, 65595)
+# mixup start
+ApocalypseDemon = Card("apocalypse_demon", "Apocalypse Demon", ['4', 'B', 'B'], ['B'], "Creature", "Demon", "HOU", 58, 65595)
+BanewhipPunisher = Card("banewhip_punisher", "Banewhip Punisher", ['2', 'B'], ['B'], "Creature", "Human Warrior", "HOU", 59, 65593)
+# mixup end
 BontusLastReckoning = Card("bontus_last_reckoning", "Bontu's Last Reckoning", ['1', 'B', 'B'], ['B'], "Sorcery", "", "HOU", 60, 65597)
 CarrionScreecher = Card("carrion_screecher", "Carrion Screecher", ['3', 'B'], ['B'], "Creature", "Zombie Bird", "HOU", 61, 65599)
 Doomfall = Card("doomfall", "Doomfall", ['2', 'B'], ['B'], "Sorcery", "", "HOU", 62, 65601)
@@ -98,21 +102,25 @@ EarthshakerKhenra = Card("earthshaker_khenra", "Earthshaker Khenra", ['1', 'R'],
 FerventPaincaster = Card("fervent_paincaster", "Fervent Paincaster", ['2', 'R'], ['R'], "Creature", "Human Wizard", "HOU", 91, 65659)
 FirebrandArcher = Card("firebrand_archer", "Firebrand Archer", ['1', 'R'], ['R'], "Creature", "Human Archer", "HOU", 92, 65661)
 FrontlineDevastator = Card("frontline_devastator", "Frontline Devastator", ['3', 'R'], ['R'], "Creature", "Zombie Minotaur Warrior", "HOU", 93, 65663)
-GildedCerodon = Card("gilded_cerodon", "Gilded Cerodon", ['4', 'R'], ['R'], "Creature", "Beast", "HOU", 94, 65665)
-GraniticTitan = Card("granitic_titan", "Granitic Titan", ['4', 'R', 'R'], ['R'], "Creature", "Elemental", "HOU", 95, 65667)
-HazoretsUndyingFury = Card("hazorets_undying_fury", "Hazoret's Undying Fury", ['4', 'R', 'R'], ['R'], "Sorcery", "", "HOU", 96, 65669)
-HourofDevastation = Card("hour_of_devastation", "Hour of Devastation", ['3', 'R', 'R'], ['R'], "Sorcery", "", "HOU", 97, 65671)
-ImminentDoom = Card("imminent_doom", "Imminent Doom", ['2', 'R'], ['R'], "Enchantment", "", "HOU", 98, 65673)
-InfernoJet = Card("inferno_jet", "Inferno Jet", ['5', 'R'], ['R'], "Sorcery", "", "HOU", 99, 65675)
-KhenraScrapper = Card("khenra_scrapper", "Khenra Scrapper", ['2', 'R'], ['R'], "Creature", "Jackal Warrior", "HOU", 100, 65677)
-KindledFury = Card("kindled_fury", "Kindled Fury", ['R'], ['R'], "Instant", "", "HOU", 101, 65679)
-Magmaroth = Card("magmaroth", "Magmaroth", ['3', 'R'], ['R'], "Creature", "Elemental", "HOU", 102, 65681)
-ManticoreEternal = Card("manticore_eternal", "Manticore Eternal", ['3', 'R', 'R'], ['R'], "Creature", "Zombie Manticore", "HOU", 103, 65683)
-NehebtheEternal = Card("neheb_the_eternal", "Neheb, the Eternal", ['3', 'R', 'R'], ['R'], "Legendary Creature", "Zombie Minotaur Warrior", "HOU", 104, 65685)
-OpenFire = Card("open_fire", "Open Fire", ['2', 'R'], ['R'], "Instant", "", "HOU", 105, 65687)
-PuncturingBlow = Card("puncturing_blow", "Puncturing Blow", ['2', 'R', 'R'], ['R'], "Sorcery", "", "HOU", 106, 65689)
-SandStrangler = Card("sand_strangler", "Sand Strangler", ['3', 'R'], ['R'], "Creature", "Beast", "HOU", 107, 65691)
-ThornedMoloch = Card("thorned_moloch", "Thorned Moloch", ['2', 'R'], ['R'], "Creature", "Lizard", "HOU", 108, 65693)
+InfernoJet = Card("inferno_jet", "Inferno Jet", ['5', 'R'], ['R'], "Sorcery", "", "HOU", 99, 65673)
+KhenraScrapper = Card("khenra_scrapper", "Khenra Scrapper", ['2', 'R'], ['R'], "Creature", "Jackal Warrior", "HOU", 100, 65675)
+KindledFury = Card("kindled_fury", "Kindled Fury", ['R'], ['R'], "Instant", "", "HOU", 101, 65677)
+Magmaroth = Card("magmaroth", "Magmaroth", ['3', 'R'], ['R'], "Creature", "Elemental", "HOU", 102, 65679)
+
+# mixup start
+ThornedMoloch = Card("thorned_moloch", "Thorned Moloch", ['2', 'R'], ['R'], "Creature", "Lizard", "HOU", 108, 65665)
+HazoretsUndyingFury = Card("hazorets_undying_fury", "Hazoret's Undying Fury", ['4', 'R', 'R'], ['R'], "Sorcery", "", "HOU", 96, 65667)
+HourofDevastation = Card("hour_of_devastation", "Hour of Devastation", ['3', 'R', 'R'], ['R'], "Sorcery", "", "HOU", 97, 65669)
+ImminentDoom = Card("imminent_doom", "Imminent Doom", ['2', 'R'], ['R'], "Enchantment", "", "HOU", 98, 65671)
+ManticoreEternal = Card("manticore_eternal", "Manticore Eternal", ['3', 'R', 'R'], ['R'], "Creature", "Zombie Manticore", "HOU", 103, 65681)
+NehebtheEternal = Card("neheb_the_eternal", "Neheb, the Eternal", ['3', 'R', 'R'], ['R'], "Legendary Creature", "Zombie Minotaur Warrior", "HOU", 104, 65683)
+OpenFire = Card("open_fire", "Open Fire", ['2', 'R'], ['R'], "Instant", "", "HOU", 105, 65685)
+PuncturingBlow = Card("puncturing_blow", "Puncturing Blow", ['2', 'R', 'R'], ['R'], "Sorcery", "", "HOU", 106, 65687)
+SandStrangler = Card("sand_strangler", "Sand Strangler", ['3', 'R'], ['R'], "Creature", "Beast", "HOU", 107, 65689)
+
+GraniticTitan = Card("granitic_titan", "Granitic Titan", ['4', 'R', 'R'], ['R'], "Creature", "Elemental", "HOU", 95, 65691)
+GildedCerodon = Card("gilded_cerodon", "Gilded Cerodon", ['4', 'R'], ['R'], "Creature", "Beast", "HOU", 94, 65693)
+
 WildfireEternal = Card("wildfire_eternal", "Wildfire Eternal", ['3', 'R'], ['R'], "Creature", "Zombie Jackal Cleric", "HOU", 109, 65695)
 Ambuscade = Card("ambuscade", "Ambuscade", ['2', 'G'], ['G'], "Instant", "", "HOU", 110, 65697)
 BeneaththeSands = Card("beneath_the_sands", "Beneath the Sands", ['2', 'G'], ['G'], "Sorcery", "", "HOU", 111, 65699)
@@ -123,8 +131,8 @@ FeralProwler = Card("feral_prowler", "Feral Prowler", ['1', 'G'], ['G'], "Creatu
 FrilledSandwalla = Card("frilled_sandwalla", "Frilled Sandwalla", ['G'], ['G'], "Creature", "Lizard", "HOU", 116, 65709)
 GiftofStrength = Card("gift_of_strength", "Gift of Strength", ['1', 'G'], ['G'], "Instant", "", "HOU", 117, 65711)
 HarrierNaga = Card("harrier_naga", "Harrier Naga", ['2', 'G'], ['G'], "Creature", "Naga Warrior", "HOU", 118, 65713)
-HopeTender = Card("hope_tender", "Hope Tender", ['1', 'G'], ['G'], "Creature", "Human Druid", "HOU", 119, 65715)
-HourofPromise = Card("hour_of_promise", "Hour of Promise", ['4', 'G'], ['G'], "Sorcery", "", "HOU", 120, 65717)
+HopeTender = Card("hope_tender", "Hope Tender", ['1', 'G'], ['G'], "Creature", "Human Druid", "HOU", 119, 65717)
+HourofPromise = Card("hour_of_promise", "Hour of Promise", ['4', 'G'], ['G'], "Sorcery", "", "HOU", 120, 65715)
 LifeGoesOn = Card("life_goes_on", "Life Goes On", ['G'], ['G'], "Instant", "", "HOU", 121, 65719)
 MajesticMyriarch = Card("majestic_myriarch", "Majestic Myriarch", ['4', 'G'], ['G'], "Creature", "Chimera", "HOU", 122, 65721)
 NissasDefeat = Card("nissas_defeat", "Nissa's Defeat", ['2', 'G'], ['G'], "Sorcery", "", "HOU", 123, 65723)
@@ -143,14 +151,16 @@ SifterWurm = Card("sifter_wurm", "Sifter Wurm", ['5', 'G', 'G'], ['G'], "Creatur
 TenaciousHunter = Card("tenacious_hunter", "Tenacious Hunter", ['2', 'G', 'G'], ['G'], "Creature", "Crocodile", "HOU", 136, 65749)
 UncagetheMenagerie = Card("uncage_the_menagerie", "Uncage the Menagerie", ['X', 'G', 'G'], ['G'], "Sorcery", "", "HOU", 137, 65751)
 BloodwaterEntity = Card("bloodwater_entity", "Bloodwater Entity", ['1', 'U', 'R'], ['U', 'R'], "Creature", "Elemental", "HOU", 138, 65753)
-TheLocustGod = Card("the_locust_god", "The Locust God", ['4', 'U', 'R'], ['U', 'R'], "Legendary Creature", "God", "HOU", 139, 65755)
-NicolBolasGodPharaoh = Card("nicol_bolas_godpharaoh", "Nicol Bolas, God-Pharaoh", ['4', 'U', 'B', 'R'], ['U', 'B', 'R'], "Legendary Planeswalker", "Bolas", "HOU", 140, 65757)
-ObeliskSpider = Card("obelisk_spider", "Obelisk Spider", ['1', 'B', 'G'], ['B', 'G'], "Creature", "Spider", "HOU", 141, 65759)
-ResoluteSurvivors = Card("resolute_survivors", "Resolute Survivors", ['1', 'R', 'W'], ['W', 'R'], "Creature", "Human Warrior", "HOU", 142, 65761)
-RiverHoopoe = Card("river_hoopoe", "River Hoopoe", ['G', 'U'], ['U', 'G'], "Creature", "Bird", "HOU", 143, 65763)
-SamuttheTested = Card("samut_the_tested", "Samut, the Tested", ['2', 'R', 'G'], ['R', 'G'], "Legendary Planeswalker", "Samut", "HOU", 144, 65765)
-TheScarabGod = Card("the_scarab_god", "The Scarab God", ['3', 'U', 'B'], ['U', 'B'], "Legendary Creature", "God", "HOU", 145, 65767)
-TheScorpionGod = Card("the_scorpion_god", "The Scorpion God", ['3', 'B', 'R'], ['B', 'R'], "Legendary Creature", "God", "HOU", 146, 65769)
+# START God mixup
+TheScorpionGod = Card("the_scorpion_god", "The Scorpion God", ['3', 'B', 'R'], ['B', 'R'], "Legendary Creature", "God", "HOU", 146, 65755)  # WRONG: was 65769
+TheLocustGod = Card("the_locust_god", "The Locust God", ['4', 'U', 'R'], ['U', 'R'], "Legendary Creature", "God", "HOU", 139, 65757)  # WRONG: was 65755
+NicolBolasGodPharaoh = Card("nicol_bolas_godpharaoh", "Nicol Bolas, God-Pharaoh", ['4', 'U', 'B', 'R'], ['U', 'B', 'R'], "Legendary Planeswalker", "Bolas", "HOU", 140, 65759)  # WRONG: was 65757
+ObeliskSpider = Card("obelisk_spider", "Obelisk Spider", ['1', 'B', 'G'], ['B', 'G'], "Creature", "Spider", "HOU", 141, 65761)  # WRONG: was 65759
+ResoluteSurvivors = Card("resolute_survivors", "Resolute Survivors", ['1', 'R', 'W'], ['W', 'R'], "Creature", "Human Warrior", "HOU", 142, 65763)  # WRONG: was 65761
+RiverHoopoe = Card("river_hoopoe", "River Hoopoe", ['G', 'U'], ['U', 'G'], "Creature", "Bird", "HOU", 143, 65765)  # WRONG: was 65763
+SamuttheTested = Card("samut_the_tested", "Samut, the Tested", ['2', 'R', 'G'], ['R', 'G'], "Legendary Planeswalker", "Samut", "HOU", 144, 65767)  # WRONG: was 65765
+TheScarabGod = Card("the_scarab_god", "The Scarab God", ['3', 'U', 'B'], ['U', 'B'], "Legendary Creature", "God", "HOU", 145, 65769)  # WRONG: was 65767
+# END God mixup
 UnravelingMummy = Card("unraveling_mummy", "Unraveling Mummy", ['1', 'W', 'B'], ['W', 'B'], "Creature", "Zombie", "HOU", 147, 65771)
 Farm = Card("farm", "Farm", ['2', 'W'], ['U', 'W'], "Instant", "", "HOU", 148, 65773)
 Market = Card("market", "Market", ['2', 'U'], ['U', 'W'], "Sorcery", "", "HOU", 148, 65776)
@@ -183,7 +193,9 @@ MirageMirror = Card("mirage_mirror", "Mirage Mirror", ['3'], [], "Artifact", "",
 SunsetPyramid = Card("sunset_pyramid", "Sunset Pyramid", ['2'], [], "Artifact", "", "HOU", 166, 65849)
 TravelersAmulet = Card("travelers_amulet", "Traveler's Amulet", ['1'], [], "Artifact", "", "HOU", 167, 65851)
 WallofForgottenPharaohs = Card("wall_of_forgotten_pharaohs", "Wall of Forgotten Pharaohs", ['2'], [], "Artifact Creature", "Wall", "HOU", 168, 65853)
-CryptoftheEternals = Card("crypt_of_the_eternals", "Crypt of the Eternals", [], ['U', 'B', 'R'], "Land", "", "HOU", 169, 65855)
+# wat
+CryptoftheEternals = Card("crypt_of_the_eternals", "Crypt of the Eternals", [], ['U', 'B', 'R'], "Land", "", "HOU", 169, 65959)
+# end wat
 DesertoftheFervent = Card("desert_of_the_fervent", "Desert of the Fervent", [], ['R'], "Land", "Desert", "HOU", 170, 65857)
 DesertoftheGlorified = Card("desert_of_the_glorified", "Desert of the Glorified", [], ['B'], "Land", "Desert", "HOU", 171, 65859)
 DesertoftheIndomitable = Card("desert_of_the_indomitable", "Desert of the Indomitable", [], ['G'], "Land", "Desert", "HOU", 172, 65861)
@@ -214,16 +226,19 @@ Mountain2 = Card("mountain", "Mountain", [], ['R'], "Basic Land", "Mountain", "H
 Mountain3 = Card("mountain", "Mountain", [], ['R'], "Basic Land", "Mountain", "HOU", 197, 65911)
 Forest2 = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "HOU", 198, 65913)
 Forest3 = Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "HOU", 199, 65915)
-NissaGenesisMage = Card("nissa_genesis_mage", "Nissa, Genesis Mage", ['5', 'G', 'G'], ['G'], "Legendary Planeswalker", "Nissa", "HOU", 200, 65917)
-AvidReclaimer = Card("avid_reclaimer", "Avid Reclaimer", ['2', 'G'], ['G', 'U'], "Creature", "Human Druid", "HOU", 201, 65919)
-BrambleweftBehemoth = Card("brambleweft_behemoth", "Brambleweft Behemoth", ['4', 'G', 'G'], ['G'], "Creature", "Elemental", "HOU", 202, 65921)
-NissasEncouragement = Card("nissas_encouragement", "Nissa's Encouragement", ['4', 'G'], ['G'], "Sorcery", "", "HOU", 203, 65923)
-WoodlandStream = Card("woodland_stream", "Woodland Stream", [], ['G', 'U'], "Land", "", "HOU", 204, 65925)
-NicolBolastheDeceiver = Card("nicol_bolas_the_deceiver", "Nicol Bolas, the Deceiver", ['5', 'U', 'B', 'R'], ['U', 'B', 'R'], "Legendary Planeswalker", "Bolas", "HOU", 205, 65927)
-WaspoftheBitterEnd = Card("wasp_of_the_bitter_end", "Wasp of the Bitter End", ['1', 'B'], ['B'], "Creature", "Insect Horror", "HOU", 206, 65929)
-ZealotoftheGodPharaoh = Card("zealot_of_the_godpharaoh", "Zealot of the God-Pharaoh", ['3', 'R'], ['R'], "Creature", "Minotaur Archer", "HOU", 207, 65931)
-VisageofBolas = Card("visage_of_bolas", "Visage of Bolas", ['4'], ['U', 'B', 'R'], "Artifact", "", "HOU", 208, 65933)
-CinderBarrens = Card("cinder_barrens", "Cinder Barrens", [], ['B', 'R'], "Land", "", "HOU", 209, 65935)
+
+# start mixup
+NissaGenesisMage = Card("nissa_genesis_mage", "Nissa, Genesis Mage", ['5', 'G', 'G'], ['G'], "Legendary Planeswalker", "Nissa", "HOU", 200, 65937)
+AvidReclaimer = Card("avid_reclaimer", "Avid Reclaimer", ['2', 'G'], ['G', 'U'], "Creature", "Human Druid", "HOU", 201, 65939)
+BrambleweftBehemoth = Card("brambleweft_behemoth", "Brambleweft Behemoth", ['4', 'G', 'G'], ['G'], "Creature", "Elemental", "HOU", 202, 65941)
+NissasEncouragement = Card("nissas_encouragement", "Nissa's Encouragement", ['4', 'G'], ['G'], "Sorcery", "", "HOU", 203, 65943)
+WoodlandStream = Card("woodland_stream", "Woodland Stream", [], ['G', 'U'], "Land", "", "HOU", 204, 65945)
+NicolBolastheDeceiver = Card("nicol_bolas_the_deceiver", "Nicol Bolas, the Deceiver", ['5', 'U', 'B', 'R'], ['U', 'B', 'R'], "Legendary Planeswalker", "Bolas", "HOU", 205, 65947)
+WaspoftheBitterEnd = Card("wasp_of_the_bitter_end", "Wasp of the Bitter End", ['1', 'B'], ['B'], "Creature", "Insect Horror", "HOU", 206, 65949)
+ZealotoftheGodPharaoh = Card("zealot_of_the_godpharaoh", "Zealot of the God-Pharaoh", ['3', 'R'], ['R'], "Creature", "Minotaur Archer", "HOU", 207, 65951)
+VisageofBolas = Card("visage_of_bolas", "Visage of Bolas", ['4'], ['U', 'B', 'R'], "Artifact", "", "HOU", 208, 65953)
+CinderBarrens = Card("cinder_barrens", "Cinder Barrens", [], ['B', 'R'], "Land", "", "HOU", 209, 65955)
+# end mixup
 
 clsmembers = [card for name, card in inspect.getmembers(sys.modules[__name__]) if isinstance(card, Card)]
 HourOfDevastation = Set("hour_of_devastation", cards=clsmembers)

@@ -10,21 +10,19 @@ SubmergedBoneyard = mcard.Card("submerged_boneyard", "Submerged Boneyard", [], [
 TimberGorge = mcard.Card("timber_gorge", "Timber Gorge", [], ["G", "R"], "Land", "", "OGW", -1, 62521)
 
 # TODO: why are these offset more than the others?
-FoulOrchardAKH = mcard.Card("foul_orchard", "Foul Orchard", [], ['B', 'G'], "Land", "", "AKH", 279, 65461)
-CinderBarrensAKH = mcard.Card("cinder_barrens", "Cinder Barrens", [], ['B', 'R'], "Land", "", "AKH", 280, 65463)
-ForsakenSanctuaryAKH = mcard.Card("forsaken_sanctuary", "Forsaken Sanctuary", [], ['W', 'B'], "Land", "", "AKH", 281, 65465)
-HighlandLakeAKH = mcard.Card("highland_lake", "Highland Lake", [], ['U', 'R'], "Land", "", "AKH", 282, 65467)
-MeanderingRiverAKH = mcard.Card("meandering_river", "Meandering River", [], ['W', 'U'], "Land", "", "AKH", -1, 65469)
-SubmergedBoneyardAKH = mcard.Card("submerged_boneyard", "Submerged Boneyard", [], ['U', 'B'], "Land", "", "AKH", 284, 65471)
-TimberGorgeAKH = mcard.Card("timber_gorge", "Timber Gorge", [], ['R', 'G'], "Land", "", "AKH", 285, 65473)
-TranquilExpanseAKH = mcard.Card("tranquil_expanse", "Tranquil Expanse", [], ['G', 'W'], "Land", "", "AKH", 286, 65475)
-WoodlandStreamAKH = mcard.Card("woodland_stream", "Woodland Stream", [], ['G', 'U'], "Land", "", "AKH", 287, 65477)
+
+
+FullArtPlainsAKH = mcard.Card("plains", "Plains", [], ['W'], "Basic Land", "Plains", "AKH", 251, 65433)
+FullArtIslandAKH = mcard.Card("island", "Island", [], ['U'], "Basic Land", "Island", "AKH", 250, 65435)
+FullArtSwampAKH = mcard.Card("swamp", "Swamp", [], ['B'], "Basic Land", "Swamp", "AKH", 252, 65437)
+FullArtMountainAKH = mcard.Card("mountain", "Mountain", [], ['W'], "Basic Land", "Mountain", "AKH", 253, 65439)
+FullArtForestAKH = mcard.Card("forest", "Forest", [], ['G'], "Basic Land", "Forest", "AKH", 254, 65441)
+
 
 WeirdLands = set.Set("weird_lands", cards=[CinderBarrens, TranquilExpanse, MeanderingRiver, TimberGorge,
-                                                SubmergedBoneyard, FoulOrchardAKH, CinderBarrensAKH,
-                                                ForsakenSanctuaryAKH, HighlandLakeAKH, MeanderingRiverAKH,
-                                                SubmergedBoneyardAKH, TimberGorgeAKH, TranquilExpanseAKH,
-                                                WoodlandStreamAKH])
+                                           SubmergedBoneyard, FullArtPlainsAKH, FullArtIslandAKH, FullArtSwampAKH,
+                                           FullArtMountainAKH, FullArtForestAKH])
+
 
 BasicLands = set.Pool("all_basic_lands", cards=[
     rix.Plains, xln.Plains, xln.Plains2, xln.Plains3, xln.Plains4,

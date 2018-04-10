@@ -60,7 +60,12 @@ class Card(object):
 
     @classmethod
     def from_dict(cls, obj):
-        return util.all_mtga_cards.find_one(obj["mtga_id"])
+        try:
+            return util.all_mtga_cards.find_one(obj["mtga_id"])
+        except ValueError:
+            new_unknown_card = cls("unknown_{}".format(obj["mtga_id"]), "{}: Unknown MTGA ID".format(obj["mtga_id"]), [], [], "unknown", "unknown", "unknown", -1, obj["mtga_id"])
+            util.all_mtga_cards.cards.append(new_unknown_card)
+            return new_unknown_card
 
     def is_basic(self):
         import app.set_data.weird

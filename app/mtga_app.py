@@ -7,7 +7,7 @@ import requests
 
 from app.queues import general_output_queue
 from app.models.set import Deck
-
+from app.queues import decklist_change_queue
 
 log_file = "mtga_watch.log"
 mtga_logger = logging.getLogger("mtga_watch")
@@ -37,8 +37,8 @@ class MTGAWatchApplication(object):
         self.error_count = 0
         self.web_api = WebAPI()
 
-        home_path = os.path.expanduser("~")
-        self._settings_path = os.path.join(home_path, ".mtga_tracker")
+        appdata_roaming = os.getenv("APPDATA")
+        self._settings_path = os.path.join(appdata_roaming, "..", "LocalLow", "MTGATracker")
         self._settings_json_path = os.path.join(self._settings_path, "settings.json")
         self.load_settings()
 
@@ -68,6 +68,11 @@ class MTGAWatchApplication(object):
         if "player_decks" in settings and settings["player_decks"]:
             for deck_id in settings["player_decks"]:
                 self.player_decks[deck_id] = Deck.from_dict(settings['player_decks'][deck_id])
+        mtga_logger.debug("queue put from settings {}".format(id(decklist_change_queue)))
+        new_dl = {k: v.to_serializable(transform_to_counted=True) for k, v in self.player_decks.items()}
+        if not new_dl:
+            new_dl = {"no_decks_defined": True}
+        decklist_change_queue.put(new_dl)
 
     def save_settings(self):
         mtga_logger.debug("saving settings")
@@ -77,6 +82,11 @@ class MTGAWatchApplication(object):
                 "player_id": self.player_id
             }
             json.dump(write_obj, wp)
+        mtga_logger.debug("queue put from settings {}".format(id(decklist_change_queue)))
+        new_dl = {k: v.to_serializable(transform_to_counted=True) for k, v in self.player_decks.items()}
+        if not new_dl:
+            new_dl = {"no_decks_defined": True}
+        decklist_change_queue.put(new_dl)
 
 
 class WebAPI(object):

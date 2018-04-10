@@ -12,28 +12,48 @@
       <img src="hide-512.png" width="30px" height="30px">
     </div>
     <div id="container">
-      <h1 class="deck-title">{ deck_name }</h1>
-      <h3 class="zoom-panel"><span id="zoom-out" class="zoom">-</span> / <span id="zoom-in" class="zoom">+</span></h3>
-      <p class="header-warning" rv-show="show_error">{last_error} / {error_count}</p>
-      <p class="update-message" rv-show="show_update_message"><a href="http://github.com/shawkinsl/mtga-tracker/releases/latest">{message}</a></p>
-      <h3>{ total_cards_in_deck } cards in deck</h3>
-      <div class="card" rv-each-stat="draw_stats" rv-card_color="stat.colors">
-        <div class="card-text">
-          <span class="card-text-limit"><i>{ stat.card.iid }</i><b>{ stat.odds_of_draw }</b> { stat.count_in_deck }x <i>{ stat.card }</i></span>
-          <span class="cost">
-            <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
-          </span>
+      <div id="game-deck-list" rv-show="game_in_progress">
+         <h1 class="deck-title">{ deck_name }</h1>
+        <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
+        <h3 class="beleren link" onclick="unpopulateDecklist()" rv-show="game_complete">Back to decklists</h3>
+        <p class="header-warning" rv-show="show_error">{error_count}</p>
+        <p class="update-message" rv-show="show_update_message"><a href="http://github.com/shawkinsl/mtga-tracker/releases/latest">{message}</a></p>
+        <h3>{ total_cards_in_deck } cards in deck</h3>
+        <div class="card" rv-each-stat="draw_stats" rv-card_color="stat.colors">
+          <div class="card-text">
+            <span class="card-text-limit"><i>{ stat.card.iid }</i>{ stat.count_in_deck }x <i>{ stat.card }</i></span>
+            <span class="cost">
+              <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
+            </span>
+          </div>
         </div>
       </div>
-      <!-- <h3>Opponent's Hand</h3>
-      <div class="card" rv-each-card="opponent_hand" rv-card_color="card.colors">
-        <div class="card-text">
-          <span class="card-text-limit"><b rv-show="show_iids">{ card.iid }</b> <i>{ card.pretty_name }</i></span>
-          <span class="cost">
-            <i rv-each-mana="card.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
-          </span>
+      <div id="available-deck-list" rv-show="show_available_decklists">
+        <h1 class="beleren">MTGATracker</h1>
+        <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
+        <div id="decklists-container" rv-show="no_list_selected">
+          <h3>Pick a deck, or start a game!</h3>
+          <p class="update-message" rv-show="show_update_message"><a href="http://github.com/shawkinsl/mtga-tracker/releases/latest">{message}</a></p>
+          <p class="header-warning" rv-show="no_decks">
+            MTGATracker couldn't find any decks. If this is the first time launching MTGATracker, please edit, then save any deck in MTGA now!
+          </p>
+          <div rv-each-deck="player_decks" class="deck-container link" rv-data-deckid="deck.deck_id" onclick="populateDeck(this)">
+            <h3 class="beleren link">{deck.pool_name}</h3>
+          </div>
         </div>
-      </div>-->
+        <div id="deck-list" rv-show="list_selected">
+          <h3 class="beleren link" onclick="unpopulateDecklist()">Back to decklists</h3>
+          <h1> <i class="fas fa-chevron-left"></i> { selected_list_name }</h1>
+          <div class="card" rv-each-stat="selected_list" rv-card_color="stat.colors">
+            <div class="card-text">
+              <span class="card-text-limit">{ stat.count_in_deck }x <i>{ stat.pretty_name }</i></span>
+              <span class="cost">
+                <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
   <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
