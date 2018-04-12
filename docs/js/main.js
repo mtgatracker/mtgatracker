@@ -152,7 +152,7 @@ jQuery(document).ready(function( $ ) {
   })
 
   $.get("https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game/users/count", (res) => {
-     $("#unique-user-count").html(res.user_count)
+     $("#unique-user-count").html(res.unique_user_count)
   })
 
   $.get("https://api.github.com/repos/shawkinsl/mtga-tracker/releases/latest", (res) => {
