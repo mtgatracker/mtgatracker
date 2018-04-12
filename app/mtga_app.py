@@ -8,6 +8,7 @@ import requests
 from app.queues import general_output_queue
 from app.models.set import Deck
 from app.queues import decklist_change_queue
+from util import client_version
 
 log_file = "mtga_watch.log"
 mtga_logger = logging.getLogger("mtga_watch")
@@ -96,6 +97,7 @@ class WebAPI(object):
 
     def save_game_result(self, game):
         url = self.api_url + "/game"
+        game["client_version"] = client_version
         print(requests.post(url, json=game).json())
 
 

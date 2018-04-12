@@ -101,6 +101,7 @@ rivets.binders.mana = function(el, value) {
     el.classList.remove("mi-8")
     el.classList.remove("mi-9")
     el.classList.remove("mi-10")
+    el.classList.remove("mi-x")
     el.classList.add(mi_class)
 }
 
