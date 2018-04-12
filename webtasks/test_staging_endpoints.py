@@ -16,7 +16,8 @@ if os.path.exists("secrets-staging"):
             if key == "DEBUG_PASSWORD":
                 staging_debug_password = value
 
-_game_shell = {
+_game_shell_schema_0 = {
+    "schemaver": 0,  # this will not be present on actual records
     "gameID": 0,
     "winner": "joe",
     "players": [
@@ -25,7 +26,7 @@ _game_shell = {
             "userID": "123-456-789",
             "deck": {
                 "deckID": "123-joe-456",
-                "poolName": "joe's deck",
+                "poolName": "Joe The Hero's Deck",
                 "cards": {
                     "123": 1,
                     "1234": 3,
@@ -37,7 +38,7 @@ _game_shell = {
             "userID": "123-456-790",
             "deck": {
                 "deckID": "123-tess-456",
-                "poolName": "tess's deck",
+                "poolName": "tess's visible cards",
                 "cards": {
                     "123": 60,
                     "1234": 3,
@@ -46,6 +47,9 @@ _game_shell = {
         }
     ]
 }
+
+_game_shell_schema_1 = copy.deepcopy(_game_shell_schema_0)
+# TODO: next schema changes?
 
 
 def post(post_url, post_json):
@@ -68,13 +72,15 @@ def _random_string():
 
 
 def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None):
-    game = copy.deepcopy(_game_shell)
+    game = copy.deepcopy(_game_shell_schema_0)
     game["gameID"] = _random_string()
     if winner:
         game["winner"] = winner
         game["players"][0]["name"] = winner
+        game["players"][0]["deck"]["poolName"] = "{} The Hero's Deck".format(winner)
     if loser:
         game["players"][1]["name"] = loser
+        game["players"][1]["deck"]["poolName"] = "{}'s visible cards".format(loser)
     if winner_id:
         game["players"][0]["userID"] = winner_id
     if loser_id:
@@ -87,7 +93,7 @@ def post_bad_game(missing_winner_name=True, missing_loser_name=False,
                   missing_winner_user_id=False, missing_loser_user_id=False,
                   no_winner_defined=False, missing_game_id=False,
                   players_undefined=False, players_not_list=False, players_empty=False):
-    game = copy.deepcopy(_game_shell)
+    game = copy.deepcopy(_game_shell_schema_0)
     if missing_winner_name:
         del game["players"][0]["name"]
     if missing_loser_name:
@@ -118,6 +124,10 @@ def get_game_count():
     return get(url + "/games/count")["game_count"]
 
 
+def get_user_count():
+    return get(url + "/users/count")["unique_user_count"]
+
+
 def get_all_games_page(page, per_page):
     return get(url + "/games?page={}&per_page={}&debug_password={}".format(page, per_page, staging_debug_password))
 
@@ -140,7 +150,10 @@ def get_game_by_oid(game_oid):
 
 @pytest.fixture
 def empty_database():
-    post(url + "/danger/reset/all", {"debug_password": staging_debug_password})
+    try:
+        post(url + "/danger/reset/all", {"debug_password": staging_debug_password})
+    except:
+        print("couldn't reset db, probably already empty")
 
 
 @pytest.fixture
@@ -151,9 +164,10 @@ def new_entry_base(empty_database):
 
 @pytest.fixture
 def any_entries_5_or_more():
-    games = get(url + "/games/count")["game_count"]
-    while games < 5:
+    games = get_game_count()
+    while int(games) < 5:
         post_random_game()
+        games = get_game_count()
 
 
 def test_games_count(new_entry_base):
@@ -161,6 +175,20 @@ def test_games_count(new_entry_base):
     _game, _post = post_random_game()
     new_game_count = get_game_count()
     assert new_game_count == game_count + 1
+
+
+def test_unique_users_count(empty_database):
+    original_user_count = get_user_count()
+    assert original_user_count == 0
+    _game, _post = post_random_game()
+    after_posting_one_game_user_count = get_user_count()
+    assert after_posting_one_game_user_count == 1
+    _game, _post = post_random_game(loser='jenna')
+    after_posting_game_with_same_users_user_count = get_user_count()
+    assert after_posting_game_with_same_users_user_count == 1
+    _game, _post = post_random_game(winner="gemma", loser='jenna')
+    after_posting_game_with_new_users_user_count = get_user_count()
+    assert after_posting_game_with_new_users_user_count == 2
 
 
 def test_get_all_games(any_entries_5_or_more):
@@ -226,7 +254,6 @@ def test_get_users_games_by_user_id(any_entries_5_or_more):
     assert len(all_id_set) == 4
 
 
-@pytest.mark.dev
 def test_get_game(any_entries_5_or_more):
     game, res = post_random_game()
     game_id = game["gameID"]

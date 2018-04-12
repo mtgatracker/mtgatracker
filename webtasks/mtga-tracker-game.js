@@ -58,6 +58,40 @@ server.get('/games/count', (req, res, next) => {
   })
 })
 
+// covered: test_unique_users_count
+server.get('/users/count', (req, res, next) => {
+  console.log("/users/count")
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
+  const { badge } = req.query;
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    if (connectErr) return next(connectErr);
+    let collection = client.db(DATABASE).collection(gameCollection)
+
+    collection.distinct("players.0.name",{
+            "players.0.deck.poolName": {
+                $not: /.*visible cards/
+            }
+    }, null, (err, countZeroes) => {
+      if (err) return next(err);
+      collection.distinct("players.1.name",{
+          "players.1.deck.poolName": {
+              $not: /.*visible cards/
+          }
+      }, null, (err, countOnes) => {
+        if (err) return next(err);
+        let count = countZeroes.length + countOnes.length;
+        if (badge) {
+          res.set('Cache-Control', 'no-cache')
+          request('https://img.shields.io/badge/Unique%20Users-' + count + '-brightgreen.svg').pipe(res);
+        } else {
+          res.status(200).send({"unique_user_count": count});
+          client.close()
+        }
+      })
+    })
+  })
+})
+
 // covered: test_get_all_games
 server.get('/games', (req, res, next) => {
   console.log("/games")
