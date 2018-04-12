@@ -12,7 +12,7 @@ version=$1
 fixversion="import json; rp = open('electron/package.json', 'r'); contents = json.load(rp); rp.close(); print('ok'); contents['version'] = '$version'; wp = open('electron/package.json', 'w'); json.dump(contents, wp, indent=4, separators=(',', ': '))"
 python -c "$fixversion"
 
-yes | pyinstaller.exe app/mtgatracker_backend.py --distpath appdist
+yes | pyinstaller.exe mtgatracker_backend.spec --distpath appdist
 #rm -rf build
 #rm -rf mtgatracker_backend.spec
 

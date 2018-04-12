@@ -2,8 +2,10 @@
 
 generally stuff that is useful but just hasn't quite found a home elswhere in the project yet. Anything here is subject
 to being moved at random! """
+import json
+import os
+import sys
 import time
-
 import app.models.set as set
 import app.set_data.xln as xln
 import app.set_data.rix as rix
@@ -125,6 +127,18 @@ def deepsearch_blob_for_ids(blob, ids_only=True):
         if search_res and blob and (not ids_only or is_number):
             return {blob: search_res}
         return {}
+
+
+# https://stackoverflow.com/questions/7674790/bundling-data-files-with-pyinstaller-onefile
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    # PyInstaller creates a temp folder and stores path in _MEIPASS
+    path = getattr(sys, '_MEIPASS', os.getcwd())
+    return os.path.join(path, relative_path)
+
+
+with open(resource_path(os.path.join('electron', 'package.json')), 'r') as package_file:
+    client_version = json.load(package_file)["version"]
 
 
 class KillableTailer(Tailer):
