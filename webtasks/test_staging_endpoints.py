@@ -71,7 +71,7 @@ def _random_string():
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
 
 
-def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None):
+def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None, client_version=None):
     game = copy.deepcopy(_game_shell_schema_0)
     game["gameID"] = _random_string()
     if winner:
@@ -85,6 +85,8 @@ def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None):
         game["players"][0]["userID"] = winner_id
     if loser_id:
         game["players"][1]["userID"] = loser_id
+    if client_version:
+        game["client_version"] = client_version
     return game, post(url + "/game", post_json=game)
 
 
@@ -122,6 +124,10 @@ def post_bad_game(missing_winner_name=True, missing_loser_name=False,
 
 def get_game_count():
     return get(url + "/games/count")["game_count"]
+
+
+def get_client_versions():
+    return get(url + "/users/client_versions")
 
 
 def get_user_count():
@@ -175,6 +181,24 @@ def test_games_count(new_entry_base):
     _game, _post = post_random_game()
     new_game_count = get_game_count()
     assert new_game_count == game_count + 1
+
+
+def test_user_client_versions(empty_database):
+    clients = get_client_versions()
+    assert not clients['counts']
+    _game, _post = post_random_game()
+    clients = get_client_versions()
+    assert clients['counts'] == {"none": 1}
+    _game, _post = post_random_game(client_version="1.1.0-beta")
+    clients = get_client_versions()
+    assert clients['counts'] == {"none": 1, "1.1.0-beta": 1}
+    _game, _post = post_random_game(client_version="1.1.0-beta")
+    clients = get_client_versions()
+    assert clients['counts'] == {"none": 1, "1.1.0-beta": 2}
+    _game, _post = post_random_game(client_version="1.2.0-beta")
+    clients = get_client_versions()
+    assert clients['counts'] == {"none": 1, "1.1.0-beta": 2, "1.2.0-beta": 1}
+
 
 
 def test_unique_users_count(empty_database):
