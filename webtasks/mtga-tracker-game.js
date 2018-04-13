@@ -102,7 +102,7 @@ server.get('/users/client_versions', (req, res, next) => {
     if (connectErr) return next(connectErr);
     let collection = client.db(DATABASE).collection(gameCollection)
 
-    let cursor = collection.find().sort({date: 1}).limit(100);
+    let cursor = collection.find({date: {$exists: true}}).sort({_id: -1}).limit(200);
 
     cursor.toArray((cursorErr, docs) => {
       if (cursorErr) return next(cursorErr);
@@ -124,7 +124,7 @@ server.get('/users/client_versions', (req, res, next) => {
         }
       })
       res.status(200).send({
-        count: Math.min(100, docs.length),
+        count: Math.min(200, docs.length),
         counts: counts
       });
     })
