@@ -154,14 +154,7 @@ are not responsible.
 
 It is entirely possible that Wizards of the Coast will disable all logging and completely wreck this project. While 
 we certainly do not hope this will happen, it is worth noting that this project may stop working at any time. In the
-event that this happens, please verify that what you are experiencing is a software issue, and if it is not, let
-Wizards know you are sad the project was killed, via Reddit, Twitter, you name it. If you would like to be proactive,
-please upvote/like/retweet MTGA Tracker announcements at the following places, to publicely let Wizards know you support
-this project: [This GitHub project (toss us a star!)](https://github.com/shawkinsl/mtga-tracker)
-/ [beta forums 1](https://mtgarena.community.gl/forums/threads/14685)
-/ [beta forums 2](https://mtgarena.community.gl/forums/threads/16647)
-/ [Twitter 1](https://twitter.com/MTGATrackerDevs/status/976990691837468673)
-/ [reddit 1](https://www.reddit.com/r/MagicArena/comments/86h1ag/mtgatracker_010alpha_is_out/)
+event that this happens, please get in touch with us to verify that what you are experiencing is not a software issue.
 
 In accordance with the [MTG Fan Art policy](http://company.wizards.com/fancontentpolicy): MTGA Tracker is unofficial
 Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used
