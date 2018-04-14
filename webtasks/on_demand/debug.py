@@ -154,7 +154,7 @@ def paranoia_backup():
         new_docs = get_all_games_page(page, 100)["docs"]
         print(new_docs)
         all_docs += new_docs
-    os.makedirs('paranoia')
+    os.makedirs('paranoia', exist_ok=True)
     with open(logname, 'w') as wf:
         json.dump({"all_docs": all_docs}, wf)
 
