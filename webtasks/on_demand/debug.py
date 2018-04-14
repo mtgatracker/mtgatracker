@@ -46,18 +46,33 @@ else:
 
 
 _game_shell = {
+    "schemaver": 0,  # this will not be present on actual records
     "gameID": 0,
     "winner": "joe",
     "players": [
         {
             "name": "joe",
             "userID": "123-456-789",
-            "deck": ["some", "cards"]
+            "deck": {
+                "deckID": "123-joe-456",
+                "poolName": "Joe The Hero's Deck",
+                "cards": {
+                    "123": 1,
+                    "1234": 3,
+                }
+            }
         },
         {
             "name": "tess",
             "userID": "123-456-790",
-            "deck": ["someother", "cardz"]
+            "deck": {
+                "deckID": "123-tess-456",
+                "poolName": "tess's visible cards",
+                "cards": {
+                    "123": 60,
+                    "1234": 3,
+                }
+            }
         }
     ]
 }

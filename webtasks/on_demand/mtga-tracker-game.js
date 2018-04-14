@@ -259,12 +259,14 @@ server.get('/game/_id/:_id', (req, res, next) => {
 });
 
 let getGameById = (client, database, gameID, callback) => {
-    console.log({ gameID: gameID })
-    client.db(database).collection(gameCollection).findOne({ gameID: gameID }, null, (err, result) => {
-      console.log(err)
-      console.log(result)
+  let myPromise = new Promise((resolve, reject) => {
+    console.log("getGameById " +  gameID)
+    client.db(database).collection(gameCollection).findOne({ gameID: gameID }, null, function(err, result) {
+      if (err) { reject() } else { resolve() }
       callback(result, err)
-    });
+    })
+  })
+  return myPromise
 }
 
 let logError = (client, database, error, callback) => {
@@ -292,20 +294,70 @@ server.get('/game/gameID/:gid', (req, res, next) => {
   });
 });
 
+// no cover - for testing only
+server.post('/game/no-verify', (req, res, next) => {
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
+  const model = req.body;
+
+  if (DATABASE != "mtga-tracker-staging") {
+    res.status(400).send({error: "not allowed to do this anywhere except staging, sorry"})
+    return
+  }
+
+  MongoClient.connect(MONGO_URL, (err, client) => {
+    client.db(DATABASE).collection(gameCollection).insertOne(model, (err, result) => {
+      client.close();
+      if (err) return next(err);
+      res.status(201).send(result);
+    });
+  })
+})
+
+// no cover - for testing only
+server.post('/games/no-verify', (req, res, next) => {
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
+  const games = req.body.games;
+
+  if (DATABASE != "mtga-tracker-staging") {
+    res.status(400).send({error: "not allowed to do this anywhere except staging, sorry"})
+    return
+  }
+
+  MongoClient.connect(MONGO_URL, (err, client) => {
+    client.db(DATABASE).collection(gameCollection).insertMany(games, null, (err, result) => {
+      client.close();
+      if (err) return next(err);
+      res.status(201).send(result);
+    });
+  })
+})
+
+
 // covered: test_post_game
 server.post('/game', (req, res, next) => {
   const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
-  // Do data sanitation here.
   const model = req.body;
+
   if (model.date === undefined) {
     model.date = Date()
-    console.log("had to manually set date")
   }
   let game = new Game(model)
   if (!game.isValid()) {
     res.status(400).send({error: game.validationError})
     return;
   }
+
+  if (model.hero === undefined) {
+    if (model.players[0].deck.poolName.includes("visible cards") && !model.players[1].deck.poolName.includes("visible cards")) {
+      model.hero = model.players[1].name
+    } else if (model.players[1].deck.poolName.includes("visible cards") && !model.players[0].deck.poolName.includes("visible cards")) {
+      model.hero = model.players[0].name
+    } else {
+      res.status(400).send({error: "invalid schema", game: result});
+      return;
+    }
+  }
+
   MongoClient.connect(MONGO_URL, (err, client) => {
     if (err) return next(err);
     getGameById(client, DATABASE, game.get("gameID"), (result, err) => {
@@ -322,9 +374,72 @@ server.post('/game', (req, res, next) => {
   });
 });
 
-// TODO: uncovered!
+
+// covered: test_post_games
+server.post('/games', (req, res, next) => {
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
+  const games = req.body.games;
+
+  let okGames = []
+  let nonDupes = []
+  let gameIDs = []
+
+  let results = []
+  let errors = []
+
+  let promises = []
+
+  // filter out games that are dupes within this request, first
+  games.forEach((model, idx) => {
+    if (gameIDs.indexOf(model.gameID) != -1) {
+      errors.push({error: "dup model in this request: " + model.gameID})
+    } else {
+      gameIDs.push(model.gameID)
+      nonDupes.push(model)
+    }
+  })
+
+  // filter out games that are dupes in the database next
+  MongoClient.connect(MONGO_URL, (err, client) => {
+    nonDupes.forEach((model, idx) => {
+      if (model.date === undefined) {
+        model.date = Date()
+      }
+      let game = new Game(model)
+      if (!game.isValid()) {
+        errors.push({error: game.validationError})
+      } else {
+        if (err) errors.push(err);
+        promises.push(getGameById(client, DATABASE, model.gameID, (result, err) => {
+          if (result !== null) {
+            errors.push({error: "game already exists", game: model.gameID})
+          } else {
+            okGames.push(model)
+            gameIDs.push(model.gameID)
+          }
+        }))
+      }
+    })
+    Promise.all(promises).then((value) => {
+
+      client.db(DATABASE).collection(gameCollection).insertMany(okGames, null, (err, result) => {
+        if (err) errors.push(err);
+        results.push(result)
+      })
+      client.close();
+    })
+
+    if (errors.length > 0) {
+      res.status(400).send({errors: errors, results: results});
+    } else {
+      res.status(201).send({results: results});
+    }
+  })
+});
+
+// no cover - for testing only
 server.post('/danger/reset/all', (req, res, next) => {
-  console.log("danger!!!")
+  console.log("/danger/reset/all")
   const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
   const { debug_password } = req.body;
   if (debug_password != DEBUG_PASSWORD) {
@@ -346,7 +461,7 @@ server.post('/danger/reset/all', (req, res, next) => {
   });
 });
 
-// covered: asd
+// no cover - not testable?
 server.get('*', function(req, res) {
   console.log('retrieving page: ' + JSON.stringify(req.params))
 

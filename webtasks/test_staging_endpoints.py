@@ -4,7 +4,6 @@ import copy
 import os
 import pytest
 import time
-
 import requests
 
 url = "https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game-staging"
@@ -49,11 +48,17 @@ _game_shell_schema_0 = {
 }
 
 _game_shell_schema_1 = copy.deepcopy(_game_shell_schema_0)
-# TODO: next schema changes?
+_game_shell_schema_1["hero"] = "joe"
+# TODO: any other schema changes?
 
 
 def post(post_url, post_json):
-    print("POST {} / {}".format(post_url, post_json))
+    post_json_str = str(post_json)
+    if len(post_json_str) > 30:
+        print("POST {} / {}".format(post_url, post_json_str[:30] + "..."))
+    else:
+        print("POST {} / {}".format(post_url, post_json))
+
     time.sleep(1.5)
     return requests.post(post_url, json=post_json).json()
 
@@ -71,8 +76,31 @@ def _random_string():
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
 
 
-def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None, client_version=None):
-    game = copy.deepcopy(_game_shell_schema_0)
+def _post_games(games, no_verify=False):
+    post_url = url + "/games"
+    if no_verify:
+        post_url += "/no-verify"
+    return games, post(post_url, post_json={"games": games})
+
+
+def post_random_games(games=None, num_games=None, no_verify=False, game_shell=_game_shell_schema_1):
+    if games is None:
+        games = [copy.deepcopy(game_shell) for _ in range(num_games or 3)]
+        for game in games:
+            game["gameID"] = _random_string()
+    return _post_games(games, no_verify)
+
+
+def _post_game(game, no_verify=False):
+    post_url = url + "/game"
+    if no_verify:
+        post_url += "/no-verify"
+    return game, post(post_url, post_json=game)
+
+
+def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None, client_version=None, no_verify=False,
+                     game_shell=_game_shell_schema_1):
+    game = copy.deepcopy(game_shell)
     game["gameID"] = _random_string()
     if winner:
         game["winner"] = winner
@@ -87,14 +115,15 @@ def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None, cli
         game["players"][1]["userID"] = loser_id
     if client_version:
         game["client_version"] = client_version
-    return game, post(url + "/game", post_json=game)
+    return _post_game(game, no_verify)
 
 
-def post_bad_game(missing_winner_name=True, missing_loser_name=False,
+def post_bad_game(missing_winner_name=False, missing_loser_name=False,
                   missing_winning_deck=False, missing_losing_deck=False,
                   missing_winner_user_id=False, missing_loser_user_id=False,
                   no_winner_defined=False, missing_game_id=False,
-                  players_undefined=False, players_not_list=False, players_empty=False):
+                  players_undefined=False, players_not_list=False, players_empty=False,
+                  no_verify=False):
     game = copy.deepcopy(_game_shell_schema_0)
     if missing_winner_name:
         del game["players"][0]["name"]
@@ -119,7 +148,7 @@ def post_bad_game(missing_winner_name=True, missing_loser_name=False,
     if players_empty:
         game["players"] = []
 
-    return post(url + "/game", post_json=game)
+    return _post_game(game, no_verify)
 
 
 def get_game_count():
@@ -198,7 +227,6 @@ def test_user_client_versions(empty_database):
     _game, _post = post_random_game(client_version="1.2.0-beta")
     clients = get_client_versions()
     assert clients['counts'] == {"none": 1, "1.1.0-beta": 2, "1.2.0-beta": 1}
-
 
 
 def test_unique_users_count(empty_database):
@@ -326,6 +354,53 @@ def test_post_game(any_entries_5_or_more):
     assert game_count_after == game_count + 1
 
 
+def test_post_game_without_hero_gets_hero():
+    posted_game, result = post_random_game(game_shell=_game_shell_schema_0)
+    assert "hero" not in posted_game.keys()
+    game_id = posted_game["gameID"]
+    game_by_id = get_game_by_id(game_id)
+    assert "hero" in game_by_id.keys()
+    for player in game_by_id["players"]:
+        if player["name"] == game_by_id["hero"]:
+            assert "visible cards" not in player["deck"]["poolName"]
+        else:
+            assert "visible cards" in player["deck"]["poolName"]
+
+
+def test_post_games(any_entries_5_or_more):
+    game_count = get_game_count()
+    post_random_games()
+    game_count_after = get_game_count()
+    assert game_count_after == game_count + 3
+
+
+def test_post_tons_of_new_games(any_entries_5_or_more):
+    game_count = get_game_count()
+    two_hundred_random_games = [copy.deepcopy(_game_shell_schema_0) for _ in range(200)]
+    for game in two_hundred_random_games:
+        game["gameID"] = _random_string()
+    post_random_games(two_hundred_random_games)
+    game_count_after_200 = get_game_count()
+    assert game_count_after_200 == game_count + 200
+
+
+def test_post_games_with_duplicate_ids(any_entries_5_or_more):
+    game_count = get_game_count()
+    six_games_five_duplicates = [copy.deepcopy(_game_shell_schema_0) for _ in range(6)]
+    same_string = _random_string()
+    for game in six_games_five_duplicates:
+        game["gameID"] = same_string
+    six_games_five_duplicates[0]["gameID"] = _random_string()
+    post_random_games(six_games_five_duplicates)
+    game_count_after_2 = get_game_count()
+    assert game_count_after_2 == game_count + 2
+
+    game_count = game_count_after_2
+    post_random_games(six_games_five_duplicates)
+    game_count_after_posting_all_duplicates = get_game_count()
+    assert game_count_after_posting_all_duplicates == game_count
+
+
 def test_404():
     result = get(url + "/its-bananas", True)
     assert result.status_code == 404
@@ -335,5 +410,20 @@ def test_404():
     assert "may be banned" in str(result.json())
 
 
+@pytest.mark.cron
+@pytest.mark.slow
+def test_cron_fixes_hero_in_schema0(empty_database):
+    post_random_games(num_games=20, no_verify=True, game_shell=_game_shell_schema_0)  # need this to exclude hero
+    all_games = get_all_games_page(1, 20)
+    for game in all_games["docs"]:
+        print(game)
+        assert "hero" not in game.keys(), game.keys()
+    time.sleep(120)
+    game_current_first = get_game_by_id(all_games["docs"][0]["gameID"])
+    assert "hero" in game_current_first.keys()
+    game_current_last = get_game_by_id(all_games["docs"][-1]["gameID"])
+    assert "hero" in game_current_last.keys()
+
+
 if __name__ == "__main__":
-    pytest.main()
+    pytest.main(['--html', 'test_report.html'])
