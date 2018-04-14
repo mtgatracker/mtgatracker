@@ -92,6 +92,45 @@ server.get('/users/count', (req, res, next) => {
   })
 })
 
+
+// covered: test_unique_users_count
+server.get('/users/client_versions', (req, res, next) => {
+  console.log("/users/client_versions")
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
+  const { badge } = req.query;
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    if (connectErr) return next(connectErr);
+    let collection = client.db(DATABASE).collection(gameCollection)
+
+    let cursor = collection.find({date: {$exists: true}}).sort({_id: -1}).limit(200);
+
+    cursor.toArray((cursorErr, docs) => {
+      if (cursorErr) return next(cursorErr);
+      let counts = {}
+
+      counts.get = function (key) {
+          if (counts.hasOwnProperty(key)) {
+              return counts[key];
+          } else {
+              return 0;
+          }
+      }
+
+      docs.forEach(function(doc, idx) {
+        if (doc.client_version != undefined) {
+          counts[doc.client_version] = counts.get(doc.client_version) + 1
+        } else {
+          counts["none"] = counts.get("none") + 1
+        }
+      })
+      res.status(200).send({
+        count: Math.min(200, docs.length),
+        counts: counts
+      });
+    })
+  })
+})
+
 // covered: test_get_all_games
 server.get('/games', (req, res, next) => {
   console.log("/games")
@@ -115,11 +154,11 @@ server.get('/games', (req, res, next) => {
       let numPages = Math.ceil(count / per_page);
       let cursor = collection.find().skip((page - 1) * per_page).limit(per_page);
       cursor.toArray((cursorErr, docs) => {
-      if (cursorErr) return next(cursorErr);
-      res.status(200).send({
-          totalPages: numPages,
-          page: page,
-          docs: docs
+        if (cursorErr) return next(cursorErr);
+        res.status(200).send({
+            totalPages: numPages,
+            page: page,
+            docs: docs
         });
       })
       client.close()
