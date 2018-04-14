@@ -1,14 +1,12 @@
 import json
 import os
-
 import math
-
 import datetime
 import requests
 import time
 from six.moves import input
 import IPython
-
+import pymongo
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -19,15 +17,8 @@ prod_url = "https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tr
 staging_url = "https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game-staging"
 
 # read secrets
-prod_debug_password = None
-if os.path.exists("secrets"):
-    with open("secrets", "r") as rf:
-        for line in rf.readlines():
 
-            key, value = line.strip().split("=")
-            if key == "DEBUG_PASSWORD":
-                prod_debug_password = value
-
+staging_mongo_url = None
 staging_debug_password = None
 if os.path.exists("secrets-staging"):
     with open("secrets-staging", "r") as rf:
@@ -35,15 +26,32 @@ if os.path.exists("secrets-staging"):
             key, value = line.strip().split("=")
             if key == "DEBUG_PASSWORD":
                 staging_debug_password = value
+            if key == "MONGO_URL":
+                staging_mongo_url = value
+
+prod_debug_password = None
+prod_mongo_url = None
+if os.path.exists("secrets"):
+    with open("secrets", "r") as rf:
+        for line in rf.readlines():
+            key, value = line.strip().split("=")
+            if key == "DEBUG_PASSWORD":
+                prod_debug_password = value
+            if key == "MONGO_URL":
+                prod_mongo_url = value
 
 if args.prod:
     print("WARNING: you are debugging on the prod server!")
     root_url = prod_url
     debug_password = prod_debug_password
+    mongo_url = prod_mongo_url
 else:
     root_url = staging_url
     debug_password = staging_debug_password
+    mongo_url = staging_mongo_url
 
+
+mongo_client = pymongo.MongoClient(mongo_url)
 
 _game_shell = {
     "schemaver": 0,  # this will not be present on actual records
