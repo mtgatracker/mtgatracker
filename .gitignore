@@ -105,3 +105,11 @@ node_modules
 appdist/
 MTGATracker-*
 app/example_logs
+
+# pytest output
+webtask/assets
+**/.pytest_cache
+**/test_report.html
+
+# "paranoia" :P backup files
+**/paranoia
