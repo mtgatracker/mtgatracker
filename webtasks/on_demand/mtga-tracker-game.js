@@ -332,6 +332,105 @@ server.post('/games/no-verify', (req, res, next) => {
   })
 })
 
+let parseVersionString = (versionStr) => {
+    let version = {}
+    let version_parts = versionStr.split("-")
+    if (version_parts.length > 1)
+        version.suffix = version_parts[1]
+    let version_bits = version_parts[0].split(".")
+    version.major = version_bits[0]
+    version.medium = version_bits[1]
+    version.minor = version_bits[2]
+    return version;
+}
+
+var latestVersion = null;
+var latestVersionString = null;
+var downloadCount = null;
+
+let differenceMinutes = (date1, date2) => {
+  return (date2 - date1) * 1.66667e-5
+}
+
+let getGithubStats = (storage) => {
+  return new Promise((resolve, reject) => {
+    storage.get((err, data) => {
+      // github rate limits are 1/min for unauthed requests, only allow every 1.5 min to be safe
+      if (data === undefined || differenceMinutes(data.lastUpdated, Date.now()) >= 1.5) {
+        let setTime = Date.now()
+        if (data !== undefined && data.lastUpdated !== undefined)
+          console.log("need to request gh api (has been " + differenceMinutes(data.lastUpdated, Date.now()) + " minutes)")
+        else
+          console.log("need to request gh data (cache is empty)")
+        request.get({
+          url: "https://api.github.com/repos/shawkinsl/mtga-tracker/releases",
+          json: true,
+          headers: {'User-Agent': 'MTGATracker-Webtask'}
+        }, (err, res, data) => {
+          let downloadCount = 0;
+          data.forEach((elem, idx) => {
+              elem.assets.forEach((asset, idx) => {
+                  downloadCount += asset.download_count;
+              })
+          })
+          if (err) {
+            reject(err)
+          }
+          latestVersionString = data[0].tag_name
+          latestVersion = parseVersionString(latestVersionString);
+          data = {latestVersion: latestVersion, latestVersionString: latestVersionString, totalDownloads: downloadCount, lastUpdated: setTime}
+          storage.set(data, (err) => {})
+          resolve(data)
+        })
+      } else {
+        resolve(data)
+      }
+    })
+  })
+}
+
+server.get('/gh-stat-cache', (req, res, next) => {
+  console.log("/gh-stat-cache")
+  getGithubStats(req.webtaskContext.storage).then((value) => {
+    res.status(200).send(value)
+  })
+})
+
+server.delete('/gh-stat-cache', (req, res, next) => {
+  req.webtaskContext.storage.set(undefined, {force: 1}, (err) => {
+    console.log("DEL /gh-stat-cache")
+    if (err) res.status(500).send(err)
+    else res.status(200).send({ok: true})
+  })
+})
+
+// TODO: DRY here and @ electron/renderer.js ?
+let clientVersionUpToDate = (clientVersion, storage) => {
+  return new Promise((resolve, reject) => {
+    // check for a newer release, (but only once, don't want to hit github a million times)
+    getGithubStats(storage).then(latestVersionObj => {
+      let { latestVersion, latestVersionString } = latestVersionObj
+      if (clientVersion === undefined) {
+        resolve({ok: false, latest: latestVersion})
+      }
+      let appVersion = parseVersionString(clientVersion);
+      let ok = false;
+      if (appVersion != latestVersion) {
+        // https://github.com/shawkinsl/mtga-tracker/issues/129
+        if (appVersion.major != latestVersion.major || appVersion.medium != latestVersion.medium) {
+          ok = false;
+        } else if (latestVersion.suffix === undefined && appVersion.suffix !== undefined) {
+          // client is x.y.z-beta, latest is x.y.z
+          ok = false;
+        } else {
+          ok = true;
+        }
+      }
+      resolve({ok: ok, latest: latestVersionString})
+    })
+  })
+}
+
 
 // covered: test_post_game
 server.post('/game', (req, res, next) => {
@@ -347,31 +446,37 @@ server.post('/game', (req, res, next) => {
     return;
   }
 
-  if (model.hero === undefined) {
-    if (model.players[0].deck.poolName.includes("visible cards") && !model.players[1].deck.poolName.includes("visible cards")) {
-      model.hero = model.players[1].name
-    } else if (model.players[1].deck.poolName.includes("visible cards") && !model.players[0].deck.poolName.includes("visible cards")) {
-      model.hero = model.players[0].name
-    } else {
-      res.status(400).send({error: "invalid schema", game: result});
-      return;
-    }
-  }
+  clientVersionUpToDate(model.client_version, req.webtaskContext.storage).then((clientVersionCheck) => {
 
-  MongoClient.connect(MONGO_URL, (err, client) => {
-    if (err) return next(err);
-    getGameById(client, DATABASE, game.get("gameID"), (result, err) => {
-      if (result !== null) {
-        res.status(400).send({error: "game already exists", game: result});
+    model.clientVersionOK = clientVersionCheck.ok
+    model.latestVersionAtPost = clientVersionCheck.latest
+
+    if (model.hero === undefined) {
+      if (model.players[0].deck.poolName.includes("visible cards") && !model.players[1].deck.poolName.includes("visible cards")) {
+        model.hero = model.players[1].name
+      } else if (model.players[1].deck.poolName.includes("visible cards") && !model.players[0].deck.poolName.includes("visible cards")) {
+        model.hero = model.players[0].name
+      } else {
+        res.status(400).send({error: "invalid schema", game: result});
         return;
       }
-      client.db(DATABASE).collection(gameCollection).insertOne(model, (err, result) => {
-        client.close();
-        if (err) return next(err);
-        res.status(201).send(result);
-      });
-    })
-  });
+    }
+
+    MongoClient.connect(MONGO_URL, (err, client) => {
+      if (err) return next(err);
+      getGameById(client, DATABASE, game.get("gameID"), (result, err) => {
+        if (result !== null) {
+          res.status(400).send({error: "game already exists", game: result});
+          return;
+        }
+        client.db(DATABASE).collection(gameCollection).insertOne(model, (err, result) => {
+          client.close();
+          if (err) return next(err);
+          res.status(201).send(result);
+        });
+      })
+    });
+  })
 });
 
 

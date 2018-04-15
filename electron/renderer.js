@@ -58,6 +58,7 @@ var parseVersionString = (versionStr) => {
     return version;
 }
 
+// TODO: DRY here and @ webtasks/on_demand/mtga-tracker-game.js
 // check for a newer release
 request.get({
     url: "https://api.github.com/repos/shawkinsl/mtga-tracker/releases/latest",
@@ -68,6 +69,7 @@ request.get({
     const appVersion = parseVersionString(appVersionStr);
     if (version != latestVersion) {
         // TODO: if major version bits do not match, stop operation of app
+        // https://github.com/shawkinsl/mtga-tracker/issues/129
         if (appVersion.major != latestVersion.major || appVersion.medium != latestVersion.medium) {
             console.log("no match, major or medium")
             appData.message = `A new version (${data.tag_name}) is available!`;
