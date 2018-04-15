@@ -5,6 +5,7 @@ import os
 import pytest
 import time
 import requests
+import sys
 
 url = "https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game-staging"
 staging_debug_password = None
@@ -14,6 +15,36 @@ if os.path.exists("secrets-staging"):
             key, value = line.strip().split("=")
             if key == "DEBUG_PASSWORD":
                 staging_debug_password = value
+
+
+def post(post_url, post_json):
+    post_json_str = str(post_json)
+    if len(post_json_str) > 30:
+        print("POST {} / {}".format(post_url, post_json_str[:30] + "..."))
+    else:
+        print("POST {} / {}".format(post_url, post_json))
+
+    time.sleep(1.5)
+    return requests.post(post_url, json=post_json).json()
+
+
+def get(get_url, raw_result=False):
+    print("GET {}".format(get_url))
+    time.sleep(1.5)
+    result = requests.get(get_url)
+    if raw_result:
+        return result
+    return result.json()
+
+
+def delete(delete_url, raw_result=False):
+    print("DELETE {}".format(delete_url))
+    time.sleep(1.5)
+    result = requests.delete(delete_url)
+    if raw_result:
+        return result
+    return result.json()
+
 
 _game_shell_schema_0 = {
     "schemaver": 0,  # this will not be present on actual records
@@ -46,30 +77,12 @@ _game_shell_schema_0 = {
         }
     ]
 }
+res = get("https://api.github.com/repos/shawkinsl/mtga-tracker/releases/latest")
+latest_client_version = res["tag_name"]
 
-_game_shell_schema_1 = copy.deepcopy(_game_shell_schema_0)
-_game_shell_schema_1["hero"] = "joe"
-# TODO: any other schema changes?
-
-
-def post(post_url, post_json):
-    post_json_str = str(post_json)
-    if len(post_json_str) > 30:
-        print("POST {} / {}".format(post_url, post_json_str[:30] + "..."))
-    else:
-        print("POST {} / {}".format(post_url, post_json))
-
-    time.sleep(1.5)
-    return requests.post(post_url, json=post_json).json()
-
-
-def get(get_url, raw_result=False):
-    print("GET {}".format(get_url))
-    time.sleep(1.5)
-    result = requests.get(get_url)
-    if raw_result:
-        return result
-    return result.json()
+_game_shell_schema_1_1_0_beta = copy.deepcopy(_game_shell_schema_0)
+_game_shell_schema_1_1_0_beta["hero"] = "joe"
+_game_shell_schema_1_1_0_beta["client_version"] = latest_client_version
 
 
 def _random_string():
@@ -83,7 +96,7 @@ def _post_games(games, no_verify=False):
     return games, post(post_url, post_json={"games": games})
 
 
-def post_random_games(games=None, num_games=None, no_verify=False, game_shell=_game_shell_schema_1):
+def post_random_games(games=None, num_games=None, no_verify=False, game_shell=_game_shell_schema_1_1_0_beta):
     if games is None:
         games = [copy.deepcopy(game_shell) for _ in range(num_games or 3)]
         for game in games:
@@ -99,7 +112,7 @@ def _post_game(game, no_verify=False):
 
 
 def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None, client_version=None, no_verify=False,
-                     game_shell=_game_shell_schema_1):
+                     game_shell=_game_shell_schema_1_1_0_beta):
     game = copy.deepcopy(game_shell)
     game["gameID"] = _random_string()
     if winner:
@@ -215,7 +228,7 @@ def test_games_count(new_entry_base):
 def test_user_client_versions(empty_database):
     clients = get_client_versions()
     assert not clients['counts']
-    _game, _post = post_random_game()
+    _game, _post = post_random_game(game_shell=_game_shell_schema_0)
     clients = get_client_versions()
     assert clients['counts'] == {"none": 1}
     _game, _post = post_random_game(client_version="1.1.0-beta")
@@ -367,6 +380,48 @@ def test_post_game_without_hero_gets_hero():
             assert "visible cards" in player["deck"]["poolName"]
 
 
+def test_clientversion_ok(any_entries_5_or_more):
+    posted_game, result = post_random_game(game_shell=_game_shell_schema_1_1_0_beta)
+    assert "clientVersionOK" not in posted_game.keys()
+    game_id = posted_game["gameID"]
+    game_by_id = get_game_by_id(game_id)
+    assert "clientVersionOK" in game_by_id.keys() and game_by_id["clientVersionOK"]
+
+    posted_game, result = post_random_game(client_version="0.0.0-alpha", game_shell=_game_shell_schema_1_1_0_beta)
+    assert "clientVersionOK" not in posted_game.keys()
+    game_id = posted_game["gameID"]
+    game_by_id = get_game_by_id(game_id)
+    assert "clientVersionOK" in game_by_id.keys() and not game_by_id["clientVersionOK"]
+
+    posted_game, result = post_random_game(client_version="99.99.99", game_shell=_game_shell_schema_1_1_0_beta)
+    assert "clientVersionOK" not in posted_game.keys()
+    game_id = posted_game["gameID"]
+    game_by_id = get_game_by_id(game_id)
+    assert "clientVersionOK" in game_by_id.keys() and not game_by_id["clientVersionOK"]
+
+    posted_game, result = post_random_game(client_version=None, game_shell=_game_shell_schema_0)
+    assert "clientVersionOK" not in posted_game.keys() and "client_version" not in posted_game.keys()
+    game_id = posted_game["gameID"]
+    game_by_id = get_game_by_id(game_id)
+    assert "clientVersionOK" in game_by_id.keys() and not game_by_id["clientVersionOK"]
+
+
+@pytest.mark.slow
+def test_gh_cache():
+    stat_cache = get(url + "/gh-stat-cache")
+    time.sleep(1)
+    stat_cache_immediate = get(url + "/gh-stat-cache")
+    assert stat_cache_immediate["lastUpdated"] == stat_cache["lastUpdated"]
+    time.sleep(1)
+    delete(url + "/gh-stat-cache")
+    time.sleep(1)
+    stat_cache_after_delete = get(url + "/gh-stat-cache")
+    assert stat_cache_after_delete["lastUpdated"] != stat_cache_immediate["lastUpdated"]
+    time.sleep(120)
+    stat_cache_after_wait = get(url + "/gh-stat-cache")
+    assert stat_cache_after_wait["lastUpdated"] != stat_cache_after_delete["lastUpdated"]
+
+
 def test_post_games(any_entries_5_or_more):
     game_count = get_game_count()
     post_random_games()
@@ -426,4 +481,4 @@ def test_cron_fixes_hero_in_schema0(empty_database):
 
 
 if __name__ == "__main__":
-    pytest.main(['--html', 'test_report.html'])
+    pytest.main(['--html', 'test_report.html'] + sys.argv[1:])
