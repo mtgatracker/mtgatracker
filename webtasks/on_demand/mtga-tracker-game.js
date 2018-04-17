@@ -7,6 +7,12 @@ import { MongoClient, ObjectID } from 'mongodb';
 var backbone = require('backbone');
 var request = require('request');
 
+const BluebirdPromise = require('bluebird')
+global.Promise = BluebirdPromise
+Promise.onPossiblyUnhandledRejection((e, promise) => {
+    throw e
+})
+
 const Game = backbone.Model.extend({
   validate: function(attr) {
     let err = []
@@ -30,7 +36,7 @@ const Game = backbone.Model.extend({
 
 const deckCollection = 'deck';
 const gameCollection = 'game';
-const userCollectionCollection = 'userCollection';
+const userCollection = 'user';
 const errorCollection = 'error';
 const server = express();
 
@@ -217,7 +223,7 @@ server.get('/games/userID/:userID', (req, res, next) => {
     return
   }
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    const { userID } = req.params ;
+    const { userID } = req.params;
     if (connectErr) return next(connectErr);
     let collection = client.db(DATABASE).collection(gameCollection)
     let cursor = collection.find({'players.userID': userID});  // hard-limit to 5 records for example
@@ -247,7 +253,7 @@ server.get('/game/_id/:_id', (req, res, next) => {
     return
   }
   MongoClient.connect(MONGO_URL, (err, client) => {
-    const { _id } = req.params ;
+    const { _id } = req.params;
     if (err) return next(err);
     client.db(DATABASE).collection(gameCollection).findOne({ _id: new ObjectID(_id) }, (err, result) => {
       client.close();
@@ -259,14 +265,13 @@ server.get('/game/_id/:_id', (req, res, next) => {
 });
 
 let getGameById = (client, database, gameID, callback) => {
-  let myPromise = new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     console.log("getGameById " +  gameID)
     client.db(database).collection(gameCollection).findOne({ gameID: gameID }, null, function(err, result) {
       if (err) { reject() } else { resolve() }
       callback(result, err)
     })
   })
-  return myPromise
 }
 
 let logError = (client, database, error, callback) => {
@@ -412,24 +417,100 @@ let clientVersionUpToDate = (clientVersion, storage) => {
       let { latestVersion, latestVersionString } = latestVersionObj
       if (clientVersion === undefined) {
         resolve({ok: false, latest: latestVersion})
-      }
-      let appVersion = parseVersionString(clientVersion);
-      let ok = false;
-      if (appVersion != latestVersion) {
-        // https://github.com/shawkinsl/mtga-tracker/issues/129
-        if (appVersion.major != latestVersion.major || appVersion.medium != latestVersion.medium) {
-          ok = false;
-        } else if (latestVersion.suffix === undefined && appVersion.suffix !== undefined) {
-          // client is x.y.z-beta, latest is x.y.z
-          ok = false;
-        } else {
-          ok = true;
+      } else {
+        let appVersion = parseVersionString(clientVersion);
+        let ok = false;
+        if (appVersion != latestVersion) {
+          // https://github.com/shawkinsl/mtga-tracker/issues/129
+          if (appVersion.major != latestVersion.major || appVersion.medium != latestVersion.medium) {
+            ok = false;
+          } else if (latestVersion.suffix === undefined && appVersion.suffix !== undefined) {
+            // client is x.y.z-beta, latest is x.y.z
+            ok = false;
+          } else {
+            ok = true;
+          }
         }
+        resolve({ok: ok, latest: latestVersionString})
       }
-      resolve({ok: ok, latest: latestVersionString})
     })
   })
 }
+
+let randomString = () => {
+  return Math.random().toString(36).substr(2, 5) + Math.random().toString(36).substr(2, 5) + Math.random().toString(36).substr(2, 5)
+}
+
+
+let getPublicName = (client, database, username, createIfDoesntExist, isUser) => {
+  console.log("getPublicName")
+
+  if (createIfDoesntExist === undefined) {
+    createIfDoesntExist = false;
+  }
+
+  if (isUser === undefined) {
+    isUser = false;
+  }
+
+  return new Promise((resolve, reject) => {
+    client.db(database).collection(userCollection).findOne({username: username}, null, function(err, result) {
+      if (!createIfDoesntExist || result) {
+        if (isUser) {
+          result.isUser = true;
+          client.db(database).collection(userCollection).save(result)
+        }
+        resolve({error: err, result: result})
+      } else {
+        // we need to make one if there isn't one available
+        client.db(database).collection(userCollection).findOne({available: true}, null, (err, result) => {
+          if (result) {
+            result.available = false
+            result.username = username
+            result.isUser = (isUser ? true : false);  // filter out any weird values that come in
+            client.db(database).collection(userCollection).save(result)
+            resolve({err: null, result: result})
+          } else {
+            // handle case where there are none available
+            let pubname = randomString()
+            let newResult = {
+              available: false,
+              username: username,
+              publicName: pubname,
+              isUser: (isUser ? true : false)
+            }
+            client.db(database).collection(userCollection).insertOne(newResult, null, (err, result) => {
+              resolve({err: null, result: result})
+            })
+          }
+        })
+      }
+    })
+  })
+}
+
+// covered: test_users_updated_on_game
+server.get('/publicName/:username', (req, res, next) => {
+  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
+
+  const { debug_password } = req.query;
+  const { username } = req.params;
+
+  if (debug_password != DEBUG_PASSWORD) {
+    res.status(400).send({error: "debug password incorrect"})
+    return
+  }
+
+  MongoClient.connect(MONGO_URL, (err, client) => {
+    getPublicName(client, DATABASE, username).then((pubNameObj) => {
+      if (pubNameObj.result) {
+        res.status(200).send(pubNameObj.result)
+      } else {
+        res.status(404).send({error: "no pubname found for user " + username})
+      }
+    })
+  })
+})
 
 
 // covered: test_post_game
@@ -451,11 +532,13 @@ server.post('/game', (req, res, next) => {
     model.clientVersionOK = clientVersionCheck.ok
     model.latestVersionAtPost = clientVersionCheck.latest
 
-    if (model.hero === undefined) {
+    if (model.hero === undefined || model.opponent === undefined) {
       if (model.players[0].deck.poolName.includes("visible cards") && !model.players[1].deck.poolName.includes("visible cards")) {
         model.hero = model.players[1].name
+        model.opponent = model.players[0].name
       } else if (model.players[1].deck.poolName.includes("visible cards") && !model.players[0].deck.poolName.includes("visible cards")) {
         model.hero = model.players[0].name
+        model.opponent = model.players[1].name
       } else {
         res.status(400).send({error: "invalid schema", game: result});
         return;
@@ -464,16 +547,22 @@ server.post('/game', (req, res, next) => {
 
     MongoClient.connect(MONGO_URL, (err, client) => {
       if (err) return next(err);
-      getGameById(client, DATABASE, game.get("gameID"), (result, err) => {
-        if (result !== null) {
-          res.status(400).send({error: "game already exists", game: result});
-          return;
-        }
-        client.db(DATABASE).collection(gameCollection).insertOne(model, (err, result) => {
-          client.close();
-          if (err) return next(err);
-          res.status(201).send(result);
-        });
+      //client, database, username, createIfDoesntExist, isUser
+      getPublicName(client, DATABASE, model.hero, true, true).then(() => {
+        getPublicName(client, DATABASE, model.opponent, true, false).then(() => {
+
+          getGameById(client, DATABASE, game.get("gameID"), (result, err) => {
+            if (result !== null) {
+              res.status(400).send({error: "game already exists", game: result});
+              return;
+            }
+            client.db(DATABASE).collection(gameCollection).insertOne(model, (err, result) => {
+              client.close();
+              if (err) return next(err);
+              res.status(201).send(result);
+            });
+          })
+        })
       })
     });
   })
@@ -540,30 +629,6 @@ server.post('/games', (req, res, next) => {
       res.status(201).send({results: results});
     }
   })
-});
-
-// no cover - for testing only
-server.post('/danger/reset/all', (req, res, next) => {
-  console.log("/danger/reset/all")
-  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
-  const { debug_password } = req.body;
-  if (debug_password != DEBUG_PASSWORD) {
-    res.status(400).send({error: "debug password incorrect"})
-    return
-  }
-  if (DATABASE != "mtga-tracker-staging") {
-    res.status(400).send({error: "not allowed to do this anywhere except staging, sorry"})
-    return
-  }
-  MongoClient.connect(MONGO_URL, (err, client) => {
-    if (err) return next(err);
-    client.db(DATABASE).collection(gameCollection).drop(null, (err, result) => {
-      if (err) return next(err);
-      if (result !== null) res.status(200).send(result)
-      else res.status(400).send(result)
-      client.close();
-    });
-  });
 });
 
 // no cover - not testable?

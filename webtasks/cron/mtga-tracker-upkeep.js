@@ -5,9 +5,15 @@ import express from 'express';
 import Webtask from 'webtask-tools';
 import { MongoClient, ObjectID } from 'mongodb';
 
+const BluebirdPromise = require('bluebird')
+global.Promise = BluebirdPromise
+Promise.onPossiblyUnhandledRejection((e, promise) => {
+    throw e
+})
+
 const deckCollection = 'deck';
 const gameCollection = 'game';
-const userCollectionCollection = 'userCollection';
+const userCollection = 'user';
 const errorCollection = 'error';
 const server = express();
 
@@ -26,9 +32,11 @@ let cleanHeroes = (collection, callback) => {
         try{
           if (doc.players[0].deck.poolName.includes("visible cards") && !doc.players[1].deck.poolName.includes("visible cards")) {
             doc.hero = doc.players[1].name;
+            doc.opponent = doc.players[0].name;
             collection.save(doc)
           } else if (doc.players[1].deck.poolName.includes("visible cards") && !doc.players[0].deck.poolName.includes("visible cards")) {
             doc.hero = doc.players[0].name;
+            doc.opponent = doc.players[1].name;
             collection.save(doc)
           } else {
             updated -= 1;
@@ -54,11 +62,11 @@ server.post('/', (req, res, next) => {
     if (connectErr) return next(connectErr);
     let collection = client.db(DATABASE).collection(gameCollection)
     cleanHeroes(collection).then((cleanHeroesResult) => {
-      const { cleanErr, cleaned } = cleanHeroesResult
-      if (cleanErr.length > 0) {
-        res.status(418).send(cleaned)
+      const { errors, cleaned } = cleanHeroesResult
+      if (errors.length > 0) {
+        res.status(418).send({errors: errors, cleaned: cleaned})
       } else {
-        res.status(200).send(cleaned)
+        res.status(200).send({cleaned: cleaned})
       }
     })
   })
