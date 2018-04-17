@@ -13,33 +13,35 @@ const server = express();
 
 server.use(bodyParser.json());
 
-// TODO uncovered
+// covered: test_cron_fixes_hero_in_schema0
 let cleanHeroes = (collection, callback) => {
-  console.log("enter cleanHeroes")
-  let noHeroDefinedCursor = collection.find({hero: {$exists: false}}).limit(100)
-  let errors = []
-  let updated = 0;
-  noHeroDefinedCursor.toArray((cursorErr, docs) => {
-    docs.forEach((doc, idx) => {
-      updated += 1
-      try{
-        if (doc.players[0].deck.poolName.includes("visible cards") && !doc.players[1].deck.poolName.includes("visible cards")) {
-          doc.hero = doc.players[1].name;
-          collection.save(doc)
-        } else if (doc.players[1].deck.poolName.includes("visible cards") && !doc.players[0].deck.poolName.includes("visible cards")) {
-          doc.hero = doc.players[0].name;
-          collection.save(doc)
-        } else {
-          updated -= 1;
-          errors.push({error: "could not determine hero for " + doc._id})
+  return new Promise((resolve, reject) => {
+    console.log("enter cleanHeroes")
+    let noHeroDefinedCursor = collection.find({hero: {$exists: false}}).limit(100)
+    let errors = []
+    let updated = 0;
+    noHeroDefinedCursor.toArray((cursorErr, docs) => {
+      docs.forEach((doc, idx) => {
+        updated += 1
+        try{
+          if (doc.players[0].deck.poolName.includes("visible cards") && !doc.players[1].deck.poolName.includes("visible cards")) {
+            doc.hero = doc.players[1].name;
+            collection.save(doc)
+          } else if (doc.players[1].deck.poolName.includes("visible cards") && !doc.players[0].deck.poolName.includes("visible cards")) {
+            doc.hero = doc.players[0].name;
+            collection.save(doc)
+          } else {
+            updated -= 1;
+            errors.push({error: "could not determine hero for " + doc._id})
+          }
+        } catch(err) {
+            updated -= 1;
+            errors.push({error: "invalid record @ " + doc._id})
+            console.log("ERROR: invalid record @ " + doc._id)
         }
-      } catch(err) {
-          updated -= 1;
-          errors.push({error: "invalid record @ " + doc._id})
-          console.log("ERROR: invalid record @ " + doc._id)
-      }
+      })
+      resolve({errors: errors, cleaned: updated})
     })
-    callback(errors, {cleaned: updated})
   })
 }
 
@@ -51,7 +53,8 @@ server.post('/', (req, res, next) => {
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     if (connectErr) return next(connectErr);
     let collection = client.db(DATABASE).collection(gameCollection)
-    cleanHeroes(collection, (cleanErr, cleaned) => {
+    cleanHeroes(collection).then((cleanHeroesResult) => {
+      const { cleanErr, cleaned } = cleanHeroesResult
       if (cleanErr.length > 0) {
         res.status(418).send(cleaned)
       } else {
