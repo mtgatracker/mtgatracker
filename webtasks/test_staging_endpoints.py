@@ -93,6 +93,9 @@ _game_shell_schema_1_1_0_beta = copy.deepcopy(_game_shell_schema_0)
 _game_shell_schema_1_1_0_beta["hero"] = "joe"
 _game_shell_schema_1_1_0_beta["client_version"] = latest_client_version
 
+_game_shell_schema_1_1_1_beta = copy.deepcopy(_game_shell_schema_1_1_0_beta)
+_game_shell_schema_1_1_1_beta['opponent'] = "tess"
+
 
 def _random_string():
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
@@ -610,6 +613,21 @@ def test_cron_fixes_hero_in_schema0(empty_game_collection):
     assert "hero" in game_current_first.keys()
     game_current_last = get_game_by_id(all_games["docs"][-1]["gameID"])
     assert "hero" in game_current_last.keys()
+
+
+@pytest.mark.cron
+@pytest.mark.slow
+def test_cron_fixes_opponent_in_schema0(empty_game_collection):
+    post_random_games(num_games=20, no_verify=True, game_shell=_game_shell_schema_1_1_0_beta)
+    all_games = get_all_games_page(1, 20)
+    for game in all_games["docs"]:
+        print(game)
+        assert "opponent" not in game.keys(), game.keys()
+    time.sleep(120)
+    game_current_first = get_game_by_id(all_games["docs"][0]["gameID"])
+    assert "opponent" in game_current_first.keys()
+    game_current_last = get_game_by_id(all_games["docs"][-1]["gameID"])
+    assert "opponent" in game_current_last.keys()
 
 
 if __name__ == "__main__":

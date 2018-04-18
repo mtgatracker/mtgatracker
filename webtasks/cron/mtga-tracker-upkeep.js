@@ -23,7 +23,7 @@ server.use(bodyParser.json());
 let cleanHeroes = (collection, callback) => {
   return new Promise((resolve, reject) => {
     console.log("enter cleanHeroes")
-    let noHeroDefinedCursor = collection.find({hero: {$exists: false}}).limit(100)
+    let noHeroDefinedCursor = collection.find({$or: [{hero: {$exists: false}}, {opponent: {$exists: false}}]}).limit(100)
     let errors = []
     let updated = 0;
     noHeroDefinedCursor.toArray((cursorErr, docs) => {
