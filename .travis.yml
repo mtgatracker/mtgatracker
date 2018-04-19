@@ -1,0 +1,26 @@
+language: python
+python:
+  - "3.6"
+
+node_js:
+  - "node"
+cache:
+  pip: true
+  directories:
+    - webtasks/on_demand/node_modules
+before_install:
+  - pip install -U pip
+install:
+  - pip install -U -r requirements-tests.txt
+  - npm install wt-cli -g
+  - npm install babel-cli -g
+  - npm install babel-preset-env babel-plugin-transform-runtime
+
+
+script:
+  - cd webtasks/on_demand
+  - npx babel mtga-tracker-game.js --out-file mtga-tracker-game.js
+  - npm install .
+  - sh serve_locally.sh
+  - cd ..
+  - python test_staging_endpoints.py -k "not cron" --local -v
