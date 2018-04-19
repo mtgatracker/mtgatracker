@@ -22,7 +22,6 @@ the easiest method.
        
 You should now have a full display capture working! Simply drag MTGATracker on top of MTGA, and stream away!
 
-
 ### Option 2: Use window capture, and launch MTGATracker framed
 
 For this use case, you will have MTGATracker running in the background, or off to the side of MTGA, and

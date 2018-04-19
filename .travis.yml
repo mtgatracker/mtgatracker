@@ -24,3 +24,9 @@ script:
   - sh serve_locally.sh
   - cd ..
   - python test_staging_endpoints.py -k "not cron" --local -v
+
+after_success:
+  - cat local_webtask_output.txt | grep "greppable"
+
+after_failure:
+  - cat local_webtask_output.txt
