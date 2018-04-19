@@ -448,10 +448,12 @@ let getGithubStats = (storage) => {
           headers: {'User-Agent': 'MTGATracker-Webtask'}
         }, (err, res, data) => {
           console.log("greppable: github data was" + JSON.stringify(data))
-          if (err || !data) {
+          if (err || (typeof data === 'object' && !(data instanceof Array))) {
+            console.log("greppable: gh data was not array and was object")
             let fakeVersionStr = "1.1.1-beta"
-            fakedData = {latestVersion: parseVersionString(fakeVersionStr), latestVersionString: latestVersionString, totalDownloads: 100, lastUpdated: new Date(), warning: "Warning: this is fake data!"}
-            resolve(err)
+            let fakedData = {latestVersion: parseVersionString(fakeVersionStr), latestVersionString: latestVersionString, totalDownloads: 100, lastUpdated: new Date(), warning: "Warning: this is fake data!"}
+            storage.set(fakedData, (err) => {})
+            resolve(fakedData)
           } else {
             let downloadCount = 0;
             data.forEach((elem, idx) => {

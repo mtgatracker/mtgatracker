@@ -17,6 +17,8 @@ yes | pyinstaller.exe mtgatracker_backend.spec --distpath appdist
 #rm -rf mtgatracker_backend.spec
 
 rm -r MTGATracker-win32-x64 || echo "nothing to remove, moving on"
+rm -r MTGATracker-win32-x64_$version || echo "nothing to remove, moving on"
+rm -r MTGATracker-win32-x64_$version.zip || echo "nothing to remove, moving on"
 
 yes | ./node_modules/.bin/electron-packager electron/ MTGATracker \
   --overwrite --version=$version --electron-version=1.7.6 \
@@ -26,3 +28,5 @@ yes | ./node_modules/.bin/electron-packager electron/ MTGATracker \
   --asar
 
 mv MTGATracker-win32-x64 MTGATracker-win32-x64_$version
+/c/Program\ Files/7-Zip/7z.exe a -tzip MTGATracker-win32-x64_$version.zip MTGATracker-win32-x64_$version
+sha256sum MTGATracker-win32-x64_$version.zip
