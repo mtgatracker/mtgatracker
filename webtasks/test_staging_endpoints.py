@@ -11,16 +11,21 @@ import requests
 import sys
 
 url = "https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game-staging"
-staging_debug_password = None
-staging_mongo_url = None
+delay = 1.5
+staging_mongo_url = os.getenv("MONGO_URL")
+staging_debug_password = os.getenv("DEBUG_PASSWORD")
+if "--local" in sys.argv:
+    url = "http://localhost:8080"
+    delay = 0
 if os.path.exists("secrets-staging"):
     with open("secrets-staging", "r") as rf:
         for line in rf.readlines():
             key, value = line.strip().split("=")
-            if key == "DEBUG_PASSWORD":
+            if key == "DEBUG_PASSWORD" and not staging_debug_password:
                 staging_debug_password = value
-            if key == "MONGO_URL":
+            if key == "MONGO_URL" and not staging_mongo_url:
                 staging_mongo_url = value
+
 
 mongo_client = pymongo.MongoClient(staging_mongo_url)
 database = mongo_client['mtga-tracker-staging']
@@ -34,14 +39,13 @@ def post(post_url, post_json):
         print("POST {} / {}".format(post_url, post_json_str[:30] + "..."))
     else:
         print("POST {} / {}".format(post_url, post_json))
-
-    time.sleep(1.5)
+    time.sleep(delay)
     return requests.post(post_url, json=post_json).json()
 
 
 def get(get_url, raw_result=False):
     print("GET {}".format(get_url))
-    time.sleep(1.5)
+    time.sleep(delay)
     result = requests.get(get_url)
     if raw_result:
         return result
@@ -50,7 +54,7 @@ def get(get_url, raw_result=False):
 
 def delete(delete_url, raw_result=False):
     print("DELETE {}".format(delete_url))
-    time.sleep(1.5)
+    time.sleep(delay)
     result = requests.delete(delete_url)
     if raw_result:
         return result
@@ -470,6 +474,7 @@ def test_post_tons_of_new_games(any_games_5_or_more):
     for game in two_hundred_random_games:
         game["gameID"] = _random_string()
     post_random_games(two_hundred_random_games)
+    time.sleep(0.5)  # give a hair of recovery time
     game_count_after_200 = get_game_count()
     assert game_count_after_200 == game_count + 200
 
@@ -606,7 +611,6 @@ def test_404():
     assert "may be banned" in str(result.json())
 
 
-@pytest.mark.dev
 def test_auth_request(empty_game_collection, empty_user_collection):
     game, _ = post_random_game(winner="kate", loser="james")
     kate_before = users_collection.find_one({"username": "kate"})
@@ -620,7 +624,6 @@ def test_auth_request(empty_game_collection, empty_user_collection):
     assert 0 < access_code < 999999
 
 
-@pytest.mark.dev
 def test_auth_request_expires(empty_game_collection, empty_user_collection):
     # TODO: dry here and test_auth_request
     game, _ = post_random_game(winner="kate", loser="james")
@@ -689,4 +692,4 @@ def test_cron_fixes_opponent_in_schema0(empty_game_collection):
 
 
 if __name__ == "__main__":
-    pytest.main(['--html', 'pytest_report.html'] + sys.argv[1:])
+    sys.exit(pytest.main(['--html', 'pytest_report.html'] + sys.argv[1:]))

@@ -1,4 +1,6 @@
 pytest
+pytest-html
 pynput
 pyperclip
 pymongo
+requests

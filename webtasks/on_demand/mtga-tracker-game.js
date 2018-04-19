@@ -68,7 +68,7 @@ server.get('/games/count', (req, res, next) => {
   })
 })
 
-let sendDiscordMessage = (message, webhook_url, slient) => {
+let sendDiscordMessage = (message, webhook_url, silent) => {
   return new Promise((resolve, reject) => {
     if (silent) {
       resolve({ok: true})
@@ -447,20 +447,21 @@ let getGithubStats = (storage) => {
           json: true,
           headers: {'User-Agent': 'MTGATracker-Webtask'}
         }, (err, res, data) => {
-          let downloadCount = 0;
-          data.forEach((elem, idx) => {
-              elem.assets.forEach((asset, idx) => {
-                  downloadCount += asset.download_count;
-              })
-          })
           if (err) {
             reject(err)
+          } else {
+            let downloadCount = 0;
+            data.forEach((elem, idx) => {
+                elem.assets.forEach((asset, idx) => {
+                    downloadCount += asset.download_count;
+                })
+            })
+            latestVersionString = data[0].tag_name
+            latestVersion = parseVersionString(latestVersionString);
+            data = {latestVersion: latestVersion, latestVersionString: latestVersionString, totalDownloads: downloadCount, lastUpdated: setTime}
+            storage.set(data, (err) => {})
+            resolve(data)
           }
-          latestVersionString = data[0].tag_name
-          latestVersion = parseVersionString(latestVersionString);
-          data = {latestVersion: latestVersion, latestVersionString: latestVersionString, totalDownloads: downloadCount, lastUpdated: setTime}
-          storage.set(data, (err) => {})
-          resolve(data)
         })
       } else {
         resolve(data)
