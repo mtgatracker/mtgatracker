@@ -137,15 +137,6 @@ jQuery(document).ready(function( $ ) {
   google.maps.event.addDomListener(window, 'load', initialize_google_map);
 
 // custom code
-  download_count = 0;
-  $.get("https://api.github.com/repos/shawkinsl/mtga-tracker/releases", (res) => {
-    $.each(res, (idx, elem) => {
-        $.each(elem.assets, (idx, asset) =>     {
-            download_count += asset.download_count;
-        })
-    })
-    $("#dl-count").html(download_count)
-  })
 
   $.get("https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game/games/count", (res) => {
      $("#tracked-game-count").html(res.game_count)
@@ -155,8 +146,13 @@ jQuery(document).ready(function( $ ) {
      $("#unique-user-count").html(res.unique_user_count)
   })
 
-  $.get("https://api.github.com/repos/shawkinsl/mtga-tracker/releases/latest", (res) => {
-    $("#latest-release").html(" (" + res.name + ")")
+  $.get("https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game/gh-stat-cache", (res) => {
+    console.log("got res")
+    console.log(res)
+    // {latestVersion: parseVersionString(fakeVersionStr), latestVersionString: latestVersionString, totalDownloads: 100, lastUpdated: new Date(), warning: "Warning: this is fake data!"}
+
+    $("#latest-release").html(" (" + res.latestVersionString + ")")
+    $("#dl-count").html(res.totalDownloads)
 //    console.log(res)
 //     $("#unique-user-count").html(res.user_count)
   })

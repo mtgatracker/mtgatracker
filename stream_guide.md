@@ -14,7 +14,6 @@ the easiest method.
 1. Create a scene (or use the default)
 1. Create a new source (blue):
    - Select "Display Capture" (red)
-   
    ![Creating a scene and display capture in OBS](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/stream_guide_1.png)
    - Select the correct display
        - Note: if you are using a computer with multiple GPU's, you may need to use nvidia control
@@ -22,7 +21,6 @@ the easiest method.
        the display
        
 You should now have a full display capture working! Simply drag MTGATracker on top of MTGA, and stream away!
-
 
 ### Option 2: Use window capture, and launch MTGATracker framed
 
@@ -37,16 +35,13 @@ you will add a separate Window Capture source for MTGATracker, and use OBS to po
 1. Create a scene (or use the default)
 1. Create a new source (blue):
     - Select "Window Capture" (yellow)
-    
     ![Creating a scene and window capture in OBS](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/stream_guide_2.png)
     - Find the MTGATracker.exe, select Done
-    
     ![Finding MTGATracker.exe](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/stream_guide_3.png)
 1. Right click on the Window Capture source and select "Filters"
 1. Add a new filter, and choose "Color Key"
 1. Set similarity to a value between 600 and 700 depending on your preference (blue), press Done
    - Notice that in the scene, the green is now gone and the background of the window appears transparent! (purple)
-   
     ![Setting filter values](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/stream_guide_4.png)
 1. (Optional) Set the transparency in the same filter to your preference
 
