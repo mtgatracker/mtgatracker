@@ -2,6 +2,8 @@ import random
 import string
 import copy
 import os
+
+import datetime
 import pytest
 import pymongo
 import time
@@ -183,6 +185,10 @@ def insert_taken_user(username=None, public_name=None, is_user=False):
         public_name = _random_string()
     users_collection.insert_one({"username": username, "available": False, "publicName": public_name,
                                  "isUser": is_user})
+
+
+def request_auth(username):
+    return post(url + "/user/auth-request", post_json={"silent": True, "username": username})
 
 
 def insert_available_user(public_name=None):
@@ -598,6 +604,58 @@ def test_404():
     result = get(url + "/its/bananas/b-a-n-a-n-a-s", True)
     assert result.status_code == 404
     assert "may be banned" in str(result.json())
+
+
+@pytest.mark.dev
+def test_auth_request(empty_game_collection, empty_user_collection):
+    game, _ = post_random_game(winner="kate", loser="james")
+    kate_before = users_collection.find_one({"username": "kate"})
+    assert "auth" not in kate_before.keys()
+
+    request_auth("kate")
+    kate_after = users_collection.find_one({"username": "kate"})
+    assert "auth" in kate_after.keys()
+
+    access_code = int(kate_after["auth"]["accessCode"])
+    assert 0 < access_code < 999999
+
+
+@pytest.mark.dev
+def test_auth_request_expires(empty_game_collection, empty_user_collection):
+    # TODO: dry here and test_auth_request
+    game, _ = post_random_game(winner="kate", loser="james")
+    kate_before = users_collection.find_one({"username": "kate"})
+    assert "auth" not in kate_before.keys()
+
+    request_auth("kate")
+    kate_after = users_collection.find_one({"username": "kate"})
+    assert "auth" in kate_after.keys()
+
+    access_code = int(kate_after["auth"]["accessCode"])
+    assert 0 < access_code < 999999
+
+    request_auth("kate")
+    kate_after_2 = users_collection.find_one({"username": "kate"})
+    access_code_after = int(kate_after_2["auth"]["accessCode"])
+    assert access_code == access_code_after
+
+    expires = kate_after_2["auth"]["expires"]
+    expires -= datetime.timedelta(hours=4, minutes=50)  # token has 1:10 left to live
+    users_collection.update_one({"username": "kate"}, {"$set": {"auth.expires": expires}})
+
+    kate_after_3 = users_collection.find_one({"username": "kate"})
+    access_code_after_3 = int(kate_after_3["auth"]["accessCode"])
+    assert access_code_after_3 == access_code_after
+
+    expires = kate_after_3["auth"]["expires"]
+    expires -= datetime.timedelta(hours=5, minutes=10)  # token is expired
+    users_collection.update_one({"username": "kate"}, {"$set": {"auth.expires": expires}})
+
+    request_auth("kate")
+    kate_after_4 = users_collection.find_one({"username": "kate"})
+    access_code_after_4 = int(kate_after_4["auth"]["accessCode"])
+    assert 0 < access_code_after_4 < 999999
+    assert access_code_after_4 != access_code_after_3
 
 
 @pytest.mark.cron

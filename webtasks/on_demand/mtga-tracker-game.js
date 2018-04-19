@@ -43,6 +43,10 @@ const server = express();
 
 server.use(bodyParser.json());
 
+let random6DigitCode = () => {
+  return Math.floor(Math.random()*900000) + 100000;
+}
+
 // covered: test_games_count
 server.get('/games/count', (req, res, next) => {
   console.log("/games/count")
@@ -59,6 +63,77 @@ server.get('/games/count', (req, res, next) => {
       } else {
         res.status(200).send({"game_count": count});
         client.close()
+      }
+    })
+  })
+})
+
+let sendDiscordMessage = (message, webhook_url, slient) => {
+  return new Promise((resolve, reject) => {
+    if (silent) {
+      resolve({ok: true})
+    } else {
+      request.post({
+        url: webhook_url,
+        body: {
+          "content": message
+          },
+        json: true,
+        headers: {'User-Agent': 'MTGATracker-Webtask'}
+      }, (err, reqRes, data) => {
+        if (err) reject(err)
+        resolve({ok: true})
+      })
+    }
+  })
+}
+
+server.post('/user/auth-request', (req, res, next) => {
+  console.log('/user/auth-request')
+  const authRequest = req.body;
+
+  const { username, silent } = authRequest;
+
+  const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
+
+
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    let users = client.db(DATABASE).collection(userCollection);
+
+    users.findOne({username: username}, null, (err, result) => {
+      if (result === undefined || result === null) {
+        res.status(404).send({"error": "no user found with username " + username})
+        return
+      }
+
+      // if the current code expires in less than an hour, let's refresh
+      let expireCheck = new Date()
+      expireCheck.setHours(expireCheck.getHours() + 1)
+      if (result.auth !== undefined && result.auth !== null && result.auth.expires > expireCheck) {
+        let authObj = result.auth;
+        let msg = username + " assigned code " + authObj.accessCode + ", expires @ " + authObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
+        sendDiscordMessage(msg, DISCORD_WEBHOOK, silent).then(() => {
+          res.status(200).send({"request": "sent"})
+        })
+      } else {
+        let expiresDate = new Date()
+        expiresDate.setHours(expiresDate.getHours() + 6)
+        let newAuthObj = {
+          expires: expiresDate,
+          accessCode: random6DigitCode()
+        }
+        users.update({'username': username}, {$set: {auth: newAuthObj}}, (err, mongoRes) => {
+          console.log(mongoRes.result.nModified)
+          if (silent != true) {
+            let msg = username + " assigned code " + newAuthObj.accessCode + ", expires @ " + newAuthObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
+
+            sendDiscordMessage(msg, DISCORD_WEBHOOK, silent).then(() => {
+              res.status(200).send({"request": "sent"})
+            })
+          } else {
+            res.status(200).send({"request": "sent"})
+          }
+        })
       }
     })
   })
