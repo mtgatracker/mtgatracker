@@ -13,6 +13,7 @@ window.addEventListener('beforeunload', function() {
 })
 
 var debug = remote.getGlobal('debug');
+var useFrame = remote.getGlobal('useFrame');
 var showIIDs = remote.getGlobal('showIIDs');
 var appVersionStr = remote.getGlobal('version');
 var zoom = 0.8;
@@ -287,6 +288,12 @@ ws.onmessage = (data) => {
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
+    if (debug || useFrame) {
+        $("#container").addClass("container-framed")
+        $("body").css("background-color", "green")
+    } else {
+        $("#container").addClass("container-normal")
+    }
     $(".zoom-out").click(() => {
         zoom -= 0.1
         browserWindow.webContents.setZoomFactor(zoom)

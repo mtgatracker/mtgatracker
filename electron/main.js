@@ -19,7 +19,16 @@ const PY_MODULE = 'mtgatracker_backend' // without .py suffix
 let pyProc = null
 let pyPort = null
 
-let debug = false;
+
+let getBooleanArg = (short, long) => {
+  let shortIdx = process.argv.indexOf(short)
+  let longIdx = process.argv.indexOf(long)
+  return shortIdx != -1 || longIdx != -1;
+}
+
+
+let debug = getBooleanArg('-d', '--debug');
+let useFrame = getBooleanArg('-uf', '--framed');
 let showIIDs = true;
 let no_server = false;
 let kill_server = true;
@@ -28,9 +37,9 @@ let noFollow = false;
 let readFullFile = false;
 let debugFile = false;
 
-if (!debug) {
-    app.disableHardwareAcceleration()
-}
+//if (!debug) {
+app.disableHardwareAcceleration()
+//}
 
 const guessPackaged = () => {
   const fullPath = path.join(__dirname, "..", PY_DIST_FOLDER)
@@ -146,6 +155,7 @@ if (!no_server) {
 }
 
 global.debug = debug;
+global.useFrame = useFrame;
 global.showIIDs = showIIDs;
 global.version = app.getVersion()
 
@@ -167,9 +177,9 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({width: window_width,
                                   height: window_height,
                                   show: false,
-                                  transparent: !debug,
-                                  resizable: debug,
-                                  frame: debug,
+                                  transparent: !(debug || useFrame),
+                                  resizable: (debug || useFrame),
+                                  frame: (debug || useFrame),
                                   alwaysOnTop: true,
                                   toolbar: false,
                                   titlebar: false,
