@@ -47,3 +47,13 @@ you will add a separate Window Capture source for MTGATracker, and use OBS to po
 
 You should now have a window capture element displaying MTGATracker that you can position however you want. Note
 that you may now minimize MTGATracker, or place it wherever you want on any display.
+
+
+#### Tip: make a shortcut to launch MTGATracker in streamer mode
+
+1. Right click on the MTGATracker.exe in the extracted download folder
+1. Select "Create shortcut" and name the shortcut "Streamer mode - MTGATracker" (or whatever you please)
+1. Right click on the shortcut and select "Properties" (blue)
+1. In the "Target" input box, add ` -uf` to the end of the command (green)
+
+![Creating a shortcut](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/stream_guide_5.png)

@@ -29,4 +29,4 @@ yes | ./node_modules/.bin/electron-packager electron/ MTGATracker \
 
 mv MTGATracker-win32-x64 MTGATracker-win32-x64_$version
 /c/Program\ Files/7-Zip/7z.exe a -tzip MTGATracker-win32-x64_$version.zip MTGATracker-win32-x64_$version
-sha256sum MTGATracker-win32-x64_$version.zip
+md5sum MTGATracker-win32-x64_$version.zip
