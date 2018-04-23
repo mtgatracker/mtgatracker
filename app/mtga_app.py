@@ -9,6 +9,11 @@ from app.queues import general_output_queue
 from app.models.set import Deck
 from app.queues import decklist_change_queue
 from util import client_version
+try:
+    from secrets import API_URL, hash_json_object
+except ImportError:
+    sys.stderr.write("WARNING! Using secrets template; this will not hit production databases!")
+    from secrets_template import API_URL, hash_json_object
 
 log_file = "mtga_watch.log"
 mtga_logger = logging.getLogger("mtga_watch")
@@ -92,12 +97,13 @@ class MTGAWatchApplication(object):
 
 class WebAPI(object):
 
-    def __init__(self, api_url="https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game"):
+    def __init__(self, api_url=API_URL):
         self.api_url = api_url
 
     def save_game_result(self, game):
         url = self.api_url + "/game"
         game["client_version"] = client_version
+        game["game_hash"] = hash_json_object(game)
         print(requests.post(url, json=game).json())
 
 

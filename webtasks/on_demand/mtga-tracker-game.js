@@ -6,6 +6,9 @@ import Webtask from 'webtask-tools';
 import { MongoClient, ObjectID } from 'mongodb';
 var backbone = require('backbone');
 var request = require('request');
+var jwt = require('jsonwebtoken')
+var ejwt = require('express-jwt')
+import secrets from './secrets.js'
 
 const BluebirdPromise = require('bluebird')
 global.Promise = BluebirdPromise
@@ -47,6 +50,39 @@ let random6DigitCode = () => {
   return Math.floor(Math.random()*900000) + 100000;
 }
 
+server.get('/fake-token', (req, res, next) => {
+  let token = jwt.sign({"user": "Spencatro"}, secrets.jwtSecret, {expiresIn: "7d"})
+  let weekMs = 7 * 24 * 60 * 60 * 1000;
+  let cookieExpiration = new Date()
+  cookieExpiration.setTime(cookieExpiration.getTime() + weekMs)
+  res.cookie('access_token', token, {secure: true, expires: cookieExpiration)})
+  res.status(200).send()
+})
+
+let getCookieToken = (req) => {
+  if (req.headers.cookie && req.headers.cookie.split('=')[0] === 'access_token') {
+      return req.headers.cookie.split('=')[1];
+  } else if (req.query && req.query.token) {
+    return req.query.token;
+  }
+  return null;
+}
+
+server.post('/decode-token', ejwt({secret: secrets.jwtSecret, getToken: getCookieToken}), (req, res, next) => {
+  res.status(200).send({"hello": "there"})
+})
+
+server.get('/decode-token', ejwt({secret: secrets.jwtSecret, getToken: getCookieToken}), (req, res, next) => {
+  res.status(200).send({"hello": "there"})
+})
+
+server.get('/vg/:game/:gameHash', (req, res, next) => {
+  const gi = req.params.game;
+  const gh = req.params.gameHash;
+  const { HASH_PASS } = req.webtaskContext.secrets;
+  res.status(200).send({"v": secrets.verifyGame({ gameID: gi }, gh, HASH_PASS)})
+})
+
 // covered: test_games_count
 server.get('/games/count', (req, res, next) => {
   console.log("/games/count")
@@ -87,6 +123,32 @@ let sendDiscordMessage = (message, webhook_url, silent) => {
     }
   })
 }
+
+server.post('/user/auth-attempt', (req, res, next) => {
+  console.log('/user/auth-request')
+  const authRequest = req.body;
+
+  const { username, accessCode } = authRequest;
+  const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
+
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    let users = client.db(DATABASE).collection(userCollection);
+    users.findOne({username: username}, null, (err, result) => {
+      if (result === undefined || result === null) {
+        res.status(404).send({"error": "no user found with username " + username})
+        return
+      }
+
+      let expireCheck = new Date()
+
+      if (result.auth !== undefined && result.auth !== null && result.auth.expires > expireCheck
+          && result.auth.accessCode == accessCode) {
+          // sign jwt
+      }
+    })
+  })
+})
+
 
 server.post('/user/auth-request', (req, res, next) => {
   console.log('/user/auth-request')
