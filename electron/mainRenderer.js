@@ -1,11 +1,10 @@
 console.time('init')
 
 const request = require("request")
-
 const ReconnectingWebSocket = require('./vendor/rws.js')
 const fs = require('fs')
 
-let { remote } = require('electron')
+let { remote, ipcRenderer } = require('electron')
 let browserWindow = remote.getCurrentWindow()
 
 window.addEventListener('beforeunload', function() {
@@ -294,6 +293,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     } else {
         $("#container").addClass("container-normal")
     }
+    $("#floating-settings").click(() => {
+      ipcRenderer.send('openSettings', null)
+    })
     $(".zoom-out").click(() => {
         zoom -= 0.1
         browserWindow.webContents.setZoomFactor(zoom)

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings</title>
+    <link rel="stylesheet" type="text/css" href="settings_style.css">
+    <link rel="stylesheet" type="text/css" href="vendor/photon/photon.css">
+    <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+    <link href="vendor/toggle/bootstrap-toggle.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="container">
+  <div class="pane-group">
+    <div class="pane pane-sm sidebar">
+      <nav class="nav-group">
+        <h5 class="nav-group-title">Tracker Settings</h5>
+        <a rv-class-active="showInterfaceSettings" class="nav-group-item" id="interface-nav">
+          <span class="icon icon-eye"></span>
+          Interface
+        </a>
+      </nav>
+      <nav class="nav-group">
+        <h5 class="nav-group-title">Account Settings</h5>
+        <a rv-class-active="showPrivacySettings" class="nav-group-item" id="privacy-nav">
+          <span class="icon icon-lock"></span>
+          Privacy
+        </a>
+      </nav>
+    </div>
+    <div class="pane">
+      <div id="interface-pane" rv-show="showInterfaceSettings">
+        <div class="settings-container">
+          <div class="settings-row">
+            <input rv-checked="debug" class="tf-toggle" type="checkbox" key="debug" data-toggle="toggle"> Debug Mode
+          </div>
+          <div class="settings-row">
+            <input rv-checked="useFrame" class="tf-toggle" type="checkbox" key="useFrame" data-toggle="toggle"> Streamer Mode (debug takes precedence)
+          </div>
+        </div>
+      </div>
+      <div id="privacy-pane" rv-show="showPrivacySettings">
+        <div class="settings-container">
+          <p>Oops! Sorry, there's nothing here yet!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+<script type="text/javascript" src="rivets.bundled.min.js"></script>
+<script type="text/javascript" src="settingsRenderer.js"></script>
+  <script>
+    let $ = require("./jquery.js")
+    let jQuery = $
+    // let renderer = require('./renderer.js')
+  </script>
+  <script>if (window.module) module = window.module;</script>
+  <script src="vendor/toggle/bootstrap-toggle.min.js"></script>
+</html>

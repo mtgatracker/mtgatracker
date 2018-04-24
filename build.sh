@@ -9,7 +9,7 @@ fi
 version=$1
 
 # to update wt secret: `openssl rand -hex 5 > webtask/on_demand/secret-name`
-echo "$version" > webtask/on_demand/client-version
+echo "$version" > webtasks/on_demand/client-version
 
 # update version in package.json
 fixversion="import json; rp = open('electron/package.json', 'r'); contents = json.load(rp); rp.close(); print('ok'); contents['version'] = '$version'; wp = open('electron/package.json', 'w'); json.dump(contents, wp, indent=4, separators=(',', ': '))"

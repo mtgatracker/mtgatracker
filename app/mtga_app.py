@@ -10,10 +10,10 @@ from app.models.set import Deck
 from app.queues import decklist_change_queue
 from util import client_version
 try:
-    from secrets import API_URL, hash_json_object
+    from app._secrets import API_URL, hash_json_object
 except ImportError:
     sys.stderr.write("WARNING! Using secrets template; this will not hit production databases!")
-    from secrets_template import API_URL, hash_json_object
+    from app.secrets_template import API_URL, hash_json_object
 
 log_file = "mtga_watch.log"
 mtga_logger = logging.getLogger("mtga_watch")
