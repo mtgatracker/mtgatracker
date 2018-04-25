@@ -4,11 +4,32 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import Webtask from 'webtask-tools';
 import { MongoClient, ObjectID } from 'mongodb';
-var backbone = require('backbone');
-var request = require('request');
-var jwt = require('jsonwebtoken')
-var ejwt = require('express-jwt')
+
+const ejwt = require('express-jwt');
+
 import secrets from './secrets.js'
+
+const {
+  clientVersionUpToDate,
+  createAnonymousToken,
+  createToken,
+  differenceMinutes,
+  Game,
+  getCookieToken,
+  getGameById,
+  getGithubStats,
+  getPublicName,
+  logError,
+  parseVersionString,
+  random6DigitCode,
+  randomString,
+  routeDoc,
+  sendDiscordMessage,
+  deckCollection,
+  gameCollection,
+  userCollection,
+  errorCollection,
+} = require('../util')
 
 const BluebirdPromise = require('bluebird')
 global.Promise = BluebirdPromise
@@ -16,646 +37,11 @@ Promise.onPossiblyUnhandledRejection((e, promise) => {
     throw e
 })
 
-const Game = backbone.Model.extend({
-  validate: function(attr) {
-    let err = []
-    if (attr.players === undefined) err.push("must have players")
-    if (attr.winner === undefined) err.push("must have a winner")
-    if (attr.gameID === undefined) err.push("must have a gameID")
-    if (!Array.isArray(attr.players)) err.push("players must be an array")
-    if(err.length) return err  // checkpoint
-    if (attr.players.length === 0) err.push("players must not be empty")
-    let winnerFound = false
-    attr.players.forEach(function(player, idx) {
-      if (player.name === undefined) err.push("players[" + idx + "] must have a name")
-      if (player.userID === undefined) err.push("players[" + idx + "] must have a userID")
-      if (player.deck === undefined) err.push("players[" + idx + "] must have a deck")
-      if (player.name === attr.winner) winnerFound = true
-    })
-    if (!winnerFound) err.push("winner " + attr.winner + " not found in players")
-    if(err.length) return err  // checkpoint
-  }
-})
-
-const deckCollection = 'deck';
-const gameCollection = 'game';
-const userCollection = 'user';
-const errorCollection = 'error';
 const server = express();
-
 
 server.use(bodyParser.json());
 
-let random6DigitCode = () => {
-  return Math.floor(Math.random()*900000) + 100000;
-}
-
-server.get('/fake-token', (req, res, next) => {
-  let token = jwt.sign({"user": "Spencatro"}, secrets.jwtSecret, {expiresIn: "7d"})
-  let weekMs = 7 * 24 * 60 * 60 * 1000;
-  let cookieExpiration = new Date()
-  cookieExpiration.setTime(cookieExpiration.getTime() + weekMs)
-  res.cookie('access_token', token, {secure: true, expires: cookieExpiration)})
-  res.status(200).send()
-})
-
-let getCookieToken = (req) => {
-  if (req.headers.cookie && req.headers.cookie.split('=')[0] === 'access_token') {
-      return req.headers.cookie.split('=')[1];
-  } else if (req.query && req.query.token) {
-    return req.query.token;
-  }
-  return null;
-}
-
-server.post('/decode-token', ejwt({secret: secrets.jwtSecret, getToken: getCookieToken}), (req, res, next) => {
-  res.status(200).send({"hello": "there"})
-})
-
-server.get('/decode-token', ejwt({secret: secrets.jwtSecret, getToken: getCookieToken}), (req, res, next) => {
-  res.status(200).send({"hello": "there"})
-})
-
-server.get('/vg/:game/:gameHash', (req, res, next) => {
-  const gi = req.params.game;
-  const gh = req.params.gameHash;
-  const { HASH_PASS } = req.webtaskContext.secrets;
-  res.status(200).send({"v": secrets.verifyGame({ gameID: gi }, gh, HASH_PASS)})
-})
-
-// covered: test_games_count
-server.get('/games/count', (req, res, next) => {
-  console.log("/games/count")
-  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
-  const { badge } = req.query;
-  MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    if (connectErr) return next(connectErr);
-    let collection = client.db(DATABASE).collection(gameCollection)
-    collection.count(null, null, (err, count) => {
-      if (err) return next(err);
-      if (badge) {
-        res.set('Cache-Control', 'no-cache')
-        request('https://img.shields.io/badge/Tracked%20Games-' + count + '-brightgreen.svg').pipe(res);
-      } else {
-        res.status(200).send({"game_count": count});
-        client.close()
-      }
-    })
-  })
-})
-
-let sendDiscordMessage = (message, webhook_url, silent) => {
-  return new Promise((resolve, reject) => {
-    if (silent) {
-      resolve({ok: true})
-    } else {
-      request.post({
-        url: webhook_url,
-        body: {
-          "content": message
-          },
-        json: true,
-        headers: {'User-Agent': 'MTGATracker-Webtask'}
-      }, (err, reqRes, data) => {
-        if (err) reject(err)
-        resolve({ok: true})
-      })
-    }
-  })
-}
-
-server.post('/user/auth-attempt', (req, res, next) => {
-  console.log('/user/auth-request')
-  const authRequest = req.body;
-
-  const { username, accessCode } = authRequest;
-  const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
-
-  MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    let users = client.db(DATABASE).collection(userCollection);
-    users.findOne({username: username}, null, (err, result) => {
-      if (result === undefined || result === null) {
-        res.status(404).send({"error": "no user found with username " + username})
-        return
-      }
-
-      let expireCheck = new Date()
-
-      if (result.auth !== undefined && result.auth !== null && result.auth.expires > expireCheck
-          && result.auth.accessCode == accessCode) {
-          // sign jwt
-      }
-    })
-  })
-})
-
-
-server.post('/user/auth-request', (req, res, next) => {
-  console.log('/user/auth-request')
-  const authRequest = req.body;
-
-  const { username, silent } = authRequest;
-
-  const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
-
-
-  MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    let users = client.db(DATABASE).collection(userCollection);
-
-    users.findOne({username: username}, null, (err, result) => {
-      if (result === undefined || result === null) {
-        res.status(404).send({"error": "no user found with username " + username})
-        return
-      }
-
-      // if the current code expires in less than an hour, let's refresh
-      let expireCheck = new Date()
-      expireCheck.setHours(expireCheck.getHours() + 1)
-      if (result.auth !== undefined && result.auth !== null && result.auth.expires > expireCheck) {
-        let authObj = result.auth;
-        let msg = username + " assigned code " + authObj.accessCode + ", expires @ " + authObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
-        sendDiscordMessage(msg, DISCORD_WEBHOOK, silent).then(() => {
-          res.status(200).send({"request": "sent"})
-        })
-      } else {
-        let expiresDate = new Date()
-        expiresDate.setHours(expiresDate.getHours() + 6)
-        let newAuthObj = {
-          expires: expiresDate,
-          accessCode: random6DigitCode()
-        }
-        users.update({'username': username}, {$set: {auth: newAuthObj}}, (err, mongoRes) => {
-          console.log(mongoRes.result.nModified)
-          if (silent != true) {
-            let msg = username + " assigned code " + newAuthObj.accessCode + ", expires @ " + newAuthObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
-
-            sendDiscordMessage(msg, DISCORD_WEBHOOK, silent).then(() => {
-              res.status(200).send({"request": "sent"})
-            })
-          } else {
-            res.status(200).send({"request": "sent"})
-          }
-        })
-      }
-    })
-  })
-})
-
-// covered: test_unique_users_count
-server.get('/users/count', (req, res, next) => {
-  console.log("/users/count")
-  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
-  const { badge } = req.query;
-  MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    if (connectErr) return next(connectErr);
-    let collection = client.db(DATABASE).collection(gameCollection)
-
-    collection.distinct("players.0.name",{
-            "players.0.deck.poolName": {
-                $not: /.*visible cards/
-            }
-    }, null, (err, countZeroes) => {
-      if (err) return next(err);
-      collection.distinct("players.1.name",{
-          "players.1.deck.poolName": {
-              $not: /.*visible cards/
-          }
-      }, null, (err, countOnes) => {
-        if (err) return next(err);
-        let count = countZeroes.length + countOnes.length;
-        if (badge) {
-          res.set('Cache-Control', 'no-cache')
-          request('https://img.shields.io/badge/Unique%20Users-' + count + '-brightgreen.svg').pipe(res);
-        } else {
-          res.status(200).send({"unique_user_count": count});
-          client.close()
-        }
-      })
-    })
-  })
-})
-
-
-// covered: test_unique_users_count
-server.get('/users/client_versions', (req, res, next) => {
-  console.log("/users/client_versions")
-  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
-  const { badge } = req.query;
-  MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    if (connectErr) return next(connectErr);
-    let collection = client.db(DATABASE).collection(gameCollection)
-
-    let cursor = collection.find({date: {$exists: true}}).sort({_id: -1}).limit(200);
-
-    cursor.toArray((cursorErr, docs) => {
-      if (cursorErr) return next(cursorErr);
-      let counts = {}
-
-      counts.get = function (key) {
-          if (counts.hasOwnProperty(key)) {
-              return counts[key];
-          } else {
-              return 0;
-          }
-      }
-
-      docs.forEach(function(doc, idx) {
-        if (doc.client_version != undefined) {
-          counts[doc.client_version] = counts.get(doc.client_version) + 1
-        } else {
-          counts["none"] = counts.get("none") + 1
-        }
-      })
-      res.status(200).send({
-        count: Math.min(200, docs.length),
-        counts: counts
-      });
-    })
-  })
-})
-
-// covered: test_get_all_games
-server.get('/games', (req, res, next) => {
-  console.log("/games")
-  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
-  if (req.query.per_page) {
-    var per_page = parseInt(req.query.per_page)
-  } else {
-    var per_page = 10;
-  }
-  const { debug_password, page = 1} = req.query;
-
-  if (debug_password != DEBUG_PASSWORD) {
-    res.status(400).send({error: "debug password incorrect"})
-    return
-  }
-
-  MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    if (connectErr) return next(connectErr);
-    let collection = client.db(DATABASE).collection(gameCollection)
-    collection.count(null, null, (err, count) => {
-      let numPages = Math.ceil(count / per_page);
-      let cursor = collection.find().skip((page - 1) * per_page).limit(per_page);
-      cursor.toArray((cursorErr, docs) => {
-        if (cursorErr) return next(cursorErr);
-        res.status(200).send({
-            totalPages: numPages,
-            page: page,
-            docs: docs
-        });
-      })
-      client.close()
-    })
-  })
-})
-
-// covered: test_get_user_games
-server.get('/games/user/:username', (req, res, next) => {
-  console.log("games/user/" + JSON.stringify(req.params))
-  if (req.query.per_page) {
-    var per_page = parseInt(req.query.per_page)
-  } else {
-    var per_page = 10;
-  }
-  const { debug_password, page = 1} = req.query;
-  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
-  if (debug_password != DEBUG_PASSWORD) {
-    res.status(400).send({error: "debug password incorrect"})
-    return
-  }
-  MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    const { username } = req.params;
-    if (connectErr) return next(connectErr);
-    let collection = client.db(DATABASE).collection(gameCollection)
-    let cursor = collection.find({'players.name': username});
-    cursor.count(null, null, (err, count) => {
-      let numPages = Math.ceil(count / per_page);
-      let docCursor = cursor.skip((page - 1) * per_page).limit(per_page);
-
-      docCursor.toArray((cursorErr, docs) => {
-        if (cursorErr) return next(cursorErr);
-        res.status(200).send({
-          totalPages: numPages,
-          page: page,
-          docs: docs
-        });
-        client.close()
-      })
-    })
-  })
-})
-
-// covered: test_get_users_games_by_user_id
-server.get('/games/userID/:userID', (req, res, next) => {
-  console.log("games/userID/" + JSON.stringify(req.params))
-  if (req.query.per_page) {
-    var per_page = parseInt(req.query.per_page)
-  } else {
-    var per_page = 10;
-  }
-  const { MONGO_URL, DEBUG_PASSWORD, DATABASE} = req.webtaskContext.secrets;
-  const { debug_password, page = 1} = req.query;
-  if (debug_password != DEBUG_PASSWORD) {
-    res.status(400).send({error: "debug password incorrect"})
-    return
-  }
-  MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    const { userID } = req.params;
-    if (connectErr) return next(connectErr);
-    let collection = client.db(DATABASE).collection(gameCollection)
-    let cursor = collection.find({'players.userID': userID});  // hard-limit to 5 records for example
-    cursor.count(null, null, (err, count) => {
-      let numPages = Math.ceil(count / per_page);
-      let docCursor = cursor.skip((page - 1) * per_page).limit(per_page);
-
-      docCursor.toArray((cursorErr, docs) => {
-        if (cursorErr) return next(cursorErr);
-        res.status(200).send({
-          totalPages: numPages,
-          page: page,
-          docs: docs
-        });
-        client.close()
-      })
-    })
-  })
-})
-
-// covered: test_get_game
-server.get('/game/_id/:_id', (req, res, next) => {
-  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
-  const { debug_password } = req.query;
-  if (debug_password != DEBUG_PASSWORD) {
-    res.status(400).send({error: "debug password incorrect"})
-    return
-  }
-  MongoClient.connect(MONGO_URL, (err, client) => {
-    const { _id } = req.params;
-    if (err) return next(err);
-    client.db(DATABASE).collection(gameCollection).findOne({ _id: new ObjectID(_id) }, (err, result) => {
-      client.close();
-      if (err) return next(err);
-      if (result !== null) res.status(200).send(result)
-      else res.status(404).send(result)
-    });
-  });
-});
-
-let getGameById = (client, database, gameID, callback) => {
-  return new Promise((resolve, reject) => {
-    console.log("getGameById " +  gameID)
-    client.db(database).collection(gameCollection).findOne({ gameID: gameID }, null, function(err, result) {
-      if (err) { reject() } else { resolve() }
-      callback(result, err)
-    })
-  })
-}
-
-let logError = (client, database, error, callback) => {
-    client.db(database).collection(errorCollection).insertOne(error, null, (err, result) => {
-      callback(result, err)
-    });
-}
-
-// covered: test_get_game
-server.get('/game/gameID/:gid', (req, res, next) => {
-  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
-  const { debug_password } = req.query;
-  if (debug_password != DEBUG_PASSWORD) {
-    res.status(400).send({error: "debug password incorrect"})
-    return
-  }
-  MongoClient.connect(MONGO_URL, (err, client) => {
-    const gid = req.params.gid;
-    getGameById(client, DATABASE, gid, (result, err) => {
-      client.close();
-      if (err) return next(err);
-      if (result !== null) res.status(200).send(result)
-      else res.status(404).send(result)
-    });
-  });
-});
-
-// no cover - for testing only
-server.post('/game/no-verify', (req, res, next) => {
-  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
-  const model = req.body;
-
-  if (DATABASE != "mtga-tracker-staging") {
-    res.status(400).send({error: "not allowed to do this anywhere except staging, sorry"})
-    return
-  }
-
-  MongoClient.connect(MONGO_URL, (err, client) => {
-    client.db(DATABASE).collection(gameCollection).insertOne(model, (err, result) => {
-      client.close();
-      if (err) return next(err);
-      res.status(201).send(result);
-    });
-  })
-})
-
-// no cover - for testing only
-server.post('/games/no-verify', (req, res, next) => {
-  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
-  const games = req.body.games;
-
-  if (DATABASE != "mtga-tracker-staging") {
-    res.status(400).send({error: "not allowed to do this anywhere except staging, sorry"})
-    return
-  }
-
-  MongoClient.connect(MONGO_URL, (err, client) => {
-    client.db(DATABASE).collection(gameCollection).insertMany(games, null, (err, result) => {
-      client.close();
-      if (err) return next(err);
-      res.status(201).send(result);
-    });
-  })
-})
-
-let parseVersionString = (versionStr) => {
-    let version = {}
-    let version_parts = versionStr.split("-")
-    if (version_parts.length > 1)
-        version.suffix = version_parts[1]
-    let version_bits = version_parts[0].split(".")
-    version.major = version_bits[0]
-    version.medium = version_bits[1]
-    version.minor = version_bits[2]
-    return version;
-}
-
-var latestVersion = null;
-var latestVersionString = null;
-var downloadCount = null;
-
-let differenceMinutes = (date1, date2) => {
-  return (date2 - date1) * 1.66667e-5
-}
-
-let getGithubStats = (storage) => {
-  return new Promise((resolve, reject) => {
-    storage.get((err, data) => {
-      // github rate limits are 1/min for unauthed requests, only allow every 1.5 min to be safe
-      if (data === undefined || differenceMinutes(data.lastUpdated, Date.now()) >= 1.5) {
-        let setTime = Date.now()
-        if (data !== undefined && data.lastUpdated !== undefined)
-          console.log("need to request gh api (has been " + differenceMinutes(data.lastUpdated, Date.now()) + " minutes)")
-        else
-          console.log("need to request gh data (cache is empty)")
-        request.get({
-          url: "https://api.github.com/repos/shawkinsl/mtga-tracker/releases",
-          json: true,
-          headers: {'User-Agent': 'MTGATracker-Webtask'}
-        }, (err, res, data) => {
-          console.log("greppable: github data was" + JSON.stringify(data))
-          if (err || (typeof data === 'object' && !(data instanceof Array))) {
-            console.log("greppable: gh data was not array and was object")
-            let fakeVersionStr = "1.1.1-beta"
-            let fakedData = {latestVersion: parseVersionString(fakeVersionStr), latestVersionString: latestVersionString, totalDownloads: 100, lastUpdated: new Date(), warning: "Warning: this is fake data!"}
-            storage.set(fakedData, (err) => {})
-            resolve(fakedData)
-          } else {
-            let downloadCount = 0;
-            data.forEach((elem, idx) => {
-                elem.assets.forEach((asset, idx) => {
-                    downloadCount += asset.download_count;
-                })
-            })
-            latestVersionString = data[0].tag_name
-            latestVersion = parseVersionString(latestVersionString);
-            data = {latestVersion: latestVersion, latestVersionString: latestVersionString, totalDownloads: downloadCount, lastUpdated: setTime}
-            storage.set(data, (err) => {})
-            resolve(data)
-          }
-        })
-      } else {
-        resolve(data)
-      }
-    })
-  })
-}
-
-server.get('/gh-stat-cache', (req, res, next) => {
-  console.log("/gh-stat-cache")
-  getGithubStats(req.webtaskContext.storage).then((value) => {
-    res.status(200).send(value)
-  })
-})
-
-server.delete('/gh-stat-cache', (req, res, next) => {
-  req.webtaskContext.storage.set(undefined, {force: 1}, (err) => {
-    console.log("DEL /gh-stat-cache")
-    if (err) res.status(500).send(err)
-    else res.status(200).send({ok: true})
-  })
-})
-
-// TODO: DRY here and @ electron/renderer.js ?
-let clientVersionUpToDate = (clientVersion, storage) => {
-  return new Promise((resolve, reject) => {
-    // check for a newer release, (but only once, don't want to hit github a million times)
-    getGithubStats(storage).then(latestVersionObj => {
-      let { latestVersion, latestVersionString } = latestVersionObj
-      if (clientVersion === undefined) {
-        resolve({ok: false, latest: latestVersion})
-      } else {
-        let appVersion = parseVersionString(clientVersion);
-        let ok = false;
-        if (appVersion != latestVersion) {
-          // https://github.com/shawkinsl/mtga-tracker/issues/129
-          if (appVersion.major != latestVersion.major || appVersion.medium != latestVersion.medium) {
-            ok = false;
-          } else if (latestVersion.suffix === undefined && appVersion.suffix !== undefined) {
-            // client is x.y.z-beta, latest is x.y.z
-            ok = false;
-          } else {
-            ok = true;
-          }
-        }
-        resolve({ok: ok, latest: latestVersionString})
-      }
-    })
-  })
-}
-
-let randomString = () => {
-  return Math.random().toString(36).substr(2, 5) + Math.random().toString(36).substr(2, 5) + Math.random().toString(36).substr(2, 5)
-}
-
-
-let getPublicName = (client, database, username, createIfDoesntExist, isUser) => {
-  console.log("getPublicName")
-
-  if (createIfDoesntExist === undefined) {
-    createIfDoesntExist = false;
-  }
-
-  if (isUser === undefined) {
-    isUser = false;
-  }
-
-  return new Promise((resolve, reject) => {
-    client.db(database).collection(userCollection).findOne({username: username}, null, function(err, result) {
-      if (!createIfDoesntExist || result) {
-        if (isUser) {
-          result.isUser = true;
-          client.db(database).collection(userCollection).save(result)
-        }
-        resolve({error: err, result: result})
-      } else {
-        // we need to make one if there isn't one available
-        client.db(database).collection(userCollection).findOne({available: true}, null, (err, result) => {
-          if (result) {
-            result.available = false
-            result.username = username
-            result.isUser = (isUser ? true : false);  // filter out any weird values that come in
-            client.db(database).collection(userCollection).save(result)
-            resolve({err: null, result: result})
-          } else {
-            // handle case where there are none available
-            let pubname = randomString()
-            let newResult = {
-              available: false,
-              username: username,
-              publicName: pubname,
-              isUser: (isUser ? true : false)
-            }
-            client.db(database).collection(userCollection).insertOne(newResult, null, (err, result) => {
-              resolve({err: null, result: result})
-            })
-          }
-        })
-      }
-    })
-  })
-}
-
-// covered: test_users_updated_on_game
-server.get('/publicName/:username', (req, res, next) => {
-  const { MONGO_URL, DEBUG_PASSWORD, DATABASE } = req.webtaskContext.secrets;
-
-  const { debug_password } = req.query;
-  const { username } = req.params;
-
-  if (debug_password != DEBUG_PASSWORD) {
-    res.status(400).send({error: "debug password incorrect"})
-    return
-  }
-
-  MongoClient.connect(MONGO_URL, (err, client) => {
-    getPublicName(client, DATABASE, username).then((pubNameObj) => {
-      if (pubNameObj.result) {
-        res.status(200).send(pubNameObj.result)
-      } else {
-        res.status(404).send({error: "no pubname found for user " + username})
-      }
-    })
-  })
-})
-
-
+// TODO deprecate this
 // covered: test_post_game
 server.post('/game', (req, res, next) => {
   const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
@@ -711,68 +97,34 @@ server.post('/game', (req, res, next) => {
   })
 });
 
+const publicAPI = require('./api/public-api')
+const anonAPI = require('./api/anon-api')
+const userAPI = require('./api/user-api')
+const adminAPI = require('./api/admin-api')
 
-// covered: test_post_games
-server.post('/games', (req, res, next) => {
-  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
-  const games = req.body.games;
+let userIsAdmin = (req, res, next) => {
+  console.log("testing for admin")
+  if (req.user.user == "Spencatro") {
+    console.log("congrats, you are an admin")
+    next()
+  } else {
+    res.status(400).send({"error": "you are not an admin, sorry :'("})
+  }
+}
 
-  let okGames = []
-  let nonDupes = []
-  let gameIDs = []
 
-  let results = []
-  let errors = []
+server.use('/public-api', publicAPI)
+server.use('/anon-api', ejwt({secret: secrets.jwtSecret, getToken: getCookieToken}), anonAPI)
+server.use('/api', ejwt({secret: secrets.jwtSecret, getToken: getCookieToken}), userAPI)
+server.use('/admin-api', ejwt({secret: secrets.jwtSecret, getToken: getCookieToken}), userIsAdmin, adminAPI)
 
-  let promises = []
-
-  // filter out games that are dupes within this request, first
-  games.forEach((model, idx) => {
-    if (gameIDs.indexOf(model.gameID) != -1) {
-      errors.push({error: "dup model in this request: " + model.gameID})
-    } else {
-      gameIDs.push(model.gameID)
-      nonDupes.push(model)
-    }
+server.get('/', (req, res, next) => {
+  res.status(200).send({
+    "/public-api": routeDoc(publicAPI.stack),
+    "/anon-api": routeDoc(anonAPI.stack),
+    "/api": routeDoc(userAPI.stack),
   })
-
-  // filter out games that are dupes in the database next
-  MongoClient.connect(MONGO_URL, (err, client) => {
-    nonDupes.forEach((model, idx) => {
-      if (model.date === undefined) {
-        model.date = Date()
-      }
-      let game = new Game(model)
-      if (!game.isValid()) {
-        errors.push({error: game.validationError})
-      } else {
-        if (err) errors.push(err);
-        promises.push(getGameById(client, DATABASE, model.gameID, (result, err) => {
-          if (result !== null) {
-            errors.push({error: "game already exists", game: model.gameID})
-          } else {
-            okGames.push(model)
-            gameIDs.push(model.gameID)
-          }
-        }))
-      }
-    })
-    Promise.all(promises).then((value) => {
-
-      client.db(DATABASE).collection(gameCollection).insertMany(okGames, null, (err, result) => {
-        if (err) errors.push(err);
-        results.push(result)
-      })
-      client.close();
-    })
-
-    if (errors.length > 0) {
-      res.status(400).send({errors: errors, results: results});
-    } else {
-      res.status(201).send({results: results});
-    }
-  })
-});
+})
 
 // no cover - not testable?
 server.get('*', function(req, res) {

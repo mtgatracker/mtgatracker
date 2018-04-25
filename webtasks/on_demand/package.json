@@ -23,6 +23,7 @@
     "jsonwebtoken": "^8.2.1",
     "mongodb": "^3.0.4",
     "request": "^2.85.0",
+    "transform-runtime": "0.0.0",
     "webtask-tools": "^3.2.0"
   },
   "license": "MIT"
