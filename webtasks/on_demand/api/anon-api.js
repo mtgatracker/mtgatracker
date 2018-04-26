@@ -26,7 +26,12 @@ const {
   errorCollection,
 } = require('../../util')
 
-import secrets from '../secrets.js'
+var secrets; // babel makes it so we can't const this, I am pretty sure
+try {
+  secrets = require('../secrets.js')
+} catch (e) {
+  secrets = require('../secrets-template.js')
+}
 
 router.get('/', (req, res, next) => {
   res.status(200).send({routes: routeDoc(router.stack)})

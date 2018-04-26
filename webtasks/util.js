@@ -2,7 +2,13 @@ const jwt = require('jsonwebtoken')
 const BluebirdPromise = require('bluebird')
 const request = require('request');
 const backbone = require('backbone');
-import secrets from './on_demand/secrets.js'
+
+var secrets;
+try {
+  secrets = require('./on_demand/secrets.js')
+} catch (e) {
+  secrets = require('./on_demand/secrets-template.js')
+}
 
 global.Promise = BluebirdPromise
 

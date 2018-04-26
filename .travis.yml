@@ -3,7 +3,7 @@ python:
   - "3.6"
 
 node_js:
-  - "node"
+  - "8.9.1"
 cache:
   pip: true
   directories:
@@ -15,12 +15,17 @@ install:
   - npm install wt-cli -g
   - npm install babel-cli -g
   - npm install babel-preset-env babel-plugin-transform-runtime
+  - npm install jsonwebtoken -g
+  - npm install webtasks/on_demand
 
 
 script:
   - cd webtasks/on_demand
   - npx babel mtga-tracker-game.js --out-file mtga-tracker-game.js
-  - npm install .
+  - npx babel secrets-template.js --out-file secrets-template.js
+  - npx babel ../util.js --out-file ../util.js
+  - npx babel api -d api
+  - node --version
   - sh serve_locally.sh
   - cd ..
   - python test_staging_endpoints.py -k "not cron" --local -v
