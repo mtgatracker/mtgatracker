@@ -47,6 +47,57 @@ router.get('/debug/decode-token', (req, res, next) => {
   res.status(200).send({"hello": "there"})
 })
 
+// TODO uncovered
+router.get('/games/time-histogram', (req, res, next) => {
+  console.log("/games/time-histogram")
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
+  let { sample_size, min_date, max_date } = req.query;
+  if (min_date === undefined) {
+    let weekMs = 7 * 24 * 60 * 60 * 1000;
+    min_date = new Date()
+    min_date.setTime(min_date.getTime() - weekMs)
+    console.log(min_date)
+  }
+  if (max_date === undefined) {
+    max_date = new Date()
+    console.log(max_date)
+  }
+  if (sample_size === undefined) {
+    sample_size = 100;
+  }
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    if (connectErr) return next(connectErr);
+    let collection = client.db(DATABASE).collection(gameCollection)
+
+    collection.count({date: {$lt: min_date.toString()}}, null, (err, startCount) => {
+      if (err) return next(err);
+      let cursor = collection.find({date: {$gt: min_date.toString(), $lt: max_date.toString()}}, null)
+      cursor.count(null, null, (err, sampleCount) => {
+        console.log("skip = " + sampleCount + " / " + sample_size)
+        let skip = Math.max(1, Math.round(sampleCount / sample_size))
+        cursor.toArray((cursorErr, docs) => {
+          resultDocs = []
+          let currentCount = startCount
+          docs.forEach((doc, idx) => {
+            currentCount += 1
+            console.log(idx + " % " + skip + " = " + (idx % skip))
+            if (idx % skip == 0 || idx == docs.length - 1) {
+              resultDocs.push({date: doc.date, count: currentCount})
+            }
+          })
+          res.status(200).send({
+            game_histogram: resultDocs,
+            startCount: startCount,
+            docLength: docs.length,
+            sampleCount: sampleCount
+          });
+          client.close()
+        })
+      })
+    })
+  })
+})
+
 // covered: test_games_count
 router.get('/games/count', (req, res, next) => {
   console.log("/games/count")
@@ -116,7 +167,9 @@ router.post('/game', (req, res, next) => {
   const model = req.body;
 
   if (model.date === undefined) {
-    model.date = Date()
+    model.date = new Date()
+  } else {
+    model.date = new Date(Date.parse(model.date))
   }
   let game = new Game(model)
   if (!game.isValid()) {

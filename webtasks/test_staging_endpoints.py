@@ -811,5 +811,29 @@ def test_get_user_games(empty_game_collection):
         assert game["hero"] == "gemma"
 
 
+@pytest.mark.dev
+def test_game_histogram(empty_game_collection, admin_token):
+    _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
+    two_hundred_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
+    for idx, game in enumerate(two_hundred_random_games):
+        game["gameID"] = _random_string()
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
+    post_random_games(two_hundred_random_games, admin_token=admin_token)
+    time.sleep(1)
+    gh_url = url + "/anon-api/games/time-histogram"
+    res = get(gh_url, headers={"token": admin_token})
+    print(res)
+
+    # two_hundred_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(180)]
+    # for game in two_hundred_random_games:
+    #     game["gameID"] = _random_string()
+    # post_random_games(two_hundred_random_games, admin_token=admin_token)
+    # gh_url = url + "/games/time-histogram"
+    # res = get(gh_url, headers={"token": admin_token})
+    # print(res)
+    # raise 1/0
+    # TODO start here
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main(['--html', 'pytest_report.html'] + sys.argv[1:]))
