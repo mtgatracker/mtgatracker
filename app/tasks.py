@@ -67,6 +67,8 @@ def block_watch_task(in_queue, out_queue):
             json_blob = block_recieved[idx_first_bracket:idx_last_bracket]
             try:
                 blob = json.loads(json_blob)
+                if block_title:
+                    blob["block_title"] = block_title.strip()
                 out_queue.put(blob)
             except:
                 mtga_logger.error("Could not parse json_blob {}".format(json_blob))

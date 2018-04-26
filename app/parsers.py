@@ -11,23 +11,32 @@ def parse_jsonrpc_blob(blob):
 
 
 def parse_get_decklists(blob):
-    """ CHECK """
+    # DOM: ok
     import app.mtga_app as mtga_app
     mtga_app.mtga_watch_app.player_decks = {}
     for deck in blob["Deck.GetDeckLists"]:
         util.process_deck(deck)
 
 
-def parse_event_joinqueue(blob):
+def parse_event_decksubmit(blob):
+    # DOM: new
     import app.mtga_app as mtga_app
-    # method = 'Event.JoinQueue'
-    """ CHECK """
-    params = blob['params']
-    deckId = params['deckId']
-    return mtga_app.mtga_watch_app.player_decks[deckId]
+    deck_id = blob["CourseDeck"]["id"]
+    deck = mtga_app.mtga_watch_app.player_decks[deck_id]
+    mtga_app.mtga_watch_app.intend_to_join_game_with = deck
+
+
+# def parse_event_joinqueue(blob):
+#     """ TODO: deprecated? """
+#     import app.mtga_app as mtga_app
+#     # method = 'Event.JoinQueue'
+#     params = blob['params']
+#     deckId = params['deckId']  # TODO: this will probably now cause a crash
+#     return mtga_app.mtga_watch_app.player_decks[deckId]
 
 
 def parse_game_state_message(message):
+    # DOM: ok
     import app.mtga_app as mtga_app
     with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
         if 'annotations' in message.keys():

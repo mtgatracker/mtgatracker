@@ -27,29 +27,33 @@ def add_cardIDs_to_cardset(cardset, start_id):
             start_id += 2
 
 
-with open("../app/set_data/XLN.json", "r", encoding='utf-8') as xln_r:
-    ixalan_card_set = json.load(xln_r)
-    add_cardIDs_to_cardset(ixalan_card_set, 65961)  # 65961 = adanto's vanguard, xln card 1
+# with open("../app/set_data/XLN.json", "r", encoding='utf-8') as xln_r:
+#     ixalan_card_set = json.load(xln_r)
+#     add_cardIDs_to_cardset(ixalan_card_set, 65961)  # 65961 = adanto's vanguard, xln card 1
+#
+# with open("../app/set_data/RIX.json", "r", encoding='utf-8') as rix_r:
+#     rivals_card_set = json.load(rix_r)
+#     add_cardIDs_to_cardset(rivals_card_set, 66619)  # 66619 = baffling end, rix card 1
+#
+# with open("../app/set_data/AKH.json", "r", encoding='utf-8') as akh_r:
+#     amonkhet_card_set = json.load(akh_r)
+#     add_cardIDs_to_cardset(amonkhet_card_set, 64801)  # 64801 = angel of sanctions, akh card 1
+#
+# with open("../app/set_data/HOU.json", "r", encoding='utf-8') as hou_r:
+#     hour_card_set = json.load(hou_r)
+#     add_cardIDs_to_cardset(hour_card_set, 65479)  # 65479 = act of heroism, hou card 1
 
-with open("../app/set_data/RIX.json", "r", encoding='utf-8') as rix_r:
-    rivals_card_set = json.load(rix_r)
-    add_cardIDs_to_cardset(rivals_card_set, 66619)  # 66619 = baffling end, rix card 1
-
-with open("../app/set_data/AKH.json", "r", encoding='utf-8') as akh_r:
-    amonkhet_card_set = json.load(akh_r)
-    add_cardIDs_to_cardset(amonkhet_card_set, 64801)  # 64801 = angel of sanctions, akh card 1
-
-with open("../app/set_data/HOU.json", "r", encoding='utf-8') as hou_r:
-    hour_card_set = json.load(hou_r)
-    add_cardIDs_to_cardset(hour_card_set, 65479)  # 65479 = act of heroism, hou card 1
+with open("../app/set_data/DOM.json", "r", encoding='utf-8') as dom_r:
+    dom_card_set = json.load(dom_r)
+    add_cardIDs_to_cardset(dom_card_set, 67106)  # 65479 = act of heroism, hou card 1
 
 
-lookup = {}
-for card in rivals_card_set["cards"]:
-    lookup[card["mtga_id"]] = card
-
-for card in ixalan_card_set["cards"]:
-    lookup[card["mtga_id"]] = card
+# lookup = {}
+# for card in rivals_card_set["cards"]:
+#     lookup[card["mtga_id"]] = card
+#
+# for card in ixalan_card_set["cards"]:
+#     lookup[card["mtga_id"]] = card
 
 
 def write_set(set_mnemonic, set_fullname, card_data):
@@ -91,7 +95,9 @@ clsmembers = [card for name, card in inspect.getmembers(sys.modules[__name__]) i
             subtype = ""
 
             if "-" in card_type:
-                card_type, subtype = card_type.split("-")
+                print(card_type)
+                card_type, *subtypes = card_type.split("-")
+                subtype = "-".join(subtypes)
 
             set_file.write('{} = Card("{}", "{}", {}, {}, "{}", "{}", "{}", {}, {})\n'.format(
                 card_name_class_cased_suffixed,
@@ -109,7 +115,8 @@ clsmembers = [card for name, card in inspect.getmembers(sys.modules[__name__]) i
         set_file.write("{}\n".format(footer))
 
 
-write_set("XLN", "Ixalan", ixalan_card_set)
-write_set("RIX", "Rivals Of Ixalan", rivals_card_set)
-write_set("AKH", "Amonkhet", amonkhet_card_set)
-write_set("HOU", "Hour Of Devastation", hour_card_set)
+# write_set("XLN", "Ixalan", ixalan_card_set)
+# write_set("RIX", "Rivals Of Ixalan", rivals_card_set)
+# write_set("AKH", "Amonkhet", amonkhet_card_set)
+# write_set("HOU", "Hour Of Devastation", hour_card_set)
+write_set("DOM", "Dominaria", dom_card_set)

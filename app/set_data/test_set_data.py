@@ -30,7 +30,7 @@ DECKS_LOCATION = 500, 30
 PACKS_LOCATION = 630, 30
 STORE_LOCATION = 750, 30
 
-EDIT_DECK = 186, 1004
+EDIT_DECK = 1731, 1000
 IMPORT_DECK = 431, 1013
 EXPORT_DECK = 621, 1008
 EXPORT_OK = 974, 644
@@ -47,9 +47,8 @@ DECKS_COLUMN_XPOS = 245, 530, 830, 1130, 1430,  1700
 
 ONLY_ONE_DECK_LOC = 1210, 280
 
-WAIT_SHORT = 0.5
+WAIT_SHORT = 0.7
 WAIT_LONG = 2
-
 
 
 def watch_for_cards(in_queue, out_queue):
@@ -290,7 +289,7 @@ def backup_all_decks():
     lw = log_watch_thread()
     ml = mouse_listener_thread()
     for xpos in list(DECKS_COLUMN_XPOS):
-        for ypos in list(DECKS_ROW_YPOS[:1]):
+        for ypos in list(DECKS_ROW_YPOS[:2]):
             if (xpos, ypos) == (DECKS_COLUMN_XPOS[0], DECKS_ROW_YPOS[0]):
                 continue
             spiffy_click(xpos, ypos)
