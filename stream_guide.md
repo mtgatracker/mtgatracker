@@ -28,9 +28,10 @@ For this use case, you will have MTGATracker running in the background, or off t
 you will add a separate Window Capture source for MTGATracker, and use OBS to position the window.
 
 1. Launch StreamlabsOBS and MTGA
-1. Launch MTGATracker.exe with the switch `-uf` or `--useFrame` (or use the [tip below](https://github.com/shawkinsl/mtga-tracker/blob/master/stream_guide.md#tip-make-a-shortcut-to-launch-mtgatracker-in-streamer-mode) to create a reusable shortcut)
-    - for example, from git bash, run: `./MTGATracker.exe -uf`
-    - This will launch MTGATracker in "framed" mode.
+1. Launch MTGATracker.exe
+1. Open the settings window
+1. Flip the switch for framed mode to "on"
+1. Quit MTGATracker, and start it again
     - You will notice that MTGATracker has an obnoxious green background; this is on purpose and will be helpful later
 1. Create a scene (or use the default)
 1. Create a new source (blue):
