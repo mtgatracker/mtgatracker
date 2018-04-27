@@ -6,6 +6,9 @@
   "scripts": {
     "start": "wt create --bundle --watch --secrets-file=secrets ."
   },
+  "files": [
+    "./secrets.js"
+  ],
   "keywords": [],
   "author": "shawkins",
   "dependencies": {
@@ -16,8 +19,11 @@
     "bluebird": "^3.5.1",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
+    "express-jwt": "^5.3.1",
+    "jsonwebtoken": "^8.2.1",
     "mongodb": "^3.0.4",
     "request": "^2.85.0",
+    "transform-runtime": "0.0.0",
     "webtask-tools": "^3.2.0"
   },
   "license": "MIT"

@@ -13,6 +13,8 @@ def dispatch_blob(blob):
         dispatch_client_to_gre(blob)
     elif "Deck.GetDeckLists" in blob:  # this looks like it's a response to a jsonrpc method
         parsers.parse_get_decklists(blob)
+    elif "block_title" in blob and blob["block_title"] == "Event.DeckSubmit":
+        parsers.parse_event_decksubmit(blob)
     elif "matchGameRoomStateChangedEvent" in blob:
         dispatch_match_gametoom_state_change(blob)
 
@@ -36,9 +38,10 @@ def dispatch_jsonrpc_method(blob):
     current_method = blob['method']
     if current_method in dont_care_rpc_methods:
         pass
-    elif current_method == "Event.JoinQueue":
-        intend_to_join = parsers.parse_event_joinqueue(blob)
-        mtga_watch_app.intend_to_join_game_with = intend_to_join
+    # TODO: deprecated, cleanup
+    # elif current_method == "Event.JoinQueue":
+    #     intend_to_join = parsers.parse_event_joinqueue(blob)
+    #     mtga_watch_app.intend_to_join_game_with = intend_to_join
     elif current_method == "PlayerInventory.GetPlayerInventory":
         # TODO: keep an eye on this one. currently empty, but maybe it will show up sometime
         pass

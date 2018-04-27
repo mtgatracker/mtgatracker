@@ -19,13 +19,10 @@ staging_url = "https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga
 # read secrets
 
 staging_mongo_url = None
-staging_debug_password = None
 if os.path.exists("secrets-staging"):
     with open("secrets-staging", "r") as rf:
         for line in rf.readlines():
             key, value = line.strip().split("=")
-            if key == "DEBUG_PASSWORD":
-                staging_debug_password = value
             if key == "MONGO_URL":
                 staging_mongo_url = value
 
@@ -47,7 +44,6 @@ if args.prod:
     mongo_url = prod_mongo_url
 else:
     root_url = staging_url
-    debug_password = staging_debug_password
     mongo_url = staging_mongo_url
 
 

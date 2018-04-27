@@ -1,11 +1,9 @@
-const electron = require('electron')
 const path = require('path')
 const console = require('console');
 const fs = require('fs');
 const findProcess = require('find-process');
-
-const app = electron.app
-const BrowserWindow = electron.BrowserWindow
+const { app, ipcMain, BrowserWindow } = require('electron')
+const settings = require('electron-settings');
 
 
 /*************************************************************
@@ -26,20 +24,62 @@ let getBooleanArg = (short, long) => {
   return shortIdx != -1 || longIdx != -1;
 }
 
+let debugCmdOpt = getBooleanArg('-d', '--debug')
+let frameCmdOpt = getBooleanArg('-uf', '--framed')
 
-let debug = getBooleanArg('-d', '--debug');
-let useFrame = getBooleanArg('-uf', '--framed');
-let showIIDs = true;
-let no_server = false;
-let kill_server = true;
-let server_killed = false;
+if (debugCmdOpt) {
+  settings.set('debug', true)
+}
+if (frameCmdOpt) {
+  settings.set('useFrame', true)
+}
+
+let debug = settings.get('debug', false);
+let useFrame = settings.get('useFrame', false);
+let showIIDs = settings.get('showIIDs', false);
+let no_server = settings.get('no_server', false);
+let kill_server = settings.get('kill_server', false);
+
 let noFollow = false;
+let server_killed = false;
 let readFullFile = false;
 let debugFile = false;
 
-//if (!debug) {
+ipcMain.on('settingsChanged', (event, arg) => {
+  global[arg.key] = arg.value;
+  settings.set(arg.key, arg.value)
+})
+
+ipcMain.on('openSettings', (event, arg) => {
+  if(settingsWindow == null) {
+    settingsWindow = new BrowserWindow({width: 800,
+                                        height: 800,
+                                        toolbar: false,
+                                        titlebar: false,
+                                        title: false,
+                                        maximizable: false,
+                                        show: false,
+                                        icon: "img/icon_small.ico"})
+    settingsWindow.setMenu(null)
+    settingsWindow.loadURL(require('url').format({
+      pathname: path.join(__dirname, 'settings.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+    if (debug) {
+      settingsWindow.webContents.openDevTools()
+    }
+  }
+  settingsWindow.once('ready-to-show', () => {
+    settingsWindow.show()
+  })
+
+  settingsWindow.on('closed', function () {
+    settingsWindow = null;
+  })
+})
+
 app.disableHardwareAcceleration()
-//}
 
 const guessPackaged = () => {
   const fullPath = path.join(__dirname, "..", PY_DIST_FOLDER)
@@ -165,6 +205,7 @@ global.version = app.getVersion()
  *************************************************************/
 
 let mainWindow = null
+let settingsWindow = null
 
 let window_width = 354;
 let window_height = 200;
@@ -192,9 +233,6 @@ const createWindow = () => {
     protocol: 'file:',
     slashes: true
   }))
-  if (debug) {
-    mainWindow.webContents.openDevTools()
-  }
   mainWindow.onbeforeunload = (e) => {
     var answer = confirm('Do you really want to close the application?');
     console.log("onbeforeunload mw")
@@ -203,8 +241,12 @@ const createWindow = () => {
   mainWindow.on('closed', () => {
     console.log("closed")
     return false;
-//    mainWindow = null
   })
+
+  if (debug) {
+    mainWindow.webContents.openDevTools()
+  }
+
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
     console.timeEnd('init')
