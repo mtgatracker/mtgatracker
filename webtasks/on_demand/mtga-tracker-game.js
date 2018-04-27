@@ -46,62 +46,6 @@ const server = express();
 
 server.use(bodyParser.json());
 
-// TODO deprecate this
-// covered: test_post_game
-server.post('/game', (req, res, next) => {
-  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
-  const model = req.body;
-
-  if (model.date === undefined) {
-    model.date = Date()
-  }
-  let game = new Game(model)
-  if (!game.isValid()) {
-    res.status(400).send({error: game.validationError})
-    return;
-  }
-
-  clientVersionUpToDate(model.client_version, req.webtaskContext.storage).then((clientVersionCheck) => {
-
-    model.clientVersionOK = clientVersionCheck.ok
-    model.latestVersionAtPost = clientVersionCheck.latest
-
-    if (model.hero === undefined || model.opponent === undefined) {
-      if (model.players[0].deck.poolName.includes("visible cards") && !model.players[1].deck.poolName.includes("visible cards")) {
-        model.hero = model.players[1].name
-        model.opponent = model.players[0].name
-      } else if (model.players[1].deck.poolName.includes("visible cards") && !model.players[0].deck.poolName.includes("visible cards")) {
-        model.hero = model.players[0].name
-        model.opponent = model.players[1].name
-      } else {
-        res.status(400).send({error: "invalid schema", game: result});
-        return;
-      }
-    }
-
-    MongoClient.connect(MONGO_URL, (err, client) => {
-      if (err) return next(err);
-      //client, database, username, createIfDoesntExist, isUser
-      getPublicName(client, DATABASE, model.hero, true, true).then(() => {
-        getPublicName(client, DATABASE, model.opponent, true, false).then(() => {
-
-          getGameById(client, DATABASE, game.get("gameID"), (result, err) => {
-            if (result !== null) {
-              res.status(400).send({error: "game already exists", game: result});
-              return;
-            }
-            client.db(DATABASE).collection(gameCollection).insertOne(model, (err, result) => {
-              client.close();
-              if (err) return next(err);
-              res.status(201).send(result);
-            });
-          })
-        })
-      })
-    });
-  })
-});
-
 const publicAPI = require('./api/public-api')
 const anonAPI = require('./api/anon-api')
 const userAPI = require('./api/user-api')

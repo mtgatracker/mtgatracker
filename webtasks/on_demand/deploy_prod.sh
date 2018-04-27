@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 wt_secret=$(cat secret-name)
-client_version=$(cat client-version)
-wt create . --bundle --name="mtgatracker-prod-$client_version-$wt_secret" --secrets-file=secrets --watch
+wt_host=$(cat secret-host)
+wt create . --bundle --host="$wt_host" --name="mtgatracker-prod-$wt_secret" --secrets-file=secrets --watch

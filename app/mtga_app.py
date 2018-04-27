@@ -101,10 +101,13 @@ class WebAPI(object):
         self.api_url = api_url
 
     def save_game_result(self, game):
-        url = self.api_url + "/game"
+        anon_token_url = self.api_url + "/public-api/anon-api-token"
+        token = requests.get(anon_token_url).json()["token"]
+
+        url = self.api_url + "/anon-api/game"
         game["client_version"] = client_version
         game["game_hash"] = hash_json_object(game)
-        print(requests.post(url, json=game).json())
+        print(requests.post(url, json=game, headers={"token": token}).json())
 
 
 mtga_watch_app = MTGAWatchApplication()
