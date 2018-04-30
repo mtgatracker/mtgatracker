@@ -14,8 +14,10 @@ def parse_get_decklists(blob):
     # DOM: ok
     import app.mtga_app as mtga_app
     mtga_app.mtga_watch_app.player_decks = {}
+    decks = []
     for deck in blob["Deck.GetDeckLists"]:
-        util.process_deck(deck)
+        decks.append(util.process_deck(deck))
+    return decks
 
 
 def parse_event_decksubmit(blob):

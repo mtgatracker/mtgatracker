@@ -90,6 +90,7 @@ def process_deck(deck_dict):
         mtga_app.mtga_watch_app.player_decks[deck_id] = deck
         mtga_app.mtga_logger.debug("deck {} is being saved".format(deck_dict["name"]))
         mtga_app.mtga_watch_app.save_settings()
+    print("RETURNING: {}".format(deck))
     return deck
 
 
