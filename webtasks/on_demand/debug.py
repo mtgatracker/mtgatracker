@@ -106,14 +106,35 @@ def _generate_valid_games():
 
 def get_all_games_page(page, per_page):
     time.sleep(1)
-    print(root_url + "/games?page={}&per_page={}&debug_password={}".format(page, per_page, debug_password))
-    return requests.get(root_url + "/games?page={}&per_page={}&debug_password={}".format(page, per_page, debug_password)).json()
+    token = get_user_token("Spencatro")
+    print(root_url + "/admin-api/games?page={}&per_page={}".format(page, per_page))
+    int_res = requests.get(root_url + "/admin-api/games", headers={"token": token}).json()
+    print(int_res)
+    return requests.get(root_url + "/admin-api/games?page={}&per_page={}".format(page, per_page), headers={"token": token}).json()
+
+
+def request_auth(username, silent=True):
+    return requests.post(root_url + "/public-api/auth-request", json={"silent": silent, "username": username}).json()
+
+
+def get_user_token(username):
+    request_auth(username)
+    users_collection = mongo_client['mtgatracker']['user']
+    user_after_auth_request = users_collection.find_one({"username": username})
+    assert "auth" in user_after_auth_request.keys()
+    access_code = int(user_after_auth_request["auth"]["accessCode"])
+    return requests.post(root_url + "/public-api/auth-attempt", json={"username": username, "accessCode": access_code}).json()["token"]
+
+
+def get_anon_token():
+    return requests.get(root_url + "/public-api/anon-api-token").json()["token"]
 
 
 def get_game_count():
     time.sleep(1)
-    print(root_url + "/games/count")
-    return requests.get(root_url + "/games/count").json()["game_count"]
+    token = get_anon_token()
+    print(root_url + "/anon-api/games/count")
+    return requests.get(root_url + "/anon-api/games/count", headers={"token": token}).json()["game_count"]
 
 
 def get_games_user(username):
@@ -156,7 +177,6 @@ def paranoia_backup():
     all_docs = []
     for page in range(1, pages + 1):
         new_docs = get_all_games_page(page, 100)["docs"]
-        print(new_docs)
         all_docs += new_docs
     os.makedirs('paranoia', exist_ok=True)
     with open(logname, 'w') as wf:
