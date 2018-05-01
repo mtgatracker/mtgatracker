@@ -12,9 +12,10 @@ import threading
 from app import parsers
 from app import tasks
 from app import queues
+from app.models import set
 from util import KillableTailer
 from queue import Queue, Empty
-from util import all_mtga_cards
+from util import all_mtga_cards, dom
 
 
 takeover_q = Queue()
@@ -45,7 +46,7 @@ IMPORT_DECK_OK = 953, 647
 DECKS_ROW_YPOS = 275, 515, 740
 DECKS_COLUMN_XPOS = 245, 530, 830, 1130, 1430,  1700
 
-ONLY_ONE_DECK_LOC = 1210, 280
+ONLY_ONE_DECK_LOC = 534, 278
 
 WAIT_SHORT = 0.7
 WAIT_LONG = 2
@@ -55,7 +56,6 @@ def watch_for_cards(in_queue, out_queue):
     last_blob = None
     while all_done_q.empty():
         json_recieved = in_queue.get()
-
         if json_recieved is None:
             out_queue.put(None)
             break
@@ -123,55 +123,46 @@ def log_watch_thread():
         queues.json_blob_queue.get()
     print("log_watch task finished")
 
-# cards_to_test = [card for card in all_mtga_cards.cards]
 
+#
+# set_card_counts = {}
+# visited_dualside_cards = []
+# dual_sided = {}
+# #
+# for card in all_mtga_cards.cards:
+#     card_key = card.set + str(card.set_number)
+#     set_card_counts[card_key] = set_card_counts.get(card_key, []) + [card]
 
-set_card_counts = {}
-visited_dualside_cards = []
-dual_sided = {}
-
-for card in all_mtga_cards.cards:
-    card_key = card.set + str(card.set_number)
-    set_card_counts[card_key] = set_card_counts.get(card_key, []) + [card]
-
-for card_key in set_card_counts.keys():
-    if len(set_card_counts[card_key]) == 2:
-        dual_sided[card_key] = set_card_counts[card_key]
-
-failed_round1 = []
-with open("set_data_test_results/failed_pass2_round1.txt", 'r') as rf:
-    lines = rf.readlines()
-    for line in lines:
-        line = line.strip()
-        if not line:
-            continue
-        line = line.replace("--", "-")
-        name, set, set_id = line.split("-")
-        failed_round1.append((set, set_id))
-
-
+# for card_key in set_card_counts.keys():
+#     if len(set_card_counts[card_key]) == 2:
+#         dual_sided[card_key] = set_card_counts[card_key]
+#
+# failed_round1 = []
+# with open("set_data_test_results/failed_pass2_round1.txt", 'r') as rf:
+#     lines = rf.readlines()
+#     for line in lines:
+#         line = line.strip()
+#         if not line:
+#             continue
+#         line = line.replace("--", "-")
+#         name, set, set_id = line.split("-")
+#         failed_round1.append((set, set_id))
+#
+#
+dc = set.Pool.from_sets("dom_cards", sets=[dom.Dominaria])
 cards_to_test = []
-for card in all_mtga_cards.cards:
+for card in dc.cards:
     card_key = card.set + str(card.set_number)
-    if card_key in dual_sided.keys():
-        if card_key in visited_dualside_cards:
-            continue
-        visited_dualside_cards.append(card_key)
-        front, back = dual_sided[card_key]
-        card_import_string = "1 {} /// {} ({}) {}".format(front.pretty_name, back.pretty_name, front.set, front.set_number)
-        cards = [front, back]
-    else:
-        card_import_string = "1 {} ({}) {}".format(card.pretty_name, card.set.upper(), card.set_number)
-        cards = [card]
-    if (card.set.upper(), str(card.set_number)) in failed_round1:
-       cards_to_test.append((card_import_string, cards))
+    card_import_string = "1 {} ({}) {}".format(card.pretty_name, "DAR", card.set_number)
+    cards = [card]
+    cards_to_test.append((card_import_string, cards))
 
-cards_to_test = cards_to_test
+# cards_to_test = cards_to_test[:3]
 
 
 @pytest.mark.parametrize("import_string,card_models", cards_to_test, ids=[str(c) for c in cards_to_test])
 def test_card(log_watch_thread, mouse_listener_thread, import_string, card_models):
-    import_deck(import_string)
+    import_log_and_delete_deck(import_string)
     start_dt = datetime.datetime.now()
     decks = []
     while (datetime.datetime.now() - start_dt).total_seconds() < 3 and len(decks) < 2:
@@ -184,7 +175,7 @@ def test_card(log_watch_thread, mouse_listener_thread, import_string, card_model
         # ["1", "Believe", "///", "Reason", ...]
         import_string_split[1], import_string_split[3] = import_string_split[3], import_string_split[1]
         flipped_import_string = " ".join(import_string_split)
-        import_deck(flipped_import_string)
+        import_log_and_delete_deck(flipped_import_string)
         start_dt = datetime.datetime.now()
         decks = []
         while (datetime.datetime.now() - start_dt).total_seconds() < 3 and len(decks) < 2:
@@ -200,10 +191,13 @@ def test_card(log_watch_thread, mouse_listener_thread, import_string, card_model
             assert card.pretty_name in [c.pretty_name for c in card_models], "names didn't match:  expected to be in ({}), got ({}, {})".format(card_models, card.pretty_name, card.mtga_id)
 
 
-def import_deck(deck_text):
+def import_log_and_delete_deck(deck_text):
     pyperclip.copy(deck_text)
     speedy_click(*IMPORT_DECK)
     spiffy_click(*IMPORT_DECK_OK)
+    # speedy_click(*HOME_LOCATION)
+    # time.sleep(1)
+    # slow_click(*DECKS_LOCATION)
     speedy_click(*ONLY_ONE_DECK_LOC)
     speedy_click(*DELETE_DECK)
     spiffy_click(*DELETE_DECK_OK)
@@ -288,8 +282,8 @@ def slow_click(x, y):
 def backup_all_decks():
     lw = log_watch_thread()
     ml = mouse_listener_thread()
-    for xpos in list(DECKS_COLUMN_XPOS):
-        for ypos in list(DECKS_ROW_YPOS[:2]):
+    for xpos in list(DECKS_COLUMN_XPOS[:1]):
+        for ypos in list(DECKS_ROW_YPOS[:1]):
             if (xpos, ypos) == (DECKS_COLUMN_XPOS[0], DECKS_ROW_YPOS[0]):
                 continue
             spiffy_click(xpos, ypos)
@@ -352,5 +346,6 @@ if __name__ == '__main__':
             print("starting in {}".format(i))
             time.sleep(1)
         backup_all_decks()
+        print("done, exiting")
     else:
         print("exiting.")

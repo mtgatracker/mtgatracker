@@ -96,7 +96,7 @@ _game_shell_schema_0 = {
     ]
 }
 res = get("https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game/gh-stat-cache")
-latest_client_version = res.get("latestVersionString", "1.1.1-beta")
+latest_client_version = res.get("latestVersionString", "2.0.0-beta")
 
 _game_shell_schema_1_1_0_beta = copy.deepcopy(_game_shell_schema_0)
 _game_shell_schema_1_1_0_beta["hero"] = "joe"
