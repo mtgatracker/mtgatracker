@@ -464,12 +464,12 @@ def test_post_game_without_hero_gets_hero():
 
 
 def test_clientversion_ok(any_games_5_or_more):
-    posted_game, result = post_random_game(game_shell=_game_shell_schema_1_1_0_beta)
+    posted_game, result = post_random_game(client_version=latest_client_version, game_shell=_game_shell_schema_1_1_0_beta)
     assert "clientVersionOK" not in posted_game.keys()
     game_id = posted_game["gameID"]
     hero_token = get_user_token(posted_game["hero"])
     game_by_id = get_game_by_id(game_id, hero_token)
-    assert "clientVersionOK" in game_by_id.keys() and not game_by_id["clientVersionOK"]
+    assert "clientVersionOK" in game_by_id.keys() and game_by_id["clientVersionOK"]
 
     posted_game, result = post_random_game(client_version="0.0.0-alpha", game_shell=_game_shell_schema_1_1_0_beta)
     assert "clientVersionOK" not in posted_game.keys()
@@ -750,21 +750,25 @@ def test_cron_fixes_opponent_in_schema0(empty_game_collection, admin_token):
     assert "opponent" in game_current_last.keys()
 
 
+@pytest.mark.token
 def test_anon_api_not_accessible_without_token():
     anon_api_no_token = get(url + "/anon-api/", raw_result=True)
     assert anon_api_no_token.status_code == 401
 
 
+@pytest.mark.token
 def test_admin_api_not_accessible_without_token():
     anon_api_no_token = get(url + "/admin-api/", raw_result=True)
     assert anon_api_no_token.status_code == 401
 
 
+@pytest.mark.token
 def test_user_api_not_accessible_without_token():
     anon_api_no_token = get(url + "/api/", raw_result=True)
     assert anon_api_no_token.status_code == 401
 
 
+@pytest.mark.token
 def test_get_anon_token(empty_game_collection):
     anon_token = get_anon_token()
     token_decoded = jwt.decode(anon_token, verify=False)  # we don't have the secret, can only inspect the payload
@@ -777,6 +781,7 @@ def test_get_anon_token(empty_game_collection):
     assert anon_api_token.status_code == 200
 
 
+@pytest.mark.token
 def test_get_user_token(empty_game_collection, empty_user_collection):
     game, _ = post_random_game(winner="kate", loser="james")
     user_token = get_user_token("kate")
@@ -788,28 +793,6 @@ def test_get_user_token(empty_game_collection, empty_user_collection):
     anon_api_token = get(url + "/api/", headers={"token": user_token}, raw_result=True)
     assert anon_api_token.status_code == 200
 
-
-def test_get_user_games(empty_game_collection):
-    post_random_game(winner="gemma")
-    gemma_token = get_user_token("gemma")
-    games = get(url + "/api/games/user", headers={"token": gemma_token})
-    print(games)
-    for game in games["docs"]:
-        print(game)
-        assert game["hero"] == "gemma"
-
-    post_random_game(winner="gemma")
-    post_random_game(winner="gemma")
-    post_random_game(winner="jane")
-    post_random_game(winner="gemma")
-    post_random_game(winner="jane")
-    post_random_game(winner="gemma")
-
-    games = get(url + "/api/games/user", headers={"token": gemma_token})
-    print(games)
-    for game in games["docs"]:
-        print(game)
-        assert game["hero"] == "gemma"
 
 
 # @pytest.mark.dev
@@ -834,6 +817,30 @@ def test_get_user_games(empty_game_collection):
 #     # print(res)
 #     # raise 1/0
 #     # TODO start here
+
+
+@pytest.mark.token
+def test_get_user_games(empty_game_collection):
+    post_random_game(winner="gemma")
+    gemma_token = get_user_token("gemma")
+    games = get(url + "/api/games/user", headers={"token": gemma_token})
+    print(games)
+    for game in games["docs"]:
+        print(game)
+        assert game["hero"] == "gemma"
+
+    post_random_game(winner="gemma")
+    post_random_game(winner="gemma")
+    post_random_game(winner="jane")
+    post_random_game(winner="gemma")
+    post_random_game(winner="jane")
+    post_random_game(winner="gemma")
+
+    games = get(url + "/api/games/user", headers={"token": gemma_token})
+    print(games)
+    for game in games["docs"]:
+        print(game)
+        assert game["hero"] == "gemma"
 
 
 if __name__ == "__main__":
