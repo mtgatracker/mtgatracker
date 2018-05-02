@@ -8,7 +8,7 @@ MTGA Tracker encourages responsible security research. If you intend to use MTGA
 
 - Always disclose to us that you intend to perform security research on our systems, preferably beforehand
 - If you think you have found an exploit on our systems, contact us immediately. If you think you have found an exploit on MTGA systems, please contact Wizards of the Coast immediately.
-    - We _do not_ condone, nor have the authority to permit security research on any Wizards of the Coast systems. You should **always** reach out to _them_ before performing security research on any Wizards of the Coast systems.
+    - We _do not_ condone, nor have the authority to permit security research on any Wizards of the Coast systems. You should **always** reach out to & recieve explicit permission from _them_ before performing security research on any Wizards of the Coast systems.
 - If you find data you do not own, please encrypt it with a secure key before sending it to us.
    - After reporting, you must delete said data from any of your computers or systems within 24 hours
 - **Please, don't DOS us!** If you are sending requests to our public API's, please always rate limit yourself to _one request each 5 seconds._ MTGATracker is currently using free-tier'ed systems, and we probably won't be able to afford to keep running our services if we exceed free limits. Please be kind to other trackers, and help us keep helping you! (Note that we will eventually impose rate limits ourselves, but at this point, we still need you to limit yourself.)
