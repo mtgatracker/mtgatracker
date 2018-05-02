@@ -20,17 +20,25 @@ MTGA Tracker is an electron-based app that helps you track your MTGA decks!
 I figured as much. I know this doc is long, please at least take a moment and scroll to [disclaimers](#disclaimers)
 before continuing, though.
 
-### Run from a release
+### Option 1 (recommended): Run from a release
 
 Download the latest release from the "releases" link above (or
 [right here](https://github.com/shawkinsl/mtga-tracker/releases)). Use your favorite md5 tool to verify what you
 downloaded is legitimate.
 
+![Selecting the correct download link](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/readme_1.png)
+
+Extract the contents of the zip file. In the top level directory, there will be an MTGATracker.exe . Double click this. And you're good to go!
+
+![Finding the correct exe](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/readme_2.png)
+
 Note that you may have to tell Windows Defender to allow MTGA Tracker to run, as MTGA Tracker is currently
 unsigned. Your antivirus will likely also want to scan it the first few times you run it. I promise both of
 these things are ok. See more in the [Signing section](https://github.com/shawkinsl/mtga-tracker#signing-code) below.
 
-### Run from source
+### OR, Option 2: Run from source
+
+_This option is not required or recommended unless you intend to contribute code changes to MTGATracker_
 
 Make sure you have all of the following installed:
 - [python3.6+](https://www.python.org/downloads/)
