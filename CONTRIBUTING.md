@@ -2,7 +2,7 @@
 
 ## Responsible Disclosure
 
-_This section adopted from Auth0's [responsible disclosure program](https://auth0.com/whitehat)._
+_This section adopted from Auth0's [responsible disclosure program](https://auth0.com/whitehat). MTGATracker is not affiliated with Auth0._
 
 MTGA Tracker encourages responsible security research. If you intend to use MTGATracker systems in an attempt to find and disclose sensitive issues, please reach out to us beforehand (so we don't ban your account for suspicious activity). MTGATracker is an open source community project that currently generates no income, so we unfortunately do not have a bounty program. However, if you are interested in trying your hand at being a hacker, we ask that you follow these guidelines:
 
