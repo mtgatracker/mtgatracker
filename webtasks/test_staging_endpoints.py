@@ -469,7 +469,7 @@ def test_clientversion_ok(any_games_5_or_more):
     game_id = posted_game["gameID"]
     hero_token = get_user_token(posted_game["hero"])
     game_by_id = get_game_by_id(game_id, hero_token)
-    assert "clientVersionOK" in game_by_id.keys() and game_by_id["clientVersionOK"]
+    assert "clientVersionOK" in game_by_id.keys() and not game_by_id["clientVersionOK"]
 
     posted_game, result = post_random_game(client_version="0.0.0-alpha", game_shell=_game_shell_schema_1_1_0_beta)
     assert "clientVersionOK" not in posted_game.keys()

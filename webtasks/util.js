@@ -63,12 +63,12 @@ let random6DigitCode = () => {
   return Math.floor(Math.random()*900000) + 100000;
 }
 
-let createToken = (username) => {
-  return jwt.sign({"user": username}, secrets.jwtSecret, {expiresIn: "7d"})
+let createToken = (username, jwtSecret) => {
+  return jwt.sign({"user": username}, jwtSecret, {expiresIn: "7d"})
 }
 
-let createAnonymousToken = () => {
-  return jwt.sign({"user": null, "anonymousClientID": random6DigitCode()}, secrets.jwtSecret, {expiresIn: "1d"})
+let createAnonymousToken = (jwtSecret) => {
+  return jwt.sign({"user": null, "anonymousClientID": random6DigitCode()}, jwtSecret, {expiresIn: "1d"})
 }
 
 let getCookieToken = (req) => {

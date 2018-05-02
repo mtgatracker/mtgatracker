@@ -61,11 +61,15 @@ let userIsAdmin = (req, res, next) => {
   }
 }
 
+function ejwt_wrapper(req, res, next) {
+  return ejwt({ secret: req.webtaskContext.secrets.JWT_SECRET, getToken: getCookieToken })
+    (req, res, next);
+}
 
 server.use('/public-api', publicAPI)
-server.use('/anon-api', ejwt({secret: secrets.jwtSecret, getToken: getCookieToken}), anonAPI)
-server.use('/api', ejwt({secret: secrets.jwtSecret, getToken: getCookieToken}), userAPI)
-server.use('/admin-api', ejwt({secret: secrets.jwtSecret, getToken: getCookieToken}), userIsAdmin, adminAPI)
+server.use('/anon-api', ejwt_wrapper, anonAPI)
+server.use('/api', ejwt_wrapper, userAPI)
+server.use('/admin-api', ejwt_wrapper, userIsAdmin, adminAPI)
 
 server.get('/', (req, res, next) => {
   res.status(200).send({
