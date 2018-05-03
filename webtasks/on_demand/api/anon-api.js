@@ -75,7 +75,7 @@ router.get('/games/time-histogram', (req, res, next) => {
         let skip = Math.max(1, Math.round(sampleCount / sample_size))
         cursor.sort({date: 1})
         cursor.toArray((cursorErr, docs) => {
-          resultDocs = []
+          let resultDocs = []
           let currentCount = startCount
           docs.forEach((doc, idx) => {
             currentCount += 1
@@ -139,7 +139,7 @@ router.get('/heroes/time-histogram', (req, res, next) => {
         let skip = Math.max(1, Math.round(totalCountAfter / sample_size))
         cursor.sort({date: 1})
         cursor.toArray((cursorErr, docs) => {
-          resultDocs = []
+          let resultDocs = []
           let currentCount = beforeCount
 
           docs.forEach((doc, idx) => {
