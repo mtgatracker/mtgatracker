@@ -12,6 +12,11 @@
   "keywords": [],
   "author": "shawkins",
   "dependencies": {
+    "@babel/cli": "^7.0.0-beta.46",
+    "@babel/core": "^7.0.0-beta.46",
+    "@babel/plugin-transform-runtime": "^7.0.0-beta.46",
+    "@babel/preset-env": "^7.0.0-beta.46",
+    "@babel/runtime": "^7.0.0-beta.46",
     "asar": "^0.14.3",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
@@ -23,7 +28,6 @@
     "jsonwebtoken": "^8.2.1",
     "mongodb": "^3.0.4",
     "request": "^2.85.0",
-    "transform-runtime": "0.0.0",
     "webtask-tools": "^3.2.0"
   },
   "license": "MIT"

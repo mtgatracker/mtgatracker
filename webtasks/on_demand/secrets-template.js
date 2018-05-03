@@ -1,5 +1,4 @@
 module.exports = {
-  jwtSecret: "this-is-a-fake-secret",
   verifyGame: (game, gameHash, hashPass) => {
     // this is a fake function
 

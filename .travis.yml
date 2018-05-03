@@ -13,8 +13,10 @@ before_install:
 install:
   - pip install -U -r requirements-tests.txt
   - npm install wt-cli -g
-  - npm install babel-cli -g
-  - npm install babel-preset-env babel-plugin-transform-runtime
+  - npm install @babel/cli -g
+  - npm install @babel/core -g
+  - npm install @babel/runtime -g
+  - npm install @babel/preset-env @babel/plugin-transform-runtime
   - npm install jsonwebtoken -g
   - npm install webtasks/on_demand
 

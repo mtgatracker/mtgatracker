@@ -26,7 +26,7 @@ router.get('/', (req, res, next) => {
 // covered: test_get_anon_token
 router.get('/anon-api-token', (req, res, next) => {
   console.log("/public-api/anon-api-token")
-  let token = createAnonymousToken()
+  let token = createAnonymousToken(req.webtaskContext.secrets.JWT_SECRET)
   let dayMs = 1 * 24 * 60 * 60 * 1000;
   let cookieExpiration = new Date()
   cookieExpiration.setTime(cookieExpiration.getTime() + dayMs)
@@ -54,7 +54,7 @@ router.post('/auth-attempt', (req, res, next) => {
 
       if (result.auth !== undefined && result.auth !== null && result.auth.expires > expireCheck
           && result.auth.accessCode == accessCode) {
-            let token = createToken(username)
+            let token = createToken(username, req.webtaskContext.secrets.JWT_SECRET)
             let weekMs = 7 * 24 * 60 * 60 * 1000;
             let cookieExpiration = new Date()
             cookieExpiration.setTime(cookieExpiration.getTime() + weekMs)
