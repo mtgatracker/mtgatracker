@@ -122,6 +122,7 @@ def post_random_games(games=None, num_games=None, admin_token=None, no_verify=Fa
         games = [copy.deepcopy(game_shell) for _ in range(num_games or 3)]
         for game in games:
             game["gameID"] = _random_string()
+    time.sleep(len(games) / 200.0)
     return _post_games(games, admin_token, no_verify)
 
 
