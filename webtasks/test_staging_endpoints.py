@@ -1,3 +1,4 @@
+import pprint
 import random
 import string
 import copy
@@ -11,7 +12,8 @@ import requests
 import sys
 import jwt
 
-url = "https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game-staging"
+from dateutil.parser import parse as parse_date
+
 delay = 1.5
 staging_mongo_url = os.getenv("MONGO_URL")
 if "--local" in sys.argv:
@@ -50,8 +52,6 @@ def get(get_url, raw_result=False, headers=None):
     result = requests.get(get_url, headers=headers)
     if raw_result:
         return result
-    print(result)
-    print(result.text)
     return result.json()
 
 
@@ -122,7 +122,10 @@ def post_random_games(games=None, num_games=None, admin_token=None, no_verify=Fa
         games = [copy.deepcopy(game_shell) for _ in range(num_games or 3)]
         for game in games:
             game["gameID"] = _random_string()
-    return _post_games(games, admin_token, no_verify)
+    time.sleep(len(games) / 200.0)
+    result = _post_games(games, admin_token, no_verify)
+    time.sleep(len(games) / 200.0)
+    return result
 
 
 def _post_game(game, no_verify=False, token=None, use_public_api=False):
@@ -794,31 +797,6 @@ def test_get_user_token(empty_game_collection, empty_user_collection):
     assert anon_api_token.status_code == 200
 
 
-
-# @pytest.mark.dev
-# def test_game_histogram(empty_game_collection, admin_token):
-#     _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
-#     two_hundred_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
-#     for idx, game in enumerate(two_hundred_random_games):
-#         game["gameID"] = _random_string()
-#         game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
-#     post_random_games(two_hundred_random_games, admin_token=admin_token)
-#     time.sleep(1)
-#     gh_url = url + "/anon-api/games/time-histogram"
-#     res = get(gh_url, headers={"token": admin_token})
-#     print(res)
-#
-#     # two_hundred_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(180)]
-#     # for game in two_hundred_random_games:
-#     #     game["gameID"] = _random_string()
-#     # post_random_games(two_hundred_random_games, admin_token=admin_token)
-#     # gh_url = url + "/games/time-histogram"
-#     # res = get(gh_url, headers={"token": admin_token})
-#     # print(res)
-#     # raise 1/0
-#     # TODO start here
-
-
 @pytest.mark.token
 def test_get_user_games(empty_game_collection):
     post_random_game(winner="gemma")
@@ -841,6 +819,132 @@ def test_get_user_games(empty_game_collection):
     for game in games["docs"]:
         print(game)
         assert game["hero"] == "gemma"
+
+
+def test_game_histogram_one_per(empty_game_collection, admin_token):
+    _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
+    twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
+    for idx, game in enumerate(twenty_random_games):
+        game["gameID"] = _random_string()
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
+    post_random_games(twenty_random_games, admin_token=admin_token)
+    time.sleep(3)
+
+    gh_url = url + "/anon-api/games/time-histogram"
+    histo = get(gh_url, headers={"token": admin_token})["game_histogram"]
+    current_count = 0
+    assert 5 < len(histo) < 8  # should have 6-7entries; 6-7 games over the last week, 20 over the last 20 days
+    for item in sorted(histo, key=lambda x: parse_date(x["date"])):
+        next_count = item["count"]
+        if current_count == 0:
+            assert next_count > current_count
+        else:
+            assert next_count == current_count + 1
+        current_count = next_count
+
+def test_game_histogram_one_per_(empty_game_collection, admin_token):
+    _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
+    two_hundred_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(200)]
+    for idx, game in enumerate(two_hundred_random_games):
+        game["gameID"] = _random_string()
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=int(idx / 10)))
+    post_random_games(two_hundred_random_games, admin_token=admin_token)
+    gh_url = url + "/anon-api/games/time-histogram"
+    histo = get(gh_url, headers={"token": admin_token})["game_histogram"]
+    assert 59 < len(histo) < 61  # should have 60 entries; 60 games over the last week, 200 over the last 20 days
+    current_count = 0
+    for item in sorted(histo, key=lambda x: parse_date(x["date"])):
+        next_count = item["count"]
+        if current_count == 0:
+            assert next_count > current_count
+        else:
+            assert next_count == current_count + 1
+        current_count = next_count
+
+
+def test_game_histogram_many_per(empty_game_collection, admin_token):
+    _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
+    for i in range(10):
+        two_hundred_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(200)]
+        for idx, game in enumerate(two_hundred_random_games):
+            game["gameID"] = _random_string()
+            game["date"] = str(_20_days_ago + datetime.timedelta(days=int(idx / 10)))
+        post_random_games(two_hundred_random_games, admin_token=admin_token)
+
+    gh_url = url + "/anon-api/games/time-histogram"
+    histo = get(gh_url, headers={"token": admin_token})["game_histogram"]
+    pprint.pprint(histo)
+    assert 99 < len(histo) < 102  # should hit the max resolution here, fuzzy 100
+    current_count = 0
+    for item in sorted(histo, key=lambda x: parse_date(x["date"])):
+        next_count = item["count"]
+        if current_count == 0:
+            assert next_count > current_count
+        else:
+            assert current_count + 5 < next_count < current_count + 8 or next_count == 2000
+        current_count = next_count
+
+
+def test_hero_histogram_one_per(empty_game_collection, admin_token):
+    _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
+    twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
+    last_hero_added = None
+    for idx, game in enumerate(twenty_random_games):
+        game["gameID"] = _random_string()
+        game["hero"] = game["hero"] + str(idx)
+        game["winner"] = game["hero"]
+        game["players"][0]["name"] = game["hero"]
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
+        last_hero_added = game["hero"]
+    post_random_games(twenty_random_games, admin_token=admin_token)
+    time.sleep(3)
+
+    gh_url = url + "/anon-api/heroes/time-histogram"
+    histo_result = get(gh_url, headers={"token": admin_token})
+    histo = histo_result["hero_histogram"]
+
+    current_count = 0
+    assert 5 < len(histo) < 8  # should have 6-7entries; 6-7 games over the last week, 20 over the last 20 days
+    for item in sorted(histo, key=lambda x: parse_date(x["date"])):
+        next_count = item["count"]
+        if current_count == 0:
+            assert next_count > current_count
+        else:
+            assert next_count == current_count + 1
+        current_count = next_count
+
+    post_random_game(winner=last_hero_added)
+    gh_url = url + "/anon-api/heroes/time-histogram"
+    histo_result_2 = get(gh_url, headers={"token": admin_token})
+
+    twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
+    for idx, game in enumerate(twenty_random_games):
+        game["gameID"] = _random_string()
+        game["hero"] = last_hero_added
+        game["winner"] = game["hero"]
+        game["players"][0]["name"] = game["hero"]
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
+    post_random_games(twenty_random_games, admin_token=admin_token)
+
+    gh_url = url + "/anon-api/heroes/time-histogram"
+    histo_result_3 = get(gh_url, headers={"token": admin_token})
+
+    twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
+    for idx, game in enumerate(twenty_random_games):
+        game["gameID"] = _random_string()
+        game["hero"] = game["hero"] + str(idx)
+        game["winner"] = game["hero"]
+        game["players"][0]["name"] = game["hero"]
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
+    post_random_games(twenty_random_games, admin_token=admin_token)
+
+    gh_url = url + "/anon-api/heroes/time-histogram"
+    histo_result_4 = get(gh_url, headers={"token": admin_token})
+
+    # make sure that the count is always 20
+    assert max(histo_result["hero_histogram"], key=lambda x: x["count"])["count"] == max(histo_result_2["hero_histogram"], key=lambda x: x["count"])["count"]
+    assert max(histo_result["hero_histogram"], key=lambda x: x["count"])["count"] == max(histo_result_3["hero_histogram"], key=lambda x: x["count"])["count"]
+    assert max(histo_result["hero_histogram"], key=lambda x: x["count"])["count"] == max(histo_result_4["hero_histogram"], key=lambda x: x["count"])["count"]
 
 
 if __name__ == "__main__":
