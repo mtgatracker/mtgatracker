@@ -123,7 +123,9 @@ def post_random_games(games=None, num_games=None, admin_token=None, no_verify=Fa
         for game in games:
             game["gameID"] = _random_string()
     time.sleep(len(games) / 200.0)
-    return _post_games(games, admin_token, no_verify)
+    result = _post_games(games, admin_token, no_verify)
+    time.sleep(len(games) / 200.0)
+    return result
 
 
 def _post_game(game, no_verify=False, token=None, use_public_api=False):
@@ -883,7 +885,6 @@ def test_game_histogram_many_per(empty_game_collection, admin_token):
         current_count = next_count
 
 
-@pytest.mark.dev
 def test_hero_histogram_one_per(empty_game_collection, admin_token):
     _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
     twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]

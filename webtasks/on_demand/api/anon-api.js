@@ -83,6 +83,9 @@ router.get('/games/time-histogram', (req, res, next) => {
               resultDocs.push({date: doc.date, count: currentCount})
             }
           })
+          if (resultDocs.length > sample_size) {
+            resultDocs.splice(0, resultDocs.length - sample_size)
+          }
           res.status(200).send({
             game_histogram: resultDocs,
             startCount: startCount,
@@ -151,6 +154,9 @@ router.get('/heroes/time-histogram', (req, res, next) => {
               distinctHeroesSet.add(doc.hero)
             }
           })
+          if (resultDocs.length > sample_size) {
+            resultDocs.splice(0, resultDocs.length - sample_size)
+          }
           res.status(200).send({
             hero_histogram: resultDocs,
             startCount: beforeCount,
