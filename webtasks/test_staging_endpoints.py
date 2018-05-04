@@ -146,18 +146,23 @@ def get_anon_token():
 
 def get_user_token(username):
     request_auth(username)
+    time.sleep(0.5)
     user_after_auth_request = users_collection.find_one({"username": username})
     assert "auth" in user_after_auth_request.keys()
     access_code = int(user_after_auth_request["auth"]["accessCode"])
     return post(url + "/public-api/auth-attempt", post_json={"username": username, "accessCode": access_code})["token"]
 
 
-def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None, client_version=None, no_verify=False,
-                     game_shell=_game_shell_schema_1_1_0_beta, token=None):
+def post_random_game(winner=None, loser=None, hero=None, opponent=None, winner_id=None, loser_id=None, client_version=None, no_verify=False,
+                     game_shell=_game_shell_schema_1_1_0_beta, token=None, winner_deck_id=None):
     if token is None:
         token = get_anon_token()
     game = copy.deepcopy(game_shell)
     game["gameID"] = _random_string()
+    if hero:
+        game["hero"] = hero
+    if opponent:
+        game["opponent"] = opponent
     if winner:
         game["winner"] = winner
         game["players"][0]["name"] = winner
@@ -171,6 +176,8 @@ def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None, cli
         game["players"][1]["userID"] = loser_id
     if client_version:
         game["client_version"] = client_version
+    if winner_deck_id:
+        game["players"][0]["deck"]["deckID"] = winner_deck_id
     return _post_game(game, no_verify, token=token)
 
 
@@ -230,6 +237,12 @@ def get_game_count(token=None):
     if token is None:
         token = get_anon_token()
     return get(url + "/anon-api/games/count", headers={"token": token})["game_count"]
+
+
+def get_speeds(token=None):
+    if token is None:
+        token = get_anon_token()
+    return get(url + "/anon-api/speeds", headers={"token": token})
 
 
 def get_client_versions(admin_token):
@@ -302,6 +315,23 @@ def test_games_count(new_entry_base):
     _game, _post = post_random_game(token=anon_token)
     new_game_count = get_game_count(anon_token)
     assert new_game_count == game_count + 1
+
+
+def test_speeds(empty_game_collection, admin_token):
+    anon_token = get_anon_token()
+    speeds = get_speeds(anon_token)
+    pprint.pprint(speeds)
+    assert speeds["game_speed_per_day"] == 0
+    assert speeds["hero_speed_per_day"] == 0
+
+    post_random_games(num_games=7, admin_token=admin_token)
+    time.sleep(1)
+    speeds = get_speeds(anon_token)
+    pprint.pprint(speeds)
+    assert 0.9 < speeds["game_speed_per_day"] < 1.1
+    assert (1.0 / 8.0) < speeds["hero_speed_per_day"] < (1.0 / 6.0)
+
+    assert 0 < speeds["download_speed_per_day"] < 1000
 
 
 def test_user_client_versions(empty_game_collection, admin_token):
@@ -801,7 +831,7 @@ def test_get_user_token(empty_game_collection, empty_user_collection):
 def test_get_user_games(empty_game_collection):
     post_random_game(winner="gemma")
     gemma_token = get_user_token("gemma")
-    games = get(url + "/api/games/user", headers={"token": gemma_token})
+    games = get(url + "/api/games", headers={"token": gemma_token})
     print(games)
     for game in games["docs"]:
         print(game)
@@ -814,11 +844,48 @@ def test_get_user_games(empty_game_collection):
     post_random_game(winner="jane")
     post_random_game(winner="gemma")
 
-    games = get(url + "/api/games/user", headers={"token": gemma_token})
+    games = get(url + "/api/games", headers={"token": gemma_token})
     print(games)
     for game in games["docs"]:
         print(game)
         assert game["hero"] == "gemma"
+
+
+@pytest.mark.token
+def test_get_user_decks(empty_game_collection):
+    post_random_game(winner="gemma")
+    gemma_token = get_user_token("gemma")
+    games = get(url + "/api/decks", headers={"token": gemma_token})
+
+    assert games["123-joe-456"]["losses"] == 0
+    assert games["123-joe-456"]["wins"] == 1
+
+    post_random_game(winner="gemma", winner_deck_id="123-456-789")
+    time.sleep(1)
+    games = get(url + "/api/decks", headers={"token": gemma_token})
+
+    assert games["123-joe-456"]["losses"] == 0
+    assert games["123-joe-456"]["wins"] == 1
+    assert games["123-456-789"]["losses"] == 0
+    assert games["123-456-789"]["wins"] == 1
+
+    post_random_game(winner="gemma", winner_deck_id="123-456-789")
+    time.sleep(1)
+    games = get(url + "/api/decks", headers={"token": gemma_token})
+
+    assert games["123-joe-456"]["losses"] == 0
+    assert games["123-joe-456"]["wins"] == 1
+    assert games["123-456-789"]["losses"] == 0
+    assert games["123-456-789"]["wins"] == 2
+
+    post_random_game(hero="gemma", loser="gemma", winner="joe")
+    time.sleep(1)
+    games = get(url + "/api/decks", headers={"token": gemma_token})
+
+    assert games["123-joe-456"]["losses"] == 1
+    assert games["123-joe-456"]["wins"] == 1
+    assert games["123-456-789"]["losses"] == 0
+    assert games["123-456-789"]["wins"] == 2
 
 
 def test_game_histogram_one_per(empty_game_collection, admin_token):

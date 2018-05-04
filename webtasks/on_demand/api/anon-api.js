@@ -169,6 +169,46 @@ router.get('/heroes/time-histogram', (req, res, next) => {
   })
 })
 
+// covered: test_speeds
+router.get('/speeds', (req, res, next) => {
+  console.log("/speeds")
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
+
+  let weekMs = 7 * 24 * 60 * 60 * 1000;
+  let weekFromNow = new Date()
+  weekFromNow.setTime(weekFromNow.getTime() - weekMs)
+
+  const { min_date=weekFromNow, max_date=new Date() } = req.query;
+
+  let dateQ = {date: {$gt: min_date, $lt: max_date}}
+
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    if (connectErr) return next(connectErr);
+    let collection = client.db(DATABASE).collection(gameCollection)
+    collection.count(dateQ, null, (countErr, count) => {
+      if (countErr) return next(countErr);
+
+      collection.distinct("hero", null, null, (distinctErr, distinctHeroes) => {
+
+        getGithubStats(req.webtaskContext.storage).then((githubStats) => {
+          let firstReleaseDate = new Date("March 22, 2018")
+          let today = new Date()
+          let oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+          let daysDiff = Math.round(Math.abs((today.getTime() - firstReleaseDate.getTime())/(oneDay)));
+          res.status(200).send({
+            game_speed_per_day: count / 7.0,
+            hero_speed_per_day: distinctHeroes.length / 7.0,
+            download_speed_per_day: githubStats.totalDownloads / daysDiff,
+          });
+          client.close()
+        })
+      })
+    })
+  })
+})
+
+
+
 // covered: test_games_count
 router.get('/games/count', (req, res, next) => {
   console.log("/games/count")
@@ -177,8 +217,8 @@ router.get('/games/count', (req, res, next) => {
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     if (connectErr) return next(connectErr);
     let collection = client.db(DATABASE).collection(gameCollection)
-    collection.count(null, null, (err, count) => {
-      if (err) return next(err);
+    collection.count(null, null, (countErr, count) => {
+      if (countErr) return next(countErr);
       if (badge) {
         res.set('Cache-Control', 'no-cache')
         request('https://img.shields.io/badge/Tracked%20Games-' + count + '-brightgreen.svg').pipe(res);
@@ -199,27 +239,16 @@ router.get('/users/count', (req, res, next) => {
     if (connectErr) return next(connectErr);
     let collection = client.db(DATABASE).collection(gameCollection)
 
-    collection.distinct("players.0.name",{
-            "players.0.deck.poolName": {
-                $not: /.*visible cards/
-            }
-    }, null, (err, countZeroes) => {
-      if (err) return next(err);
-      collection.distinct("players.1.name",{
-          "players.1.deck.poolName": {
-              $not: /.*visible cards/
-          }
-      }, null, (err, countOnes) => {
-        if (err) return next(err);
-        let count = countZeroes.length + countOnes.length;
-        if (badge) {
-          res.set('Cache-Control', 'no-cache')
-          request('https://img.shields.io/badge/Unique%20Users-' + count + '-brightgreen.svg').pipe(res);
-        } else {
-          res.status(200).send({"unique_user_count": count});
-          client.close()
-        }
-      })
+    collection.distinct("hero", null, null, (error, distinctHeroes) => {
+      if (error) return next(error);
+      let count = distinctHeroes.length;
+      if (badge) {
+        res.set('Cache-Control', 'no-cache')
+        request('https://img.shields.io/badge/Unique%20Users-' + count + '-brightgreen.svg').pipe(res);
+      } else {
+        res.status(200).send({"unique_user_count": count});
+        client.close()
+      }
     })
   })
 })
