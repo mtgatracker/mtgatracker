@@ -39,8 +39,8 @@ router.get('/', (req, res, next) => {
 
 
 // covered: test_get_user_games
-router.get('/games/user', (req, res, next) => {
-  console.log("/api/games/user/" + JSON.stringify(req.params))
+router.get('/games', (req, res, next) => {
+  console.log("/api/games" + JSON.stringify(req.params))
   if (req.query.per_page) {
     var per_page = parseInt(req.query.per_page)
   } else {

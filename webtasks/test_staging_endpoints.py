@@ -232,6 +232,12 @@ def get_game_count(token=None):
     return get(url + "/anon-api/games/count", headers={"token": token})["game_count"]
 
 
+def get_speeds(token=None):
+    if token is None:
+        token = get_anon_token()
+    return get(url + "/anon-api/speeds", headers={"token": token})
+
+
 def get_client_versions(admin_token):
     return get(url + "/admin-api/users/client_versions", headers={"token": admin_token})
 
@@ -302,6 +308,23 @@ def test_games_count(new_entry_base):
     _game, _post = post_random_game(token=anon_token)
     new_game_count = get_game_count(anon_token)
     assert new_game_count == game_count + 1
+
+
+def test_speeds(empty_game_collection, admin_token):
+    anon_token = get_anon_token()
+    speeds = get_speeds(anon_token)
+    pprint.pprint(speeds)
+    assert speeds["game_speed_per_day"] == 0
+    assert speeds["hero_speed_per_day"] == 0
+
+    post_random_games(num_games=7, admin_token=admin_token)
+    time.sleep(1)
+    speeds = get_speeds(anon_token)
+    pprint.pprint(speeds)
+    assert 0.9 < speeds["game_speed_per_day"] < 1.1
+    assert (1.0 / 8.0) < speeds["hero_speed_per_day"] < (1.0 / 6.0)
+
+    assert 0 < speeds["download_speed_per_day"] < 1000
 
 
 def test_user_client_versions(empty_game_collection, admin_token):
@@ -801,7 +824,7 @@ def test_get_user_token(empty_game_collection, empty_user_collection):
 def test_get_user_games(empty_game_collection):
     post_random_game(winner="gemma")
     gemma_token = get_user_token("gemma")
-    games = get(url + "/api/games/user", headers={"token": gemma_token})
+    games = get(url + "/api/games", headers={"token": gemma_token})
     print(games)
     for game in games["docs"]:
         print(game)
