@@ -36,7 +36,7 @@ router.get('/anon-api-token', (req, res, next) => {
 
 // covered: test_get_user_token
 router.post('/auth-attempt', (req, res, next) => {
-  console.log('/auth-request')
+  console.log('/auth-attempt')
   const authRequest = req.body;
 
   const { username, accessCode } = authRequest;
@@ -91,7 +91,8 @@ router.post('/auth-request', (req, res, next) => {
       expireCheck.setHours(expireCheck.getHours() + 1)
       if (result.auth !== undefined && result.auth !== null && result.auth.expires > expireCheck) {
         let authObj = result.auth;
-        let msg = username + " assigned code " + authObj.accessCode + ", expires @ " + authObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
+        let msgUsername = result.discordUsername ? "Discord:" + result.discordUsername : "MTGA:" + username;
+        let msg = msgUsername + "/" + authObj.accessCode + "/expires @ " + authObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
         sendDiscordMessage(msg, DISCORD_WEBHOOK, silent).then(() => {
           res.status(200).send({"request": "sent"})
         })
@@ -105,7 +106,8 @@ router.post('/auth-request', (req, res, next) => {
         users.update({'username': username}, {$set: {auth: newAuthObj}}, (err, mongoRes) => {
           console.log(mongoRes.result.nModified)
           if (silent != true) {
-            let msg = username + " assigned code " + newAuthObj.accessCode + ", expires @ " + newAuthObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
+            let msgUsername = result.discordUsername ? "Discord:" + result.discordUsername : "MTGA:" + username;
+            let msg = msgUsername + "/" + newAuthObj.accessCode + "/expires @ " + newAuthObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
 
             sendDiscordMessage(msg, DISCORD_WEBHOOK, silent).then(() => {
               res.status(200).send({"request": "sent"})
