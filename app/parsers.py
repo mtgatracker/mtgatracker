@@ -23,8 +23,9 @@ def parse_get_decklists(blob):
 def parse_event_decksubmit(blob):
     # DOM: new
     import app.mtga_app as mtga_app
-    deck_id = blob["CourseDeck"]["id"]
-    deck = mtga_app.mtga_watch_app.player_decks[deck_id]
+    course_deck = blob["CourseDeck"]
+    deck_id = course_deck["id"]
+    deck = util.process_deck(course_deck, save_deck=False)
     mtga_app.mtga_watch_app.intend_to_join_game_with = deck
 
 
