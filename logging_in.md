@@ -38,8 +38,7 @@ ask for your password, in any setting, for any reason.
 
 MTGATracker Inspector requires that your MTGATracker client is up to date. We ask that you always keep your client up
 to date in case we find critical security issues, or are asked by Wizards to modify the tracker in any way in order
-to stay in good standing. When you use an old tracker client, your account will be locked until you update to the
-latest client, and complete a match.
+to stay in good standing. When you use an old tracker client, your account will be locked. **To unlock your account,** simply update to the latest client, and complete a match with it running.
 
 ## Inspector says my account is permanently locked. What gives _now?_
 
