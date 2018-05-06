@@ -58,4 +58,4 @@ If you would like to better understand how any of your data is used, please feel
 our developers. Contributors will be more than happy to explain, improve, or remove ways we handle your data, whenever
 necessary.
 
-If you at any time would like data related to you to be archinved or removed from MTGATracker systems, contact devs.mtgatracker@gmail.com .
+If you at any time would like data related to you to be archived or removed from MTGATracker systems, contact devs.mtgatracker@gmail.com .
