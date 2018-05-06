@@ -55,7 +55,6 @@ router.post('/auth-attempt', (req, res, next) => {
       }
 
       let expireCheck = new Date()
-
       if (result.auth !== undefined && result.auth !== null && result.auth.expires > expireCheck
           && result.auth.accessCode == accessCode) {
             let token = createToken(username, req.webtaskContext.secrets.JWT_SECRET)
@@ -63,7 +62,17 @@ router.post('/auth-attempt', (req, res, next) => {
             let cookieExpiration = new Date()
             cookieExpiration.setTime(cookieExpiration.getTime() + weekMs)
             res.cookie('access_token', token, {secure: true, expires: cookieExpiration})
-            res.status(200).send({token: token})
+
+            // reset token now
+            let expiresDate = new Date()
+            expiresDate.setHours(expiresDate.getHours() + 6)
+            let newAuthObj = {
+              expires: expiresDate,
+              accessCode: random6DigitCode()
+            }
+            users.update({'username': result.username}, {$set: {auth: newAuthObj}}, (err, mongoRes) => {
+              res.status(200).send({token: token})
+            })
       } else {
         res.status(400).send({"error": "auth_error"})
       }
