@@ -54,8 +54,8 @@ or through unexpected uses of the app or site. We will endeavor to anonymize Pla
 publicly, but we reserve the right to share Platform Information in it's raw form with any authenticated user with a need to see that
 information (for example, if you played a game against User A, it is reasonable that that game's data will also be visible to User A.)
 
-If you would like to better understand how any of your data is used, please feel free to look through the code, or ask
-our developers. Contributors will be more than happy to explain, improve, or remove ways we handle your data, whenever
-necessary.
+If you would like to better understand how any of your data is used, please feel free to ask
+our developers [on discord](https://discord.gg/j5u76j2) or via email (devs.mtgatracker@gmail.com)
+(or just look through the code)! Contributors will be more than happy to explain, improve, or remove ways we handle your data, whenever necessary.
 
 If you at any time would like data related to you to be archived or removed from MTGATracker systems, contact devs.mtgatracker@gmail.com .
