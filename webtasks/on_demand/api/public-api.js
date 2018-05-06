@@ -44,7 +44,11 @@ router.post('/auth-attempt', (req, res, next) => {
 
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     let users = client.db(DATABASE).collection(userCollection);
-    users.findOne({username: username}, null, (err, result) => {
+
+    let usernameRegexp = new RegExp(username, "i")
+    let userSearch = {username: {$regex: usernameRegexp}}
+
+    users.findOne(userSearch, null, (err, result) => {
       if (result === undefined || result === null) {
         res.status(404).send({"error": "no user found with username " + username})
         return
@@ -84,7 +88,10 @@ router.post('/auth-request', (req, res, next) => {
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     let users = client.db(DATABASE).collection(userCollection);
 
-    users.findOne({username: username}, null, (err, result) => {
+    let usernameRegexp = new RegExp(username, "i")
+    let userSearch = {username: {$regex: usernameRegexp}}
+
+    users.findOne(userSearch, null, (err, result) => {
       if (result === undefined || result === null) {
         res.status(404).send({"error": "no user found with username " + username})
         return
@@ -112,7 +119,7 @@ router.post('/auth-request', (req, res, next) => {
           expires: expiresDate,
           accessCode: random6DigitCode()
         }
-        users.update({'username': username}, {$set: {auth: newAuthObj}}, (err, mongoRes) => {
+        users.update({'username': result.username}, {$set: {auth: newAuthObj}}, (err, mongoRes) => {
           console.log(mongoRes.result.nModified)
           if (silent != true) {
             let msgUsername = result.discordUsername ? "Discord:" + result.discordUsername : "MTGA:" + username;

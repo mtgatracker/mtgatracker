@@ -96,7 +96,7 @@ _game_shell_schema_0 = {
     ]
 }
 res = get("https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game/gh-stat-cache")
-latest_client_version = res.get("latestVersionString", "2.0.0-beta")
+latest_client_version = res.get("latestVersionString", "2.1.0-beta")
 
 _game_shell_schema_1_1_0_beta = copy.deepcopy(_game_shell_schema_0)
 _game_shell_schema_1_1_0_beta["hero"] = "joe"
@@ -227,7 +227,7 @@ def insert_taken_user(username=None, public_name=None, is_user=False, discord_us
 
 def request_auth(username, silent=True, force_discord=False):
     if force_discord:
-        users_collection.update_one({"username": username}, {"$set": {"discordUsername": "kate#123"}})
+        users_collection.update_one({"username": username}, {"$set": {"discordUsername": "{}#123".format(username)}})
         time.sleep(0.1)
     res = post(url + "/public-api/auth-request", post_json={"silent": silent, "username": username}, raw_result=True).json()
     time.sleep(0.1)
@@ -489,7 +489,7 @@ def test_post_game(any_games_5_or_more):
     assert game_count_after == game_count + 1
 
 
-def test_post_game_without_hero_gets_hero():
+def test_post_game_without_hero_gets_hero(empty_user_collection):
     posted_game, result = post_random_game(game_shell=_game_shell_schema_0)
     assert "hero" not in posted_game.keys()
     game_id = posted_game["gameID"]
@@ -503,7 +503,7 @@ def test_post_game_without_hero_gets_hero():
             assert "visible cards" in player["deck"]["poolName"]
 
 
-def test_clientversion_ok(any_games_5_or_more):
+def test_clientversion_ok(empty_user_collection, any_games_5_or_more):
     posted_game, result = post_random_game(client_version=latest_client_version, game_shell=_game_shell_schema_1_1_0_beta)
     assert "clientVersionOK" not in posted_game.keys()
     game_id = posted_game["gameID"]
@@ -713,8 +713,6 @@ def test_404():
 def test_auth_request(empty_game_collection, empty_user_collection):
 
     game, _ = post_random_game(winner="kate", loser="james")
-    kate_before = users_collection.find_one({"username": "kate"})
-    assert "auth" not in kate_before.keys()
 
     # test no discord mapping -> no token
     request_auth("kate")
@@ -734,7 +732,13 @@ def test_auth_request(empty_game_collection, empty_user_collection):
     assert 0 < access_code < 999999
 
 
-@pytest.mark.dev
+def test_auth_request_case_insensitive(empty_game_collection, empty_user_collection):
+    insert_taken_user("kate", discord_username="kate#123123123123")
+    request_auth("kAtE")
+    kate_after = users_collection.find_one({"username": "kate"})
+    assert "auth" in kate_after.keys()
+
+
 def test_auth_request_expires(empty_game_collection, empty_user_collection):
     # TODO: dry here and test_auth_request
     game, _ = post_random_game(winner="kate", loser="james")
@@ -778,7 +782,6 @@ def test_cron_fixes_hero_in_schema0(empty_game_collection, admin_token):
     post_random_games(num_games=20, no_verify=True, game_shell=_game_shell_schema_0)  # need this to exclude hero
     all_games = get_all_games_admin_page(admin_token, 1, 20)
     for game in all_games["docs"]:
-        print(game)
         assert "hero" not in game.keys(), game.keys()
     time.sleep(120)
     game_current_first = get_game_by_id(all_games["docs"][0]["gameID"])
@@ -793,7 +796,6 @@ def test_cron_fixes_opponent_in_schema0(empty_game_collection, admin_token):
     post_random_games(num_games=20, no_verify=True, game_shell=_game_shell_schema_1_1_0_beta)
     all_games = get_all_games_admin_page(admin_token, 1, 20)
     for game in all_games["docs"]:
-        print(game)
         assert "opponent" not in game.keys(), game.keys()
     time.sleep(120)
     game_current_first = get_game_by_id(all_games["docs"][0]["gameID"])
