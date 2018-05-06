@@ -110,7 +110,7 @@ router.post('/auth-request', (req, res, next) => {
         let msgUsername = result.discordUsername ? "Discord:" + result.discordUsername : "MTGA:" + username;
         let msg = msgUsername + "/" + authObj.accessCode + "/expires @ " + authObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
         sendDiscordMessage(msg, DISCORD_WEBHOOK, silent).then(() => {
-          res.status(200).send({"request": "sent"})
+          res.status(200).send({"request": "sent", "username": result.username})
         })
       } else {
         let expiresDate = new Date()
@@ -126,10 +126,10 @@ router.post('/auth-request', (req, res, next) => {
             let msg = msgUsername + "/" + newAuthObj.accessCode + "/expires @ " + newAuthObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
 
             sendDiscordMessage(msg, DISCORD_WEBHOOK, silent).then(() => {
-              res.status(200).send({"request": "sent"})
+              res.status(200).send({"request": "sent", "username": result.username})
             })
           } else {
-            res.status(200).send({"request": "sent"})
+            res.status(200).send({"request": "sent", "username": result.username})
           }
         })
       }
