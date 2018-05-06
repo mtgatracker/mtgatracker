@@ -18,12 +18,11 @@ but not "Personal Information," or "Platform Information"
 
 ### Personal Information
 
-"Personal Information" includes data that de-facto represents an individual. We consider things like email addresses
-to be "Personal Information."
+"Personal Information" includes data that de-facto represents an individual. We consider things like email addresses, full names, phone numbers, and addresses to be "Personal Information." We do not collect any personal information.
 
 ### Secure Information
 
-"Secure Information" includes secret and private data such as passwords.
+"Secure Information" includes secret and private data such as passwords. We do not collect any secure information.
 
 ### Platform Information
 
@@ -31,17 +30,16 @@ to be "Personal Information."
 usernames, deck titles, deck contents, win ratios, etc to be "Platform Information." We consider Platform Information
 to be adjacent to and distinct from Personal Information, similar to Linkable Information.
 
+If a user chooses to encode personal information into platform information (for example, a user selecting a title for a deck that is also their home address), this use case would be a bizarre misuse of the platform, in which MTGATracker is not liable. Encoding personal information into platform information is done so at the user's own risk.
+
 ## Our data policy
 
 We will never sell any of your information to any third parties. Ever.
 
-We defer authentication, and the handling of _all_ Secure Information to [Auth0](https://auth0.com/). You can read
-about their data policy [here](https://auth0.com/privacy). We very much trust Auth0, and think you should too.
-
 We use Personal Information only to operate and improve the app and the site. We must use third parties to process
-information from any of the defitions above, but we will we never display Personal or Linkable Information
+information from any of the defitions above, but we will we never display Linkable Information
 publicly to any user other than the owner of that information. We also will never share Personal Information with any
-3rd party for any reason other than to operate the app and site.
+3rd party for any reason other than to operate the app and site (again, we do not collect Personal Information).
 
 We do share Linkable Information discoevered on the site with analytics services (namely, Google Analytics, which you
 can read more about [here](https://www.google.com/policies/privacy/partners/)). We only share this information to
@@ -49,12 +47,15 @@ understand our usage history, understand the scaling challenges ahead, plan futu
 the app and site. Note that we do not collect, store, or retain Linkable Information in any form.
 
 We reserve the right to share Linkable Information with advertisement agencies. We will never share Personal
-Information or Platform Information with any third party for the purpose of monetary gain.
+Information (which we do not collect) or Platform Information with any third party for the purpose of monetary gain. We may intentionally share Platform Information with other services with your express permission for each service.
 
 Any and all Platform Information is subject to becoming public information, whether through intentional implementation,
 or through unexpected uses of the app or site. We will endeavor to anonymize Platform Information before sharing it
-publicly, but we reserve the right to share Platform Information with any authenticated user.
+publicly, but we reserve the right to share Platform Information in it's raw form with any authenticated user with a need to see that
+information (for example, if you played a game against User A, it is reasonable that that game's data will also be visible to User A.)
 
 If you would like to better understand how any of your data is used, please feel free to look through the code, or ask
 our developers. Contributors will be more than happy to explain, improve, or remove ways we handle your data, whenever
 necessary.
+
+If you at any time would like data related to you to be archinved or removed from MTGATracker systems, contact devs.mtgatracker@gmail.com .
