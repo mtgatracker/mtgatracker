@@ -33,7 +33,7 @@ to be adjacent to and distinct from Personal Information, similar to Linkable In
 
 ## Our data policy
 
-We will never sell any of your to any third parties. Ever.
+We will never sell any of your information to any third parties. Ever.
 
 We defer authentication, and the handling of _all_ Secure Information to [Auth0](https://auth0.com/). You can read
 about their data policy [here](https://auth0.com/privacy). We very much trust Auth0, and think you should too.
