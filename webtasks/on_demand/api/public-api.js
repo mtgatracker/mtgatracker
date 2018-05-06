@@ -76,6 +76,10 @@ router.post('/auth-request', (req, res, next) => {
 
   const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
 
+  if (username === undefined || username === null) {
+    res.status(400).send({"error": "invalid request"})
+    return
+  }
 
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     let users = client.db(DATABASE).collection(userCollection);
@@ -83,6 +87,11 @@ router.post('/auth-request', (req, res, next) => {
     users.findOne({username: username}, null, (err, result) => {
       if (result === undefined || result === null) {
         res.status(404).send({"error": "no user found with username " + username})
+        return
+      }
+
+      if (result.discordUsername === undefined || result.discordUsername === null) {
+        res.status(404).send({"error": "discord mapping not found for " + username})
         return
       }
 
