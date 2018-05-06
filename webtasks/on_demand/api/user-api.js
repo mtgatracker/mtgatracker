@@ -47,7 +47,6 @@ router.get('/games', (req, res, next) => {
     var per_page = 10;
   }
   const { page = 1} = req.query;
-
   const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
 
   MongoClient.connect(MONGO_URL, (connectErr, client) => {

@@ -492,6 +492,8 @@ def test_post_game(any_games_5_or_more):
 def test_post_game_without_hero_gets_hero(empty_user_collection):
     posted_game, result = post_random_game(game_shell=_game_shell_schema_0)
     assert "hero" not in posted_game.keys()
+    post_random_game()  # unlock account
+
     game_id = posted_game["gameID"]
     hero_token = get_user_token("joe")
     game_by_id = get_game_by_id(game_id, hero_token)
@@ -515,6 +517,7 @@ def test_clientversion_ok(empty_user_collection, any_games_5_or_more):
     assert "clientVersionOK" not in posted_game.keys()
     game_id = posted_game["gameID"]
     hero_token = get_user_token(posted_game["hero"])
+    post_random_game()  # unlock account
     game_by_id = get_game_by_id(game_id, hero_token)
     assert "clientVersionOK" in game_by_id.keys() and not game_by_id["clientVersionOK"]
 
@@ -522,11 +525,13 @@ def test_clientversion_ok(empty_user_collection, any_games_5_or_more):
     assert "clientVersionOK" not in posted_game.keys()
     game_id = posted_game["gameID"]
     hero_token = get_user_token(posted_game["hero"])
+    post_random_game()  # unlock account
     game_by_id = get_game_by_id(game_id, hero_token)
     assert "clientVersionOK" in game_by_id.keys() and not game_by_id["clientVersionOK"]
 
     posted_game, result = post_random_game(client_version=None, game_shell=_game_shell_schema_0)
     assert "clientVersionOK" not in posted_game.keys() and "client_version" not in posted_game.keys()
+    post_random_game()  # unlock account
     game_id = posted_game["gameID"]
     hero_token = get_user_token("joe")
     game_by_id = get_game_by_id(game_id, hero_token)
@@ -869,6 +874,24 @@ def test_get_user_games(empty_game_collection):
     print(games)
     for game in games["docs"]:
         print(game)
+        assert game["hero"] == "gemma"
+
+
+@pytest.mark.token
+def test_get_user_games_hides_games_oldversions(empty_game_collection):
+    post_random_game(winner="gemma")
+    gemma_token = get_user_token("gemma")
+    games = get(url + "/api/games", headers={"token": gemma_token})
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+
+    post_random_game(winner="gemma", client_version="0.0.0-beta")
+    games = get(url + "/api/games", headers={"token": gemma_token})
+    assert "locked" in games["error"]
+
+    post_random_game(winner="gemma")
+    games = get(url + "/api/games", headers={"token": gemma_token})
+    for game in games["docs"]:
         assert game["hero"] == "gemma"
 
 

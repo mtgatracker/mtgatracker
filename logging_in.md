@@ -33,3 +33,22 @@ to verify your identity.
 
 If anyone asks for your password in relation to MTGATracker, please report it to Spencatro immediately. We will never
 ask for your password, in any setting, for any reason.
+
+## Inspector says my account is locked. What gives?
+
+MTGATracker Inspector requires that your MTGATracker client is up to date. We ask that you always keep your client up
+to date in case we find critical security issues, or are asked by Wizards to modify the tracker in any way in order
+to stay in good standing. When you use an old tracker client, your account will be locked until you update to the
+latest client, and complete a match.
+
+## Inspector says my account is permanently locked. What gives _now?_
+
+If you repeatedly abuse the account locking mechanism in order to use old client versions, your account will be
+permanently locked. This means that a tracker admin will have to manually unlock it after you have plead your
+case. We understand mistakes, but multiple offenders of this rule may be banned from the platform.
+
+## Inspector says my account is banned. What?
+
+You most likely will know what you did, but if you're not sure, you can ask us in discord. Generally, bans are issued to 
+users who attempt to access other players' data without permission, or users who have harassed others within MTGATracker
+or within platforms adjacent to MTGATracker. Bans are only issued manually, and likely will not be revoked. 

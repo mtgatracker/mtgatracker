@@ -260,7 +260,6 @@ let getPublicName = (client, database, username, createIfDoesntExist, isUser) =>
   })
 }
 
-
 module.exports = {
   getPublicName: getPublicName,
   randomString: randomString,
