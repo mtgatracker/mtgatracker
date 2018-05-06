@@ -145,10 +145,9 @@ def get_anon_token():
 
 
 def get_user_token(username):
-    request_auth(username)
+    request_auth(username, force_discord=True)
     time.sleep(0.5)
     user_after_auth_request = users_collection.find_one({"username": username})
-    assert "auth" in user_after_auth_request.keys()
     access_code = int(user_after_auth_request["auth"]["accessCode"])
     return post(url + "/public-api/auth-attempt", post_json={"username": username, "accessCode": access_code})["token"]
 
@@ -214,17 +213,25 @@ def post_bad_game(missing_winner_name=False, missing_loser_name=False,
     return _post_game(game, no_verify)
 
 
-def insert_taken_user(username=None, public_name=None, is_user=False):
+def insert_taken_user(username=None, public_name=None, is_user=False, discord_username=None):
     if username is None:
         username = _random_string()
     if public_name is None:
         public_name = _random_string()
-    users_collection.insert_one({"username": username, "available": False, "publicName": public_name,
-                                 "isUser": is_user})
+
+    user_obj = {"username": username, "available": False, "publicName": public_name, "isUser": is_user}
+    if discord_username:
+        user_obj["discordUsername"] = discord_username
+    users_collection.insert_one(user_obj)
 
 
-def request_auth(username, silent=True):
-    return post(url + "/public-api/auth-request", post_json={"silent": silent, "username": username}, raw_result=True).json()
+def request_auth(username, silent=True, force_discord=False):
+    if force_discord:
+        users_collection.update_one({"username": username}, {"$set": {"discordUsername": "kate#123"}})
+        time.sleep(0.1)
+    res = post(url + "/public-api/auth-request", post_json={"silent": silent, "username": username}, raw_result=True).json()
+    time.sleep(0.1)
+    return res
 
 
 def insert_available_user(public_name=None):
@@ -291,7 +298,7 @@ def empty_user_collection():
 
 @pytest.fixture
 def admin_token():
-    insert_taken_user("Spencatro", "Tracker_Admin")
+    insert_taken_user("Spencatro", "Tracker_Admin", discord_username="Spencatro#1234554321")
     return get_user_token("Spencatro")
 
 
@@ -704,11 +711,22 @@ def test_404():
 
 
 def test_auth_request(empty_game_collection, empty_user_collection):
+
     game, _ = post_random_game(winner="kate", loser="james")
     kate_before = users_collection.find_one({"username": "kate"})
     assert "auth" not in kate_before.keys()
 
+    # test no discord mapping -> no token
     request_auth("kate")
+    time.sleep(0.5)
+    user_after_auth_request = users_collection.find_one({"username": "kate"})
+    assert "auth" not in user_after_auth_request.keys()
+
+    # test with discord mapping -> token
+    request_auth("kate", force_discord=True)
+    time.sleep(0.5)
+    user_after_auth_request = users_collection.find_one({"username": "kate"})
+
     kate_after = users_collection.find_one({"username": "kate"})
     assert "auth" in kate_after.keys()
 
@@ -716,13 +734,14 @@ def test_auth_request(empty_game_collection, empty_user_collection):
     assert 0 < access_code < 999999
 
 
+@pytest.mark.dev
 def test_auth_request_expires(empty_game_collection, empty_user_collection):
     # TODO: dry here and test_auth_request
     game, _ = post_random_game(winner="kate", loser="james")
     kate_before = users_collection.find_one({"username": "kate"})
     assert "auth" not in kate_before.keys()
 
-    request_auth("kate")
+    request_auth("kate", force_discord=True)
     kate_after = users_collection.find_one({"username": "kate"})
     assert "auth" in kate_after.keys()
 
