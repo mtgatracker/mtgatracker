@@ -54,7 +54,7 @@ router.get('/games', (req, res, next) => {
     const { user } = req.user;
     if (connectErr) return next(connectErr);
     let collection = client.db(DATABASE).collection(gameCollection)
-    let cursor = collection.find({'players.name': user});
+    let cursor = collection.find({'players.name': user}).sort({date: -1});
     cursor.count(null, null, (err, count) => {
       let numPages = Math.ceil(count / per_page);
       let docCursor = cursor.skip((page - 1) * per_page).limit(per_page);
