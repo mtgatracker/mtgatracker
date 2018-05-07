@@ -715,8 +715,8 @@ def test_404():
     assert "may be banned" in str(result.json())
 
 
+@pytest.mark.auth
 def test_auth_request(empty_game_collection, empty_user_collection):
-
     game, _ = post_random_game(winner="kate", loser="james")
 
     # test no discord mapping -> no token
@@ -737,6 +737,7 @@ def test_auth_request(empty_game_collection, empty_user_collection):
     assert 0 < access_code < 999999
 
 
+@pytest.mark.auth
 def test_auth_request_case_insensitive(empty_game_collection, empty_user_collection):
     insert_taken_user("kate", discord_username="kate#123123123123")
     request_auth("kAtE")
@@ -744,6 +745,8 @@ def test_auth_request_case_insensitive(empty_game_collection, empty_user_collect
     assert "auth" in kate_after.keys()
 
 
+@pytest.mark.slow
+@pytest.mark.auth
 def test_auth_request_expires(empty_game_collection, empty_user_collection):
     # TODO: dry here and test_auth_request
     game, _ = post_random_game(winner="kate", loser="james")
@@ -762,23 +765,17 @@ def test_auth_request_expires(empty_game_collection, empty_user_collection):
     access_code_after = int(kate_after_2["auth"]["accessCode"])
     assert access_code == access_code_after
 
-    expires = kate_after_2["auth"]["expires"]
-    expires -= datetime.timedelta(hours=4, minutes=50)  # token has 1:10 left to live
-    users_collection.update_one({"username": "kate"}, {"$set": {"auth.expires": expires}})
-
-    kate_after_3 = users_collection.find_one({"username": "kate"})
-    access_code_after_3 = int(kate_after_3["auth"]["accessCode"])
-    assert access_code_after_3 == access_code_after
-
-    expires = kate_after_3["auth"]["expires"]
-    expires -= datetime.timedelta(hours=5, minutes=10)  # token is expired
-    users_collection.update_one({"username": "kate"}, {"$set": {"auth.expires": expires}})
-
+    time.sleep(30)
     request_auth("kate")
-    kate_after_4 = users_collection.find_one({"username": "kate"})
-    access_code_after_4 = int(kate_after_4["auth"]["accessCode"])
-    assert 0 < access_code_after_4 < 999999
-    assert access_code_after_4 != access_code_after_3
+    kate_after_30s = users_collection.find_one({"username": "kate"})
+    access_code_after30s = int(kate_after_30s["auth"]["accessCode"])
+    assert access_code == access_code_after30s
+
+    time.sleep(70)  # 70 + 30 = 100 > 90, so code should roll
+    request_auth("kate")
+    kate_after_100s = users_collection.find_one({"username": "kate"})
+    access_code_after100s = int(kate_after_100s["auth"]["accessCode"])
+    assert access_code != access_code_after100s
 
 
 @pytest.mark.cron
@@ -810,24 +807,28 @@ def test_cron_fixes_opponent_in_schema0(empty_game_collection, admin_token):
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_anon_api_not_accessible_without_token():
     anon_api_no_token = get(url + "/anon-api/", raw_result=True)
     assert anon_api_no_token.status_code == 401
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_admin_api_not_accessible_without_token():
     anon_api_no_token = get(url + "/admin-api/", raw_result=True)
     assert anon_api_no_token.status_code == 401
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_user_api_not_accessible_without_token():
     anon_api_no_token = get(url + "/api/", raw_result=True)
     assert anon_api_no_token.status_code == 401
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_get_anon_token(empty_game_collection):
     anon_token = get_anon_token()
     token_decoded = jwt.decode(anon_token, verify=False)  # we don't have the secret, can only inspect the payload
@@ -841,6 +842,7 @@ def test_get_anon_token(empty_game_collection):
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_get_user_token(empty_game_collection, empty_user_collection):
     game, _ = post_random_game(winner="kate", loser="james")
     user_token = get_user_token("kate")
@@ -854,6 +856,7 @@ def test_get_user_token(empty_game_collection, empty_user_collection):
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_get_user_games(empty_game_collection):
     post_random_game(winner="gemma")
     gemma_token = get_user_token("gemma")
@@ -878,6 +881,7 @@ def test_get_user_games(empty_game_collection):
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_get_user_games_hides_games_oldversions(empty_game_collection):
     post_random_game(winner="gemma")
     gemma_token = get_user_token("gemma")
@@ -896,6 +900,7 @@ def test_get_user_games_hides_games_oldversions(empty_game_collection):
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_get_user_decks(empty_game_collection):
     post_random_game(winner="gemma")
     gemma_token = get_user_token("gemma")

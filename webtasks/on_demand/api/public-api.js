@@ -111,10 +111,11 @@ router.post('/auth-request', (req, res, next) => {
         return
       }
 
-      // if the current code expires in less than an hour, let's refresh
+      // if the current code expires in less than 30 seconds, let's refresh
       let expireCheck = new Date()
-      expireCheck.setHours(expireCheck.getHours() + 1)
+      expireCheck.setSeconds(expireCheck.getSeconds() + 30)
       if (result.auth !== undefined && result.auth !== null && result.auth.expires > expireCheck) {
+        // this code is still ok; you have >30s to put it in
         let authObj = result.auth;
         let msgUsername = result.discordUsername ? "Discord:" + result.discordUsername : "MTGA:" + username;
         let msg = msgUsername + "/" + authObj.accessCode + "/expires @ " + authObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
@@ -122,8 +123,9 @@ router.post('/auth-request', (req, res, next) => {
           res.status(200).send({"request": "sent", "username": result.username})
         })
       } else {
+        // this code will expire in less than 30s; we will just make you a new one.
         let expiresDate = new Date()
-        expiresDate.setHours(expiresDate.getHours() + 6)
+        expiresDate.setMinutes(expiresDate.getMinutes() + 2)
         let newAuthObj = {
           expires: expiresDate,
           accessCode: random6DigitCode()
