@@ -45,7 +45,7 @@ router.post('/auth-attempt', (req, res, next) => {
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     let users = client.db(DATABASE).collection(userCollection);
 
-    let usernameRegexp = new RegExp(username, "i")
+    let usernameRegexp = new RegExp(`^${username}$`, "i")
     let userSearch = {username: {$regex: usernameRegexp}}
 
     users.findOne(userSearch, null, (err, result) => {
@@ -97,7 +97,7 @@ router.post('/auth-request', (req, res, next) => {
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     let users = client.db(DATABASE).collection(userCollection);
 
-    let usernameRegexp = new RegExp(username, "i")
+    let usernameRegexp = new RegExp(`^${username}$`, "i")
     let userSearch = {username: {$regex: usernameRegexp}}
 
     users.findOne(userSearch, null, (err, result) => {
