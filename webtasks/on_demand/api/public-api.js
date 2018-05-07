@@ -65,7 +65,7 @@ router.post('/auth-attempt', (req, res, next) => {
 
             // reset token now
             let expiresDate = new Date()
-            expiresDate.setHours(expiresDate.getHours() + 6)
+            expiresDate.setMinutes(expiresDate.getMinutes() + 2)
             let newAuthObj = {
               expires: expiresDate,
               accessCode: random6DigitCode()
