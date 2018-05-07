@@ -66,7 +66,7 @@ let userUpToDate = (req, res, next) => {
     const { user } = req.user;
     if (connectErr) return next(connectErr);
     let collection = client.db(DATABASE).collection(gameCollection)
-    let cursor = collection.find({'players.name': user}).sort({date: -1});
+    let cursor = collection.find({'hero': user}).sort({date: -1});
     cursor.next((err, doc) => {
       if (doc.clientVersionOK) next()
       else {
