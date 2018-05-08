@@ -1,29 +1,50 @@
 console.time('init')
 
 const request = require("request")
+const crypto = require("crypto")
 const ReconnectingWebSocket = require('./vendor/rws.js')
 const fs = require('fs')
 
-let { remote, ipcRenderer } = require('electron')
+const { remote, ipcRenderer, shell } = require('electron')
+const { Menu, MenuItem } = remote
 let browserWindow = remote.getCurrentWindow()
 
 window.addEventListener('beforeunload', function() {
     ws.send("die")
 })
 
+let rightClickPosition = null
+
+const menu = new Menu()
+const menuItem = new MenuItem({
+  label: 'Inspect Element',
+  click: () => {
+    remote.getCurrentWindow().inspectElement(rightClickPosition.x, rightClickPosition.y)
+  }
+})
+menu.append(menuItem)
+
 var debug = remote.getGlobal('debug');
 var useFrame = remote.getGlobal('useFrame');
 var showIIDs = remote.getGlobal('showIIDs');
+var showErrors = remote.getGlobal('showErrors');
 var appVersionStr = remote.getGlobal('version');
 var zoom = 0.8;
+
+if (debug) {
+  window.addEventListener('contextmenu', (e) => {
+    e.preventDefault()
+    rightClickPosition = {x: e.x, y: e.y}
+    menu.popup(remote.getCurrentWindow())
+  }, false)
+}
 
 var ws = new ReconnectingWebSocket("ws://127.0.0.1:5678/", null, {constructor: WebSocket})
 
 var appData = {
     deck_name: "loading...",
     cant_connect: false,
-    show_error: false,
-    show_update_message: false,
+    showErrors: showErrors,
     last_error: "",
     error_count: 0,
     debug: debug,
@@ -44,6 +65,8 @@ var appData = {
     total_cards_in_deck: "0",
     draw_stats: [],
     opponent_hand: [],
+    messages: [],
+    version: appVersionStr
 }
 
 var parseVersionString = (versionStr) => {
@@ -58,33 +81,36 @@ var parseVersionString = (versionStr) => {
     return version;
 }
 
-// TODO: DRY here and @ webtasks/on_demand/mtga-tracker-game.js
-// check for a newer release
+var dismissMessage = (element) => {
+   let elementIdx = element.attributes.index.value
+   let messageID = false
+   if (element.attributes.messageID) {
+     messageID = element.attributes.messageID.value
+   }
+   if (messageID) {
+     ipcRenderer.send('messageAcknowledged', messageID)
+   }
+   appData.messages[elementIdx]["show"] = false;
+}
+
 request.get({
-    url: "https://api.github.com/repos/shawkinsl/mtga-tracker/releases/latest",
+    url: "https://wt.mtgatracker.com/wt-bd90f3fae00b1572ed028d0340861e6a-0/mtgatracker-prod-EhDvLyq7PNb/public-api/tracker-notifications",
     json: true,
     headers: {'User-Agent': 'MTGATracker-App'}
 }, (err, res, data) => {
-    const latestVersion = parseVersionString(data.tag_name);
-    const appVersion = parseVersionString(appVersionStr);
-    if (version != latestVersion) {
-        // TODO: if major version bits do not match, stop operation of app
-        // https://github.com/shawkinsl/mtga-tracker/issues/129
-        if (appVersion.major != latestVersion.major || appVersion.medium != latestVersion.medium) {
-            console.log("no match, major or medium")
-            appData.message = `A new version (${data.tag_name}) is available!`;
-            appData.show_update_message = true;
-        } else if (latestVersion.suffix === undefined && appVersion.suffix !== undefined) {
-            appData.message = `A new version (${data.tag_name}) is available!`;
-            appData.show_update_message = true;
-            console.log("no match, suffix")
-        } else {
-            console.log("close enough")
-        }
-    }
+  if (appData.messages)
+    appData.messages = appData.messages.concat(...data.notifications)
 })
 
 rivets.bind(document.getElementById('container'), appData)
+
+rivets.binders.showmessage = function(el, value) {
+  if (value && remote.getGlobal('messagesAcknowledged').includes(value)) {
+    el.style.display = "none"
+  } else {
+    el.style.display = "block"
+  }
+}
 
 rivets.binders.mana = function(el, value) {
     mi_class = "mi-" + value.toLowerCase()
@@ -191,10 +217,9 @@ ws.addEventListener('open', () => {
     ws.send('hello!');
     console.log("sent hello")
     ws.addEventListener('message', (m) => {
-        console.log(m)
+        console.debug(m)
     })
 });
-
 
 function resizeWindow() {
     let total = 0;
@@ -242,13 +267,84 @@ function unpopulateDecklist() {
 }
 
 
+function uploadGame(attempt, gameData, errors) {
+  if (!errors) {
+    errors = []
+  }
+  return new Promise((resolve, reject) => {
+    if (attempt > 5) {
+      if (!remote.getGlobal("incognito")) {
+        appData.messages.push({text: "WARNING! Could not upload game result to inspector! Error log generated @ uploadfailure.log ... please send this log to our discord #bug_reports channel!"})
+      }
+      fs.writeFile("uploadfailure.log", JSON.stringify({fatal: "too_many_attempts", errors: errors}))
+      reject({fatal: "too_many_attempts", errors: errors})
+    } else {
+      let delay = 1000 * attempt;
+      setTimeout(() => {
+        console.log("sending token request...")
+        request.get({
+            url: "https://wt.mtgatracker.com/wt-bd90f3fae00b1572ed028d0340861e6a-0/mtgatracker-prod-EhDvLyq7PNb/public-api/anon-api-token",
+            json: true,
+            headers: {'User-Agent': 'MTGATracker-App'}
+        }, (err, res, data) => {
+          if (err || res.statusCode != 200) {
+            errors.push({on: "get_token", error: err || res})
+            resolve({attempt: attempt, errors: errors})
+          } else {
+            let token = data.token
+            gameData.client_version = appData.version
+            if (remote.getGlobal("incognito")) {  // we're not allowed to use this game data :(
+              gameData = {anonymousUserID: crypto.createHash('md5').update(gameData.players[0].name).digest("hex")}
+            }
+            console.log("posting game request...")
+            request.post({
+              url: "https://wt.mtgatracker.com/wt-bd90f3fae00b1572ed028d0340861e6a-0/mtgatracker-prod-EhDvLyq7PNb/anon-api/game",
+              json: true,
+              body: gameData,
+              headers: {'User-Agent': 'MTGATracker-App', token: token}
+            }, (err, res, data) => {
+              console.log("finished posting game request...")
+              console.log(res)
+              console.log(err)
+              if (err || res.statusCode != 201) {
+                errors.push({on: "post_game", error: err || res})
+                resolve({attempt: attempt, errors: errors})
+              } else {
+                resolve({
+                  success: true
+                })
+              }
+            })
+          }
+        })
+      }, delay)
+    }
+  }).then(result => {
+    if (!result || !result.success) {
+      return uploadGame(++attempt, gameData, result.errors)
+    } else {
+      return result
+    }
+  })
+}
+
 ws.onmessage = (data) => {
     // data is already parsed as JSON:
     data = JSON.parse(event.data)
     if(data.data_type == "game_state") {
         if (data.match_complete) {
             console.log("match over")
-            appData.game_complete = true;
+            if (data.game) {
+              appData.game_complete = true;
+              let uploadAttempt = 0
+              uploadGame(uploadAttempt, data.game)
+                .then(() => {
+                  console.log("successfully uploaded game!")
+                  if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
+                    appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
+                  }
+                })
+            }
         } else {
             appData.game_in_progress = true;
             appData.game_complete = false;
@@ -264,7 +360,6 @@ ws.onmessage = (data) => {
             appData.error_count = data.count;
         }
         appData.last_error = data.msg;
-        appData.show_error = true;
     } else if (data.data_type == "message") {
         // TODO
     } else if (data.data_type=="decklist_change") {
@@ -274,13 +369,10 @@ ws.onmessage = (data) => {
         } else {
             new_decks = []
             $.each(data.decks, (key, value) => {
-                console.log(key)
-                console.log(value)
                 new_decks.push(value)
             })
             appData.player_decks = new_decks;
             appData.no_decks = false;
-            console.log("got decks safvace")
         }
     }
     resizeWindow()
@@ -304,12 +396,37 @@ document.addEventListener("DOMContentLoaded", function(event) {
         zoom += 0.1
         browserWindow.webContents.setZoomFactor(zoom)
     })
-    const shell = require('electron').shell;
     //open links externally by default
     $(document).on('click', 'a[href^="http"]', function(event) {
         event.preventDefault();
         shell.openExternal(this.href);
     });
 });
+
+ipcRenderer.on('themeChanged', (themeInfo) => {
+  console.log("got theme changed")
+  let useTheme = remote.getGlobal("useTheme")
+  let themeFile = remote.getGlobal("themeFile")
+  let currentThemeLink = $("#theme")
+  if (currentThemeLink) {
+    currentThemeLink.remove()
+  }
+
+  if (useTheme && themeFile) {
+    let head  = document.getElementsByTagName('head')[0];
+    let link  = document.createElement('link');
+    link.id   = 'theme';
+    link.rel  = 'stylesheet';
+    link.type = 'text/css';
+    link.href = '../../../themes/' + themeFile; // ????? tbh
+    head.appendChild(link)
+  }
+})
+
+ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
+  console.log("got an update ready message")
+  console.log(messageInfo)
+  appData.messages.push({text: "A new tracker update will be applied on next launch!", mayfollow:"https://github.com/shawkinsl/mtga-tracker/releases/latest"})
+})
 
 console.timeEnd('init')

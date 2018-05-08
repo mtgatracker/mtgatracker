@@ -10,6 +10,7 @@ const {
   routeDoc,
   sendDiscordMessage,
   userCollection,
+  notificationCollection,
 } = require('../../util')
 
 var secrets; // babel makes it so we can't const this, I am pretty sure
@@ -21,6 +22,22 @@ try {
 
 router.get('/', (req, res, next) => {
   res.status(200).send({routes: routeDoc(router.stack)})
+})
+
+// covered: test_get_anon_token
+router.get('/tracker-notifications', (req, res, next) => {
+  console.log("/public-api/tracker-notifications")
+  const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
+
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    console.log(notificationCollection)
+    let notifications = client.db(DATABASE).collection(notificationCollection);
+    console.log("got notifications")
+    notifications.find().toArray((err, docs) => {
+      console.log("got array")
+      res.status(200).send({notifications: docs})
+    })
+  })
 })
 
 // covered: test_get_anon_token

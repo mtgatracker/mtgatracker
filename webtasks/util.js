@@ -44,6 +44,7 @@ var downloadCount = null;
 const deckCollection = 'deck',
       gameCollection = 'game',
       userCollection = 'user',
+      notificationCollection = 'tracker-notification',
       errorCollection = 'error';
 
 let routeDoc = (routeStack) => {
@@ -306,5 +307,6 @@ module.exports = {
   userCollection: userCollection,
   errorCollection: errorCollection,
   Game: Game,
-  createDeckFilter: createDeckFilter
+  createDeckFilter: createDeckFilter,
+  notificationCollection: notificationCollection,
 }

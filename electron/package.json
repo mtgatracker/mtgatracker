@@ -27,6 +27,7 @@
     },
     "devDependencies": {
         "electron": "^1.7.6",
-        "electron-packager": "^9.0.1"
+        "electron-packager": "^9.0.1",
+        "grunt-electron-installer": "^2.1.0"
     }
 }

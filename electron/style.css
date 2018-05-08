@@ -70,7 +70,17 @@ p {
 .update-message a {
     color: #cccc00;
     text-shadow: 2px 2px #1c1c1c;
-    text-decoration: none;
+}
+
+.update-message {
+    color: #cccc00;
+    text-shadow: 2px 2px #1c1c1c;
+    margin: 5px 0;
+}
+
+.update-message:last-child {
+    margin: 5px 0;
+    margin-bottom: 20px;
 }
 
 #container {

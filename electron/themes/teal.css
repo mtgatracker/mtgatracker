@@ -1,0 +1,16 @@
+* {
+    text-shadow: none!important;
+    color: black!important;
+}
+
+.container-framed {
+    background-color: rgb(2, 238, 238);
+}
+
+.container-normal {
+    background-color: rgba(2, 238, 238, 0.8);
+}
+
+.deck-container:nth-child(even) {
+    background-color: rgb(146, 255, 255);
+}
