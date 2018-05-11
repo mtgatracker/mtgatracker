@@ -71,6 +71,29 @@ let createAnonymousToken = (jwtSecret) => {
   return jwt.sign({"user": null, "anonymousClientID": random6DigitCode()}, jwtSecret, {expiresIn: "1d"})
 }
 
+let createDeckFilter = (query) => {
+  queryObj = {$and: []}
+  filterable = {
+    //"colors": "notimplemented",
+    //"colorsAgainst": "notimplemented",
+    "deckID": "players.0.deck.deckID",
+    "opponent": "opponent"}
+  Object.keys(query).filter(key => Object.keys(filterable).includes(key)).forEach(key => {
+    filterObj = query[key]
+
+    // js doesn't allow literals as keys :(
+    let matchFilter = {}
+    matchFilter[`${filterable[key]}`] = filterObj
+    let doesntExistFilter = {}
+    doesntExistFilter[`${filterable[key]}`] = {$exists: false}
+
+    queryObj["$and"].push({
+      $or: [ matchFilter, doesntExistFilter ]  // match where they are equal, or the filter doesn't exist in the db, e.g. colors
+    })
+  })
+  return queryObj
+}
+
 let getCookieToken = (req) => {
   console.log("get cookie token")
   if (req.headers.cookie && req.headers.cookie.split('=')[0] === 'access_token') {
@@ -279,5 +302,6 @@ module.exports = {
   gameCollection: gameCollection,
   userCollection: userCollection,
   errorCollection: errorCollection,
-  Game: Game
+  Game: Game,
+  createDeckFilter: createDeckFilter
 }

@@ -937,6 +937,31 @@ def test_get_user_decks(empty_game_collection):
     assert games["123-456-789"]["wins"] == 2
 
 
+@pytest.mark.token
+@pytest.mark.auth
+def test_get_user_games_for_deck(empty_game_collection):
+    specific_deck_ID = "search_deck_id"
+    post_random_game(winner="gemma", winner_deck_id=specific_deck_ID)
+    gemma_token = get_user_token("gemma")
+    games = get(url + "/api/games?deckID={}".format(specific_deck_ID), headers={"token": gemma_token})
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+        assert game["players"][0]["deck"]["deckID"] == specific_deck_ID
+
+    post_random_game(winner="gemma", winner_deck_id="search_deck_id")
+    post_random_game(winner="gemma")
+    post_random_game(winner="notgemma")
+    post_random_game(winner="notgemma", winner_deck_id="search_deck_id")  # this should never happen, but still
+    post_random_game(winner="gemma", winner_deck_id="search_deck_id")
+    post_random_game(winner="gemma")
+
+    games = get(url + "/api/games?deckID={}".format(specific_deck_ID), headers={"token": gemma_token})
+    assert len(games["docs"]) == 3
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+        assert game["players"][0]["deck"]["deckID"] == specific_deck_ID
+
+
 def test_game_histogram_one_per(empty_game_collection, admin_token):
     _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
     twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]

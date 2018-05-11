@@ -5,6 +5,7 @@ const express = require('express'),
 const {
   clientVersionUpToDate,
   createAnonymousToken,
+  createDeckFilter,
   createToken,
   differenceMinutes,
   Game,
@@ -46,14 +47,18 @@ router.get('/games', (req, res, next) => {
   } else {
     var per_page = 10;
   }
-  const { page = 1} = req.query;
+  const { page = 1 } = req.query;
+  const { user } = req.user;
+  const addFilter = Object.assign({'players.name': user}, createDeckFilter(req.query))
+
+  console.log(`=========================> using filter ${JSON.stringify(addFilter)}`)
+
   const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
 
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
-    const { user } = req.user;
     if (connectErr) return next(connectErr);
     let collection = client.db(DATABASE).collection(gameCollection)
-    let cursor = collection.find({'players.name': user}).sort({date: -1});
+    let cursor = collection.find(addFilter).sort({date: -1});
     cursor.count(null, null, (err, count) => {
       let numPages = Math.ceil(count / per_page);
       let docCursor = cursor.skip((page - 1) * per_page).limit(per_page);
