@@ -72,7 +72,7 @@ let createAnonymousToken = (jwtSecret) => {
 }
 
 let createDeckFilter = (query) => {
-  queryObj = {$and: []}
+  queryObj = {}
   filterable = {
     //"colors": "notimplemented",
     //"colorsAgainst": "notimplemented",
@@ -87,6 +87,9 @@ let createDeckFilter = (query) => {
     let doesntExistFilter = {}
     doesntExistFilter[`${filterable[key]}`] = {$exists: false}
 
+    if (!queryObj.$and) {
+      queryObj.$and = []
+    }
     queryObj["$and"].push({
       $or: [ matchFilter, doesntExistFilter ]  // match where they are equal, or the filter doesn't exist in the db, e.g. colors
     })

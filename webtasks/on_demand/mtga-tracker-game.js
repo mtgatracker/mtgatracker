@@ -68,7 +68,7 @@ let userUpToDate = (req, res, next) => {
     let collection = client.db(DATABASE).collection(gameCollection)
     let cursor = collection.find({'hero': user}).sort({date: -1});
     cursor.next((err, doc) => {
-      if (doc.clientVersionOK) next()
+      if (doc && doc.clientVersionOK) next()
       else {
        res.status(400).send({"error": "your account has been locked"})
       }

@@ -109,6 +109,7 @@ router.get('/decks', (req, res, next) => {
           let winCount = pushed.pop()
           deckReturn[deck.players[0].deck.deckID] = {
             deckName: deck.players[0].deck.poolName,
+            deckID: deck.players[0].deck.deckID,
             wins: winCount,
             losses: lossCount
           }
