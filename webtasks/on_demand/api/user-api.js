@@ -2,6 +2,9 @@
 
 const express = require('express'),
       router = express.Router();
+
+const { cardsColors } = require("mtga")
+
 const {
   clientVersionUpToDate,
   createAnonymousToken,
@@ -71,6 +74,46 @@ router.get('/games', (req, res, next) => {
           docs: docs
         });
         client.close()
+      })
+    })
+  })
+})
+
+router.get('/deck/:deckID/winloss-colors', (req, res, next) => {
+
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
+
+  console.log("/deck/winloss-colors" + JSON.stringify(req.params))
+  const { user } = req.user;
+  let colors = ["White", "Red", "Green", "Blue", "Black"]
+  let colorCounts = {}
+  colors.forEach(color => {
+    colorCounts[color] = {wins: 0, total: 0}
+  })
+
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    if (connectErr) return next(connectErr);
+    let collection = client.db(DATABASE).collection(gameCollection)
+    const addFilter = {'hero': user, 'players.0.deck.deckID': req.params.deckID}
+    let allDeckGames = collection.find(addFilter)
+    allDeckGames.toArray((err, gameArray) => {
+      let allColorPromises = []
+      gameArray.forEach(game => {
+        let oppoCardIDs = Object.keys(game.players[1].deck.cards).map(x => parseInt(x, 10))
+        let oppoColorPromise = cardsColors(oppoCardIDs)
+        allColorPromises.push(oppoColorPromise)
+        oppoColorPromise.then(colors => {
+          colors.forEach(oppoColor => {
+            if (oppoColor != "Colorless") {
+              colorCounts[oppoColor].total += 1
+              if (game.winner == user)
+                colorCounts[oppoColor].wins += 1
+            }
+          })
+        })
+      })
+      Promise.all(allColorPromises).then(unused => {
+        res.status(200).send(colorCounts)
       })
     })
   })
