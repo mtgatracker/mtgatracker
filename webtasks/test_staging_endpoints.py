@@ -434,8 +434,10 @@ def test_get_users_games_by_user_id_admin(any_games_5_or_more, admin_token):
     assert len(all_id_set) == 4
 
 
-def test_get_game(any_games_5_or_more):
+def test_get_game(empty_game_collection):
     game, res = post_random_game(winner="tess", loser="joey")
+    game2, res = post_random_game(winner="joey", loser="nobody")
+
     game_id = game["gameID"]
     hero_token = get_user_token("tess")
     opponent_token = get_user_token("joey")
@@ -937,6 +939,56 @@ def test_get_user_decks(empty_game_collection):
     assert games["123-456-789"]["wins"] == 2
 
 
+@pytest.mark.token
+@pytest.mark.auth
+def test_get_user_games_for_deck(empty_game_collection):
+    specific_deck_ID = "search_deck_id"
+    post_random_game(winner="gemma", winner_deck_id=specific_deck_ID)
+    gemma_token = get_user_token("gemma")
+    games = get(url + "/api/games?deckID={}".format(specific_deck_ID), headers={"token": gemma_token})
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+        assert game["players"][0]["deck"]["deckID"] == specific_deck_ID
+
+    post_random_game(winner="gemma", winner_deck_id="search_deck_id")
+    post_random_game(winner="gemma")
+    post_random_game(winner="notgemma")
+    post_random_game(winner="notgemma", winner_deck_id="search_deck_id")  # this should never happen, but still
+    post_random_game(winner="gemma", winner_deck_id="search_deck_id")
+    post_random_game(winner="gemma")
+
+    games = get(url + "/api/games?deckID={}".format(specific_deck_ID), headers={"token": gemma_token})
+    assert len(games["docs"]) == 3
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+        assert game["players"][0]["deck"]["deckID"] == specific_deck_ID
+
+
+@pytest.mark.token
+@pytest.mark.auth
+def test_get_user_games_against_opponent(empty_game_collection):
+    specific_opponent = "antigemma"
+    post_random_game(winner="gemma", hero="gemma", opponent=specific_opponent)
+    gemma_token = get_user_token("gemma")
+    games = get(url + "/api/games?opponent={}".format(specific_opponent), headers={"token": gemma_token})
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+        assert game["opponent"] == specific_opponent
+
+    post_random_game(winner="gemma", hero="gemma", opponent=specific_opponent)
+    post_random_game(winner="gemma", hero="gemma")
+    post_random_game(winner="notgemma")
+    post_random_game(winner="notgemma", opponent=specific_opponent)  # this should never happen, but still
+    post_random_game(winner="gemma", hero="gemma", opponent=specific_opponent)
+    post_random_game(winner="gemma", hero="gemma")
+
+    games = get(url + "/api/games?opponent={}".format(specific_opponent), headers={"token": gemma_token})
+    assert len(games["docs"]) == 3
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+        assert game["opponent"] == specific_opponent
+
+
 def test_game_histogram_one_per(empty_game_collection, admin_token):
     _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
     twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
@@ -957,6 +1009,7 @@ def test_game_histogram_one_per(empty_game_collection, admin_token):
         else:
             assert next_count == current_count + 1
         current_count = next_count
+
 
 def test_game_histogram_one_per_(empty_game_collection, admin_token):
     _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
