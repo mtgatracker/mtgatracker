@@ -4,8 +4,9 @@ Howdy! You probably got dumped here after attempting to log in to [MTGA Tracker:
 for the first time. Unfortunately, we need to verify your identity before we allow you to log in to MTGATracker.
 
 We'll be happy to get you set up over in the discord; simply join our server using [this
-link](https://discord.gg/j5u76j2), and let the mods know you're trying to log in. (Go ahead and use @mods, we don't
-mind!) You can go now, and we'll get you set up, or you can read a little more about why we use this step here.
+link](https://discord.gg/j5u76j2). Once you've joined the server, our bot will send you a PM with the next instructions. Note that you will need to complete at least one game with the tracker running before our systems will be able to verify you.
+
+You can stop reading now and go get logged in, or you can keep reading here to learn about what we're doing here & why.
 
 ### MTGA Tracker is "passwordless"
 
