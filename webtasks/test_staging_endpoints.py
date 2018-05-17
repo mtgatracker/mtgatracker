@@ -32,6 +32,8 @@ database = mongo_client['mtga-tracker-staging']
 games_collection = database['game']
 users_collection = database['user']
 
+url = "https://wt-bd90f3fae00b1572ed028d0340861e6a-0.sandbox.auth0-extend.com/mtga-tracker-game-staging"
+
 
 def post(post_url, post_json, raw_result=False, headers=None):
     post_json_str = str(post_json)
@@ -507,8 +509,25 @@ def test_post_game_without_hero_gets_hero(empty_user_collection):
             assert "visible cards" in player["deck"]["poolName"]
 
 
+@pytest.mark.dev
 def test_clientversion_ok(empty_user_collection, any_games_5_or_more):
     posted_game, result = post_random_game(client_version=latest_client_version, game_shell=_game_shell_schema_1_1_0_beta)
+    assert "clientVersionOK" not in posted_game.keys()
+    game_id = posted_game["gameID"]
+    hero_token = get_user_token(posted_game["hero"])
+    game_by_id = get_game_by_id(game_id, hero_token)
+    assert "clientVersionOK" in game_by_id.keys() and game_by_id["clientVersionOK"]
+
+    newer_major_version = "9" + latest_client_version[1:]
+    posted_game, result = post_random_game(client_version=newer_major_version, game_shell=_game_shell_schema_1_1_0_beta)
+    assert "clientVersionOK" not in posted_game.keys()
+    game_id = posted_game["gameID"]
+    hero_token = get_user_token(posted_game["hero"])
+    game_by_id = get_game_by_id(game_id, hero_token)
+    assert "clientVersionOK" in game_by_id.keys() and game_by_id["clientVersionOK"]
+
+    newer_medium_version = latest_client_version[:2] + "9" + latest_client_version[3:]
+    posted_game, result = post_random_game(client_version=newer_medium_version, game_shell=_game_shell_schema_1_1_0_beta)
     assert "clientVersionOK" not in posted_game.keys()
     game_id = posted_game["gameID"]
     hero_token = get_user_token(posted_game["hero"])
@@ -523,7 +542,7 @@ def test_clientversion_ok(empty_user_collection, any_games_5_or_more):
     game_by_id = get_game_by_id(game_id, hero_token)
     assert "clientVersionOK" in game_by_id.keys() and not game_by_id["clientVersionOK"]
 
-    posted_game, result = post_random_game(client_version="99.99.99", game_shell=_game_shell_schema_1_1_0_beta)
+    posted_game, result = post_random_game(client_version="1.0.0", game_shell=_game_shell_schema_1_1_0_beta)
     assert "clientVersionOK" not in posted_game.keys()
     game_id = posted_game["gameID"]
     hero_token = get_user_token(posted_game["hero"])
