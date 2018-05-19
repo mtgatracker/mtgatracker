@@ -1,8 +1,15 @@
+import sys
+
 import app.models.set as mset
 from app.mtga_app import mtga_watch_app
 from app.models.card import GameCard
 from app.models.set import Deck
 from util import all_mtga_cards
+try:
+    from app._secrets import API_URL, hash_json_object
+except ImportError:
+    sys.stderr.write("WARNING! Using secrets template; this will not hit production databases!")
+    from app.secrets_template import API_URL, hash_json_object
 
 
 class Player(object):
@@ -244,8 +251,10 @@ class Game(object):
             "userID": self.opponent.player_id,
             "deck": self.opponent.seen_cards_to_min_json()
         }
-        return {
+        gameJSON = {
             "players": [hero_obj, opponent_obj],
             "winner": self.winner.player_name,
             "gameID": self.match_id,
         }
+        gameJSON["game_hash"] = hash_json_object(gameJSON)
+        return gameJSON

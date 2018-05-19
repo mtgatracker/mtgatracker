@@ -41,7 +41,6 @@ class MTGAWatchApplication(object):
         self.player_decks = {}
         self.last_blob = None
         self.error_count = 0
-        self.web_api = WebAPI()
 
         appdata_roaming = os.getenv("APPDATA")
         self._settings_path = os.path.join(appdata_roaming, "..", "LocalLow", "MTGATracker")
@@ -66,7 +65,7 @@ class MTGAWatchApplication(object):
                 settings = json.load(rp)
         except:
             mtga_logger.error("had to move settings.json -> settings.json.bak, trying again...")
-            mtga_watch_app.send_error("Error loading settings; had to move settings.json -> settings.json.bak")
+            # mtga_watch_app.send_error("Error loading settings; had to move settings.json -> settings.json.bak")
             os.rename(self._settings_json_path, self._settings_json_path + ".bak")
             return self.load_settings()
         if "player_id" in settings and settings["player_id"]:
@@ -93,21 +92,6 @@ class MTGAWatchApplication(object):
         if not new_dl:
             new_dl = {"no_decks_defined": True}
         decklist_change_queue.put(new_dl)
-
-
-class WebAPI(object):
-
-    def __init__(self, api_url=API_URL):
-        self.api_url = api_url
-
-    def save_game_result(self, game):
-        anon_token_url = self.api_url + "/public-api/anon-api-token"
-        token = requests.get(anon_token_url).json()["token"]
-
-        url = self.api_url + "/anon-api/game"
-        game["client_version"] = client_version
-        game["game_hash"] = hash_json_object(game)
-        print(requests.post(url, json=game, headers={"token": token}).json())
 
 
 mtga_watch_app = MTGAWatchApplication()

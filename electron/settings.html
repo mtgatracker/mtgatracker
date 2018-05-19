@@ -15,33 +15,83 @@
     <div class="pane pane-sm sidebar">
       <nav class="nav-group">
         <h5 class="nav-group-title">Tracker Settings</h5>
-        <a rv-class-active="showInterfaceSettings" class="nav-group-item" id="interface-nav">
-          <span class="icon icon-eye"></span>
-          Interface
+        <a value="about" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="about-nav">
+          <span class="icon icon-info"></span>
+          About
+        </a>
+        <a value="general" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="general-nav">
+          <span class="icon icon-home"></span>
+          General
+        </a>
+        <a value="theme" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="theme-nav">
+          <span class="icon icon-brush"></span>
+          Themes
         </a>
       </nav>
       <nav class="nav-group">
         <h5 class="nav-group-title">Account Settings</h5>
-        <a rv-class-active="showPrivacySettings" class="nav-group-item" id="privacy-nav">
+        <a value="privacy" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="privacy-nav">
           <span class="icon icon-lock"></span>
           Privacy
         </a>
       </nav>
     </div>
     <div class="pane">
-      <div id="interface-pane" rv-show="showInterfaceSettings">
+      <div id="about-pane" value="about" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
-            <input rv-checked="debug" class="tf-toggle" type="checkbox" key="debug" data-toggle="toggle"> Debug Mode
-          </div>
-          <div class="settings-row">
-            <input rv-checked="useFrame" class="tf-toggle" type="checkbox" key="useFrame" data-toggle="toggle"> Streamer Mode (debug takes precedence)
+            <h3><i>About MTGATracker</i></h3>
+            <p class="about-p"><b>Version:</b> { version }</p>
+            <p class="about-p"><b>Homepage:</b> <a href="https://mtgatracker.com/">mtgatracker.com</a></p>
+            <p class="about-p"><b>Privacy:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/privacy.md">privacy.md</a></p>
+            <p class="about-p"><b>Documentation:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/README.md">README.md</a></p>
+            <p class="about-p"><b>Inspector:</b> <a href="https://inspector.mtgatracker.com/">inspector.mtgatracker.com</a></p>
+            <br />
+            <p class="about-p disclaimer">MTGA Tracker is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
           </div>
         </div>
       </div>
-      <div id="privacy-pane" rv-show="showPrivacySettings">
+      <div id="general-pane" value="general" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
-          <p>Oops! Sorry, there's nothing here yet!</p>
+          <div class="settings-row">
+            <p><i>Note: after changing these settings, you must restart MTGATracker to see effects</i></p>
+            <input rv-checked="debug" class="tf-toggle" type="checkbox" key="debug" data-toggle="toggle"> Debug Mode
+          </div>
+          <div class="settings-row">
+            <input rv-checked="useFrame" class="tf-toggle" type="checkbox" key="useFrame" data-toggle="toggle"> Streamer Mode
+          </div>
+          <div class="settings-row">
+            <input rv-checked="showErrors" class="tf-toggle" type="checkbox" key="showErrors" data-toggle="toggle"> Show error count in game
+          </div>
+          <div class="settings-row">
+            <input rv-checked="showInspector" class="tf-toggle" type="checkbox" key="showInspector" data-toggle="toggle"> Show inspector reminders
+          </div>
+        </div>
+      </div>
+      <div id="theme-pane" value="theme" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <div class="checkbox">
+              <label>
+                <input rv-checked="useTheme" id="apply-custom-theme-toggle" type="checkbox" data-toggle="toggle"> Apply the following custom theme:
+              </label>
+            </div>
+          </div>
+          <div class="settings-row">
+            <select id="custom-theme-select" class="form-control">
+              <option rv-each-theme="customStyleFiles">{ theme }</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="privacy-pane" value="privacy" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <input rv-checked="incognito" class="tf-toggle" type="checkbox" key="incognito" data-toggle="toggle"> Incognito Mode
+            <br />
+            <br />
+            <p class="about-p disclaimer"><b>Warning:</b> with incognito mode enabled, MTGATracker will not send any game data to MTGATracker services, including inspector. This means that inspector will no longer work!</p>
+          </div>
         </div>
       </div>
     </div>
