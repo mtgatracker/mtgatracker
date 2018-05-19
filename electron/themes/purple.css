@@ -1,0 +1,11 @@
+.container-framed {
+    background-color: rgb(112, 0, 103);
+}
+
+.container-normal {
+    background-color: rgba(112, 0, 103, 0.8);
+}
+
+.deck-container:nth-child(even) {
+    background-color: #8a1881;
+}

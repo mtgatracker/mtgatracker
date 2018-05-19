@@ -24,7 +24,7 @@ args = arg_parser.parse_args()
 
 async def stats(websocket):
     try:
-        game_state = game_state_change_queue.get(timeout=0.1)
+        game_state = game_state_change_queue.get(timeout=0.01)
     except Empty:
         game_state = False
     if game_state:
@@ -34,13 +34,13 @@ async def stats(websocket):
         await websocket.send(json.dumps(game_state))
     # else:
     #     await websocket.send('{"no": "data"}')
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.01)
 
 
 async def decks(websocket):
     decklist_change = {}
     try:
-        decks = decklist_change_queue.get(timeout=0.1)
+        decks = decklist_change_queue.get(timeout=0.01)
     except Empty:
         decks = False
     if decks:
@@ -49,12 +49,12 @@ async def decks(websocket):
         decklist_change["now"] = now
         decklist_change["data_type"] = "decklist_change"
         await websocket.send(json.dumps(decklist_change))
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.01)
 
 
 async def output(websocket):
     try:
-        message = general_output_queue.get(timeout=0.1)
+        message = general_output_queue.get(timeout=0.01)
     except Empty:
         message = False
     if message:
@@ -65,7 +65,7 @@ async def output(websocket):
         else:
             message["data_type"] = "message"
         await websocket.send(json.dumps(message))
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.01)
 
 
 async def consumer_handler(websocket):
@@ -89,7 +89,7 @@ async def handler(websocket, _):
         )
         for task in pending:
             task.cancel()
-        time.sleep(1)
+        time.sleep(0.1)
     websocket.close()
     loop = asyncio.get_event_loop()
     loop.stop()

@@ -44,6 +44,7 @@ var downloadCount = null;
 const deckCollection = 'deck',
       gameCollection = 'game',
       userCollection = 'user',
+      notificationCollection = 'tracker-notification',
       errorCollection = 'error';
 
 let routeDoc = (routeStack) => {
@@ -223,7 +224,7 @@ let clientVersionUpToDate = (clientVersion, storage) => {
         let ok = false;
         if (appVersion != latestVersion) {
           // https://github.com/shawkinsl/mtga-tracker/issues/129
-          if (appVersion.major != latestVersion.major || appVersion.medium != latestVersion.medium) {
+          if (appVersion.major < latestVersion.major || appVersion.medium < latestVersion.medium) {
             ok = false;
           } else if (latestVersion.suffix === undefined && appVersion.suffix !== undefined) {
             // client is x.y.z-beta, latest is x.y.z
@@ -306,5 +307,6 @@ module.exports = {
   userCollection: userCollection,
   errorCollection: errorCollection,
   Game: Game,
-  createDeckFilter: createDeckFilter
+  createDeckFilter: createDeckFilter,
+  notificationCollection: notificationCollection,
 }

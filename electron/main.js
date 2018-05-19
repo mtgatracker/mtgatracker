@@ -1,9 +1,24 @@
-const path = require('path')
 const console = require('console');
+
+global.updateReady = false
+const { handleStartupEvent } = require("./updates")
+
+if (handleStartupEvent()) {
+  return;
+}
+
+const path = require('path')
 const fs = require('fs');
 const findProcess = require('find-process');
-const { app, ipcMain, BrowserWindow } = require('electron')
+const { app, ipcMain, BrowserWindow, autoUpdater } = require('electron')
 const settings = require('electron-settings');
+
+autoUpdater.on('update-downloaded', (e) => {
+  global.updateReady = true
+  mainWindow.webContents.send('updateReadyToInstall', {
+    text: "A new version has been downloaded. Restart to update!"
+  })
+})
 
 
 /*************************************************************
@@ -16,7 +31,6 @@ const PY_MODULE = 'mtgatracker_backend' // without .py suffix
 
 let pyProc = null
 let pyPort = null
-
 
 let getBooleanArg = (short, long) => {
   let shortIdx = process.argv.indexOf(short)
@@ -35,7 +49,12 @@ if (frameCmdOpt) {
 }
 
 let debug = settings.get('debug', false);
+let showErrors = settings.get('showErrors', false);
+let incognito = settings.get('incognito', false);
+let showInspector = settings.get('showInspector', true);
 let useFrame = settings.get('useFrame', false);
+let useTheme = settings.get('useTheme', false);
+let themeFile = settings.get('themeFile', "");
 let showIIDs = settings.get('showIIDs', false);
 let no_server = settings.get('no_server', false);
 let kill_server = settings.get('kill_server', false);
@@ -45,9 +64,19 @@ let server_killed = false;
 let readFullFile = false;
 let debugFile = false;
 
+ipcMain.on('messageAcknowledged', (event, arg) => {
+  let acked = settings.get("messagesAcknowledged", [])
+  acked.push(arg)
+  settings.set("messagesAcknowledged", acked)
+  global["messagesAcknowledged"] = acked;
+})
+
 ipcMain.on('settingsChanged', (event, arg) => {
   global[arg.key] = arg.value;
   settings.set(arg.key, arg.value)
+  if (arg.key == "themeFile" || arg.key == "useTheme") {
+    mainWindow.webContents.send('themeChanged')
+  }
 })
 
 ipcMain.on('openSettings', (event, arg) => {
@@ -195,10 +224,15 @@ if (!no_server) {
 }
 
 global.debug = debug;
+global.showErrors = showErrors;
+global.incognito = incognito;
+global.showInspector = showInspector;
 global.useFrame = useFrame;
+global.useTheme = useTheme;
+global.themeFile = themeFile;
 global.showIIDs = showIIDs;
 global.version = app.getVersion()
-
+global.messagesAcknowledged = settings.get("messagesAcknowledged", [])
 
 /*************************************************************
  * window management
@@ -227,20 +261,14 @@ const createWindow = () => {
                                   title: false,
                                   maximizable: false,
                                   icon: "img/icon_small.ico"})
-
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
     slashes: true
   }))
-  mainWindow.onbeforeunload = (e) => {
-    var answer = confirm('Do you really want to close the application?');
-    console.log("onbeforeunload mw")
-    e.returnValue = false
-  }
   mainWindow.on('closed', () => {
-    console.log("closed")
-    return false;
+    console.log("main window closed")
+    killServer()
   })
 
   if (debug) {
@@ -248,6 +276,7 @@ const createWindow = () => {
   }
 
   mainWindow.once('ready-to-show', () => {
+    mainWindow.webContents.send('themeChanged')
     mainWindow.show()
     console.timeEnd('init')
     mainWindow.webContents.setZoomFactor(0.8)
@@ -260,6 +289,7 @@ function freeze(time) {
 }
 
 const killServer = () => {
+    console.log("killServer called")
     if (!server_killed && kill_server) {
         server_killed = true;
         if (!no_server) {
@@ -268,28 +298,23 @@ const killServer = () => {
         }
         pyProc = null
         pyPort = null
-        app.quit()
+    }
+//    if (settingsWindow) {
+//      settingsWindow.close()
+//      settingsWindow = null;
+//    }
+    if (global.updateReady) {
+      console.log("doing quitAndInstall")
+      autoUpdater.quitAndInstall()
+    } else {
+      console.log("app.quit()")
+      app.quit()
     }
 }
 
 app.on('ready', createWindow)
 
-app.on('before-quit', function() {
-  console.log("boutta quit")
-  killServer()
-})
-
 app.on('will-quit', function() {
-  console.log("quitting")
+  console.log("will quit")
   killServer()
-})
-
-app.on('window-all-closed', () => {
-    killServer()
-})
-
-app.on('beforeunload', (e) => {
-    console.log("onbeforeunload app")
-    return false;
-    e.returnValue = "false";
 })

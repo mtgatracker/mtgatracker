@@ -67,10 +67,6 @@ class Card(object):
             util.all_mtga_cards.cards.append(new_unknown_card)
             return new_unknown_card
 
-    def is_basic(self):
-        import app.set_data.weird
-        return self.mtga_id in [card.mtga_id for card in app.set_data.weird.BasicLands.cards]
-
     def __repr__(self):
         return "<Card: '{}' {} {} {}>".format(self.pretty_name, self.colors, self.set, self.mtga_id)
 

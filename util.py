@@ -139,9 +139,13 @@ def resource_path(relative_path):
     path = getattr(sys, '_MEIPASS', os.getcwd())
     return os.path.join(path, relative_path)
 
+try:
+    with open(resource_path(os.path.join('electron', 'package.json')), 'r') as package_file:
+        client_version = json.load(package_file)["version"]
+except FileNotFoundError:
+    with open(resource_path(os.path.join('..', 'electron', 'package.json')), 'r') as package_file:
+        client_version = json.load(package_file)["version"]
 
-with open(resource_path(os.path.join('electron', 'package.json')), 'r') as package_file:
-    client_version = json.load(package_file)["version"]
 
 
 class KillableTailer(Tailer):
