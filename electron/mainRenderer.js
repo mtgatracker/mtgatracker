@@ -200,8 +200,12 @@ var updateOpacity = function() {
     }
 }
 
-document.getElementById("floating-eye").addEventListener("click", function() {
-    all_hidden = !all_hidden;
+var toggleOpacity = function(hide) {
+    if (hide === undefined) {
+      all_hidden = !all_hidden;
+    } else {
+      all_hidden = hide;
+    }
     updateOpacity();
     if (hideTimeoutId) {
         clearTimeout(hideTimeoutId)
@@ -211,6 +215,10 @@ document.getElementById("floating-eye").addEventListener("click", function() {
         all_hidden = false;
         updateOpacity()
     }, 10000)
+}
+
+document.getElementById("floating-eye").addEventListener("click", function() {
+  toggleOpacity()
 })
 
 ws.addEventListener('open', () => {
@@ -218,6 +226,13 @@ ws.addEventListener('open', () => {
     console.log("sent hello")
     ws.addEventListener('message', (m) => {
         console.debug(m)
+        let mdata = JSON.parse(m.data)
+        if (mdata.right_click) {
+            toggleOpacity(true)
+        }
+        if (mdata.left_click && remote.getGlobal("leftMouseEvents")) {
+            toggleOpacity(false)
+        }
     })
 });
 

@@ -10,6 +10,8 @@ var settingsData = {
   incognito: remote.getGlobal('incognito'),
   useFrame: remote.getGlobal('useFrame'),
   useTheme: remote.getGlobal('useTheme'),
+  mouseEvents: remote.getGlobal('mouseEvents'),
+  leftMouseEvents: remote.getGlobal('leftMouseEvents'),
   customStyleFiles: [],
 }
 

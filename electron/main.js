@@ -57,6 +57,8 @@ let useTheme = settings.get('useTheme', false);
 let themeFile = settings.get('themeFile', "");
 let showIIDs = settings.get('showIIDs', false);
 let no_server = settings.get('no_server', false);
+let mouseEvents = settings.get('mouseEvents', true);
+let leftMouseEvents = settings.get('leftMouseEvents', true);
 let kill_server = settings.get('kill_server', false);
 
 let noFollow = false;
@@ -165,6 +167,9 @@ const generateArgs = () => {
     if (readFullFile) {
         args.push('-f')
     }
+    if (mouseEvents) {
+      args.push('-m')
+    }
     return args
 }
 
@@ -231,6 +236,8 @@ global.useFrame = useFrame;
 global.useTheme = useTheme;
 global.themeFile = themeFile;
 global.showIIDs = showIIDs;
+global.leftMouseEvents = leftMouseEvents;
+global.mouseEvents = mouseEvents;
 global.version = app.getVersion()
 global.messagesAcknowledged = settings.get("messagesAcknowledged", [])
 

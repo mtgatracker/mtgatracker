@@ -4,3 +4,4 @@ tailer
 websockets
 pyinstaller
 pytest
+pynput
