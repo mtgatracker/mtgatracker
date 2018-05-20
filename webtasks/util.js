@@ -171,12 +171,12 @@ let differenceMinutes = (date1, date2) => {
 
 let getGithubStats = (storage) => {
   return new Promise((resolve, reject) => {
-    storage.get((err, data) => {
+    storage.get((err, storageData) => {
       // github rate limits are 1/min for unauthed requests, only allow every 1.5 min to be safe
-      if (data === undefined || differenceMinutes(data.lastUpdated, Date.now()) >= 1.5) {
+      if (storageData === undefined || differenceMinutes(storageData.lastUpdated, Date.now()) >= 1.5) {
         let setTime = Date.now()
-        if (data !== undefined && data.lastUpdated !== undefined)
-          console.log("need to request gh api (has been " + differenceMinutes(data.lastUpdated, Date.now()) + " minutes)")
+        if (storageData !== undefined && storageData.lastUpdated !== undefined)
+          console.log("need to request gh api (has been " + differenceMinutes(storageData.lastUpdated, Date.now()) + " minutes)")
         else
           console.log("need to request gh data (cache is empty)")
         request.get({
@@ -186,10 +186,12 @@ let getGithubStats = (storage) => {
         }, (err, res, data) => {
           if (err || (typeof data === 'object' && !(data instanceof Array))) {
             console.log("greppable: gh data was not array and was object")
-            let fakeVersionStr = "1.1.1-beta"
-            let fakedData = {latestVersion: parseVersionString(fakeVersionStr), latestVersionString: latestVersionString, totalDownloads: 100, lastUpdated: new Date(), warning: "Warning: this is fake data!"}
-            storage.set(fakedData, (err) => {})
-            resolve(fakedData)
+            if (!storageData) {
+              let fakeVersionStr = "3.0.0"
+              storageData = {latestVersion: parseVersionString(fakeVersionStr), latestVersionString: latestVersionString, totalDownloads: 100, lastUpdated: new Date(), warning: "Warning: this is fake data!"}
+            }
+            storage.set(storageData, (err) => {})
+            resolve(storageData)
           } else {
             let downloadCount = 0;
             data.forEach((elem, idx) => {
@@ -205,7 +207,7 @@ let getGithubStats = (storage) => {
           }
         })
       } else {
-        resolve(data)
+        resolve(storageData)
       }
     })
   })
