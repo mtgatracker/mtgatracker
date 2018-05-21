@@ -21,16 +21,15 @@ Instead, we will use MTGA as the source of trust (once MTGA has a friends list).
 account a 6-digit rotating access code as you try to log in. Since you, and only you, are able to log in to your MTGA
 account, when you tell use that same 6 digit passcode, we know it's you!
 
-Of course, MTGA doesn't have a friends list, or buddy messaging, yet. So in the meantime, we're using discord and a team
-of mods who will manually verify your identity. Once a mod has verified your identity (one-time), our discord bots
-will PM you your passcode, which you can then use to log in to inspector.
+Of course, MTGA doesn't have a friends list, or buddy messaging, yet. So in the meantime, we're using discord, a bot, and a team
+of mods who can manually verify your identity if our bots get hung up on something. Once a bot or mod has verifie
+your identity (one-time only), our discord bots will PM you your passcode, which you can then use to log in to inspector.
 
 ### Verifying your identity
 
-All that's required for this step is that you have MTGATracker running. Our mods will walk your through our requirements
-to verify your identity.
+All that's required for this step is that you are in the [mtgatracker discord server](https://discord.gg/j5u76j2) (it's free!), and are logged in to the MTGA beta forums. The bot will send you a message as you join the server that will walk you through the rest!
 
-# MTGA Tracker, and its mods, will NEVER ask for your MTGA password
+# MTGA Tracker, its bots, and its mods, will NEVER ask for your MTGA password
 
 If anyone asks for your password in relation to MTGATracker, please report it to Spencatro immediately. We will never
 ask for your password, in any setting, for any reason.
