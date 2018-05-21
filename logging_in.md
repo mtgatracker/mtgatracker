@@ -1,7 +1,7 @@
 # How to log in to inspector
 
 Howdy! You probably got dumped here after attempting to log in to [MTGA Tracker: Inspector](https://inspector.mtgatracker.com/)
-for the first time. Unfortunately, we need to verify your identity before we allow you to log in to MTGATracker: Inspector.
+for the first time. Unfortunately, we need to verify that you own the MTGA account you're trying to log in with before we allow you to log in to MTGATracker: Inspector.
 
 We'll be happy to get you set up over in the discord; simply join our server using [this
 link](https://discord.gg/j5u76j2). Once you've joined the server, our bot will send you a PM with the next instructions. Note that you will need to complete at least one game with the tracker running before our systems will be able to verify you.
@@ -22,7 +22,7 @@ account a 6-digit rotating access code as you try to log in. Since you, and only
 account, when you tell use that same 6 digit passcode, we know it's you!
 
 Of course, MTGA doesn't have a friends list, or buddy messaging, yet. So in the meantime, we're using discord, a bot, and a team
-of mods who can manually verify your identity if our bots get hung up on something. Once a bot or mod has verifie
+of mods who can manually verify your identity if our bots get hung up on something. Once a bot or mod has verified
 your identity (one-time only), our discord bots will PM you your passcode, which you can then use to log in to inspector.
 
 ### Verifying your identity
