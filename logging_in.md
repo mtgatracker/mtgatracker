@@ -1,7 +1,7 @@
 # How to log in to inspector
 
 Howdy! You probably got dumped here after attempting to log in to [MTGA Tracker: Inspector](https://inspector.mtgatracker.com/)
-for the first time. Unfortunately, we need to verify your identity before we allow you to log in to MTGATracker.
+for the first time. Unfortunately, we need to verify your identity before we allow you to log in to MTGATracker: Inspector.
 
 We'll be happy to get you set up over in the discord; simply join our server using [this
 link](https://discord.gg/j5u76j2). Once you've joined the server, our bot will send you a PM with the next instructions. Note that you will need to complete at least one game with the tracker running before our systems will be able to verify you.
