@@ -166,7 +166,13 @@ let parseVersionString = (versionStr) => {
 }
 
 let differenceMinutes = (date1, date2) => {
-  return (date2 - date1) * 1.66667e-5
+  if (typeof date1 === 'string')
+    date1 = Date.parse(date1)
+  if (typeof date2 === 'string')
+    date1 = Date.parse(date2)
+  let result = (date2 - date1) * 1.66667e-5
+  console.log("differenceMinutes: it has been " + result)
+  return result
 }
 
 let getGithubStats = (storage) => {
