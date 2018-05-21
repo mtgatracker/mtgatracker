@@ -19,7 +19,7 @@ passwords!
 
 Instead, we will use MTGA as the source of trust (once MTGA has a friends list). We will simply message your MTGA
 account a 6-digit rotating access code as you try to log in. Since you, and only you, are able to log in to your MTGA
-account, when you tell use that same 6 digit passcode, we know it's you!
+account, when you tell us that same 6 digit passcode, we know it's you!
 
 Of course, MTGA doesn't have a friends list, or buddy messaging, yet. So in the meantime, we're using discord, a bot, and a team
 of mods who can manually verify your identity if our bots get hung up on something. Once a bot or mod has verified
