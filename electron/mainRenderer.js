@@ -298,6 +298,19 @@ function uploadGame(attempt, gameData, errors) {
   if (!errors) {
     errors = []
   }
+  if (attempt == 0) { // only set local winloss counters on first upload attempt
+
+    if (gameData.players[0].name == gameData.winner) {
+      appData.winCounter++
+    } else {
+      appData.lossCounter++
+    }
+    ipcRenderer.send('settingsChanged', {
+      key: "winLossCounter",
+      value: {win: appData.winCounter, loss: appData.lossCounter}
+    })
+  }
+
   return new Promise((resolve, reject) => {
     if (attempt > 5) {
       if (!remote.getGlobal("incognito")) {
@@ -355,7 +368,7 @@ function uploadGame(attempt, gameData, errors) {
   })
 }
 
-ws.onmessage = (data) => {
+let processGameState = (data) => {
     // data is already parsed as JSON:
     data = JSON.parse(event.data)
     if(data.data_type == "game_state") {
@@ -363,20 +376,9 @@ ws.onmessage = (data) => {
             console.log("match over")
             if (data.game) {
               appData.game_complete = true;
-              if (data.game.hero == data.game.winner) {
-                appData.winCounter++
-              } else {
-                appData.lossCounter++
-              }
 
-              ipcRenderer.send('settingsChanged', {
-                key: "winLossCounter",
-                value: {win: appData.winCounter, loss: appData.lossCounter}
-              })
-
-              let uploadAttempt = 0
               gameLookup[data.game.gameID] = {count: 0, uploaded: true}
-              uploadGame(uploadAttempt, data.game)
+              uploadGame(0, data.game)
                 .then(() => {
                   if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
                     appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
@@ -388,13 +390,15 @@ ws.onmessage = (data) => {
                 if (gameLookup[data.gameID].count++ > 5) {
                   if (!gameLookup[data.gameID].uploaded) {
                     gameLookup[data.gameID].uploaded = true
-                    uploadGame(0, lastGameState)
-                      .then(() => {
-                        console.log("successfully uploaded game!")
-                        if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
-                          appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
-                        }
-                      })com
+                    if (lastGameState) {
+                      uploadGame(0, lastGameState)
+                        .then(() => {
+                          console.log("successfully uploaded game!")
+                          if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
+                            appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
+                          }
+                        })
+                    }
                   }
                 }
               } else { // gameLookup doesn't know this game yet
@@ -475,6 +479,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       head.appendChild(link)
     }
   }
+  ws.onmessage = processGameState
 });
 
 ipcRenderer.on('updateReadyToInstall', (messageInfo) => {

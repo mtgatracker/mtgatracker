@@ -7,12 +7,18 @@ if (handleStartupEvent()) {
   return;
 }
 
-const path = require('path')
-const fs = require('fs');
-const findProcess = require('find-process');
 const { app, ipcMain, BrowserWindow, autoUpdater } = require('electron')
-const settings = require('electron-settings');
+const fs = require('fs');
+const path = require('path')
 
+let firstRun = process.argv[1] == '--squirrel-firstrun';
+
+if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
+  autoUpdater.checkForUpdates()
+}
+
+const findProcess = require('find-process');
+const settings = require('electron-settings');
 autoUpdater.on('update-downloaded', (e) => {
   global.updateReady = true
   mainWindow.webContents.send('updateReadyToInstall', {
@@ -300,8 +306,6 @@ const createWindow = () => {
     versionsAcknowledged.push(app.getVersion())
     settings.set("versionsAcknowledged", versionsAcknowledged)
     openSettingsWindow()
-  } else {
-    console.log(versionsAcknowledged)
   }
 }
 

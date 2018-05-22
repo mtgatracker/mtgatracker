@@ -8,8 +8,6 @@ const updateDotExe = path.resolve(path.join(rootAtomFolder, 'Update.exe'));
 
 const exeName = path.basename(process.execPath);
 
-var firstRun = false;
-
 const spawn = function(command, args) {
   let spawnedProcess, error;
   try {
@@ -52,9 +50,6 @@ var handleStartupEvent = function() {
       app.quit();
       return true;
 
-    case '--squirrel-firstrun':
-      app.quit()
-      return true;
   }
 };
 
@@ -85,10 +80,6 @@ autoUpdater.on('update-not-available', () => {
   console.log('update-not-available v2.2.5')
 })
 
-if (fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
-  autoUpdater.checkForUpdates()
-}
-
 module.exports = {
-  handleStartupEvent: handleStartupEvent
+  handleStartupEvent: handleStartupEvent,
 }
