@@ -33,7 +33,7 @@ unsigned (did you know that code-signing keys & certs cost over $100 per year?)
 Your antivirus will likely also want to scan it the first few times you run it.
 See more in the [Signing section](https://github.com/shawkinsl/mtga-tracker#signing-code) below.
 
-![Getting past windows defender](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/readme_1.png)
+![Getting past windows defender](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/readme_2.png)
 
 ### OR, Option 2: Run from source
 
