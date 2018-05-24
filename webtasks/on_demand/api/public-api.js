@@ -51,12 +51,17 @@ router.get('/anon-api-token', (req, res, next) => {
   res.status(200).send({token: token})
 })
 
+function escapeRegExp(str) {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+
 // covered: test_get_user_token
 router.post('/auth-attempt', (req, res, next) => {
   console.log('/auth-attempt')
   const authRequest = req.body;
 
-  const { username, accessCode } = authRequest;
+  let { username, accessCode } = authRequest;
+  username = escapeRegExp(username)
   const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
 
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
@@ -102,7 +107,8 @@ router.post('/auth-request', (req, res, next) => {
   console.log('/user/auth-request')
   const authRequest = req.body;
 
-  const { username, silent } = authRequest;
+  let { username, silent } = authRequest;
+  username = escapeRegExp(username)
 
   const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
 
