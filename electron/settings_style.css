@@ -21,6 +21,10 @@ a {
   cursor: pointer;
 }
 
+.btnbtn {
+  margin-top: 12px;
+}
+
 .disclaimer {
   font-size: 14px;
   font-style: italic;

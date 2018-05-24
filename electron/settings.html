@@ -47,6 +47,16 @@
             <p class="about-p"><b>Documentation:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/README.md">README.md</a></p>
             <p class="about-p"><b>Inspector:</b> <a href="https://inspector.mtgatracker.com/">inspector.mtgatracker.com</a></p>
             <br />
+
+            <h3>Release notes for 3.1.0</h3>
+            <ul>
+              <li class="about-p">Added Win / Loss counter (disable or reset in General tab)</li>
+              <li class="about-p">Added auto-hide on right click (disable or reset in General tab)</li>
+              <li class="about-p">Tracker will now open settings to about page on first launch after an update (so you can see this changelog!)</li>
+              <li class="about-p">Tracker will now attempt to upload at end of game slightly more aggressively, to help prevent lost inspector data</li>
+            </ul>
+            <br />
+
             <p class="about-p disclaimer">MTGA Tracker is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
           </div>
         </div>
@@ -65,6 +75,16 @@
           </div>
           <div class="settings-row">
             <input rv-checked="showInspector" class="tf-toggle" type="checkbox" key="showInspector" data-toggle="toggle"> Show inspector reminders
+          </div>
+          <div class="settings-row">
+            <input rv-checked="showWinLossCounter" class="tf-toggle" type="checkbox" key="showWinLossCounter" data-toggle="toggle"> Show win/loss counter
+          </div>
+          <button id="resetWinLoss" class="btn btnbtn btn-negative">Reset Win / Loss counter</button>
+          <div class="settings-row">
+            <input rv-checked="mouseEvents" class="tf-toggle" type="checkbox" key="mouseEvents" data-toggle="toggle"> Hide tracker on all right clicks
+          </div>
+          <div class="settings-row">
+            <input rv-checked="leftMouseEvents" class="tf-toggle" type="checkbox" key="leftMouseEvents" data-toggle="toggle"> Un-hide tracker on all left clicks
           </div>
         </div>
       </div>

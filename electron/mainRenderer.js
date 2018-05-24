@@ -29,7 +29,11 @@ var useFrame = remote.getGlobal('useFrame');
 var showIIDs = remote.getGlobal('showIIDs');
 var showErrors = remote.getGlobal('showErrors');
 var appVersionStr = remote.getGlobal('version');
+var showWinLossCounter = remote.getGlobal('showWinLossCounter');
 var zoom = 0.8;
+
+var lastUseTheme = remote.getGlobal('useTheme')
+var lastThemeFile = remote.getGlobal('themeFile')
 
 if (debug) {
   window.addEventListener('contextmenu', (e) => {
@@ -40,6 +44,11 @@ if (debug) {
 }
 
 var ws = new ReconnectingWebSocket("ws://127.0.0.1:5678/", null, {constructor: WebSocket})
+
+var gameLookup = {}
+var lastGameState = null;
+
+var winLossCounterInitial = remote.getGlobal("winLossCounter")
 
 var appData = {
     deck_name: "loading...",
@@ -66,7 +75,10 @@ var appData = {
     draw_stats: [],
     opponent_hand: [],
     messages: [],
-    version: appVersionStr
+    version: appVersionStr,
+    showWinLossCounter: showWinLossCounter,
+    winCounter: winLossCounterInitial.win,
+    lossCounter: winLossCounterInitial.loss
 }
 
 var parseVersionString = (versionStr) => {
@@ -200,8 +212,12 @@ var updateOpacity = function() {
     }
 }
 
-document.getElementById("floating-eye").addEventListener("click", function() {
-    all_hidden = !all_hidden;
+var toggleOpacity = function(hide) {
+    if (hide === undefined) {
+      all_hidden = !all_hidden;
+    } else {
+      all_hidden = hide;
+    }
     updateOpacity();
     if (hideTimeoutId) {
         clearTimeout(hideTimeoutId)
@@ -211,6 +227,10 @@ document.getElementById("floating-eye").addEventListener("click", function() {
         all_hidden = false;
         updateOpacity()
     }, 10000)
+}
+
+document.getElementById("floating-eye").addEventListener("click", function() {
+  toggleOpacity()
 })
 
 ws.addEventListener('open', () => {
@@ -218,6 +238,13 @@ ws.addEventListener('open', () => {
     console.log("sent hello")
     ws.addEventListener('message', (m) => {
         console.debug(m)
+        let mdata = JSON.parse(m.data)
+        if (mdata.right_click) {
+            toggleOpacity(true)
+        }
+        if (mdata.left_click && remote.getGlobal("leftMouseEvents")) {
+            toggleOpacity(false)
+        }
     })
 });
 
@@ -271,6 +298,19 @@ function uploadGame(attempt, gameData, errors) {
   if (!errors) {
     errors = []
   }
+  if (attempt == 0) { // only set local winloss counters on first upload attempt
+
+    if (gameData.players[0].name == gameData.winner) {
+      appData.winCounter++
+    } else {
+      appData.lossCounter++
+    }
+    ipcRenderer.send('settingsChanged', {
+      key: "winLossCounter",
+      value: {win: appData.winCounter, loss: appData.lossCounter}
+    })
+  }
+
   return new Promise((resolve, reject) => {
     if (attempt > 5) {
       if (!remote.getGlobal("incognito")) {
@@ -328,7 +368,7 @@ function uploadGame(attempt, gameData, errors) {
   })
 }
 
-ws.onmessage = (data) => {
+let processGameState = (data) => {
     // data is already parsed as JSON:
     data = JSON.parse(event.data)
     if(data.data_type == "game_state") {
@@ -336,16 +376,38 @@ ws.onmessage = (data) => {
             console.log("match over")
             if (data.game) {
               appData.game_complete = true;
-              let uploadAttempt = 0
-              uploadGame(uploadAttempt, data.game)
+
+              gameLookup[data.game.gameID] = {count: 0, uploaded: true}
+              uploadGame(0, data.game)
                 .then(() => {
-                  console.log("successfully uploaded game!")
                   if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
                     appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
                   }
                 })
+            } else if (data.gameID) {
+              console.log(`match_complete and gameID ${data.gameID} but no game data`)
+              if (Object.keys(gameLookup).includes(data.gameID)) {
+                if (gameLookup[data.gameID].count++ > 5) {
+                  if (!gameLookup[data.gameID].uploaded) {
+                    gameLookup[data.gameID].uploaded = true
+                    if (lastGameState) {
+                      uploadGame(0, lastGameState)
+                        .then(() => {
+                          console.log("successfully uploaded game!")
+                          if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
+                            appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
+                          }
+                        })
+                    }
+                  }
+                }
+              } else { // gameLookup doesn't know this game yet
+                console.log(`haven't seen ${data.gameID} before, adding now'`)
+                gameLookup[data.gameID] = {count: 0, uploaded: false}
+              }
             }
         } else {
+            lastGameState = data
             appData.game_in_progress = true;
             appData.game_complete = false;
             appData.show_available_decklists = false;
@@ -401,32 +463,74 @@ document.addEventListener("DOMContentLoaded", function(event) {
         event.preventDefault();
         shell.openExternal(this.href);
     });
+    // load theme on first launch without settings change
+    if (lastThemeFile && lastUseTheme) {
+    let currentThemeLink = $("#theme")
+    if (currentThemeLink) {
+      currentThemeLink.remove()
+    }
+    if (lastUseTheme) {
+      let head  = document.getElementsByTagName('head')[0];
+      let link  = document.createElement('link');
+      link.id   = 'theme';
+      link.rel  = 'stylesheet';
+      link.type = 'text/css';
+      link.href = '../../../themes/' + lastThemeFile; // ????? tbh
+      head.appendChild(link)
+    }
+  }
+  ws.onmessage = processGameState
 });
-
-ipcRenderer.on('themeChanged', (themeInfo) => {
-  console.log("got theme changed")
-  let useTheme = remote.getGlobal("useTheme")
-  let themeFile = remote.getGlobal("themeFile")
-  let currentThemeLink = $("#theme")
-  if (currentThemeLink) {
-    currentThemeLink.remove()
-  }
-
-  if (useTheme && themeFile) {
-    let head  = document.getElementsByTagName('head')[0];
-    let link  = document.createElement('link');
-    link.id   = 'theme';
-    link.rel  = 'stylesheet';
-    link.type = 'text/css';
-    link.href = '../../../themes/' + themeFile; // ????? tbh
-    head.appendChild(link)
-  }
-})
 
 ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
   console.log("got an update ready message")
   console.log(messageInfo)
   appData.messages.push({text: "A new tracker update will be applied on next launch!", mayfollow:"https://github.com/shawkinsl/mtga-tracker/releases/latest"})
+})
+
+ipcRenderer.on('settingsChanged', () => {
+  debug = remote.getGlobal('debug');
+  appData.debug = debug
+
+  useFrame = remote.getGlobal('useFrame');
+  appData.useFrame = useFrame
+
+  showIIDs = remote.getGlobal('showIIDs');
+  appData.showIIDs = showIIDs
+
+  showErrors = remote.getGlobal('showErrors');
+  appData.showErrors = showErrors
+
+  appVersionStr = remote.getGlobal('version');
+  appData.appVersionStr = appVersionStr
+
+  showWinLossCounter = remote.getGlobal('showWinLossCounter');
+  appData.showWinLossCounter = showWinLossCounter
+
+  winLossCounter = remote.getGlobal('winLossCounter');
+  appData.winCounter = winLossCounter.win
+  appData.lossCounter = winLossCounter.loss
+
+  let useTheme = remote.getGlobal("useTheme")
+  let themeFile = remote.getGlobal("themeFile")
+
+  if ((themeFile && (themeFile != lastThemeFile)) || useTheme != lastUseTheme) {
+    lastThemeFile = themeFile
+    lastUseTheme = useTheme
+    let currentThemeLink = $("#theme")
+    if (currentThemeLink) {
+      currentThemeLink.remove()
+    }
+    if (useTheme) {
+      let head  = document.getElementsByTagName('head')[0];
+      let link  = document.createElement('link');
+      link.id   = 'theme';
+      link.rel  = 'stylesheet';
+      link.type = 'text/css';
+      link.href = '../../../themes/' + themeFile; // ????? tbh
+      head.appendChild(link)
+    }
+  }
 })
 
 console.timeEnd('init')

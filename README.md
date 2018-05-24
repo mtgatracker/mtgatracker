@@ -28,13 +28,12 @@ downloaded is legitimate.
 
 ![Selecting the correct download link](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/readme_1.png)
 
-Extract the contents of the zip file. In the top level directory, there will be an MTGATracker.exe . Double click this. And you're good to go!
-
-![Finding the correct exe](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/readme_2.png)
-
 Note that you may have to tell Windows Defender to allow MTGA Tracker to run, as MTGA Tracker is currently
-unsigned. Your antivirus will likely also want to scan it the first few times you run it. I promise both of
-these things are ok. See more in the [Signing section](https://github.com/shawkinsl/mtga-tracker#signing-code) below.
+unsigned (did you know that code-signing keys & certs cost over $100 per year?)
+Your antivirus will likely also want to scan it the first few times you run it.
+See more in the [Signing section](https://github.com/shawkinsl/mtga-tracker#signing-code) below.
+
+![Getting past windows defender](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/readme_1.png)
 
 ### OR, Option 2: Run from source
 

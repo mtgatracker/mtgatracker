@@ -10,6 +10,9 @@ var settingsData = {
   incognito: remote.getGlobal('incognito'),
   useFrame: remote.getGlobal('useFrame'),
   useTheme: remote.getGlobal('useTheme'),
+  mouseEvents: remote.getGlobal('mouseEvents'),
+  leftMouseEvents: remote.getGlobal('leftMouseEvents'),
+  showWinLossCounter: remote.getGlobal('showWinLossCounter'),
   customStyleFiles: [],
 }
 
@@ -58,7 +61,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
     ipcRenderer.send('settingsChanged', {key: "useTheme", value: settingsData.useTheme})
     ipcRenderer.send('settingsChanged', {key: "themeFile", value: themeSelected})
   })
-
+  $("#resetWinLoss").click((e) => {
+    console.log("resetting win/loss")
+    ipcRenderer.send('settingsChanged', {key: "winLossCounter", value: {win: 0, loss: 0}})
+  })
   fs.readdir("../themes", (err, files) => {
     if(files) {
       files.forEach((val) => {

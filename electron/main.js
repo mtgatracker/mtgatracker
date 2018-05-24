@@ -7,12 +7,18 @@ if (handleStartupEvent()) {
   return;
 }
 
-const path = require('path')
-const fs = require('fs');
-const findProcess = require('find-process');
 const { app, ipcMain, BrowserWindow, autoUpdater } = require('electron')
-const settings = require('electron-settings');
+const fs = require('fs');
+const path = require('path')
 
+let firstRun = process.argv[1] == '--squirrel-firstrun';
+
+if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
+  autoUpdater.checkForUpdates()
+}
+
+const findProcess = require('find-process');
+const settings = require('electron-settings');
 autoUpdater.on('update-downloaded', (e) => {
   global.updateReady = true
   mainWindow.webContents.send('updateReadyToInstall', {
@@ -57,7 +63,12 @@ let useTheme = settings.get('useTheme', false);
 let themeFile = settings.get('themeFile', "");
 let showIIDs = settings.get('showIIDs', false);
 let no_server = settings.get('no_server', false);
+let mouseEvents = settings.get('mouseEvents', true);
+let leftMouseEvents = settings.get('leftMouseEvents', true);
 let kill_server = settings.get('kill_server', false);
+let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
+let showWinLossCounter = settings.get('showWinLossCounter', true);
+
 
 let noFollow = false;
 let server_killed = false;
@@ -74,12 +85,10 @@ ipcMain.on('messageAcknowledged', (event, arg) => {
 ipcMain.on('settingsChanged', (event, arg) => {
   global[arg.key] = arg.value;
   settings.set(arg.key, arg.value)
-  if (arg.key == "themeFile" || arg.key == "useTheme") {
-    mainWindow.webContents.send('themeChanged')
-  }
+  mainWindow.webContents.send('settingsChanged')
 })
 
-ipcMain.on('openSettings', (event, arg) => {
+let openSettingsWindow = () => {
   if(settingsWindow == null) {
     settingsWindow = new BrowserWindow({width: 800,
                                         height: 800,
@@ -98,15 +107,16 @@ ipcMain.on('openSettings', (event, arg) => {
     if (debug) {
       settingsWindow.webContents.openDevTools()
     }
+    settingsWindow.on('closed', function () {
+      settingsWindow = null;
+    })
   }
   settingsWindow.once('ready-to-show', () => {
     settingsWindow.show()
   })
+}
 
-  settingsWindow.on('closed', function () {
-    settingsWindow = null;
-  })
-})
+ipcMain.on('openSettings', openSettingsWindow)
 
 app.disableHardwareAcceleration()
 
@@ -164,6 +174,9 @@ const generateArgs = () => {
     }
     if (readFullFile) {
         args.push('-f')
+    }
+    if (mouseEvents) {
+      args.push('-m')
     }
     return args
 }
@@ -231,6 +244,10 @@ global.useFrame = useFrame;
 global.useTheme = useTheme;
 global.themeFile = themeFile;
 global.showIIDs = showIIDs;
+global.leftMouseEvents = leftMouseEvents;
+global.mouseEvents = mouseEvents;
+global.winLossCounter = winLossCounter;
+global.showWinLossCounter = showWinLossCounter;
 global.version = app.getVersion()
 global.messagesAcknowledged = settings.get("messagesAcknowledged", [])
 
@@ -276,11 +293,20 @@ const createWindow = () => {
   }
 
   mainWindow.once('ready-to-show', () => {
-    mainWindow.webContents.send('themeChanged')
+    mainWindow.webContents.send('settingsChanged')
     mainWindow.show()
     console.timeEnd('init')
     mainWindow.webContents.setZoomFactor(0.8)
   })
+
+  let versionsAcknowledged = settings.get('versionsAcknowledged', [])
+
+  // show release notes on first launch of new version
+  if (!versionsAcknowledged.includes(app.getVersion())) {
+    versionsAcknowledged.push(app.getVersion())
+    settings.set("versionsAcknowledged", versionsAcknowledged)
+    openSettingsWindow()
+  }
 }
 
 function freeze(time) {
