@@ -114,6 +114,145 @@ request.get({
     appData.messages = appData.messages.concat(...data.notifications)
 })
 
+let cardtypeCompare = function (a, b) {
+    // Creatures -> Planeswalkers -> Enchantments -> Artifacts -> Sorceries -> Instants -> Non-Basic Lands -> Basic Lands
+    if (a.includes("Creature")) {
+        if (!b.includes("Creature")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Creature")) {
+        return 1;
+    }
+    if (a.includes("Planeswalker")) {
+        if (!b.includes("Planeswalker")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Planeswalker")) {
+        return 1;
+    }
+    if (a.includes("Enchantment")) {
+        if (!b.includes("Enchantment")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Enchantment")) {
+        return 1;
+    }
+    if (a.includes("Artifact")) {
+        if (!b.includes("Artifact")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Artifact")) {
+        return 1;
+    }
+    if (a.includes("Sorcery")) {
+        if (!b.includes("Sorcery")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Sorcery")) {
+        return 1;
+    }
+    if (a.includes("Instant")) {
+        if (!b.includes("Instant")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Instant")) {
+        return 1;
+    }
+    if (a.includes("Basic")) {
+        if (!b.includes("Basic")) {
+            return 1;
+        }
+        return 0;
+    }
+    if (b.includes("Basic")) {
+        return -1;
+    }
+    return 0;
+};
+
+let manaCostCompare = function (a, b) {
+    let cmcA = 0;
+    let cmcB = 0;
+    let cmcCompute = function (manaSymbol) {
+        // Put X spells at the end
+        if (manaSymbol === "X") {
+            return 100;
+        }
+        // Generic mana amount
+        let intValue = parseInt(manaSymbol);
+        if (!isNaN(intValue)) {
+            return intValue;
+        }
+        // Colored mana
+        return 1;
+    };
+    for (let manaSymbol of a) {
+        cmcA += cmcCompute(manaSymbol);
+    }
+    for (let manaSymbol of b) {
+        cmcB += cmcCompute(manaSymbol);
+    }
+    if (cmcA < cmcB) {
+        return -1;
+    }
+    if (cmcB < cmcA) {
+        return 1;
+    }
+    return 0;
+};
+
+let nameCompare = function (a, b) {
+    if (a < b) {
+        return -1;
+    }
+    if (b < a) {
+        return 1;
+    }
+    return 0;
+};
+
+rivets.formatters.drawStatsSort = function(decklist) {
+    if (decklist.length === 0) {
+        return decklist;
+    }
+    return decklist.sort(
+            function (a, b) {
+                // Sort by cardtype first
+                return cardtypeCompare(a.card_type, b.card_type)
+                        // Then sort by mana cost
+                        || manaCostCompare(a.cost, b.cost)
+                        // Then sort by name
+                        || nameCompare(a.card, b.card);
+            });
+};
+
+rivets.formatters.decklistSort = function(decklist) {
+    if (decklist.length === 0) {
+        return decklist;
+    }
+    return decklist.sort(
+        function (a, b) {
+            // Sort by cardtype first
+            return cardtypeCompare(a.card_type, b.card_type)
+                    // Then sort by mana cost
+                    || manaCostCompare(a.cost, b.cost)
+                    // Then sort by name
+                    || nameCompare(a.pretty_name, b.pretty_name);
+    });
+};
+
 rivets.bind(document.getElementById('container'), appData)
 
 rivets.binders.showmessage = function(el, value) {
