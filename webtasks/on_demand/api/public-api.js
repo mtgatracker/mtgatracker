@@ -60,14 +60,14 @@ router.post('/auth-attempt', (req, res, next) => {
   console.log('/auth-attempt')
   const authRequest = req.body;
 
-  let { username, accessCode } = authRequest;
-  username = escapeRegExp(username)
+  const { username, accessCode } = authRequest;
+  let usernameEsc = escapeRegExp(username)
   const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
 
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     let users = client.db(DATABASE).collection(userCollection);
 
-    let usernameRegexp = new RegExp(`^${username}$`, "i")
+    let usernameRegexp = new RegExp(`^${usernameEsc}$`, "i")
     let userSearch = {username: {$regex: usernameRegexp}}
 
     users.findOne(userSearch, null, (err, result) => {
