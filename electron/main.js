@@ -69,11 +69,13 @@ let kill_server = settings.get('kill_server', false);
 let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
 
+let runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
 let noFollow = false;
 let server_killed = false;
 let readFullFile = false;
 let debugFile = false;
+
 
 ipcMain.on('messageAcknowledged', (event, arg) => {
   let acked = settings.get("messagesAcknowledged", [])
@@ -250,6 +252,7 @@ global.winLossCounter = winLossCounter;
 global.showWinLossCounter = showWinLossCounter;
 global.version = app.getVersion()
 global.messagesAcknowledged = settings.get("messagesAcknowledged", [])
+global.runFromSource = runFromSource
 
 /*************************************************************
  * window management

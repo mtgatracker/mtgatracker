@@ -13,6 +13,7 @@ var settingsData = {
   mouseEvents: remote.getGlobal('mouseEvents'),
   leftMouseEvents: remote.getGlobal('leftMouseEvents'),
   showWinLossCounter: remote.getGlobal('showWinLossCounter'),
+  runFromSource: remote.getGlobal('runFromSource'),
   customStyleFiles: [],
 }
 
@@ -65,7 +66,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     console.log("resetting win/loss")
     ipcRenderer.send('settingsChanged', {key: "winLossCounter", value: {win: 0, loss: 0}})
   })
-  fs.readdir("../themes", (err, files) => {
+  let themePath = settingsData.runFromSource ? "themes" : "../themes";
+  fs.readdir(themePath, (err, files) => {
     if(files) {
       files.forEach((val) => {
         if (val.endsWith(".css")) {

@@ -29,6 +29,7 @@ var useFrame = remote.getGlobal('useFrame');
 var showIIDs = remote.getGlobal('showIIDs');
 var showErrors = remote.getGlobal('showErrors');
 var appVersionStr = remote.getGlobal('version');
+var runFromSource = remote.getGlobal('runFromSource');
 var showWinLossCounter = remote.getGlobal('showWinLossCounter');
 var zoom = 0.8;
 
@@ -316,7 +317,8 @@ function uploadGame(attempt, gameData, errors) {
       if (!remote.getGlobal("incognito")) {
         appData.messages.push({text: "WARNING! Could not upload game result to inspector! Error log generated @ uploadfailure.log ... please send this log to our discord #bug_reports channel!"})
       }
-      fs.writeFile("uploadfailure.log", JSON.stringify({fatal: "too_many_attempts", errors: errors}))
+      let filePath = runFromSource ? "uploadfailure.log" : "../uploadfailure.log";
+      fs.writeFile(filePath, JSON.stringify({fatal: "too_many_attempts", errors: errors}))
       reject({fatal: "too_many_attempts", errors: errors})
     } else {
       let delay = 1000 * attempt;
@@ -475,7 +477,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
       link.id   = 'theme';
       link.rel  = 'stylesheet';
       link.type = 'text/css';
-      link.href = '../../../themes/' + lastThemeFile; // ????? tbh
+      let themePath = runFromSource ? "themes/" : "../../../themes/";
+      link.href = themePath + lastThemeFile;
       head.appendChild(link)
     }
   }
@@ -527,7 +530,8 @@ ipcRenderer.on('settingsChanged', () => {
       link.id   = 'theme';
       link.rel  = 'stylesheet';
       link.type = 'text/css';
-      link.href = '../../../themes/' + themeFile; // ????? tbh
+      let themePath = runFromSource ? "themes/" : "../../../themes/";
+      link.href = themePath + lastThemeFile;
       head.appendChild(link)
     }
   }
