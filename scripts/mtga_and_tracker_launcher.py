@@ -38,11 +38,11 @@ os.system(MTGA_Tracker_Path)
 n=0# number of instances of the program running 
 
 prog = [line.split() for line in subprocess.check_output("tasklist").splitlines()]
-prog.pop(e) for e in [0,1,2]] #useless 
+prog.pop(e) for e in [0,1,2]]
 
 for task in prog:
         if task[0]=="MTGA.exe":
-            n = n+1
+            n = 1
     if n > 0:
         return True
     if n = 0:
