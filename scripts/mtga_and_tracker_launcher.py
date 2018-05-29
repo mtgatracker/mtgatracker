@@ -48,7 +48,7 @@ for task in prog:
     if n > 0:
       return True
    
-    if n = 0:
+    if n == 0:
          if _platform == "win32" or _platform == "win64":
             os.system("TASKKILL /F /IM MTGATracker.exe")
          
