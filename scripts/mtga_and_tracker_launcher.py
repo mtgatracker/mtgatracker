@@ -4,6 +4,7 @@ __date__ = "$May 28, 2018 8:27:00 PM$"
 from sys import platform as _platform
 import subprocess
 import psutil
+import os
 
 #Set path to MTGA
 mtga_path = ''
