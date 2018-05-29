@@ -124,7 +124,7 @@ def json_blob_reader_task(in_queue, out_queue):
                 if hero_library_hash != hero_library_hash_post or opponent_hand_hash != opponent_hand_hash_post:
                     game_state_change_queue.put(mtga_watch_app.game.game_state())  # TODO: BREAKPOINT HERE
                 if mtga_watch_app.game.final:
-                    game_state_change_queue.put({"match_complete": True})
+                    game_state_change_queue.put({"match_complete": True, "gameID": mtga_watch_app.game.match_id})
         except:
             import traceback
             exc = traceback.format_exc()

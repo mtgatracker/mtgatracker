@@ -1,3 +1,4 @@
+python-dateutil
 pyjwt
 pytest
 pytest-html

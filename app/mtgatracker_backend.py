@@ -12,19 +12,21 @@ import datetime
 import json
 import websockets
 import time
+from pynput import mouse
 from app.queues import all_die_queue, game_state_change_queue, general_output_queue, decklist_change_queue
 
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument('-i', '--log_file', default=None)
 arg_parser.add_argument('-nf', '--no_follow', action="store_true", default=False)
 arg_parser.add_argument('-f', '--read_full_log', action="store_true", default=False)
+arg_parser.add_argument('-m', '--mouse_events', action="store_true", default=False)
 arg_parser.add_argument('-p', '--port', default=8089, type=int)
 args = arg_parser.parse_args()
 
 
 async def stats(websocket):
     try:
-        game_state = game_state_change_queue.get(timeout=0.1)
+        game_state = game_state_change_queue.get(timeout=0.01)
     except Empty:
         game_state = False
     if game_state:
@@ -34,13 +36,13 @@ async def stats(websocket):
         await websocket.send(json.dumps(game_state))
     # else:
     #     await websocket.send('{"no": "data"}')
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.01)
 
 
 async def decks(websocket):
     decklist_change = {}
     try:
-        decks = decklist_change_queue.get(timeout=0.1)
+        decks = decklist_change_queue.get(timeout=0.01)
     except Empty:
         decks = False
     if decks:
@@ -49,12 +51,12 @@ async def decks(websocket):
         decklist_change["now"] = now
         decklist_change["data_type"] = "decklist_change"
         await websocket.send(json.dumps(decklist_change))
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.01)
 
 
 async def output(websocket):
     try:
-        message = general_output_queue.get(timeout=0.1)
+        message = general_output_queue.get(timeout=0.01)
     except Empty:
         message = False
     if message:
@@ -65,7 +67,7 @@ async def output(websocket):
         else:
             message["data_type"] = "message"
         await websocket.send(json.dumps(message))
-    await asyncio.sleep(0.1)
+    await asyncio.sleep(0.01)
 
 
 async def consumer_handler(websocket):
@@ -89,7 +91,7 @@ async def handler(websocket, _):
         )
         for task in pending:
             task.cancel()
-        time.sleep(1)
+        time.sleep(0.1)
     websocket.close()
     loop = asyncio.get_event_loop()
     loop.stop()
@@ -101,6 +103,22 @@ if args.log_file is None:  # assume we're on windows for now # TODO
     if not os.path.exists(output_log):
         output_log = None
     args.log_file = output_log
+
+
+def click_event(_x, _y, button, pressed):
+    if pressed:
+        if button == mouse.Button.right:
+            general_output_queue.put({"right_click": True})
+        if button == mouse.Button.left:
+            general_output_queue.put({"left_click": True})
+    if not all_die_queue.empty():
+        return False
+
+
+def start_mouse_listener():
+    with mouse.Listener(on_click=click_event) as listener:
+        listener.join()
+
 
 if __name__ == "__main__":
 
@@ -116,6 +134,11 @@ if __name__ == "__main__":
 
     websocket_thread = threading.Thread(target=asyncio.get_event_loop().run_forever)
     websocket_thread.start()
+
+    mouse_thread = None
+    if args.mouse_events:
+        mouse_thread = threading.Thread(target=start_mouse_listener)
+        mouse_thread.start()
 
     if args.read_full_log:
         print("WARNING: known issue with reading full log!")
@@ -149,10 +172,15 @@ if __name__ == "__main__":
                         break
         else:
             general_output_queue.put({"error": "NoLogException", "msg": "No log file present. Please run MTGA at least once before launching MTGA Tracker.", "count": 1})
+
     queues.block_read_queue.put(None)
+
     block_watch_process.join()
     json_watch_process.join()
     websocket_thread.join()
     start_server.ws_server.close()
+    if mouse_thread:
+        mouse_thread.join()
+        print("mouse joined!")
     while queues.json_blob_queue.qsize():
         queues.json_blob_queue.get()

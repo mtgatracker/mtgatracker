@@ -33,7 +33,7 @@ const {
   deckCollection,
   gameCollection,
   userCollection,
-  errorCollection,
+  errorCollection
 } = require('../util')
 
 const BluebirdPromise = require('bluebird')
@@ -52,13 +52,28 @@ const userAPI = require('./api/user-api')
 const adminAPI = require('./api/admin-api')
 
 let userIsAdmin = (req, res, next) => {
-  console.log("testing for admin")
   if (req.user.user == "Spencatro") {
-    console.log("congrats, you are an admin")
     next()
   } else {
     res.status(400).send({"error": "you are not an admin, sorry :'("})
   }
+}
+
+let userUpToDate = (req, res, next) => {
+  const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
+
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    const { user } = req.user;
+    if (connectErr) return next(connectErr);
+    let collection = client.db(DATABASE).collection(gameCollection)
+    let cursor = collection.find({'hero': user}).sort({date: -1});
+    cursor.next((err, doc) => {
+      if (doc && doc.clientVersionOK) next()
+      else {
+       res.status(400).send({"error": "your account has been locked"})
+      }
+    })
+  })
 }
 
 function ejwt_wrapper(req, res, next) {
@@ -68,7 +83,7 @@ function ejwt_wrapper(req, res, next) {
 
 server.use('/public-api', publicAPI)
 server.use('/anon-api', ejwt_wrapper, anonAPI)
-server.use('/api', ejwt_wrapper, userAPI)
+server.use('/api', ejwt_wrapper, userUpToDate, userAPI)
 server.use('/admin-api', ejwt_wrapper, userIsAdmin, adminAPI)
 
 server.get('/', (req, res, next) => {

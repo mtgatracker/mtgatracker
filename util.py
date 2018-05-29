@@ -74,7 +74,7 @@ def id_to_card(card_id):
         mtga_app.mtga_watch_app.send_error("Unknown mtga_id: {}".format(card_id))
 
 
-def process_deck(deck_dict):
+def process_deck(deck_dict, save_deck=True):
     import app.mtga_app as mtga_app
     deck_id = deck_dict['id']
     deck = set.Deck(deck_dict["name"], deck_id)
@@ -86,10 +86,11 @@ def process_deck(deck_dict):
         except:
             mtga_app.mtga_logger.error("Unknown mtga_id: {}".format(card_obj))
             mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck_dict["name"], card_obj))
-    with mtga_app.mtga_watch_app.game_lock:
-        mtga_app.mtga_watch_app.player_decks[deck_id] = deck
-        mtga_app.mtga_logger.debug("deck {} is being saved".format(deck_dict["name"]))
-        mtga_app.mtga_watch_app.save_settings()
+    if save_deck:
+        with mtga_app.mtga_watch_app.game_lock:
+            mtga_app.mtga_watch_app.player_decks[deck_id] = deck
+            mtga_app.mtga_logger.debug("deck {} is being saved".format(deck_dict["name"]))
+            mtga_app.mtga_watch_app.save_settings()
     print("RETURNING: {}".format(deck))
     return deck
 
@@ -138,9 +139,13 @@ def resource_path(relative_path):
     path = getattr(sys, '_MEIPASS', os.getcwd())
     return os.path.join(path, relative_path)
 
+try:
+    with open(resource_path(os.path.join('electron', 'package.json')), 'r') as package_file:
+        client_version = json.load(package_file)["version"]
+except FileNotFoundError:
+    with open(resource_path(os.path.join('..', 'electron', 'package.json')), 'r') as package_file:
+        client_version = json.load(package_file)["version"]
 
-with open(resource_path(os.path.join('electron', 'package.json')), 'r') as package_file:
-    client_version = json.load(package_file)["version"]
 
 
 class KillableTailer(Tailer):

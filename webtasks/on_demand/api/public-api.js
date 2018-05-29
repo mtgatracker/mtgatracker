@@ -10,6 +10,7 @@ const {
   routeDoc,
   sendDiscordMessage,
   userCollection,
+  notificationCollection,
 } = require('../../util')
 
 var secrets; // babel makes it so we can't const this, I am pretty sure
@@ -24,6 +25,22 @@ router.get('/', (req, res, next) => {
 })
 
 // covered: test_get_anon_token
+router.get('/tracker-notifications', (req, res, next) => {
+  console.log("/public-api/tracker-notifications")
+  const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
+
+  MongoClient.connect(MONGO_URL, (connectErr, client) => {
+    console.log(notificationCollection)
+    let notifications = client.db(DATABASE).collection(notificationCollection);
+    console.log("got notifications")
+    notifications.find().toArray((err, docs) => {
+      console.log("got array")
+      res.status(200).send({notifications: docs})
+    })
+  })
+})
+
+// covered: test_get_anon_token
 router.get('/anon-api-token', (req, res, next) => {
   console.log("/public-api/anon-api-token")
   let token = createAnonymousToken(req.webtaskContext.secrets.JWT_SECRET)
@@ -34,24 +51,32 @@ router.get('/anon-api-token', (req, res, next) => {
   res.status(200).send({token: token})
 })
 
+function escapeRegExp(str) {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+
 // covered: test_get_user_token
 router.post('/auth-attempt', (req, res, next) => {
-  console.log('/auth-request')
+  console.log('/auth-attempt')
   const authRequest = req.body;
 
-  const { username, accessCode } = authRequest;
+  let { username, accessCode } = authRequest;
+  username = escapeRegExp(username)
   const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
 
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     let users = client.db(DATABASE).collection(userCollection);
-    users.findOne({username: username}, null, (err, result) => {
+
+    let usernameRegexp = new RegExp(`^${username}$`, "i")
+    let userSearch = {username: {$regex: usernameRegexp}}
+
+    users.findOne(userSearch, null, (err, result) => {
       if (result === undefined || result === null) {
         res.status(404).send({"error": "no user found with username " + username})
         return
       }
 
       let expireCheck = new Date()
-
       if (result.auth !== undefined && result.auth !== null && result.auth.expires > expireCheck
           && result.auth.accessCode == accessCode) {
             let token = createToken(username, req.webtaskContext.secrets.JWT_SECRET)
@@ -59,7 +84,17 @@ router.post('/auth-attempt', (req, res, next) => {
             let cookieExpiration = new Date()
             cookieExpiration.setTime(cookieExpiration.getTime() + weekMs)
             res.cookie('access_token', token, {secure: true, expires: cookieExpiration})
-            res.status(200).send({token: token})
+
+            // reset token now
+            let expiresDate = new Date()
+            expiresDate.setMinutes(expiresDate.getMinutes() + 2)
+            let newAuthObj = {
+              expires: expiresDate,
+              accessCode: random6DigitCode()
+            }
+            users.update({'username': result.username}, {$set: {auth: newAuthObj}}, (err, mongoRes) => {
+              res.status(200).send({token: token})
+            })
       } else {
         res.status(400).send({"error": "auth_error"})
       }
@@ -72,46 +107,63 @@ router.post('/auth-request', (req, res, next) => {
   console.log('/user/auth-request')
   const authRequest = req.body;
 
-  const { username, silent } = authRequest;
+  let { username, silent } = authRequest;
+  username = escapeRegExp(username)
 
   const { MONGO_URL, DATABASE, DISCORD_WEBHOOK } = req.webtaskContext.secrets;
 
+  if (username === undefined || username === null) {
+    res.status(400).send({"error": "invalid request"})
+    return
+  }
 
   MongoClient.connect(MONGO_URL, (connectErr, client) => {
     let users = client.db(DATABASE).collection(userCollection);
 
-    users.findOne({username: username}, null, (err, result) => {
+    let usernameRegexp = new RegExp(`^${username}$`, "i")
+    let userSearch = {username: {$regex: usernameRegexp}}
+
+    users.findOne(userSearch, null, (err, result) => {
       if (result === undefined || result === null) {
         res.status(404).send({"error": "no user found with username " + username})
         return
       }
 
-      // if the current code expires in less than an hour, let's refresh
+      if (result.discordUsername === undefined || result.discordUsername === null) {
+        res.status(404).send({"error": "discord mapping not found for " + username})
+        return
+      }
+
+      // if the current code expires in less than 30 seconds, let's refresh
       let expireCheck = new Date()
-      expireCheck.setHours(expireCheck.getHours() + 1)
+      expireCheck.setSeconds(expireCheck.getSeconds() + 30)
       if (result.auth !== undefined && result.auth !== null && result.auth.expires > expireCheck) {
+        // this code is still ok; you have >30s to put it in
         let authObj = result.auth;
-        let msg = username + " assigned code " + authObj.accessCode + ", expires @ " + authObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
+        let msgUsername = result.discordUsername ? "Discord:" + result.discordUsername : "MTGA:" + username;
+        let msg = msgUsername + "/" + authObj.accessCode + "/expires @ " + authObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
         sendDiscordMessage(msg, DISCORD_WEBHOOK, silent).then(() => {
-          res.status(200).send({"request": "sent"})
+          res.status(200).send({"request": "sent", "username": result.username})
         })
       } else {
+        // this code will expire in less than 30s; we will just make you a new one.
         let expiresDate = new Date()
-        expiresDate.setHours(expiresDate.getHours() + 6)
+        expiresDate.setMinutes(expiresDate.getMinutes() + 2)
         let newAuthObj = {
           expires: expiresDate,
           accessCode: random6DigitCode()
         }
-        users.update({'username': username}, {$set: {auth: newAuthObj}}, (err, mongoRes) => {
+        users.update({'username': result.username}, {$set: {auth: newAuthObj}}, (err, mongoRes) => {
           console.log(mongoRes.result.nModified)
           if (silent != true) {
-            let msg = username + " assigned code " + newAuthObj.accessCode + ", expires @ " + newAuthObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
+            let msgUsername = result.discordUsername ? "Discord:" + result.discordUsername : "MTGA:" + username;
+            let msg = msgUsername + "/" + newAuthObj.accessCode + "/expires @ " + newAuthObj.expires.toLocaleString("en-US", {timeZone: "America/Los_Angeles"})
 
             sendDiscordMessage(msg, DISCORD_WEBHOOK, silent).then(() => {
-              res.status(200).send({"request": "sent"})
+              res.status(200).send({"request": "sent", "username": result.username})
             })
           } else {
-            res.status(200).send({"request": "sent"})
+            res.status(200).send({"request": "sent", "username": result.username})
           }
         })
       }

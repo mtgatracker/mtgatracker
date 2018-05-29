@@ -1,3 +1,4 @@
+import pprint
 import random
 import string
 import copy
@@ -11,7 +12,8 @@ import requests
 import sys
 import jwt
 
-url = "https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game-staging"
+from dateutil.parser import parse as parse_date
+
 delay = 1.5
 staging_mongo_url = os.getenv("MONGO_URL")
 if "--local" in sys.argv:
@@ -29,6 +31,8 @@ mongo_client = pymongo.MongoClient(staging_mongo_url)
 database = mongo_client['mtga-tracker-staging']
 games_collection = database['game']
 users_collection = database['user']
+
+url = "https://wt-bd90f3fae00b1572ed028d0340861e6a-0.sandbox.auth0-extend.com/mtga-tracker-game-staging"
 
 
 def post(post_url, post_json, raw_result=False, headers=None):
@@ -50,8 +54,6 @@ def get(get_url, raw_result=False, headers=None):
     result = requests.get(get_url, headers=headers)
     if raw_result:
         return result
-    print(result)
-    print(result.text)
     return result.json()
 
 
@@ -96,7 +98,7 @@ _game_shell_schema_0 = {
     ]
 }
 res = get("https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game/gh-stat-cache")
-latest_client_version = res.get("latestVersionString", "2.0.0-beta")
+latest_client_version = res.get("latestVersionString", "2.1.0-beta")
 
 _game_shell_schema_1_1_0_beta = copy.deepcopy(_game_shell_schema_0)
 _game_shell_schema_1_1_0_beta["hero"] = "joe"
@@ -122,7 +124,10 @@ def post_random_games(games=None, num_games=None, admin_token=None, no_verify=Fa
         games = [copy.deepcopy(game_shell) for _ in range(num_games or 3)]
         for game in games:
             game["gameID"] = _random_string()
-    return _post_games(games, admin_token, no_verify)
+    time.sleep(len(games) / 200.0)
+    result = _post_games(games, admin_token, no_verify)
+    time.sleep(len(games) / 200.0)
+    return result
 
 
 def _post_game(game, no_verify=False, token=None, use_public_api=False):
@@ -142,19 +147,23 @@ def get_anon_token():
 
 
 def get_user_token(username):
-    request_auth(username)
+    request_auth(username, force_discord=True)
+    time.sleep(0.5)
     user_after_auth_request = users_collection.find_one({"username": username})
-    assert "auth" in user_after_auth_request.keys()
     access_code = int(user_after_auth_request["auth"]["accessCode"])
     return post(url + "/public-api/auth-attempt", post_json={"username": username, "accessCode": access_code})["token"]
 
 
-def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None, client_version=None, no_verify=False,
-                     game_shell=_game_shell_schema_1_1_0_beta, token=None):
+def post_random_game(winner=None, loser=None, hero=None, opponent=None, winner_id=None, loser_id=None, client_version=None, no_verify=False,
+                     game_shell=_game_shell_schema_1_1_0_beta, token=None, winner_deck_id=None):
     if token is None:
         token = get_anon_token()
     game = copy.deepcopy(game_shell)
     game["gameID"] = _random_string()
+    if hero:
+        game["hero"] = hero
+    if opponent:
+        game["opponent"] = opponent
     if winner:
         game["winner"] = winner
         game["players"][0]["name"] = winner
@@ -168,6 +177,8 @@ def post_random_game(winner=None, loser=None, winner_id=None, loser_id=None, cli
         game["players"][1]["userID"] = loser_id
     if client_version:
         game["client_version"] = client_version
+    if winner_deck_id:
+        game["players"][0]["deck"]["deckID"] = winner_deck_id
     return _post_game(game, no_verify, token=token)
 
 
@@ -204,17 +215,25 @@ def post_bad_game(missing_winner_name=False, missing_loser_name=False,
     return _post_game(game, no_verify)
 
 
-def insert_taken_user(username=None, public_name=None, is_user=False):
+def insert_taken_user(username=None, public_name=None, is_user=False, discord_username=None):
     if username is None:
         username = _random_string()
     if public_name is None:
         public_name = _random_string()
-    users_collection.insert_one({"username": username, "available": False, "publicName": public_name,
-                                 "isUser": is_user})
+
+    user_obj = {"username": username, "available": False, "publicName": public_name, "isUser": is_user}
+    if discord_username:
+        user_obj["discordUsername"] = discord_username
+    users_collection.insert_one(user_obj)
 
 
-def request_auth(username, silent=True):
-    return post(url + "/public-api/auth-request", post_json={"silent": silent, "username": username}, raw_result=True).json()
+def request_auth(username, silent=True, force_discord=False):
+    if force_discord:
+        users_collection.update_one({"username": username}, {"$set": {"discordUsername": "{}#123".format(username)}})
+        time.sleep(0.1)
+    res = post(url + "/public-api/auth-request", post_json={"silent": silent, "username": username}, raw_result=True).json()
+    time.sleep(0.1)
+    return res
 
 
 def insert_available_user(public_name=None):
@@ -227,6 +246,12 @@ def get_game_count(token=None):
     if token is None:
         token = get_anon_token()
     return get(url + "/anon-api/games/count", headers={"token": token})["game_count"]
+
+
+def get_speeds(token=None):
+    if token is None:
+        token = get_anon_token()
+    return get(url + "/anon-api/speeds", headers={"token": token})
 
 
 def get_client_versions(admin_token):
@@ -275,7 +300,7 @@ def empty_user_collection():
 
 @pytest.fixture
 def admin_token():
-    insert_taken_user("Spencatro", "Tracker_Admin")
+    insert_taken_user("Spencatro", "Tracker_Admin", discord_username="Spencatro#1234554321")
     return get_user_token("Spencatro")
 
 
@@ -299,6 +324,23 @@ def test_games_count(new_entry_base):
     _game, _post = post_random_game(token=anon_token)
     new_game_count = get_game_count(anon_token)
     assert new_game_count == game_count + 1
+
+
+def test_speeds(empty_game_collection, admin_token):
+    anon_token = get_anon_token()
+    speeds = get_speeds(anon_token)
+    pprint.pprint(speeds)
+    assert speeds["game_speed_per_day"] == 0
+    assert speeds["hero_speed_per_day"] == 0
+
+    post_random_games(num_games=7, admin_token=admin_token)
+    time.sleep(1)
+    speeds = get_speeds(anon_token)
+    pprint.pprint(speeds)
+    assert 0.9 < speeds["game_speed_per_day"] < 1.1
+    assert (1.0 / 8.0) < speeds["hero_speed_per_day"] < (1.0 / 6.0)
+
+    assert 0 < speeds["download_speed_per_day"] < 1000
 
 
 def test_user_client_versions(empty_game_collection, admin_token):
@@ -394,8 +436,10 @@ def test_get_users_games_by_user_id_admin(any_games_5_or_more, admin_token):
     assert len(all_id_set) == 4
 
 
-def test_get_game(any_games_5_or_more):
+def test_get_game(empty_game_collection):
     game, res = post_random_game(winner="tess", loser="joey")
+    game2, res = post_random_game(winner="joey", loser="nobody")
+
     game_id = game["gameID"]
     hero_token = get_user_token("tess")
     opponent_token = get_user_token("joey")
@@ -449,9 +493,11 @@ def test_post_game(any_games_5_or_more):
     assert game_count_after == game_count + 1
 
 
-def test_post_game_without_hero_gets_hero():
+def test_post_game_without_hero_gets_hero(empty_user_collection):
     posted_game, result = post_random_game(game_shell=_game_shell_schema_0)
     assert "hero" not in posted_game.keys()
+    post_random_game()  # unlock account
+
     game_id = posted_game["gameID"]
     hero_token = get_user_token("joe")
     game_by_id = get_game_by_id(game_id, hero_token)
@@ -463,8 +509,25 @@ def test_post_game_without_hero_gets_hero():
             assert "visible cards" in player["deck"]["poolName"]
 
 
-def test_clientversion_ok(any_games_5_or_more):
+@pytest.mark.dev
+def test_clientversion_ok(empty_user_collection, any_games_5_or_more):
     posted_game, result = post_random_game(client_version=latest_client_version, game_shell=_game_shell_schema_1_1_0_beta)
+    assert "clientVersionOK" not in posted_game.keys()
+    game_id = posted_game["gameID"]
+    hero_token = get_user_token(posted_game["hero"])
+    game_by_id = get_game_by_id(game_id, hero_token)
+    assert "clientVersionOK" in game_by_id.keys() and game_by_id["clientVersionOK"]
+
+    newer_major_version = "9" + latest_client_version[1:]
+    posted_game, result = post_random_game(client_version=newer_major_version, game_shell=_game_shell_schema_1_1_0_beta)
+    assert "clientVersionOK" not in posted_game.keys()
+    game_id = posted_game["gameID"]
+    hero_token = get_user_token(posted_game["hero"])
+    game_by_id = get_game_by_id(game_id, hero_token)
+    assert "clientVersionOK" in game_by_id.keys() and game_by_id["clientVersionOK"]
+
+    newer_medium_version = latest_client_version[:2] + "9" + latest_client_version[3:]
+    posted_game, result = post_random_game(client_version=newer_medium_version, game_shell=_game_shell_schema_1_1_0_beta)
     assert "clientVersionOK" not in posted_game.keys()
     game_id = posted_game["gameID"]
     hero_token = get_user_token(posted_game["hero"])
@@ -475,18 +538,21 @@ def test_clientversion_ok(any_games_5_or_more):
     assert "clientVersionOK" not in posted_game.keys()
     game_id = posted_game["gameID"]
     hero_token = get_user_token(posted_game["hero"])
+    post_random_game()  # unlock account
     game_by_id = get_game_by_id(game_id, hero_token)
     assert "clientVersionOK" in game_by_id.keys() and not game_by_id["clientVersionOK"]
 
-    posted_game, result = post_random_game(client_version="99.99.99", game_shell=_game_shell_schema_1_1_0_beta)
+    posted_game, result = post_random_game(client_version="1.0.0", game_shell=_game_shell_schema_1_1_0_beta)
     assert "clientVersionOK" not in posted_game.keys()
     game_id = posted_game["gameID"]
     hero_token = get_user_token(posted_game["hero"])
+    post_random_game()  # unlock account
     game_by_id = get_game_by_id(game_id, hero_token)
     assert "clientVersionOK" in game_by_id.keys() and not game_by_id["clientVersionOK"]
 
     posted_game, result = post_random_game(client_version=None, game_shell=_game_shell_schema_0)
     assert "clientVersionOK" not in posted_game.keys() and "client_version" not in posted_game.keys()
+    post_random_game()  # unlock account
     game_id = posted_game["gameID"]
     hero_token = get_user_token("joe")
     game_by_id = get_game_by_id(game_id, hero_token)
@@ -670,12 +736,21 @@ def test_404():
     assert "may be banned" in str(result.json())
 
 
+@pytest.mark.auth
 def test_auth_request(empty_game_collection, empty_user_collection):
     game, _ = post_random_game(winner="kate", loser="james")
-    kate_before = users_collection.find_one({"username": "kate"})
-    assert "auth" not in kate_before.keys()
 
+    # test no discord mapping -> no token
     request_auth("kate")
+    time.sleep(0.5)
+    user_after_auth_request = users_collection.find_one({"username": "kate"})
+    assert "auth" not in user_after_auth_request.keys()
+
+    # test with discord mapping -> token
+    request_auth("kate", force_discord=True)
+    time.sleep(0.5)
+    user_after_auth_request = users_collection.find_one({"username": "kate"})
+
     kate_after = users_collection.find_one({"username": "kate"})
     assert "auth" in kate_after.keys()
 
@@ -683,13 +758,23 @@ def test_auth_request(empty_game_collection, empty_user_collection):
     assert 0 < access_code < 999999
 
 
+@pytest.mark.auth
+def test_auth_request_case_insensitive(empty_game_collection, empty_user_collection):
+    insert_taken_user("kate", discord_username="kate#123123123123")
+    request_auth("kAtE")
+    kate_after = users_collection.find_one({"username": "kate"})
+    assert "auth" in kate_after.keys()
+
+
+@pytest.mark.slow
+@pytest.mark.auth
 def test_auth_request_expires(empty_game_collection, empty_user_collection):
     # TODO: dry here and test_auth_request
     game, _ = post_random_game(winner="kate", loser="james")
     kate_before = users_collection.find_one({"username": "kate"})
     assert "auth" not in kate_before.keys()
 
-    request_auth("kate")
+    request_auth("kate", force_discord=True)
     kate_after = users_collection.find_one({"username": "kate"})
     assert "auth" in kate_after.keys()
 
@@ -701,23 +786,17 @@ def test_auth_request_expires(empty_game_collection, empty_user_collection):
     access_code_after = int(kate_after_2["auth"]["accessCode"])
     assert access_code == access_code_after
 
-    expires = kate_after_2["auth"]["expires"]
-    expires -= datetime.timedelta(hours=4, minutes=50)  # token has 1:10 left to live
-    users_collection.update_one({"username": "kate"}, {"$set": {"auth.expires": expires}})
-
-    kate_after_3 = users_collection.find_one({"username": "kate"})
-    access_code_after_3 = int(kate_after_3["auth"]["accessCode"])
-    assert access_code_after_3 == access_code_after
-
-    expires = kate_after_3["auth"]["expires"]
-    expires -= datetime.timedelta(hours=5, minutes=10)  # token is expired
-    users_collection.update_one({"username": "kate"}, {"$set": {"auth.expires": expires}})
-
+    time.sleep(30)
     request_auth("kate")
-    kate_after_4 = users_collection.find_one({"username": "kate"})
-    access_code_after_4 = int(kate_after_4["auth"]["accessCode"])
-    assert 0 < access_code_after_4 < 999999
-    assert access_code_after_4 != access_code_after_3
+    kate_after_30s = users_collection.find_one({"username": "kate"})
+    access_code_after30s = int(kate_after_30s["auth"]["accessCode"])
+    assert access_code == access_code_after30s
+
+    time.sleep(70)  # 70 + 30 = 100 > 90, so code should roll
+    request_auth("kate")
+    kate_after_100s = users_collection.find_one({"username": "kate"})
+    access_code_after100s = int(kate_after_100s["auth"]["accessCode"])
+    assert access_code != access_code_after100s
 
 
 @pytest.mark.cron
@@ -726,7 +805,6 @@ def test_cron_fixes_hero_in_schema0(empty_game_collection, admin_token):
     post_random_games(num_games=20, no_verify=True, game_shell=_game_shell_schema_0)  # need this to exclude hero
     all_games = get_all_games_admin_page(admin_token, 1, 20)
     for game in all_games["docs"]:
-        print(game)
         assert "hero" not in game.keys(), game.keys()
     time.sleep(120)
     game_current_first = get_game_by_id(all_games["docs"][0]["gameID"])
@@ -741,7 +819,6 @@ def test_cron_fixes_opponent_in_schema0(empty_game_collection, admin_token):
     post_random_games(num_games=20, no_verify=True, game_shell=_game_shell_schema_1_1_0_beta)
     all_games = get_all_games_admin_page(admin_token, 1, 20)
     for game in all_games["docs"]:
-        print(game)
         assert "opponent" not in game.keys(), game.keys()
     time.sleep(120)
     game_current_first = get_game_by_id(all_games["docs"][0]["gameID"])
@@ -751,24 +828,28 @@ def test_cron_fixes_opponent_in_schema0(empty_game_collection, admin_token):
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_anon_api_not_accessible_without_token():
     anon_api_no_token = get(url + "/anon-api/", raw_result=True)
     assert anon_api_no_token.status_code == 401
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_admin_api_not_accessible_without_token():
     anon_api_no_token = get(url + "/admin-api/", raw_result=True)
     assert anon_api_no_token.status_code == 401
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_user_api_not_accessible_without_token():
     anon_api_no_token = get(url + "/api/", raw_result=True)
     assert anon_api_no_token.status_code == 401
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_get_anon_token(empty_game_collection):
     anon_token = get_anon_token()
     token_decoded = jwt.decode(anon_token, verify=False)  # we don't have the secret, can only inspect the payload
@@ -782,6 +863,7 @@ def test_get_anon_token(empty_game_collection):
 
 
 @pytest.mark.token
+@pytest.mark.auth
 def test_get_user_token(empty_game_collection, empty_user_collection):
     game, _ = post_random_game(winner="kate", loser="james")
     user_token = get_user_token("kate")
@@ -794,36 +876,12 @@ def test_get_user_token(empty_game_collection, empty_user_collection):
     assert anon_api_token.status_code == 200
 
 
-
-# @pytest.mark.dev
-# def test_game_histogram(empty_game_collection, admin_token):
-#     _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
-#     two_hundred_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
-#     for idx, game in enumerate(two_hundred_random_games):
-#         game["gameID"] = _random_string()
-#         game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
-#     post_random_games(two_hundred_random_games, admin_token=admin_token)
-#     time.sleep(1)
-#     gh_url = url + "/anon-api/games/time-histogram"
-#     res = get(gh_url, headers={"token": admin_token})
-#     print(res)
-#
-#     # two_hundred_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(180)]
-#     # for game in two_hundred_random_games:
-#     #     game["gameID"] = _random_string()
-#     # post_random_games(two_hundred_random_games, admin_token=admin_token)
-#     # gh_url = url + "/games/time-histogram"
-#     # res = get(gh_url, headers={"token": admin_token})
-#     # print(res)
-#     # raise 1/0
-#     # TODO start here
-
-
 @pytest.mark.token
+@pytest.mark.auth
 def test_get_user_games(empty_game_collection):
     post_random_game(winner="gemma")
     gemma_token = get_user_token("gemma")
-    games = get(url + "/api/games/user", headers={"token": gemma_token})
+    games = get(url + "/api/games", headers={"token": gemma_token})
     print(games)
     for game in games["docs"]:
         print(game)
@@ -836,11 +894,245 @@ def test_get_user_games(empty_game_collection):
     post_random_game(winner="jane")
     post_random_game(winner="gemma")
 
-    games = get(url + "/api/games/user", headers={"token": gemma_token})
+    games = get(url + "/api/games", headers={"token": gemma_token})
     print(games)
     for game in games["docs"]:
         print(game)
         assert game["hero"] == "gemma"
+
+
+@pytest.mark.token
+@pytest.mark.auth
+def test_get_user_games_hides_games_oldversions(empty_game_collection):
+    post_random_game(winner="gemma")
+    gemma_token = get_user_token("gemma")
+    games = get(url + "/api/games", headers={"token": gemma_token})
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+
+    post_random_game(winner="gemma", client_version="0.0.0-beta")
+    games = get(url + "/api/games", headers={"token": gemma_token})
+    assert "locked" in games["error"]
+
+    post_random_game(winner="gemma")
+    games = get(url + "/api/games", headers={"token": gemma_token})
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+
+
+@pytest.mark.token
+@pytest.mark.auth
+def test_get_user_decks(empty_game_collection):
+    post_random_game(winner="gemma")
+    gemma_token = get_user_token("gemma")
+    games = get(url + "/api/decks", headers={"token": gemma_token})
+
+    assert games["123-joe-456"]["losses"] == 0
+    assert games["123-joe-456"]["wins"] == 1
+
+    post_random_game(winner="gemma", winner_deck_id="123-456-789")
+    time.sleep(1)
+    games = get(url + "/api/decks", headers={"token": gemma_token})
+
+    assert games["123-joe-456"]["losses"] == 0
+    assert games["123-joe-456"]["wins"] == 1
+    assert games["123-456-789"]["losses"] == 0
+    assert games["123-456-789"]["wins"] == 1
+
+    post_random_game(winner="gemma", winner_deck_id="123-456-789")
+    time.sleep(1)
+    games = get(url + "/api/decks", headers={"token": gemma_token})
+
+    assert games["123-joe-456"]["losses"] == 0
+    assert games["123-joe-456"]["wins"] == 1
+    assert games["123-456-789"]["losses"] == 0
+    assert games["123-456-789"]["wins"] == 2
+
+    post_random_game(hero="gemma", loser="gemma", winner="joe")
+    time.sleep(1)
+    games = get(url + "/api/decks", headers={"token": gemma_token})
+
+    assert games["123-joe-456"]["losses"] == 1
+    assert games["123-joe-456"]["wins"] == 1
+    assert games["123-456-789"]["losses"] == 0
+    assert games["123-456-789"]["wins"] == 2
+
+
+@pytest.mark.token
+@pytest.mark.auth
+def test_get_user_games_for_deck(empty_game_collection):
+    specific_deck_ID = "search_deck_id"
+    post_random_game(winner="gemma", winner_deck_id=specific_deck_ID)
+    gemma_token = get_user_token("gemma")
+    games = get(url + "/api/games?deckID={}".format(specific_deck_ID), headers={"token": gemma_token})
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+        assert game["players"][0]["deck"]["deckID"] == specific_deck_ID
+
+    post_random_game(winner="gemma", winner_deck_id="search_deck_id")
+    post_random_game(winner="gemma")
+    post_random_game(winner="notgemma")
+    post_random_game(winner="notgemma", winner_deck_id="search_deck_id")  # this should never happen, but still
+    post_random_game(winner="gemma", winner_deck_id="search_deck_id")
+    post_random_game(winner="gemma")
+
+    games = get(url + "/api/games?deckID={}".format(specific_deck_ID), headers={"token": gemma_token})
+    assert len(games["docs"]) == 3
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+        assert game["players"][0]["deck"]["deckID"] == specific_deck_ID
+
+
+@pytest.mark.token
+@pytest.mark.auth
+def test_get_user_games_against_opponent(empty_game_collection):
+    specific_opponent = "antigemma"
+    post_random_game(winner="gemma", hero="gemma", opponent=specific_opponent)
+    gemma_token = get_user_token("gemma")
+    games = get(url + "/api/games?opponent={}".format(specific_opponent), headers={"token": gemma_token})
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+        assert game["opponent"] == specific_opponent
+
+    post_random_game(winner="gemma", hero="gemma", opponent=specific_opponent)
+    post_random_game(winner="gemma", hero="gemma")
+    post_random_game(winner="notgemma")
+    post_random_game(winner="notgemma", opponent=specific_opponent)  # this should never happen, but still
+    post_random_game(winner="gemma", hero="gemma", opponent=specific_opponent)
+    post_random_game(winner="gemma", hero="gemma")
+
+    games = get(url + "/api/games?opponent={}".format(specific_opponent), headers={"token": gemma_token})
+    assert len(games["docs"]) == 3
+    for game in games["docs"]:
+        assert game["hero"] == "gemma"
+        assert game["opponent"] == specific_opponent
+
+
+def test_game_histogram_one_per(empty_game_collection, admin_token):
+    _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
+    twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
+    for idx, game in enumerate(twenty_random_games):
+        game["gameID"] = _random_string()
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
+    post_random_games(twenty_random_games, admin_token=admin_token)
+    time.sleep(3)
+
+    gh_url = url + "/anon-api/games/time-histogram"
+    histo = get(gh_url, headers={"token": admin_token})["game_histogram"]
+    current_count = 0
+    assert 5 < len(histo) < 8  # should have 6-7entries; 6-7 games over the last week, 20 over the last 20 days
+    for item in sorted(histo, key=lambda x: parse_date(x["date"])):
+        next_count = item["count"]
+        if current_count == 0:
+            assert next_count > current_count
+        else:
+            assert next_count == current_count + 1
+        current_count = next_count
+
+
+def test_game_histogram_one_per_(empty_game_collection, admin_token):
+    _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
+    two_hundred_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(200)]
+    for idx, game in enumerate(two_hundred_random_games):
+        game["gameID"] = _random_string()
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=int(idx / 10)))
+    post_random_games(two_hundred_random_games, admin_token=admin_token)
+    gh_url = url + "/anon-api/games/time-histogram"
+    histo = get(gh_url, headers={"token": admin_token})["game_histogram"]
+    assert 59 < len(histo) < 61  # should have 60 entries; 60 games over the last week, 200 over the last 20 days
+    current_count = 0
+    for item in sorted(histo, key=lambda x: parse_date(x["date"])):
+        next_count = item["count"]
+        if current_count == 0:
+            assert next_count > current_count
+        else:
+            assert next_count == current_count + 1
+        current_count = next_count
+
+
+def test_game_histogram_many_per(empty_game_collection, admin_token):
+    _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
+    for i in range(10):
+        two_hundred_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(200)]
+        for idx, game in enumerate(two_hundred_random_games):
+            game["gameID"] = _random_string()
+            game["date"] = str(_20_days_ago + datetime.timedelta(days=int(idx / 10)))
+        post_random_games(two_hundred_random_games, admin_token=admin_token)
+
+    gh_url = url + "/anon-api/games/time-histogram"
+    histo = get(gh_url, headers={"token": admin_token})["game_histogram"]
+    pprint.pprint(histo)
+    assert 99 < len(histo) < 102  # should hit the max resolution here, fuzzy 100
+    current_count = 0
+    for item in sorted(histo, key=lambda x: parse_date(x["date"])):
+        next_count = item["count"]
+        if current_count == 0:
+            assert next_count > current_count
+        else:
+            assert current_count + 5 < next_count < current_count + 8 or next_count == 2000
+        current_count = next_count
+
+
+def test_hero_histogram_one_per(empty_game_collection, admin_token):
+    _20_days_ago = datetime.datetime.now() - datetime.timedelta(days=20)
+    twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
+    last_hero_added = None
+    for idx, game in enumerate(twenty_random_games):
+        game["gameID"] = _random_string()
+        game["hero"] = game["hero"] + str(idx)
+        game["winner"] = game["hero"]
+        game["players"][0]["name"] = game["hero"]
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
+        last_hero_added = game["hero"]
+    post_random_games(twenty_random_games, admin_token=admin_token)
+    time.sleep(3)
+
+    gh_url = url + "/anon-api/heroes/time-histogram"
+    histo_result = get(gh_url, headers={"token": admin_token})
+    histo = histo_result["hero_histogram"]
+
+    current_count = 0
+    assert 5 < len(histo) < 8  # should have 6-7entries; 6-7 games over the last week, 20 over the last 20 days
+    for item in sorted(histo, key=lambda x: parse_date(x["date"])):
+        next_count = item["count"]
+        if current_count == 0:
+            assert next_count > current_count
+        else:
+            assert next_count == current_count + 1
+        current_count = next_count
+
+    post_random_game(winner=last_hero_added)
+    gh_url = url + "/anon-api/heroes/time-histogram"
+    histo_result_2 = get(gh_url, headers={"token": admin_token})
+
+    twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
+    for idx, game in enumerate(twenty_random_games):
+        game["gameID"] = _random_string()
+        game["hero"] = last_hero_added
+        game["winner"] = game["hero"]
+        game["players"][0]["name"] = game["hero"]
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
+    post_random_games(twenty_random_games, admin_token=admin_token)
+
+    gh_url = url + "/anon-api/heroes/time-histogram"
+    histo_result_3 = get(gh_url, headers={"token": admin_token})
+
+    twenty_random_games = [copy.deepcopy(_game_shell_schema_1_1_1_beta) for _ in range(20)]
+    for idx, game in enumerate(twenty_random_games):
+        game["gameID"] = _random_string()
+        game["hero"] = game["hero"] + str(idx)
+        game["winner"] = game["hero"]
+        game["players"][0]["name"] = game["hero"]
+        game["date"] = str(_20_days_ago + datetime.timedelta(days=idx))
+    post_random_games(twenty_random_games, admin_token=admin_token)
+
+    gh_url = url + "/anon-api/heroes/time-histogram"
+    histo_result_4 = get(gh_url, headers={"token": admin_token})
+
+    # make sure that the count is always 20
+    assert max(histo_result["hero_histogram"], key=lambda x: x["count"])["count"] == max(histo_result_2["hero_histogram"], key=lambda x: x["count"])["count"]
+    assert max(histo_result["hero_histogram"], key=lambda x: x["count"])["count"] == max(histo_result_3["hero_histogram"], key=lambda x: x["count"])["count"]
+    assert max(histo_result["hero_histogram"], key=lambda x: x["count"])["count"] == max(histo_result_4["hero_histogram"], key=lambda x: x["count"])["count"]
 
 
 if __name__ == "__main__":

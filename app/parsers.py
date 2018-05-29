@@ -23,8 +23,9 @@ def parse_get_decklists(blob):
 def parse_event_decksubmit(blob):
     # DOM: new
     import app.mtga_app as mtga_app
-    deck_id = blob["CourseDeck"]["id"]
-    deck = mtga_app.mtga_watch_app.player_decks[deck_id]
+    course_deck = blob["CourseDeck"]
+    deck_id = course_deck["id"]
+    deck = util.process_deck(course_deck, save_deck=False)
     mtga_app.mtga_watch_app.intend_to_join_game_with = deck
 
 
@@ -169,7 +170,6 @@ def parse_accept_hand(blob):
 
 def parse_match_complete(blob):
     import app.mtga_app as mtga_app
-    game_state_change_queue.put({"match_complete": True})
     game_room_info = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']
     final_match_result = game_room_info['finalMatchResult']
     result_list = final_match_result["resultList"]
@@ -181,9 +181,12 @@ def parse_match_complete(blob):
             with mtga_app.mtga_watch_app.game_lock:
                 mtga_app.mtga_watch_app.game.final = True
                 mtga_app.mtga_watch_app.game.winner = mtga_app.mtga_watch_app.game.get_player_in_seat(winning_team)
-                if match_id == mtga_app.mtga_watch_app.game.match_id:
-                    mtga_app.mtga_watch_app.web_api.save_game_result(mtga_app.mtga_watch_app.game.to_json())
-                else:
+                # let electron handle the upload
+                game_state_change_queue.put({
+                    "match_complete": True,
+                    "game": mtga_app.mtga_watch_app.game.to_json()
+                })
+                if match_id != mtga_app.mtga_watch_app.game.match_id:
                     fstr = "match_id {} ended, but doesn't match current game object ({})!"
                     raise Exception(fstr.format(match_id, mtga_app.mtga_watch_app.game.match_id))
 

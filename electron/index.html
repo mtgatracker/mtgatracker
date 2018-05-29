@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>MTGA Tracker</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <!-- <link id="theme" rel="stylesheet" type="text/css" href="../../themes/blue.css"> <!-- example theme file -->
     <link rel="stylesheet" type="text/css" href="mtg-font-master/css/magic-font.css">
   <!-- TODO: https://github.com/magarena/magarena/tree/master/resources/cardbuilder/fonts -->
   </head>
@@ -18,10 +19,16 @@
     <div id="container">
       <div id="game-deck-list" rv-show="game_in_progress">
          <h1 class="deck-title">{ deck_name }</h1>
+        <h3 rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
         <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
         <h3 class="beleren link" onclick="unpopulateDecklist()" rv-show="game_complete">Back to decklists</h3>
-        <p class="header-warning" rv-show="show_error">{error_count}</p>
-        <p class="update-message" rv-show="show_update_message"><a href="http://github.com/shawkinsl/mtga-tracker/releases/latest">{message}</a></p>
+        <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
+        <div class="messages">
+          <p rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
+            <span class="update-message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mayfollow">{ message.text }</a> [x]</span>
+            <span class="update-message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mustfollow">{ message.text } [x]</a></span>
+          </p>
+        </div>
         <h3>{ total_cards_in_deck } cards in deck</h3>
         <div class="card" rv-each-stat="draw_stats" rv-card_color="stat.colors">
           <div class="card-text">
@@ -34,10 +41,16 @@
       </div>
       <div id="available-deck-list" rv-show="show_available_decklists">
         <h1 class="beleren">MTGATracker</h1>
+        <h3 rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
         <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
         <div id="decklists-container" rv-show="no_list_selected">
           <h3>Pick a deck, or start a game!</h3>
-          <p class="update-message" rv-show="show_update_message"><a href="http://github.com/shawkinsl/mtga-tracker/releases/latest">{message}</a></p>
+          <div class="messages">
+            <p rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
+              <span class="update-message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mayfollow">{ message.text }</a> [x]</span>
+              <span class="update-message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mustfollow">{ message.text } [x]</a></span>
+            </p>
+          </div>
           <p class="header-warning" rv-show="no_decks">
             MTGATracker couldn't find any decks. If this is the first time launching MTGATracker, please edit, then save any deck in MTGA now!
           </p>

@@ -6,3 +6,26 @@
 .settings-row {
   margin-top: 10px;
 }
+
+.toggle {
+  min-width: 65px;
+  min-height: 40px;
+}
+
+.about-p {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  cursor: pointer;
+}
+
+.btnbtn {
+  margin-top: 12px;
+}
+
+.disclaimer {
+  font-size: 14px;
+  font-style: italic;
+}

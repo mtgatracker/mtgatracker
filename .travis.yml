@@ -6,8 +6,6 @@ node_js:
   - "8.9.1"
 cache:
   pip: true
-  directories:
-    - webtasks/on_demand/node_modules
 before_install:
   - pip install -U pip
 install:
@@ -23,6 +21,7 @@ install:
 
 script:
   - cd webtasks/on_demand
+  - npm install .
   - npx babel mtga-tracker-game.js --out-file mtga-tracker-game.js
   - npx babel secrets-template.js --out-file secrets-template.js
   - npx babel ../util.js --out-file ../util.js

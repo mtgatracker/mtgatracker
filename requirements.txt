@@ -1,5 +1,7 @@
+python-dateutil
 requests
 tailer
 websockets
 pyinstaller
 pytest
+pynput

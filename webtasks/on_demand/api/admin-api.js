@@ -245,7 +245,7 @@ router.post('/game/no-verify', (req, res, next) => {
 
 // covered: test_post_games
 router.post('/games', (req, res, next) => {
-  console.log("admin games")
+  console.log("POST admin /games")
   const { MONGO_URL, DATABASE } = req.webtaskContext.secrets;
   const games = req.body.games;
 
@@ -272,7 +272,9 @@ router.post('/games', (req, res, next) => {
   MongoClient.connect(MONGO_URL, (err, client) => {
     nonDupes.forEach((model, idx) => {
       if (model.date === undefined) {
-        model.date = Date()
+        model.date = new Date()
+      } else {
+        model.date = new Date(Date.parse(model.date))
       }
       let game = new Game(model)
       if (!game.isValid()) {

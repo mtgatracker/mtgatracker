@@ -1,9 +1,30 @@
-const path = require('path')
 const console = require('console');
+
+global.updateReady = false
+const { handleStartupEvent } = require("./updates")
+
+if (handleStartupEvent()) {
+  return;
+}
+
+const { app, ipcMain, BrowserWindow, autoUpdater } = require('electron')
 const fs = require('fs');
+const path = require('path')
+
+let firstRun = process.argv[1] == '--squirrel-firstrun';
+
+if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
+  autoUpdater.checkForUpdates()
+}
+
 const findProcess = require('find-process');
-const { app, ipcMain, BrowserWindow } = require('electron')
 const settings = require('electron-settings');
+autoUpdater.on('update-downloaded', (e) => {
+  global.updateReady = true
+  mainWindow.webContents.send('updateReadyToInstall', {
+    text: "A new version has been downloaded. Restart to update!"
+  })
+})
 
 
 /*************************************************************
@@ -16,7 +37,6 @@ const PY_MODULE = 'mtgatracker_backend' // without .py suffix
 
 let pyProc = null
 let pyPort = null
-
 
 let getBooleanArg = (short, long) => {
   let shortIdx = process.argv.indexOf(short)
@@ -35,22 +55,42 @@ if (frameCmdOpt) {
 }
 
 let debug = settings.get('debug', false);
+let showErrors = settings.get('showErrors', false);
+let incognito = settings.get('incognito', false);
+let showInspector = settings.get('showInspector', true);
 let useFrame = settings.get('useFrame', false);
+let useTheme = settings.get('useTheme', false);
+let themeFile = settings.get('themeFile', "");
 let showIIDs = settings.get('showIIDs', false);
 let no_server = settings.get('no_server', false);
+let mouseEvents = settings.get('mouseEvents', true);
+let leftMouseEvents = settings.get('leftMouseEvents', true);
 let kill_server = settings.get('kill_server', false);
+let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
+let showWinLossCounter = settings.get('showWinLossCounter', true);
+
+let runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
 let noFollow = false;
 let server_killed = false;
 let readFullFile = false;
 let debugFile = false;
 
+
+ipcMain.on('messageAcknowledged', (event, arg) => {
+  let acked = settings.get("messagesAcknowledged", [])
+  acked.push(arg)
+  settings.set("messagesAcknowledged", acked)
+  global["messagesAcknowledged"] = acked;
+})
+
 ipcMain.on('settingsChanged', (event, arg) => {
   global[arg.key] = arg.value;
   settings.set(arg.key, arg.value)
+  mainWindow.webContents.send('settingsChanged')
 })
 
-ipcMain.on('openSettings', (event, arg) => {
+let openSettingsWindow = () => {
   if(settingsWindow == null) {
     settingsWindow = new BrowserWindow({width: 800,
                                         height: 800,
@@ -69,15 +109,16 @@ ipcMain.on('openSettings', (event, arg) => {
     if (debug) {
       settingsWindow.webContents.openDevTools()
     }
+    settingsWindow.on('closed', function () {
+      settingsWindow = null;
+    })
   }
   settingsWindow.once('ready-to-show', () => {
     settingsWindow.show()
   })
+}
 
-  settingsWindow.on('closed', function () {
-    settingsWindow = null;
-  })
-})
+ipcMain.on('openSettings', openSettingsWindow)
 
 app.disableHardwareAcceleration()
 
@@ -135,6 +176,9 @@ const generateArgs = () => {
     }
     if (readFullFile) {
         args.push('-f')
+    }
+    if (mouseEvents) {
+      args.push('-m')
     }
     return args
 }
@@ -195,10 +239,20 @@ if (!no_server) {
 }
 
 global.debug = debug;
+global.showErrors = showErrors;
+global.incognito = incognito;
+global.showInspector = showInspector;
 global.useFrame = useFrame;
+global.useTheme = useTheme;
+global.themeFile = themeFile;
 global.showIIDs = showIIDs;
+global.leftMouseEvents = leftMouseEvents;
+global.mouseEvents = mouseEvents;
+global.winLossCounter = winLossCounter;
+global.showWinLossCounter = showWinLossCounter;
 global.version = app.getVersion()
-
+global.messagesAcknowledged = settings.get("messagesAcknowledged", [])
+global.runFromSource = runFromSource
 
 /*************************************************************
  * window management
@@ -227,20 +281,14 @@ const createWindow = () => {
                                   title: false,
                                   maximizable: false,
                                   icon: "img/icon_small.ico"})
-
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
     slashes: true
   }))
-  mainWindow.onbeforeunload = (e) => {
-    var answer = confirm('Do you really want to close the application?');
-    console.log("onbeforeunload mw")
-    e.returnValue = false
-  }
   mainWindow.on('closed', () => {
-    console.log("closed")
-    return false;
+    console.log("main window closed")
+    killServer()
   })
 
   if (debug) {
@@ -248,10 +296,20 @@ const createWindow = () => {
   }
 
   mainWindow.once('ready-to-show', () => {
+    mainWindow.webContents.send('settingsChanged')
     mainWindow.show()
     console.timeEnd('init')
     mainWindow.webContents.setZoomFactor(0.8)
   })
+
+  let versionsAcknowledged = settings.get('versionsAcknowledged', [])
+
+  // show release notes on first launch of new version
+  if (!versionsAcknowledged.includes(app.getVersion())) {
+    versionsAcknowledged.push(app.getVersion())
+    settings.set("versionsAcknowledged", versionsAcknowledged)
+    openSettingsWindow()
+  }
 }
 
 function freeze(time) {
@@ -260,6 +318,7 @@ function freeze(time) {
 }
 
 const killServer = () => {
+    console.log("killServer called")
     if (!server_killed && kill_server) {
         server_killed = true;
         if (!no_server) {
@@ -268,28 +327,23 @@ const killServer = () => {
         }
         pyProc = null
         pyPort = null
-        app.quit()
+    }
+//    if (settingsWindow) {
+//      settingsWindow.close()
+//      settingsWindow = null;
+//    }
+    if (global.updateReady) {
+      console.log("doing quitAndInstall")
+      autoUpdater.quitAndInstall()
+    } else {
+      console.log("app.quit()")
+      app.quit()
     }
 }
 
 app.on('ready', createWindow)
 
-app.on('before-quit', function() {
-  console.log("boutta quit")
-  killServer()
-})
-
 app.on('will-quit', function() {
-  console.log("quitting")
+  console.log("will quit")
   killServer()
-})
-
-app.on('window-all-closed', () => {
-    killServer()
-})
-
-app.on('beforeunload', (e) => {
-    console.log("onbeforeunload app")
-    return false;
-    e.returnValue = "false";
 })

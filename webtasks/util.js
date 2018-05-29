@@ -44,6 +44,7 @@ var downloadCount = null;
 const deckCollection = 'deck',
       gameCollection = 'game',
       userCollection = 'user',
+      notificationCollection = 'tracker-notification',
       errorCollection = 'error';
 
 let routeDoc = (routeStack) => {
@@ -69,6 +70,32 @@ let createToken = (username, jwtSecret) => {
 
 let createAnonymousToken = (jwtSecret) => {
   return jwt.sign({"user": null, "anonymousClientID": random6DigitCode()}, jwtSecret, {expiresIn: "1d"})
+}
+
+let createDeckFilter = (query) => {
+  queryObj = {}
+  filterable = {
+    //"colors": "notimplemented",
+    //"colorsAgainst": "notimplemented",
+    "deckID": "players.0.deck.deckID",
+    "opponent": "opponent"}
+  Object.keys(query).filter(key => Object.keys(filterable).includes(key)).forEach(key => {
+    filterObj = query[key]
+
+    // js doesn't allow literals as keys :(
+    let matchFilter = {}
+    matchFilter[`${filterable[key]}`] = filterObj
+    let doesntExistFilter = {}
+    doesntExistFilter[`${filterable[key]}`] = {$exists: false}
+
+    if (!queryObj.$and) {
+      queryObj.$and = []
+    }
+    queryObj["$and"].push({
+      $or: [ matchFilter, doesntExistFilter ]  // match where they are equal, or the filter doesn't exist in the db, e.g. colors
+    })
+  })
+  return queryObj
 }
 
 let getCookieToken = (req) => {
@@ -139,17 +166,23 @@ let parseVersionString = (versionStr) => {
 }
 
 let differenceMinutes = (date1, date2) => {
-  return (date2 - date1) * 1.66667e-5
+  if (typeof date1 === 'string')
+    date1 = Date.parse(date1)
+  if (typeof date2 === 'string')
+    date1 = Date.parse(date2)
+  let result = (date2 - date1) * 1.66667e-5
+  console.log("differenceMinutes: it has been " + result)
+  return result
 }
 
 let getGithubStats = (storage) => {
   return new Promise((resolve, reject) => {
-    storage.get((err, data) => {
+    storage.get((err, storageData) => {
       // github rate limits are 1/min for unauthed requests, only allow every 1.5 min to be safe
-      if (data === undefined || differenceMinutes(data.lastUpdated, Date.now()) >= 1.5) {
+      if (storageData === undefined || differenceMinutes(storageData.lastUpdated, Date.now()) >= 1.5) {
         let setTime = Date.now()
-        if (data !== undefined && data.lastUpdated !== undefined)
-          console.log("need to request gh api (has been " + differenceMinutes(data.lastUpdated, Date.now()) + " minutes)")
+        if (storageData !== undefined && storageData.lastUpdated !== undefined)
+          console.log("need to request gh api (has been " + differenceMinutes(storageData.lastUpdated, Date.now()) + " minutes)")
         else
           console.log("need to request gh data (cache is empty)")
         request.get({
@@ -159,10 +192,12 @@ let getGithubStats = (storage) => {
         }, (err, res, data) => {
           if (err || (typeof data === 'object' && !(data instanceof Array))) {
             console.log("greppable: gh data was not array and was object")
-            let fakeVersionStr = "1.1.1-beta"
-            let fakedData = {latestVersion: parseVersionString(fakeVersionStr), latestVersionString: latestVersionString, totalDownloads: 100, lastUpdated: new Date(), warning: "Warning: this is fake data!"}
-            storage.set(fakedData, (err) => {})
-            resolve(fakedData)
+            if (!storageData) {
+              let fakeVersionStr = "3.0.0"
+              storageData = {latestVersion: parseVersionString(fakeVersionStr), latestVersionString: latestVersionString, totalDownloads: 100, lastUpdated: new Date(), warning: "Warning: this is fake data!"}
+            }
+            storage.set(storageData, (err) => {})
+            resolve(storageData)
           } else {
             let downloadCount = 0;
             data.forEach((elem, idx) => {
@@ -178,7 +213,7 @@ let getGithubStats = (storage) => {
           }
         })
       } else {
-        resolve(data)
+        resolve(storageData)
       }
     })
   })
@@ -197,7 +232,7 @@ let clientVersionUpToDate = (clientVersion, storage) => {
         let ok = false;
         if (appVersion != latestVersion) {
           // https://github.com/shawkinsl/mtga-tracker/issues/129
-          if (appVersion.major != latestVersion.major || appVersion.medium != latestVersion.medium) {
+          if (appVersion.major < latestVersion.major || appVersion.medium < latestVersion.medium) {
             ok = false;
           } else if (latestVersion.suffix === undefined && appVersion.suffix !== undefined) {
             // client is x.y.z-beta, latest is x.y.z
@@ -260,7 +295,6 @@ let getPublicName = (client, database, username, createIfDoesntExist, isUser) =>
   })
 }
 
-
 module.exports = {
   getPublicName: getPublicName,
   randomString: randomString,
@@ -280,5 +314,7 @@ module.exports = {
   gameCollection: gameCollection,
   userCollection: userCollection,
   errorCollection: errorCollection,
-  Game: Game
+  Game: Game,
+  createDeckFilter: createDeckFilter,
+  notificationCollection: notificationCollection,
 }

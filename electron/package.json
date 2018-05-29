@@ -1,6 +1,6 @@
 {
-    "name": "mtga-tracker",
-    "version": "2.0.0-beta",
+    "name": "mtgatracker",
+    "version": "3.1.0",
     "description": "Application to track MTGA decks in-game",
     "main": "main.js",
     "scripts": {
@@ -27,6 +27,7 @@
     },
     "devDependencies": {
         "electron": "^1.7.6",
-        "electron-packager": "^9.0.1"
+        "electron-packager": "^9.0.1",
+        "grunt-electron-installer": "^2.1.0"
     }
 }
