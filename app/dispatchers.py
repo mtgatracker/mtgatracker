@@ -16,6 +16,8 @@ def dispatch_blob(blob):
     elif "block_title" in blob and (blob["block_title"] == "Event.DeckSubmit" or \
                                     blob["block_title"] == "Event.GetPlayerCourse"):
         parsers.parse_event_decksubmit(blob)
+    elif "block_title" in blob and blob["block_title"] == "PlayerInventory.GetPlayerCardsV3":
+        parsers.parse_inventory(blob)
     elif "matchGameRoomStateChangedEvent" in blob:
         dispatch_match_gametoom_state_change(blob)
 

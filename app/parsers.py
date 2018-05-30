@@ -10,6 +10,11 @@ def parse_jsonrpc_blob(blob):
     pass
 
 
+def parse_inventory(blob):
+    app.mtga_app.mtga_logger.info("Need to parse this inventory:")
+    app.mtga_app.mtga_logger.info(str(blob)[:30] + "...")
+
+
 def parse_get_decklists(blob):
     # DOM: ok
     import app.mtga_app as mtga_app
