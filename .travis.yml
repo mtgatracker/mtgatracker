@@ -6,33 +6,35 @@ node_js:
   - "8.9.1"
 cache:
   pip: true
-before_install:
-  - pip install -U pip
-install:
-  - pip install -U -r requirements-tests.txt
-  - npm install wt-cli -g
-  - npm install @babel/cli -g
-  - npm install @babel/core -g
-  - npm install @babel/runtime -g
-  - npm install @babel/preset-env @babel/plugin-transform-runtime
-  - npm install jsonwebtoken -g
-  - npm install webtasks/on_demand
+  
+#before_install:
+#  - pip install -U pip
+#install:
+#  - pip install -U -r requirements-tests.txt
+#  - npm install wt-cli -g
+#  - npm install @babel/cli -g
+#  - npm install @babel/core -g
+#  - npm install @babel/runtime -g
+#  - npm install @babel/preset-env @babel/plugin-transform-runtime
+#  - npm install jsonwebtoken -g
+#  - npm install webtasks/on_demand
 
 
 script:
-  - cd webtasks/on_demand
-  - npm install .
-  - npx babel mtga-tracker-game.js --out-file mtga-tracker-game.js
-  - npx babel secrets-template.js --out-file secrets-template.js
-  - npx babel ../util.js --out-file ../util.js
-  - npx babel api -d api
-  - node --version
-  - sh serve_locally.sh
-  - cd ..
-  - python test_staging_endpoints.py -k "not cron" --local -v
+  - echo "oops, tests have moved :("
+#  - cd webtasks/on_demand
+#  - npm install .
+#  - npx babel mtga-tracker-game.js --out-file mtga-tracker-game.js
+#  - npx babel secrets-template.js --out-file secrets-template.js
+#  - npx babel ../util.js --out-file ../util.js
+#  - npx babel api -d api
+#  - node --version
+#  - sh serve_locally.sh
+#  - cd ..
+#  - python test_staging_endpoints.py -k "not cron" --local -v
 
-after_success:
-  - cat on_demand/local_webtask_output.txt | grep "greppable"
-
-after_failure:
-  - cat on_demand/local_webtask_output.txt
+#after_success:
+#  - cat on_demand/local_webtask_output.txt | grep "greppable"
+#
+#after_failure:
+#  - cat on_demand/local_webtask_output.txt
