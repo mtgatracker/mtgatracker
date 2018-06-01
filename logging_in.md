@@ -4,7 +4,7 @@ Howdy! You probably got dumped here after attempting to log in to [MTGA Tracker:
 for the first time. Unfortunately, we need to verify that you own the MTGA account you're trying to log in with before we allow you to log in to MTGATracker: Inspector.
 
 We'll be happy to get you set up over in the discord; simply join our server using [this
-link](https://discord.gg/j5u76j2). Once you've joined the server, our bot will send you a PM with the next instructions. Note that you will need to complete at least one game with the tracker running before our systems will be able to verify you.
+link](https://discord.gg/Ygfv25w). Once you've joined the server, our bot will send you a PM with the next instructions. Note that you will need to complete at least one game with the tracker running before our systems will be able to verify you.
 
 You can stop reading now and go get logged in, or you can keep reading here to learn about what we're doing here & why.
 
@@ -27,7 +27,7 @@ your identity (one-time only), our discord bots will PM you your passcode, which
 
 ### Verifying your identity
 
-All that's required for this step is that you are in the [mtgatracker discord server](https://discord.gg/j5u76j2) (it's free!), and are logged in to the MTGA beta forums. The bot will send you a message as you join the server that will walk you through the rest!
+All that's required for this step is that you are in the [mtgatracker discord server](https://discord.gg/Ygfv25w) (it's free!), and are logged in to the MTGA beta forums. The bot will send you a message as you join the server that will walk you through the rest!
 
 # MTGA Tracker, its bots, and its mods, will NEVER ask for your MTGA password
 

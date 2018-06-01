@@ -298,7 +298,7 @@ policy [here](https://auth0.com/privacy), and their security practices [here](ht
 
 
 If you would like to better understand how any of your data is used, please feel free to ask
-our developers [on discord](https://discord.gg/j5u76j2) or via email (devs.mtgatracker@gmail.com)
+our developers [on discord](https://discord.gg/Ygfv25w) or via email (devs.mtgatracker@gmail.com)
 (or just look through the code)! Contributors will be more than happy to explain, improve, or remove ways we handle your data, whenever necessary.
 
 If you at any time would like data related to you to be archived or removed from MTGATracker systems, contact devs.mtgatracker@gmail.com .
