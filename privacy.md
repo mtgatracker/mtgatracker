@@ -1,7 +1,7 @@
 # Privacy Policy
 
-MTGA Tracker ("us", "we", "our") manages source code ("the code"), distributes the application ("the app") and operates
-and maintains MTGATracker.com ("the site"). This document is to inform users of our policies regarding to the
+MTGATracker's core contributors ("us", "we", "our") manages source code ("the code"), distributes the application ("the app")
+and operates and maintains MTGATracker.com ("the site"). This document is to inform users of our policies regarding to the
 collection, use, and disclosure of data we receive from users of the app, the site, or contributors to
 the code.
 
