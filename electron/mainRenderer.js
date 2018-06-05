@@ -483,7 +483,6 @@ function ShowHideCardImage(el) {
     var x = $(el).find('.card-image');
 	if(x.length>0) {
 		var card_image_div = x[0];
-		console.log(card_image_div);
 		if (card_image_div.style.display === "none") {
 			card_image_div.style.display = "block";
 		} else {
