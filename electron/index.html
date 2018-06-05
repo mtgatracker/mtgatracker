@@ -30,13 +30,17 @@
           </p>
         </div>
         <h3>{ total_cards_in_deck } cards in deck</h3>
-        <div class="card" rv-each-stat="draw_stats" rv-card_color="stat.colors">
+        <div class="card" rv-each-stat="draw_stats | drawStatsSort" rv-card_color="stat.colors" onclick="ShowHideCardImage(this)">
           <div class="card-text">
-            <span class="card-text-limit"><i>{ stat.card.iid }</i>{ stat.count_in_deck }x <i>{ stat.card }</i></span>
+            <span class="card-text-limit"><i>{ stat.mtga_id } - </i>{ stat.count_in_deck }x <i>{ stat.card }</i></span>
             <span class="cost">
               <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
             </span>
+			
           </div>
+		  <div class="card-image" style="display: none;">
+              <img rv-cardimage="stat.mtga_id" />
+            </div>
         </div>
       </div>
       <div id="available-deck-list" rv-show="show_available_decklists">
@@ -61,12 +65,16 @@
         <div id="deck-list" rv-show="list_selected">
           <h3 class="beleren link" onclick="unpopulateDecklist()">Back to decklists</h3>
           <h1> <i class="fas fa-chevron-left"></i> { selected_list_name }</h1>
-          <div class="card" rv-each-stat="selected_list" rv-card_color="stat.colors">
+          <div class="card" rv-each-stat="selected_list | decklistSort" rv-card_color="stat.colors" onclick="ShowHideCardImage(this)">
             <div class="card-text">
               <span class="card-text-limit">{ stat.count_in_deck }x <i>{ stat.pretty_name }</i></span>
               <span class="cost">
                 <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
               </span>
+
+            </div>
+			<div class="card-image" style="display: none;">
+              <img rv-cardimage="stat.mtga_id" />
             </div>
           </div>
         </div>

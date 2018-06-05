@@ -37,7 +37,7 @@ var lastUseTheme = remote.getGlobal('useTheme')
 var lastThemeFile = remote.getGlobal('themeFile')
 
 if (debug) {
-  window.addEventListener('contextmenu', (e) => {
+    window.addEventListener('contextmenu', (e) => {
     e.preventDefault()
     rightClickPosition = {x: e.x, y: e.y}
     menu.popup(remote.getCurrentWindow())
@@ -115,6 +115,145 @@ request.get({
     appData.messages = appData.messages.concat(...data.notifications)
 })
 
+let cardtypeCompare = function (a, b) {
+    // Creatures -> Planeswalkers -> Enchantments -> Artifacts -> Sorceries -> Instants -> Non-Basic Lands -> Basic Lands
+    if (a.includes("Creature")) {
+        if (!b.includes("Creature")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Creature")) {
+        return 1;
+    }
+    if (a.includes("Planeswalker")) {
+        if (!b.includes("Planeswalker")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Planeswalker")) {
+        return 1;
+    }
+    if (a.includes("Enchantment")) {
+        if (!b.includes("Enchantment")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Enchantment")) {
+        return 1;
+    }
+    if (a.includes("Artifact")) {
+        if (!b.includes("Artifact")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Artifact")) {
+        return 1;
+    }
+    if (a.includes("Sorcery")) {
+        if (!b.includes("Sorcery")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Sorcery")) {
+        return 1;
+    }
+    if (a.includes("Instant")) {
+        if (!b.includes("Instant")) {
+            return -1;
+        }
+        return 0;
+    }
+    if (b.includes("Instant")) {
+        return 1;
+    }
+    if (a.includes("Basic")) {
+        if (!b.includes("Basic")) {
+            return 1;
+        }
+        return 0;
+    }
+    if (b.includes("Basic")) {
+        return -1;
+    }
+    return 0;
+};
+
+let manaCostCompare = function (a, b) {
+    let cmcA = 0;
+    let cmcB = 0;
+    let cmcCompute = function (manaSymbol) {
+        // Put X spells at the end
+        if (manaSymbol === "X") {
+            return 100;
+        }
+        // Generic mana amount
+        let intValue = parseInt(manaSymbol);
+        if (!isNaN(intValue)) {
+            return intValue;
+        }
+        // Colored mana
+        return 1;
+    };
+    for (let manaSymbol of a) {
+        cmcA += cmcCompute(manaSymbol);
+    }
+    for (let manaSymbol of b) {
+        cmcB += cmcCompute(manaSymbol);
+    }
+    if (cmcA < cmcB) {
+        return -1;
+    }
+    if (cmcB < cmcA) {
+        return 1;
+    }
+    return 0;
+};
+
+let nameCompare = function (a, b) {
+    if (a < b) {
+        return -1;
+    }
+    if (b < a) {
+        return 1;
+    }
+    return 0;
+};
+
+rivets.formatters.drawStatsSort = function(decklist) {
+    if (decklist.length === 0) {
+        return decklist;
+    }
+    return decklist.sort(
+            function (a, b) {
+                // Sort by cardtype first
+                return cardtypeCompare(a.card_type, b.card_type)
+                        // Then sort by mana cost
+                        || manaCostCompare(a.cost, b.cost)
+                        // Then sort by name
+                        || nameCompare(a.card, b.card);
+            });
+};
+
+rivets.formatters.decklistSort = function(decklist) {
+    if (decklist.length === 0) {
+        return decklist;
+    }
+    return decklist.sort(
+        function (a, b) {
+            // Sort by cardtype first
+            return cardtypeCompare(a.card_type, b.card_type)
+                    // Then sort by mana cost
+                    || manaCostCompare(a.cost, b.cost)
+                    // Then sort by name
+                    || nameCompare(a.pretty_name, b.pretty_name);
+    });
+};
+
 rivets.bind(document.getElementById('container'), appData)
 
 rivets.binders.showmessage = function(el, value) {
@@ -147,7 +286,6 @@ rivets.binders.mana = function(el, value) {
 }
 
 rivets.binders.card_color = function(el, value) {
-
   el.classList.remove("card-b")
   el.classList.remove("card-g")
   el.classList.remove("card-r")
@@ -192,6 +330,52 @@ rivets.binders.card_color = function(el, value) {
         el.classList.add("card-c")
       }
   }
+}
+
+let checkPath = function (obj /*, level1, level2, ... levelN*/) {
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  for (var i = 0; i < args.length; i++) {
+	if (!obj || !obj.hasOwnProperty(args[i])) {
+	  return false;
+	}
+	obj = obj[args[i]];
+  }
+  return true;
+}
+
+rivets.binders.cardimage = function(el, value) {
+	el.src = '';
+	if(isNaN(value)) {
+		console.log("Error in Card Image loading. ID is empty. Card element: ");
+		console.log(el);
+	} else {
+		let cardID=parseInt(value);
+		try{
+			$.ajax({
+				dataType: 'json',
+				url : "https://api.scryfall.com/cards/arena/"+cardID ,
+				success:	function(data) {
+					if( checkPath(data, 'image_uris', 'normal') ) {
+						el.src = data['image_uris']['normal'];
+					} else {
+						if( checkPath(data, 'card_faces' , '0' ,  'image_uris' , 'normal')) {
+							el.src = data['card_faces'][0]['image_uris']['normal'];
+							for( var i=1 ; i<data['card_faces'].length;i++){
+								if( checkPath(data, 'card_faces' , i ,  'image_uris' , 'normal')) {
+									el.parentNode.innerHTML += '<img src="'+data['card_faces'][i]['image_uris']['normal']+'" />';
+								}
+							}
+						} else {
+							console.log("Error in Card Image loading. Can't find image at www.scryfall.com  Card id: "+ cardID 	+ " Check url: https://api.scryfall.com/cards/arena/"+cardID );
+						}
+					}
+				}
+			});
+		} catch(e) {
+			console.log("Error in Card Image loading. Card id: "+cardID);
+		}
+	}
 }
 
 rivets.formatters.as_seconds = function(value) {
@@ -264,6 +448,7 @@ function resizeWindow() {
             totalHeight += $(e).outerHeight(true);
     });
     bounds = browserWindow.getBounds()
+	bounds.width = 500;
     bounds.height = parseInt(totalHeight);
     container.style.height = "" + parseInt(totalHeight) + "px"
     if (!debug) {
@@ -294,6 +479,19 @@ function unpopulateDecklist() {
     resizeWindow()
 }
 
+function ShowHideCardImage(el) {
+    var x = $(el).find('.card-image');
+	if(x.length>0) {
+		var card_image_div = x[0];
+		console.log(card_image_div);
+		if (card_image_div.style.display === "none") {
+			card_image_div.style.display = "block";
+		} else {
+			card_image_div.style.display = "none";
+		}
+	}
+    resizeWindow()
+}
 
 function uploadGame(attempt, gameData, errors) {
   if (!errors) {

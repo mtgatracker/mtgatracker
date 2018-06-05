@@ -111,7 +111,7 @@ p {
 .card {
     font-family: beleren;
     width: 297px;
-    height: 43px;
+    height: auto;
     background-image: url("card_bgs/bw.png");
     /* background-color: rgba(221, 221, 221, 0.3); */
     margin-left: 8px;
