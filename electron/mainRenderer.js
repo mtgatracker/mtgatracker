@@ -239,6 +239,20 @@ rivets.formatters.drawStatsSort = function(decklist) {
             });
 };
 
+rivets.formatters.drawStatsMergeDuplicates = function(decklist) {
+    console.log(decklist);
+    let mergedDecklist = new Map();
+    decklist.forEach((card) => {
+        if (mergedDecklist.get(card.card)) {
+            mergedDecklist.get(card.card).count_in_deck += card.count_in_deck;
+        }
+        else {
+            mergedDecklist.set(card.card, card);
+        }
+    });
+    return Array.from(mergedDecklist.values());
+};
+
 rivets.formatters.decklistSort = function(decklist) {
     if (decklist.length === 0) {
         return decklist;
@@ -252,6 +266,19 @@ rivets.formatters.decklistSort = function(decklist) {
                     // Then sort by name
                     || nameCompare(a.pretty_name, b.pretty_name);
     });
+};
+
+rivets.formatters.decklistMergeDuplicates = function(decklist) {
+    let mergedDecklist = new Map();
+    decklist.forEach((card) => {
+        if (mergedDecklist.get(card.pretty_name)) {
+            mergedDecklist.get(card.pretty_name).count_in_deck += card.count_in_deck;
+        }
+        else {
+            mergedDecklist.set(card.pretty_name, card);
+        }
+    });
+    return Array.from(mergedDecklist.values());
 };
 
 rivets.bind(document.getElementById('container'), appData)
