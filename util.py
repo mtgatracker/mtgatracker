@@ -13,12 +13,41 @@ import app.set_data.hou as hou
 import app.set_data.akh as akh
 import app.set_data.dom as dom
 import app.set_data.weird as weird
+import app.set_data.kld as kld
+import app.set_data.aer as aer
+import app.set_data.w17 as w17
 from tailer import Tailer
-
 
 all_mtga_cards = set.Pool.from_sets("mtga_cards",
                                     sets=[rix.RivalsOfIxalan, xln.Ixalan, hou.HourOfDevastation, akh.Amonkhet,
-                                          dom.Dominaria, weird.WeirdLands])
+                                          dom.Dominaria, kld.Kaladesh, aer.AetherRevolt, w17.WelcomeDecks2017,
+                                          weird.WeirdLands])
+
+depth = {"depth_counter": 0}
+
+
+def ld():
+    return "---" * depth["depth_counter"]
+
+
+def debug_log_trace(decorated_function):
+    import app.mtga_app as mtga_app
+    from functools import wraps
+
+    @wraps(decorated_function)
+    def wrapper(*dec_fn_args, **dec_fn_kwargs):
+        # Log function entry
+        func_name = decorated_function.__name__
+        mtga_app.mtga_logger.debug('{}Entering {}()...'.format(ld(), func_name))
+        # Execute wrapped (decorated) function:
+        depth["depth_counter"] += 1
+        out = decorated_function(*dec_fn_args, **dec_fn_kwargs)
+        depth["depth_counter"] -= 1
+        mtga_app.mtga_logger.debug('{}Exiting {}()!'.format(ld(), func_name))
+
+        return out
+    return wrapper
+
 
 example_deck = {
     'id': '32e22460-c165-48a3-881a-b6fad5d963b0',
@@ -70,7 +99,7 @@ def id_to_card(card_id):
     try:
         return all_mtga_cards.find_one(card_id)
     except:
-        mtga_app.mtga_logger.error("Unknown mtga_id: {}".format(card_id))
+        mtga_app.mtga_logger.error("{}Unknown mtga_id: {}".format(ld(), card_id))
         mtga_app.mtga_watch_app.send_error("Unknown mtga_id: {}".format(card_id))
 
 
@@ -84,25 +113,24 @@ def process_deck(deck_dict, save_deck=True):
             for i in range(card_obj["quantity"]):
                 deck.cards.append(card)
         except:
-            mtga_app.mtga_logger.error("Unknown mtga_id: {}".format(card_obj))
+            mtga_app.mtga_logger.error("{}Unknown mtga_id: {}".format(ld(), card_obj))
             mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck_dict["name"], card_obj))
     if save_deck:
         with mtga_app.mtga_watch_app.game_lock:
             mtga_app.mtga_watch_app.player_decks[deck_id] = deck
-            mtga_app.mtga_logger.debug("deck {} is being saved".format(deck_dict["name"]))
+            mtga_app.mtga_logger.info("{}deck {} is being saved".format(ld(), deck_dict["name"]))
             mtga_app.mtga_watch_app.save_settings()
-    print("RETURNING: {}".format(deck))
     return deck
 
 
 def print_deck(deck_pool):
     import app.mtga_app as mtga_app
     print("Deck: {} ({} cards)".format(deck_pool.pool_name, len(deck_pool.cards)))
-    mtga_app.mtga_logger.info("Deck: {} ({} cards)".format(deck_pool.pool_name, len(deck_pool.cards)))
+    mtga_app.mtga_logger.info("{}Deck: {} ({} cards)".format(ld(), deck_pool.pool_name, len(deck_pool.cards)))
     grouped = deck_pool.group_cards()
     for card in grouped.keys():
         print("  {}x {}".format(grouped[card], card))
-        mtga_app.mtga_logger.info("  {}x {}".format(grouped[card], card))
+        mtga_app.mtga_logger.info("{}  {}x {}".format(ld(), grouped[card], card))
 
 
 def deepsearch_blob_for_ids(blob, ids_only=True):

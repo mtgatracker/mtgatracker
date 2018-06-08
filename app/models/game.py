@@ -27,6 +27,7 @@ class Player(object):
         self.stack = stack
         self.is_hero = False
         self.original_deck = None
+        self._deck_cards = deck_cards
 
         self.private_zones = [self.library, self.hand, self.graveyard]
         self.shared_zones = [self.exile, self.battlefield, self.limbo, self.stack]

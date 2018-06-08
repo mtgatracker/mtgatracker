@@ -7,6 +7,8 @@ default_delta = 2  # card ID goes up by 2, to account for... foils, I guess?
 # 65273 = Spring /// Mind
 # 65729 = pride sovereign
 # 65349 = start /// finish
+# 66600 = acrobatic maneuver / 65425 = Woodland Stream
+
 
 special_layouts = {"aftermath": 3}
 
@@ -27,6 +29,21 @@ def add_cardIDs_to_cardset(cardset, start_id):
             start_id += 2
 
 
+with open("all_cards.json", "r") as aci:
+    all_cards = json.load(aci)
+
+
+def map_set_using_lookup(cards, set, lookup):
+    for card in cards["cards"]:
+        card_number = int(card["number"])
+        grp_id = lookup[card_number]["grpid"]
+        card["mtga_id"] = grp_id
+        card["number_int"] = card_number
+
+all_card_sets = set([card["set"] for card in all_cards["all_cards"]])
+lookup_by_set_and_num = {card_set: {int(v["CollectorNumber"]): v for v in all_cards["all_cards"] if v["set"] == card_set and v["isCollectible"] == True} for card_set in all_card_sets}
+
+
 # with open("../app/set_data/XLN.json", "r", encoding='utf-8') as xln_r:
 #     ixalan_card_set = json.load(xln_r)
 #     add_cardIDs_to_cardset(ixalan_card_set, 65961)  # 65961 = adanto's vanguard, xln card 1
@@ -43,9 +60,23 @@ def add_cardIDs_to_cardset(cardset, start_id):
 #     hour_card_set = json.load(hou_r)
 #     add_cardIDs_to_cardset(hour_card_set, 65479)  # 65479 = act of heroism, hou card 1
 
-with open("../app/set_data/DOM.json", "r", encoding='utf-8') as dom_r:
-    dom_card_set = json.load(dom_r)
-    add_cardIDs_to_cardset(dom_card_set, 67106)  # 65479 = act of heroism, hou card 1
+# with open("../app/set_data/DOM.json", "r", encoding='utf-8') as dom_r:
+#     dom_card_set = json.load(dom_r)
+#     add_cardIDs_to_cardset(dom_card_set, 67106)  # 65479 = act of heroism, hou card 1
+
+with open("KLD.json", "r", encoding='utf-8') as kld_r:
+    kld_card_set = json.load(kld_r)
+    map_set_using_lookup(kld_card_set, "KLD", lookup_by_set_and_num["KLD"])
+
+
+with open("AER.json", "r", encoding='utf-8') as aer_r:
+    aer_card_set = json.load(aer_r)
+    map_set_using_lookup(aer_card_set, "AER", lookup_by_set_and_num["AER"])
+
+
+with open("W17.json", "r", encoding='utf-8') as w17_r:
+    w17_card_set = json.load(w17_r)
+    map_set_using_lookup(w17_card_set, "W17", lookup_by_set_and_num["W17"])
 
 
 # lookup = {}
@@ -95,8 +126,10 @@ clsmembers = [card for name, card in inspect.getmembers(sys.modules[__name__]) i
             subtype = ""
 
             if "-" in card_type:
-                print(card_type)
                 card_type, *subtypes = card_type.split("-")
+                subtype = "-".join(subtypes)
+            if "—" in card_type:
+                card_type, *subtypes = card_type.split("—")
                 subtype = "-".join(subtypes)
 
             set_file.write('{} = Card("{}", "{}", {}, {}, "{}", "{}", "{}", {}, {})\n'.format(
@@ -119,4 +152,6 @@ clsmembers = [card for name, card in inspect.getmembers(sys.modules[__name__]) i
 # write_set("RIX", "Rivals Of Ixalan", rivals_card_set)
 # write_set("AKH", "Amonkhet", amonkhet_card_set)
 # write_set("HOU", "Hour Of Devastation", hour_card_set)
-write_set("DOM", "Dominaria", dom_card_set)
+write_set("KLD", "Kaladesh", kld_card_set)
+write_set("AER", "Aether Revolt", aer_card_set)
+write_set("W17", "Welcome Decks 2017", aer_card_set)
