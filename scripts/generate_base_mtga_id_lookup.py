@@ -41,7 +41,7 @@ def map_set_using_lookup(cards, set, lookup):
         card["number_int"] = card_number
 
 all_card_sets = set([card["set"] for card in all_cards["all_cards"]])
-lookup_by_set_and_num = {card_set: {int(v["CollectorNumber"]): v for v in all_cards["all_cards"] if v["set"] == card_set} for card_set in all_card_sets}
+lookup_by_set_and_num = {card_set: {int(v["CollectorNumber"]): v for v in all_cards["all_cards"] if v["set"] == card_set and v["isCollectible"] == True} for card_set in all_card_sets}
 
 
 # with open("../app/set_data/XLN.json", "r", encoding='utf-8') as xln_r:
@@ -72,6 +72,11 @@ with open("KLD.json", "r", encoding='utf-8') as kld_r:
 with open("AER.json", "r", encoding='utf-8') as aer_r:
     aer_card_set = json.load(aer_r)
     map_set_using_lookup(aer_card_set, "AER", lookup_by_set_and_num["AER"])
+
+
+with open("W17.json", "r", encoding='utf-8') as w17_r:
+    w17_card_set = json.load(w17_r)
+    map_set_using_lookup(w17_card_set, "W17", lookup_by_set_and_num["W17"])
 
 
 # lookup = {}
@@ -149,3 +154,4 @@ clsmembers = [card for name, card in inspect.getmembers(sys.modules[__name__]) i
 # write_set("HOU", "Hour Of Devastation", hour_card_set)
 write_set("KLD", "Kaladesh", kld_card_set)
 write_set("AER", "Aether Revolt", aer_card_set)
+write_set("W17", "Welcome Decks 2017", aer_card_set)

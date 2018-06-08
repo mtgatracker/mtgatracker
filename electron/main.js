@@ -154,7 +154,7 @@ const getPyBinPath = () => {
 
 const getLogFilePath = () => {
     // TODO: make this cmd-line configurable
-    return path.join(__dirname, "..", "example_logs", "output_log.txt")
+    return path.join(__dirname, "..", "app", "example_logs", "kld", "output_log.txt")
 }
 
 const selectPort = () => {

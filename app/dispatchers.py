@@ -1,10 +1,17 @@
+import pprint
+
 import app.parsers as parsers
 import app.mtga_app
+import util
 
 # HIGHEST LEVEL DISPATCHERS: any json blob
 
 
+@util.debug_log_trace
 def dispatch_blob(blob):
+    seq = blob.get("block_title_sequence", -1)
+    if seq:
+        app.mtga_app.mtga_logger.debug("{}dispatching seq ({})".format(util.ld(), seq))
     if "method" in blob and "jsonrpc" in blob:
         dispatch_jsonrpc_method(blob)
     elif "greToClientEvent" in blob:
@@ -21,6 +28,7 @@ def dispatch_blob(blob):
 
 
 # MID-LEVER DISPATCHERS: first depth level of a blob
+@util.debug_log_trace
 def dispatch_match_gametoom_state_change(blob):
     state_type = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']['stateType']
     if state_type == "MatchGameRoomStateType_Playing":
@@ -29,6 +37,7 @@ def dispatch_match_gametoom_state_change(blob):
         parsers.parse_match_complete(blob)
 
 
+@util.debug_log_trace
 def dispatch_jsonrpc_method(blob):
     """ route what parser to run on this jsonrpc methoc blob
 
@@ -37,17 +46,17 @@ def dispatch_jsonrpc_method(blob):
     from app.mtga_app import mtga_watch_app
     dont_care_rpc_methods = ['Event.DeckSelect', "Log.Info", "Deck.GetDeckLists", "Quest.CompletePlayerQuest"]
     current_method = blob['method']
+    request_or_response = blob['request_or_response']
     if current_method in dont_care_rpc_methods:
         pass
-    # TODO: deprecated, cleanup
-    # elif current_method == "Event.JoinQueue":
-    #     intend_to_join = parsers.parse_event_joinqueue(blob)
-    #     mtga_watch_app.intend_to_join_game_with = intend_to_join
     elif current_method == "PlayerInventory.GetPlayerInventory":
         # TODO: keep an eye on this one. currently empty, but maybe it will show up sometime
-        pass
+        app.mtga_app.mtga_logger.info("{}PlayerInventory.GetPlayerInventory found".format(util.ld()))
+    else:
+        app.mtga_app.mtga_logger.debug("{}not sure what to do with jsonrpc method {}".format(util.ld(), current_method))
 
 
+@util.debug_log_trace
 def dispatch_gre_to_client(blob):
     client_messages = blob["greToClientEvent"]['greToClientMessages']
     dont_care_types = ["GREMessageType_UIMessage"]
@@ -60,6 +69,7 @@ def dispatch_gre_to_client(blob):
             parsers.parse_game_state_message(game_state_message)
 
 
+@util.debug_log_trace
 def dispatch_client_to_gre(blob):
     client_message = blob['clientToGreMessage']
     message_type = client_message['type']
@@ -77,7 +87,7 @@ def dispatch_client_to_gre(blob):
         # TODO: log ?
         pass
     else:
-        app.mtga_app.mtga_logger.info("WARNING: unknown clientToGreMessage type: {}".format(message_type))
+        app.mtga_app.mtga_logger.warning("{}WARNING: unknown clientToGreMessage type: {}".format(util.ld(), message_type))
 
 
 # LOWER LEVEL DISPATCHERS: a message or game object (?)

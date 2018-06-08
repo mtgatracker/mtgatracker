@@ -5,9 +5,9 @@ from app.models.set import Set
 import inspect
 
 
-AerialModification = Card("aerial_modification", "Aerial Modification", ['4', 'W'], ['W'], "Enchantment", "Aura", "AER", 1, 66561)
-AeronautAdmiral = Card("aeronaut_admiral", "Aeronaut Admiral", ['3', 'W'], ['W'], "Creature", "Human Pilot", "AER", 2, 66562)
-AetherInspector = Card("aether_inspector", "Aether Inspector", ['3', 'W'], ['W'], "Creature", "Dwarf Artificer", "AER", 3, 66563)
+AerialModification = Card("aerial_modification", "Aerial Modification", ['4', 'W'], ['W'], "Enchantment", "Aura", "AER", 1, 64213)
+AeronautAdmiral = Card("aeronaut_admiral", "Aeronaut Admiral", ['3', 'W'], ['W'], "Creature", "Human Pilot", "AER", 2, 64207)
+AetherInspector = Card("aether_inspector", "Aether Inspector", ['3', 'W'], ['W'], "Creature", "Dwarf Artificer", "AER", 3, 64541)
 AethergeodeMiner = Card("aethergeode_miner", "Aethergeode Miner", ['1', 'W'], ['W'], "Creature", "Dwarf Scout", "AER", 4, 64543)
 AirdropAeronauts = Card("airdrop_aeronauts", "Airdrop Aeronauts", ['3', 'W', 'W'], ['W'], "Creature", "Dwarf Scout", "AER", 5, 64211)
 AlleyEvasion = Card("alley_evasion", "Alley Evasion", ['W'], ['W'], "Instant", "", "AER", 6, 64545)
