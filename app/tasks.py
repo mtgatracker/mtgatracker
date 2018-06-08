@@ -12,67 +12,29 @@ def block_watch_task(in_queue, out_queue):
             break
         if "[" not in block_recieved and "{" not in block_recieved:
             continue
-        square_index = block_recieved.index("[") if "[" in block_recieved else -1
-        curly_index = block_recieved.index("{") if "{" in block_recieved else -1
-        if square_index != -1 and (square_index < curly_index or curly_index == -1):
-            # TODO: this, but better
-            """ 
-            found a log with a block that looked like this:
-
-            ```
-            Unloading 6 Unused Serialized files (Serialized files now loaded: 46)
-            3/6/2018 9:35:53 PM: Match to 6A250A78F6933705: GreToClientEvent
-            {
-              "greToClientEvent": {
-               ...
-            ```
-
-            so it misses the elif clause below. I guess delete the crap in front of it? shrugggg
-            """
-            # try list first
-            pre_block = block_recieved[:square_index]
-            if " " in pre_block:
-                block_title = pre_block.split(" ")[-2]
-                block_recieved = block_title + " " + block_recieved[square_index:]
-            else:
-                block_recieved = block_recieved[square_index:]
-        if curly_index != -1 and (curly_index < square_index or square_index == -1):
-            pre_block = block_recieved[:curly_index]
-            if " " in pre_block:
-                block_title = pre_block.split(" ")[-2]
-                block_recieved = block_title + " " + block_recieved[curly_index:]
-            else:
-                block_recieved = block_recieved[curly_index:]
-            # try object parsing
         block_lines = block_recieved.split("\n")
-        first_line = block_lines[0].strip()
-        second_line = None
-        if len(block_lines) > 1:
-            second_line = block_lines[1].strip()
-        if first_line and first_line[-1] == "[":
-            list_name = first_line.split(" ")[-2]
-            idx_first_sq_bracket = block_recieved.index("[")
-            idx_last_sq_bracket = block_recieved.rindex("]") + 1
-            list_blob = '{{"{}": '.format(list_name) + block_recieved[idx_first_sq_bracket:idx_last_sq_bracket] + " }"
-            try:
-                blob = json.loads(list_blob)
-                out_queue.put(blob)
-            except:
-                mtga_logger.error("Could not parse list_blob {}".format(list_blob))
-                mtga_watch_app.send_error("Could not parse list_blob {}".format(list_blob))
-        elif first_line and first_line[-1] == "{" or second_line and second_line == "{":
-            idx_first_bracket = block_recieved.index("{")
-            idx_last_bracket = block_recieved.rindex("}") + 1
+        if len(block_lines) < 2:
+            continue
+        title_line = block_lines[1]
+        block_title = " ".join(title_line.split(" ")[1:]).split("(")[0]
+        block_title_seq = None
 
-            json_blob = block_recieved[idx_first_bracket:idx_last_bracket]
+        if "(" in title_line and ")" in title_line:
+            block_title_seq = title_line.split("(")[1].split(")")[0]  # wtf is this thing?
+
+        if title_line and title_line.startswith("==>") or title_line.startswith("<=="):
+            json_str = "\n".join(block_lines[2:])
             try:
-                blob = json.loads(json_blob)
+                blob = json.loads(json_str)
+                mtga_logger.debug("success parsing blob: {}({})".format(block_title, block_title_seq))
                 if block_title:
                     blob["block_title"] = block_title.strip()
+                if block_title_seq:
+                    blob["block_title_sequence"] = block_title_seq
                 out_queue.put(blob)
             except:
-                mtga_logger.error("Could not parse json_blob {}".format(json_blob))
-                mtga_watch_app.send_error("Could not parse json_blob {}".format(json_blob))
+                mtga_logger.error("Could not parse json_blob {}".format(json_str))
+                mtga_watch_app.send_error("Could not parse json_blob {}".format(json_str))
 
 
 def json_blob_reader_task(in_queue, out_queue):

@@ -13,12 +13,13 @@ import app.set_data.hou as hou
 import app.set_data.akh as akh
 import app.set_data.dom as dom
 import app.set_data.weird as weird
+import app.set_data.kld as kld
+import app.set_data.aer as aer
 from tailer import Tailer
-
 
 all_mtga_cards = set.Pool.from_sets("mtga_cards",
                                     sets=[rix.RivalsOfIxalan, xln.Ixalan, hou.HourOfDevastation, akh.Amonkhet,
-                                          dom.Dominaria, weird.WeirdLands])
+                                          dom.Dominaria, kld.Kaladesh, aer.AetherRevolt, weird.WeirdLands])
 
 example_deck = {
     'id': '32e22460-c165-48a3-881a-b6fad5d963b0',
