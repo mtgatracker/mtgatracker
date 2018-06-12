@@ -31,6 +31,7 @@ var showErrors = remote.getGlobal('showErrors');
 var appVersionStr = remote.getGlobal('version');
 var runFromSource = remote.getGlobal('runFromSource');
 var showWinLossCounter = remote.getGlobal('showWinLossCounter');
+var sortMethod = remote.getGlobal('sortMethod');
 var zoom = 0.8;
 
 var lastUseTheme = remote.getGlobal('useTheme')
@@ -228,15 +229,19 @@ rivets.formatters.drawStatsSort = function(decklist) {
     if (decklist.length === 0) {
         return decklist;
     }
-    return decklist.sort(
-            function (a, b) {
-                // Sort by cardtype first
-                return cardtypeCompare(a.card_type, b.card_type)
+    if (sortMethod == "draw") {
+        return decklist;
+    } else if (sortMethod == "emerald") {
+        return decklist.sort(
+                function (a, b) {
+                    // Sort by cardtype first
+                    return cardtypeCompare(a.card_type, b.card_type)
                         // Then sort by mana cost
                         || manaCostCompare(a.cost, b.cost)
                         // Then sort by name
                         || nameCompare(a.card, b.card);
-            });
+                });
+    }
 };
 
 rivets.formatters.drawStatsMergeDuplicates = function(decklist) {
@@ -257,15 +262,19 @@ rivets.formatters.decklistSort = function(decklist) {
     if (decklist.length === 0) {
         return decklist;
     }
-    return decklist.sort(
-        function (a, b) {
-            // Sort by cardtype first
-            return cardtypeCompare(a.card_type, b.card_type)
-                    // Then sort by mana cost
-                    || manaCostCompare(a.cost, b.cost)
-                    // Then sort by name
-                    || nameCompare(a.pretty_name, b.pretty_name);
-    });
+    if (sortMethod == "draw") {
+        return decklist;
+    } else if (sortMethod == "emerald") {
+        return decklist.sort(
+            function (a, b) {
+                // Sort by cardtype first
+                return cardtypeCompare(a.card_type, b.card_type)
+                        // Then sort by mana cost
+                        || manaCostCompare(a.cost, b.cost)
+                        // Then sort by name
+                        || nameCompare(a.pretty_name, b.pretty_name);
+        });
+    }
 };
 
 rivets.formatters.decklistMergeDuplicates = function(decklist) {
@@ -666,6 +675,8 @@ ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
 ipcRenderer.on('settingsChanged', () => {
   debug = remote.getGlobal('debug');
   appData.debug = debug
+
+  sortMethod = remote.getGlobal('sortMethod');
 
   useFrame = remote.getGlobal('useFrame');
   appData.useFrame = useFrame

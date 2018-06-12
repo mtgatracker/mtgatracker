@@ -48,11 +48,18 @@
             <p class="about-p"><b>Inspector:</b> <a href="https://inspector.mtgatracker.com/">inspector.mtgatracker.com</a></p>
             <br />
 
+            <h3>Release notes for 3.2.2</h3>
+            <ul>
+              <li class="about-p">Fixed an issue in 3.2.1 & under where the 2nd+ game in competitive draft would upload multiple times and/or cause upload error messages</li>
+              <li class="about-p">Added deck list sorting options to General tab of settings; sorting method "Emerald" implemented</li>
+              <li class="about-p">When using multiple arts for the same card in the same deck, that card will now be condensed into a single row</li>
+            </ul>
+            <br />
+
             <h3>Release notes for 3.2.0</h3>
             <ul>
               <li class="about-p">Added support for KLD, AER, W17 sets</li>
               <li class="about-p">Refactored json-blob parser task post-KLD patch</li>
-              <li class="about-p"><b>3.2.2</b>: Fixed an issue in 3.2.1 where the 2nd+ game in competitive draft would upload multiple times and/or cause upload error messages</li>
             </ul>
             <br />
 
@@ -94,6 +101,21 @@
           <div class="settings-row">
             <input rv-checked="leftMouseEvents" class="tf-toggle" type="checkbox" key="leftMouseEvents" data-toggle="toggle"> Un-hide tracker on all left clicks
           </div>
+
+          <div class="settings-row">
+            Use the following sorting method on deck lists <a class="link" onclick='$("#sorting-help").slideToggle()'><span class="icon icon-help-circled link"></span></a>
+          </div>
+          <div class="settings-row">
+            <select id="sorting-method-select" class="form-control">
+              <option rv-each-sortingmethod="sortingMethods" rv-value="sortingmethod.id">{ sortingmethod.text }</option>
+            </select>
+          </div>
+
+          <div class="settings-row well" id="sorting-help" style="display: none;">
+            <h5>What do these sorting methods mean?</h5>
+            <p class="about-p" rv-each-sortingmethod="sortingMethods"><b>{ sortingmethod.text }</b>: { sortingmethod.help }</p>
+          </div>
+
         </div>
       </div>
       <div id="theme-pane" value="theme" rv-showsettingspane="settingsPaneIndex">

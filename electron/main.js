@@ -68,6 +68,7 @@ let leftMouseEvents = settings.get('leftMouseEvents', true);
 let kill_server = settings.get('kill_server', false);
 let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
+let sortMethod = settings.get('sortMethod', 'draw');
 
 let runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
@@ -253,6 +254,7 @@ global.showWinLossCounter = showWinLossCounter;
 global.version = app.getVersion()
 global.messagesAcknowledged = settings.get("messagesAcknowledged", [])
 global.runFromSource = runFromSource
+global.sortMethod = sortMethod
 
 /*************************************************************
  * window management
