@@ -536,13 +536,19 @@ function uploadGame(attempt, gameData, errors) {
   })
 }
 
+let gameAlreadyUploaded = (gameID) => {
+  return Object.keys(gameLookup).includes(gameID)
+}
+
 let processGameState = (data) => {
     // data is already parsed as JSON:
     data = JSON.parse(event.data)
     if(data.data_type == "game_state") {
         if (data.match_complete) {
             console.log("match over")
-            if (data.game) {
+            if (data.game && gameAlreadyUploaded(data.game.gameID)) {
+              console.log(`Backend sent match_complete for ${data.game.gameID}, but already know that game`)
+            } else if (data.game) {
               appData.game_complete = true;
 
               gameLookup[data.game.gameID] = {count: 0, uploaded: true}
@@ -554,7 +560,7 @@ let processGameState = (data) => {
                 })
             } else if (data.gameID) {
               console.log(`match_complete and gameID ${data.gameID} but no game data`)
-              if (Object.keys(gameLookup).includes(data.gameID)) {
+              if (gameAlreadyUploaded(data.gameID)) {
                 if (gameLookup[data.gameID].count++ > 5) {
                   if (!gameLookup[data.gameID].uploaded) {
                     gameLookup[data.gameID].uploaded = true
