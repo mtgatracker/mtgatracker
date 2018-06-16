@@ -26,7 +26,10 @@ all_mtga_cards = set.Pool.from_sets("mtga_cards",
 depth = {"depth_counter": 0}
 
 
-def ld():
+def ld(reset=False):
+    if reset:
+        depth["depth_counter"] = 0
+    depth["depth_counter"] = max(depth["depth_counter"], 0)
     return "---" * depth["depth_counter"]
 
 
@@ -173,7 +176,6 @@ try:
 except FileNotFoundError:
     with open(resource_path(os.path.join('..', 'electron', 'package.json')), 'r') as package_file:
         client_version = json.load(package_file)["version"]
-
 
 
 class KillableTailer(Tailer):

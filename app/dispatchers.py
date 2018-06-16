@@ -10,8 +10,9 @@ import util
 @util.debug_log_trace
 def dispatch_blob(blob):
     seq = blob.get("block_title_sequence", -1)
+    log_line = blob.get("log_line", -1)
     if seq:
-        app.mtga_app.mtga_logger.debug("{}dispatching seq ({})".format(util.ld(), seq))
+        app.mtga_app.mtga_logger.debug("{}dispatching seq ({}) / log_line {}".format(util.ld(), seq, log_line))
     if "method" in blob and "jsonrpc" in blob:
         dispatch_jsonrpc_method(blob)
     elif "greToClientEvent" in blob:
@@ -33,8 +34,8 @@ def dispatch_match_gametoom_state_change(blob):
     state_type = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']['stateType']
     if state_type == "MatchGameRoomStateType_Playing":
         parsers.parse_match_playing(blob)
-    elif state_type == "MatchGameRoomStateType_MatchCompleted":
-        parsers.parse_match_complete(blob)
+    # elif state_type == "MatchGameRoomStateType_MatchCompleted":
+    #     parsers.parse_match_complete(blob)
 
 
 @util.debug_log_trace
