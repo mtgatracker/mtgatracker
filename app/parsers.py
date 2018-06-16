@@ -1,6 +1,6 @@
 import pprint
 import util
-from app.models.game import Game, Player
+from app.models.game import Game, Match, Player
 from app.models.set import Zone
 import app.mtga_app
 from app.queues import game_state_change_queue
@@ -50,8 +50,14 @@ def parse_game_state_message(message):
     with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
         if 'gameInfo' in message.keys():
             if 'matchState' in message['gameInfo']:
-                match_id = message['gameInfo']['matchID']
                 game_number = message['gameInfo']['gameNumber']
+                game_player_id = "-game{}-{}".format(game_number, mtga_app.mtga_watch_app.game.hero.player_id)
+                match_id = message['gameInfo']['matchID'] + game_player_id
+
+                if 'results' in message['gameInfo']:
+                    results = message['gameInfo']['results']
+                    parse_game_results(True, match_id, results)
+
                 if message['gameInfo']['matchState'] == "MatchState_GameInProgress":
                     shared_battlefield = Zone("battlefield")
                     shared_exile = Zone("exile")
@@ -71,12 +77,9 @@ def parse_game_state_message(message):
                     new_hero.is_hero = True
                     if mtga_app.mtga_watch_app.intend_to_join_game_with:
                         new_hero.original_deck = mtga_app.mtga_watch_app.intend_to_join_game_with
-                        new_match_id = match_id + "-game{}".format(game_number)
+                        new_match_id = match_id + "-game{}-{}".format(game_number, new_hero.player_id)
                         mtga_app.mtga_watch_app.game = Game(new_match_id, new_hero, new_oppo, shared_battlefield,
                                                             shared_exile, shared_limbo, shared_stack)
-                if message['gameInfo']['matchState'] == "MatchState_GameComplete":
-                    results = message['gameInfo']['results']
-                    parse_game_results(True, match_id + "-game{}".format(game_number), results)
         if 'annotations' in message.keys():
             for annotation in message['annotations']:
                 annotation_type = annotation['type'][0]
@@ -102,8 +105,8 @@ def parse_game_state_message(message):
                             card_with_iid.previous_iids.append(original_id)
                             card_with_iid.game_id = new_id
                     except:
-                        app.mtga_app.mtga_logger.error("{}Exception @ count {}".format(util.ld(), app.mtga_app.mtga_watch_app.error_count))
-                        app.mtga_app.mtga_logger.error("{}parsers:parse_game_state_message - error parsing annotation:".format(util.ld()))
+                        app.mtga_app.mtga_logger.error("{}Exception @ count {}".format(util.ld(True), app.mtga_app.mtga_watch_app.error_count))
+                        app.mtga_app.mtga_logger.error("{}parsers:parse_game_state_message - error parsing annotation:".format(util.ld(True)))
                         app.mtga_app.mtga_logger.error(pprint.pformat(annotation))
                         app.mtga_app.mtga_watch_app.send_error("Exception during parse annotation. Check log for more details")
         if 'gameObjects' in message.keys():
@@ -135,8 +138,8 @@ def parse_game_state_message(message):
                     if removable:
                         cards_to_remove_from_zones[zone["zoneId"]] = removable
                 except:
-                    app.mtga_app.mtga_logger.error("{}Exception @ count {}".format(util.ld(), app.mtga_app.mtga_watch_app.error_count))
-                    app.mtga_app.mtga_logger.error("{}error parsing zone:".format(util.ld()))
+                    app.mtga_app.mtga_logger.error("{}Exception @ count {}".format(util.ld(True), app.mtga_app.mtga_watch_app.error_count))
+                    app.mtga_app.mtga_logger.error("{}error parsing zone:".format(util.ld(True)))
                     app.mtga_app.mtga_logger.error(pprint.pformat(zone))
                     app.mtga_app.mtga_watch_app.send_error("Exception during parse zone. Check log for more details")
                     raise
@@ -209,20 +212,23 @@ def parse_accept_hand(blob):
 @util.debug_log_trace
 def parse_game_results(_unused_locked, match_id, result_list):
     import app.mtga_app as mtga_app
-    for result in result_list:
-        # scope = result["scope"]
-        # if scope == 'MatchScope_Match':  # TODO: with BO3, check games too. (might be in a different event type)
-        winning_team = result["winningTeamId"]
-        mtga_app.mtga_watch_app.game.final = True
-        mtga_app.mtga_watch_app.game.winner = mtga_app.mtga_watch_app.game.get_player_in_seat(winning_team)
-        # let electron handle the upload
-        game_state_change_queue.put({
-            "match_complete": True,
-            "game": mtga_app.mtga_watch_app.game.to_json()
-        })
-        if match_id != mtga_app.mtga_watch_app.game.match_id:
-            fstr = "match_id {} ended, but doesn't match current game object ({})!"
-            raise Exception(fstr.format(match_id, mtga_app.mtga_watch_app.game.match_id))
+    for idx, result in enumerate(result_list):
+        if not app.mtga_app.mtga_watch_app.match.has_results(idx):
+            # scope = result["scope"]
+            # if scope == 'MatchScope_Match':  # TODO: with BO3, check games too. (might be in a different event type)
+            winning_team = result["winningTeamId"]
+            mtga_app.mtga_watch_app.game.final = True
+            mtga_app.mtga_watch_app.game.winner = mtga_app.mtga_watch_app.game.get_player_in_seat(winning_team)
+            # let electron handle the upload
+            result = {
+                "match_complete": True,
+                "game": mtga_app.mtga_watch_app.game.to_json()
+            }
+            app.mtga_app.mtga_watch_app.match.add_result(result)
+            game_state_change_queue.put(result)
+            if match_id != mtga_app.mtga_watch_app.game.match_id:
+                fstr = "match_id {} ended, but doesn't match current game object ({})!"
+                raise Exception(fstr.format(match_id, mtga_app.mtga_watch_app.game.match_id))
 
 
 # TODO: turn this back on to track BO3 _event_ result instead of each game
@@ -243,8 +249,8 @@ def parse_match_playing(blob):
         1: {},
         2: {}
     }
-    match_id = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']['gameRoomConfig']['matchId']
     game_room_info = blob["matchGameRoomStateChangedEvent"]["gameRoomInfo"]
+    event_id = game_room_info['gameRoomConfig']['eventId']
     game_room_players = game_room_info["players"]
 
     for player in game_room_players:
@@ -288,5 +294,8 @@ def parse_match_playing(blob):
         hero.is_hero = True
         if mtga_app.mtga_watch_app.intend_to_join_game_with:
             hero.original_deck = mtga_app.mtga_watch_app.intend_to_join_game_with
+
+        match_id = game_room_info['gameRoomConfig']['matchId'] + "-game1-{}".format(hero.player_id)
         mtga_app.mtga_watch_app.game = Game(match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo,
                                             shared_stack)
+        mtga_app.mtga_watch_app.match = Match(match_id, event_id, hero.player_id, hero.seat, opponent.player_id, opponent.seat)

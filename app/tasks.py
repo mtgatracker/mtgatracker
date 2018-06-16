@@ -31,6 +31,11 @@ def block_watch_task(in_queue, out_queue):
         if block_recieved is None:
             out_queue.put(None)
             break
+
+        log_line = None
+        if isinstance(block_recieved, tuple):
+            log_line, block_recieved = block_recieved
+
         if "[" not in block_recieved and "{" not in block_recieved:
             continue
         block_lines = block_recieved.split("\n")
@@ -79,7 +84,9 @@ def block_watch_task(in_queue, out_queue):
         if json_str:
             try:
                 blob = json.loads(json_str)
-                mtga_logger.info("{}success parsing blob: {}({})".format(util.ld(), block_title, block_title_seq))
+                if log_line:
+                    blob["log_line"] = log_line
+                mtga_logger.info("{}success parsing blob: {}({}) / log_line {}".format(util.ld(), block_title, block_title_seq, log_line))
                 if request_or_response:
                     blob["request_or_response"] = request_or_response
                 if block_title:
@@ -147,7 +154,7 @@ def json_blob_reader_task(in_queue, out_queue):
             import traceback
             exc = traceback.format_exc()
             stack = traceback.format_stack()
-            mtga_logger.error("{}Exception @ count {}".format(util.ld(), mtga_watch_app.error_count))
+            mtga_logger.error("{}Exception @ count {}".format(util.ld(True), mtga_watch_app.error_count))
             mtga_logger.error(exc)
             mtga_logger.error(stack)
             mtga_watch_app.send_error("Exception during check game state. Check log for more details")

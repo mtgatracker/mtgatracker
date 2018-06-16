@@ -146,12 +146,14 @@ if __name__ == "__main__":
         print("It has something to do with putting data into the queue from this block (line marked), but other than")
         print("that I really can't figure it out. Anyways, you'll have to kill the python process manually.")
         with open(args.log_file, 'r') as rf:
+            previous_block_end = 0
             for idx, line in enumerate(rf):
                 if line.strip() == "":
-                    queues.block_read_queue.put(current_block)  # THIS IS THE BAD LINE :(
+                    queues.block_read_queue.put((previous_block_end, current_block))  # THIS IS THE BAD LINE :(
                     current_block = ""
                 else:
                     current_block += line.strip() + "\n"
+                    previous_block_end = idx
                 if not all_die_queue.empty():
                     break
     count = 0

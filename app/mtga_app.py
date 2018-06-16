@@ -50,6 +50,7 @@ mtga_logger.setLevel(logging.DEBUG)
 class MTGAWatchApplication(object):
     def __init__(self):
         self.game = None
+        self.match = None
         self.game_lock = threading.Lock()
         self._log_bit_count = 1
         self.player_id = None

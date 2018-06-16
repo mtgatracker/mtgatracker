@@ -147,6 +147,25 @@ class Player(object):
         }
 
 
+class Match(object):
+    def __init__(self, match_id, event_id, hero_id, hero_seat, opponent_id, opponent_seat):
+        self.match_id = match_id
+        self.event_id = event_id
+        self.hero_id = hero_id
+        self.opponent_id = opponent_id
+        self.hero_seat = hero_seat
+        self.opponent_seat = opponent_seat
+        self.game_results = []
+
+    def current_game_number(self):
+        return len(self.game_results) + 1
+
+    def has_results(self, game_number):
+        return len(self.game_results) > game_number
+
+    def add_result(self, result):
+        self.game_results.append(result)
+
 class Game(object):
     def __init__(self, match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo, shared_stack):
         self.match_id = match_id
