@@ -11,7 +11,8 @@ const { app, ipcMain, BrowserWindow, autoUpdater } = require('electron')
 const fs = require('fs');
 const path = require('path')
 
-let firstRun = process.argv[1] == '--squirrel-firstrun';
+const firstRun = process.argv[1] == '--squirrel-firstrun';
+const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
 if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
   autoUpdater.checkForUpdates()
@@ -25,7 +26,32 @@ autoUpdater.on('update-downloaded', (e) => {
     text: "A new version has been downloaded. Restart to update!"
   })
 })
+const crypto = require("crypto")
 
+let checksum = (str, algorithm, encoding) => {
+    return crypto
+        .createHash(algorithm || 'md5')
+        .update(str, 'utf8')
+        .digest(encoding || 'hex')
+}
+
+// check if we need to show the ToS
+let tosAcks = settings.get("tosAcks", [])
+let tosPath = 'resources/app.asar/legal/tos.md';
+if (runFromSource) {
+  tosPath = 'legal/tos.md';
+}
+
+let currentTOSChecksum = checksum(fs.readFileSync(tosPath))
+
+let tosAcked = false;
+
+if (tosAcks.includes(currentTOSChecksum)) {
+   tosAcked = true;
+   console.log("TOS already acked, ok to launch")
+} else {
+   console.log("must ack TOS before launch")
+}
 
 /*************************************************************
  * py process
@@ -70,13 +96,10 @@ let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
 let sortMethod = settings.get('sortMethod', 'draw');
 
-let runFromSource = !process.execPath.endsWith("MTGATracker.exe")
-
 let noFollow = false;
 let server_killed = false;
 let readFullFile = false;
 let debugFile = false;
-
 
 ipcMain.on('messageAcknowledged', (event, arg) => {
   let acked = settings.get("messagesAcknowledged", [])
@@ -89,6 +112,17 @@ ipcMain.on('settingsChanged', (event, arg) => {
   global[arg.key] = arg.value;
   settings.set(arg.key, arg.value)
   mainWindow.webContents.send('settingsChanged')
+})
+
+ipcMain.on('tosAgreed', (event, arg) => {
+  let tosAcks = settings.get("tosAcks", [])
+  let currentTOSChecksum = checksum(fs.readFileSync(tosPath))
+  if (!tosAcks.includes(currentTOSChecksum)) {
+    tosAcks.push(currentTOSChecksum)
+  }
+  settings.set('tosAcks', tosAcks)
+  createMainWindow()
+  tosWindow.close()
 })
 
 let openSettingsWindow = () => {
@@ -116,6 +150,34 @@ let openSettingsWindow = () => {
   }
   settingsWindow.once('ready-to-show', () => {
     settingsWindow.show()
+  })
+}
+
+let openTOSWindow = () => {
+  if(tosWindow == null) {
+    tosWindow  = new BrowserWindow({width: 800,
+                                        height: 560,
+                                        toolbar: false,
+                                        titlebar: false,
+                                        title: false,
+                                        maximizable: false,
+                                        show: false,
+                                        icon: "img/icon_small.ico"})
+    tosWindow.setMenu(null)
+    tosWindow.loadURL(require('url').format({
+      pathname: path.join(__dirname, 'tos.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+    if (debug) {
+      tosWindow.webContents.openDevTools()
+    }
+    tosWindow.on('closed', function () {
+      tosWindow = null;
+    })
+  }
+  tosWindow.once('ready-to-show', () => {
+    tosWindow.show()
   })
 }
 
@@ -262,6 +324,7 @@ global.sortMethod = sortMethod
 
 let mainWindow = null
 let settingsWindow = null
+let tosWindow = null
 
 let window_width = 354;
 let window_height = 200;
@@ -270,7 +333,7 @@ if (debug) {
     window_height = 700;
 }
 
-const createWindow = () => {
+const createMainWindow = () => {
   mainWindow = new BrowserWindow({width: window_width,
                                   height: window_height,
                                   show: false,
@@ -314,6 +377,15 @@ const createWindow = () => {
   }
 }
 
+const openFirstWindow = () => {
+  if (tosAcked) {
+    createMainWindow()
+  } else {
+    openTOSWindow()
+//    createMainWindow()
+  }
+}
+
 function freeze(time) {
     const stop = new Date().getTime() + time;
     while(new Date().getTime() < stop);
@@ -343,7 +415,7 @@ const killServer = () => {
     }
 }
 
-app.on('ready', createWindow)
+app.on('ready', openFirstWindow)
 
 app.on('will-quit', function() {
   console.log("will quit")

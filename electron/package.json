@@ -20,6 +20,7 @@
     "dependencies": {
         "electron-settings": "^3.1.4",
         "find-process": "^1.1.0",
+        "markdown": "^0.5.0",
         "npm": "^5.7.1",
         "reconnecting-websocket": "^3.2.2",
         "request": "^2.85.0",
