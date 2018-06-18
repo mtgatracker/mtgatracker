@@ -74,9 +74,10 @@ If your child has asked for your consent to these terms on their behalf, please
 review these Terms, as well as our Privacy Policy, and discuss them with your
 child to help them understand how to use our services & how our services use their
 information. You may find a form which gives your express parental consent to these
-Terms here (TODO link), which you should send to us at devs.mtgatracker@gmail.com
+Terms [here](https://mtgatracker.com/legal/MTGATracker_Parental_Consent_Form.pdf),
+which you should send to us at devs.mtgatracker@gmail.com
 before allowing your child to use MTGATracker services. If you do not agree to
-these terms, your child must not use any MTGATracker service.
+these terms, your child must not use any MTGATracker services.
 
 ### Contact us about these terms
 

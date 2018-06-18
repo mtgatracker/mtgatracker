@@ -153,19 +153,6 @@ Here are some examples of information **we do** reserve the right to share publi
 
 _Last updated with version 3.3.0_
 
-### ToS Acceptance
-
-The first time you complete a game after accepting our Terms of Services, MTGATracker will send a request to our servers
-with the following information:
-
-```
-{
-  "anonymousUserID": "<hash>",  /* this is a hash (numeric representation) of your MTGA username */
-  "date": "2018-05-08 14:40:26.809448",
-  "terms_of_services_accepted": true
-}
-```
-
 ### Game Information
 
 MTGATracker sends one request to our servers at the end of each game played with the tracker running.
