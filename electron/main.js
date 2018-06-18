@@ -17,6 +17,7 @@ if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..'
   autoUpdater.checkForUpdates()
 }
 
+
 const findProcess = require('find-process');
 const settings = require('electron-settings');
 autoUpdater.on('update-downloaded', (e) => {

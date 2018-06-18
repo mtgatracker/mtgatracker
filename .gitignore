@@ -108,6 +108,7 @@ node_modules
 appdist/
 MTGATracker-*
 app/example_logs
+electron/legal
 
 # pytest output
 webtask/assets
