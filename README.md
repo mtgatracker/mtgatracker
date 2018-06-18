@@ -168,7 +168,7 @@ In accordance with the [MTG Fan Art policy](http://company.wizards.com/fanconten
 Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used
 are property of Wizards of the Coast. ©Wizards of the Coast LLC.
 
-Please take a moment to read our [privacy policy](https://github.com/shawkinsl/mtga-tracker/blob/master/privacy.md).
+Please take a moment to read our [privacy policy](https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md).
 The use of MTGATracker is considered an implicit agreement to this policy.
 
 ### Credits, License

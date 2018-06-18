@@ -35,7 +35,7 @@ analytic MTGA content (written or otherwise) alongside anonymized aggregate data
 You provide to MTGATracker, via usage of the MTGATracker application, specific data about your MTGA play history.
 This data is collected by MTGATracker by way of reading the contents of specific log files from your hard drive.
 This data, as well as what we may or may not do with it, and ways to opt out, are explicitly outlined in our
-[Privacy Policy](https://github.com/mtgatracker/mtgatracker/blob/master/privacy.md).
+[Privacy Policy](https://github.com/mtgatracker/mtgatracker/blob/master/legal/privacy.md).
 
 ## Restrictions and Terminations
 

@@ -7,8 +7,8 @@ the app, the site, or contributors to the code.
 
 **MTGATracker tracks and stores game data from MTG Arena.** (We hope this does not come as a surprise to our users,
 based on the name of the project.) You can read more specifics about the data we
-track [below](https://github.com/shawkinsl/mtga-tracker/blob/master/privacy.md#specifically-what-data-does-mtgatracker-track-and-how-often), as well as
-learn how to [opt-out](https://github.com/shawkinsl/mtga-tracker/blob/master/privacy.md#how-do-i-opt-out-turning-on-incognito-mode).
+track [below](https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md#specifically-what-data-does-mtgatracker-track-and-how-often), as well as
+learn how to [opt-out](https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md#how-do-i-opt-out-turning-on-incognito-mode).
 
 We are required, per [Google Analytics](https://www.google.com/analytics/terms/us.html) terms, to share a privacy policy.
 None of us are lawyers; this is a document written by non-lawyer humans as a courtesy, and to satisfy Privacy Policy laws to the
