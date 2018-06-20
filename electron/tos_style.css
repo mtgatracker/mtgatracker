@@ -4,7 +4,7 @@
 
 .scroller {
   width: 100%;
-  height: 400px;
+  height: 300px;
   overflow: auto;
   margin: 10px auto;
   padding: 10px 20px;
@@ -27,4 +27,10 @@ a {
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
     box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+}
+
+.banner {
+    margin-top: -15px;
+    margin-bottom: -15px;
+    width: 300px;
 }

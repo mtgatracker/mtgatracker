@@ -58,6 +58,7 @@ class MTGAWatchApplication(object):
         self.player_decks = {}
         self.last_blob = None
         self.error_count = 0
+        self.collection = {}
 
         appdata_roaming = os.getenv("APPDATA")
         self._settings_path = os.path.join(appdata_roaming, "..", "LocalLow", "MTGATracker")
@@ -87,6 +88,8 @@ class MTGAWatchApplication(object):
                 os.remove(self._settings_json_path + ".bak")
             os.rename(self._settings_json_path, self._settings_json_path + ".bak")
             return self.load_settings()
+        if "collection" in settings and settings["collection"]:
+            self.collection = settings["collection"]
         if "player_id" in settings and settings["player_id"]:
             self.player_id = settings["player_id"]
         if "player_decks" in settings and settings["player_decks"]:
@@ -103,7 +106,8 @@ class MTGAWatchApplication(object):
         with open(self._settings_json_path, 'w') as wp:
             write_obj = {
                 "player_decks": {d.deck_id: d.to_serializable() for d in self.player_decks.values()},
-                "player_id": self.player_id
+                "player_id": self.player_id,
+                "collection": self.collection,
             }
             json.dump(write_obj, wp)
         mtga_logger.debug("{}queue put from settings {}".format(util.ld(), id(decklist_change_queue)))

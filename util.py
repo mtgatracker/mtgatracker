@@ -126,6 +126,49 @@ def process_deck(deck_dict, save_deck=True):
     return deck
 
 
+def rank_rarity(rarity):
+    # mythic rare, rare, uncommon, common, basic land; for sorting
+    rarity_lower = rarity.lower()
+    if "mythic" in rarity_lower:
+        return 100
+    elif "rare" in rarity_lower:
+        return 80
+    elif "uncommon" in rarity_lower:
+        return 50
+    elif "common" in rarity_lower:
+        return 20
+    return 0
+
+
+def rank_colors(colors):
+    color_val = 0
+    if "W" in colors:
+        color_val += 1
+    if "U" in colors:
+        color_val += 2
+    if "B" in colors:
+        color_val += 4
+    if "R" in colors:
+        color_val += 8
+    if "G" in colors:
+        color_val += 16
+    if color_val == 0:
+        color_val = 33
+    return color_val
+
+
+def rank_cost(cost):
+    cost_total = 0
+    for cost_bubble in cost:
+        try:
+            cost_total += int(cost_bubble)
+        except:
+            cost_total += 1
+            if "x" in cost_bubble.lower():
+                cost_total += 20  # ??
+    return cost_total
+
+
 def print_deck(deck_pool):
     import app.mtga_app as mtga_app
     print("Deck: {} ({} cards)".format(deck_pool.pool_name, len(deck_pool.cards)))

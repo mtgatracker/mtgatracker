@@ -40,6 +40,7 @@ def map_set_using_lookup(cards, set, lookup):
         card["mtga_id"] = grp_id
         card["number_int"] = card_number
 
+
 all_card_sets = set([card["set"] for card in all_cards["all_cards"]])
 lookup_by_set_and_num = {card_set: {int(v["CollectorNumber"]): v for v in all_cards["all_cards"] if v["set"] == card_set and v["isCollectible"] == True} for card_set in all_card_sets}
 
@@ -64,14 +65,14 @@ lookup_by_set_and_num = {card_set: {int(v["CollectorNumber"]): v for v in all_ca
 #     dom_card_set = json.load(dom_r)
 #     add_cardIDs_to_cardset(dom_card_set, 67106)  # 65479 = act of heroism, hou card 1
 
-with open("KLD.json", "r", encoding='utf-8') as kld_r:
-    kld_card_set = json.load(kld_r)
-    map_set_using_lookup(kld_card_set, "KLD", lookup_by_set_and_num["KLD"])
-
-
-with open("AER.json", "r", encoding='utf-8') as aer_r:
-    aer_card_set = json.load(aer_r)
-    map_set_using_lookup(aer_card_set, "AER", lookup_by_set_and_num["AER"])
+# with open("KLD.json", "r", encoding='utf-8') as kld_r:
+#     kld_card_set = json.load(kld_r)
+#     map_set_using_lookup(kld_card_set, "KLD", lookup_by_set_and_num["KLD"])
+#
+#
+# with open("AER.json", "r", encoding='utf-8') as aer_r:
+#     aer_card_set = json.load(aer_r)
+#     map_set_using_lookup(aer_card_set, "AER", lookup_by_set_and_num["AER"])
 
 
 with open("W17.json", "r", encoding='utf-8') as w17_r:
@@ -152,6 +153,6 @@ clsmembers = [card for name, card in inspect.getmembers(sys.modules[__name__]) i
 # write_set("RIX", "Rivals Of Ixalan", rivals_card_set)
 # write_set("AKH", "Amonkhet", amonkhet_card_set)
 # write_set("HOU", "Hour Of Devastation", hour_card_set)
-write_set("KLD", "Kaladesh", kld_card_set)
-write_set("AER", "Aether Revolt", aer_card_set)
-write_set("W17", "Welcome Decks 2017", aer_card_set)
+# write_set("KLD", "Kaladesh", kld_card_set)
+# write_set("AER", "Aether Revolt", aer_card_set)
+write_set("W17", "Welcome Decks 2017", w17_card_set)

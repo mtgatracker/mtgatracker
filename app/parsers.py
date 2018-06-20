@@ -3,7 +3,7 @@ import util
 from app.models.game import Game, Match, Player
 from app.models.set import Zone
 import app.mtga_app
-from app.queues import game_state_change_queue
+from app.queues import game_state_change_queue, general_output_queue
 
 
 @util.debug_log_trace
@@ -20,6 +20,38 @@ def parse_get_decklists(blob):
     for deck in blob["Deck.GetDeckLists"]:
         decks.append(util.process_deck(deck))
     return decks
+
+
+@util.debug_log_trace
+def parse_get_player_cards_v3(blob):
+    import app.mtga_app as mtga_app
+    mtga_app.mtga_watch_app.collection = blob
+    mtga_app.mtga_watch_app.save_settings()
+
+
+@util.debug_log_trace
+def parse_draft_status(blob):
+    # TODO: need to implement the sorting algo shown here:
+    # TODO: https://github.com/Fugiman/deckmaster/blob/559e3b94bb105387a0e33463e4b5f718ab91721d/client/updater.go#L113
+
+    """ return a.RarityRank() > b.RarityRank() ||
+            (a.RarityRank() == b.RarityRank() && a.ColorRank() > b.ColorRank()) ||
+            (a.RarityRank() == b.RarityRank() && a.ColorRank() == b.ColorRank() && a.CMC < b.CMC) ||
+            (a.RarityRank() == b.RarityRank() && a.ColorRank() == b.ColorRank() && a.CMC == b.CMC && a.Name < b.Name)"""
+    import app.mtga_app as mtga_app
+    collection_count = []
+    picked_cards_this_draft = []
+    if "pickedCards" in blob and blob["pickedCards"]:
+        picked_cards_this_draft = blob["pickedCards"]
+    for card in blob["draftPack"]:
+        card_obj = util.all_mtga_cards.find_one(card).to_serializable()
+        if card in mtga_app.mtga_watch_app.collection:
+            card_obj["count"] = min(mtga_app.mtga_watch_app.collection[card] + picked_cards_this_draft.count(card), 4)
+        else:
+            card_obj["count"] = min(0 + picked_cards_this_draft.count(card), 4)
+        collection_count.append(card_obj)
+    collection_count.sort(key=lambda x: (-1 * util.rank_rarity(x["rarity"]), util.rank_colors(x["color_identity"]), util.rank_cost(x["cost"]), x["pretty_name"]))
+    general_output_queue.put({"draft_collection_count": collection_count})
 
 
 @util.debug_log_trace
