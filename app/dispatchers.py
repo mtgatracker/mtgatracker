@@ -21,9 +21,14 @@ def dispatch_blob(blob):
         dispatch_client_to_gre(blob)
     elif "Deck.GetDeckLists" in blob:  # this looks like it's a response to a jsonrpc method
         parsers.parse_get_decklists(blob)
-    elif "block_title" in blob and (blob["block_title"] == "Event.DeckSubmit" or \
+    elif "block_title" in blob and (blob["block_title"] == "Event.DeckSubmit" or
                                     blob["block_title"] == "Event.GetPlayerCourse"):
         parsers.parse_event_decksubmit(blob)
+    elif "block_title" in blob and blob["block_title"] == "PlayerInventory.GetPlayerCardsV3":
+        parsers.parse_get_player_cards_v3(blob)
+    elif "block_title" in blob and (blob["block_title"] == "Draft.DraftStatus" or
+                                    blob["block_title"] == "Draft.MakePick"):
+        parsers.parse_draft_status(blob)
     elif "matchGameRoomStateChangedEvent" in blob:
         dispatch_match_gametoom_state_change(blob)
 

@@ -63,6 +63,8 @@ var appData = {
     last_connect: 0,
     last_connect_as_seconds: 0,
     game_in_progress: false,
+    showDraftStats: false,
+    draftStats: [],
     game_complete: false,
     game_dismissed: false,
     show_available_decklists: true,
@@ -412,16 +414,6 @@ document.getElementById("floating-eye").addEventListener("click", function() {
 ws.addEventListener('open', () => {
     ws.send('hello!');
     console.log("sent hello")
-    ws.addEventListener('message', (m) => {
-        console.debug(m)
-        let mdata = JSON.parse(m.data)
-        if (mdata.right_click) {
-            toggleOpacity(true)
-        }
-        if (mdata.left_click && remote.getGlobal("leftMouseEvents")) {
-            toggleOpacity(false)
-        }
-    })
 });
 
 function resizeWindow() {
@@ -461,11 +453,21 @@ function populateDeck(elem) {
     resizeWindow()
 }
 
+function exitDraft() {
+    appData.game_in_progress = false;
+    appData.show_available_decklists = true;
+    appData.showDraftStats = false;
+    resizeWindow()
+}
+
 function unpopulateDecklist() {
     appData.list_selected = false;
     appData.no_list_selected = true;
-    appData.show_available_decklists = true;
+
     appData.game_in_progress = false;
+    appData.show_available_decklists = true;
+    appData.showDraftStats = false;
+
     resizeWindow()
 }
 
@@ -549,8 +551,7 @@ let gameAlreadyUploaded = (gameID) => {
   return Object.keys(gameLookup).includes(gameID)
 }
 
-let processGameState = (data) => {
-    // data is already parsed as JSON:
+let onMessage = (data) => {
     data = JSON.parse(event.data)
     if(data.data_type == "game_state") {
         if (data.match_complete) {
@@ -591,9 +592,12 @@ let processGameState = (data) => {
             }
         } else {
             lastGameState = data
+
             appData.game_in_progress = true;
-            appData.game_complete = false;
             appData.show_available_decklists = false;
+            appData.showDraftStats = false;
+
+            appData.game_complete = false;
             appData.draw_stats = data.draw_odds.stats;
             appData.deck_name = data.draw_odds.deck_name;
             appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
@@ -606,7 +610,20 @@ let processGameState = (data) => {
         }
         appData.last_error = data.msg;
     } else if (data.data_type == "message") {
-        // TODO
+        if (data.right_click) {
+            toggleOpacity(true)
+        } else if (data.left_click && remote.getGlobal("leftMouseEvents")) {
+            toggleOpacity(false)
+        } else if (data.draft_collection_count) {
+            console.log("handle draft stuff")
+            console.log(data.draft_collection_count)
+
+            appData.game_in_progress = false;
+            appData.show_available_decklists = false;
+            appData.showDraftStats = true;
+
+            appData.draftStats = data.draft_collection_count
+        }
     } else if (data.data_type=="decklist_change") {
         console.log("got a dl change")
         if (data.decks.no_decks_defined) {
@@ -663,7 +680,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       head.appendChild(link)
     }
   }
-  ws.onmessage = processGameState
+  ws.onmessage = onMessage
 });
 
 ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
