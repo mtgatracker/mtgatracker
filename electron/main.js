@@ -91,11 +91,11 @@ let showIIDs = settings.get('showIIDs', false);
 let no_server = settings.get('no_server', false);
 let mouseEvents = settings.get('mouseEvents', true);
 let leftMouseEvents = settings.get('leftMouseEvents', true);
-let kill_server = settings.get('kill_server', false);
 let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
 let sortMethod = settings.get('sortMethod', 'draw');
 
+let kill_server = true;
 let noFollow = false;
 let server_killed = false;
 let readFullFile = false;
@@ -396,16 +396,13 @@ const killServer = () => {
     if (!server_killed && kill_server) {
         server_killed = true;
         if (!no_server) {
+            console.log("cleaning up")
             freeze(2000)
             cleanupPyProc(() => {})
         }
         pyProc = null
         pyPort = null
     }
-//    if (settingsWindow) {
-//      settingsWindow.close()
-//      settingsWindow = null;
-//    }
     if (global.updateReady) {
       console.log("doing quitAndInstall")
       autoUpdater.quitAndInstall()
