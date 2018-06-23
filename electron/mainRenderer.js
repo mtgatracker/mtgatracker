@@ -49,8 +49,25 @@ var ws = new ReconnectingWebSocket("ws://127.0.0.1:5678/", null, {constructor: W
 
 var gameLookup = {}
 var lastGameState = null;
+var resizing = false;
 
 var winLossCounterInitial = remote.getGlobal("winLossCounter")
+
+let getMainWindowDisplay = () => {
+  let {x, y} = browserWindow.getBounds()
+  let display = remote.screen.getDisplayNearestPoint({x: x, y: y})
+  return display;
+}
+
+let calcMainMaxHeight = () => {
+  let displayBounds = getMainWindowDisplay().bounds
+  let displayY= displayBounds.y
+  let displayHeight = displayBounds.height
+  let windowBounds = browserWindow.getBounds()
+  let windowY = windowBounds.y
+  let maxHeight = displayHeight - (windowY - displayY)
+  return maxHeight
+}
 
 var appData = {
     deck_name: "loading...",
@@ -431,12 +448,10 @@ function resizeWindow() {
             totalHeight += $(e).outerHeight(true);
     });
     bounds = browserWindow.getBounds()
-    bounds.height = parseInt(totalHeight);
+    bounds.height = Math.min(parseInt(totalHeight), calcMainMaxHeight());
     container.style.height = "" + parseInt(totalHeight) + "px"
     if (!debug) {
         browserWindow.setBounds(bounds)
-    } else {
-        // console.log("would set height: " + totalHeight)
     }
 }
 
