@@ -72,7 +72,16 @@ def dispatch_gre_to_client(blob):
             pass
         elif message_type in ["GREMessageType_GameStateMessage", "GREMessageType_QueuedGameStateMessage"]:
             game_state_message = message['gameStateMessage']
-            parsers.parse_game_state_message(game_state_message)
+            try:
+                parsers.parse_game_state_message(game_state_message)
+            except:
+                import traceback
+                exc = traceback.format_exc()
+                stack = traceback.format_stack()
+                app.mtga_app.mtga_logger.error("{}Exception @ count {}".format(util.ld(True), app.mtga_app.mtga_watch_app.error_count))
+                app.mtga_app.mtga_logger.error(exc)
+                app.mtga_app.mtga_logger.error(stack)
+                app.mtga_app.mtga_watch_app.send_error("Exception during parse game state. Check log for more details")
 
 
 @util.debug_log_trace
