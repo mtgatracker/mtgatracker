@@ -575,6 +575,7 @@ let onMessage = (data) => {
               console.log(`Backend sent match_complete for ${data.game.gameID}, but already know that game`)
             } else if (data.game) {
               appData.game_complete = true;
+              $(".cardsleft").addClass("gamecomplete")
 
               gameLookup[data.game.gameID] = {count: 0, uploaded: true}
               uploadGame(0, data.game)
@@ -613,6 +614,7 @@ let onMessage = (data) => {
             appData.showDraftStats = false;
 
             appData.game_complete = false;
+            $(".cardsleft").removeClass("gamecomplete")
             appData.draw_stats = data.draw_odds.stats;
             appData.deck_name = data.draw_odds.deck_name;
             appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
@@ -731,6 +733,41 @@ ipcRenderer.on('settingsChanged', () => {
 
   let useTheme = remote.getGlobal("useTheme")
   let themeFile = remote.getGlobal("themeFile")
+  let useFlat = remote.getGlobal("useFlat")
+
+  let currentFlatLink = $("#flat")
+  if (useFlat) {
+    if(!currentFlatLink.length) {
+      let head  = document.getElementsByTagName('head')[0];
+      let link  = document.createElement('link');
+      link.id   = 'flat';
+      link.rel  = 'stylesheet';
+      link.type = 'text/css';
+      link.href = 'flat.css';
+      head.appendChild(link)
+    } else {
+      console.log(currentFlatLink)
+    }
+  } else if (currentFlatLink) {
+    currentFlatLink.remove()
+  }
+
+  let useMinimal = remote.getGlobal("useMinimal")
+
+  let currentMinimalLink = $("#minimal")
+  if (useMinimal) {
+    if (!currentMinimalLink.length) {
+      let head  = document.getElementsByTagName('head')[0];
+      let link  = document.createElement('link');
+      link.id   = 'minimal';
+      link.rel  = 'stylesheet';
+      link.type = 'text/css';
+      link.href = 'minimal.css';
+      head.appendChild(link)
+    }
+  } else if (currentMinimalLink) {
+    currentMinimalLink.remove()
+  }
 
   if ((themeFile && (themeFile != lastThemeFile)) || useTheme != lastUseTheme) {
     lastThemeFile = themeFile
