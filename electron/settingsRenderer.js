@@ -16,6 +16,8 @@ var settingsData = {
   showWinLossCounter: remote.getGlobal('showWinLossCounter'),
   runFromSource: remote.getGlobal('runFromSource'),
   sortMethodSelected: remote.getGlobal('sortMethod'),
+  useFlat: remote.getGlobal('useFlat'),
+  useMinimal: remote.getGlobal('useMinimal'),
   customStyleFiles: [],
   sortingMethods: [
     {id: "draw", text: "By likelihood of next draw (default)",
@@ -77,6 +79,20 @@ document.addEventListener("DOMContentLoaded", function(event) {
     let themeSelected = $("#custom-theme-select").val()
     ipcRenderer.send('settingsChanged', {key: "useTheme", value: settingsData.useTheme})
     ipcRenderer.send('settingsChanged', {key: "themeFile", value: themeSelected})
+  })
+  $('#enable-flat-theme-toggle').change(function() {
+    console.log("apply flat theme was just toggled")
+    settingsData.useFlat = $(this).prop('checked')
+    ipcRenderer.send('settingsChanged', {key: "useFlat", value: settingsData.useFlat})
+    if (!settingsData.useFlat) {
+      settingsData.useMinimal = false;
+      ipcRenderer.send('settingsChanged', {key: "useMinimal", value: settingsData.useMinimal})
+    }
+  })
+  $('#enable-minimal-theme-toggle').change(function() {
+    console.log("apply theme was just toggled")
+    settingsData.useMinimal = $(this).prop('checked')
+    ipcRenderer.send('settingsChanged', {key: "useMinimal", value: settingsData.useMinimal})
   })
   $("#custom-theme-select").change(function() {
     console.log("apply theme was just toggled")

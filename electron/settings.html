@@ -139,6 +139,20 @@
               <option rv-each-theme="customStyleFiles">{ theme }</option>
             </select>
           </div>
+          <div class="settings-row">
+            <div class="checkbox">
+              <label>
+                <input rv-checked="useFlat" id="enable-flat-theme-toggle" type="checkbox" data-toggle="toggle"> Enable flat theme
+              </label>
+            </div>
+          </div>
+          <div class="settings-row" rv-show="useFlat">
+            <div class="checkbox">
+              <label>
+                <input rv-checked="useMinimal" id="enable-minimal-theme-toggle" type="checkbox" data-toggle="toggle"> Enable minimal theme
+              </label>
+            </div>
+          </div>
         </div>
       </div>
       <div id="privacy-pane" value="privacy" rv-showsettingspane="settingsPaneIndex">

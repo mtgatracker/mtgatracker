@@ -1,0 +1,127 @@
+.cost {
+  margin-right: 7px;
+  margin-top: 5px;
+}
+
+h1 {
+  font-size: 20px;
+}
+
+.reminder {
+  display: none;
+}
+
+.win-loss {
+  font-size: 16px;
+}
+
+#container {
+    width: 280px;
+    color: white;
+    -moz-box-shadow: 0 4px 12px rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 4px 12px rgba(0,0,0,.5);
+    box-shadow: 0 4px 12px rgba(0,0,0,.5);
+    margin: 15px;
+}
+
+.settings-img {
+  height: 18px;
+  width: 18px;
+}
+
+#floating-eye {
+  height: 20px;
+  width: 20px;
+  left: 271px;
+  top: 26px;
+}
+
+#floating-settings {
+  top: 25px;
+  left: 249px;
+  top: 27px;
+}
+
+.zoom-panel {
+    left: 179px;
+    position: relative;
+    top: -31px;
+    height: 0px;
+}
+
+.deck-container {
+    height: 30px;
+    font-size: 14px;
+}
+
+.deck-name {
+    top: -1px;
+    position: relative;
+}
+
+.card {
+  background-image:none;
+  color: white;
+  height: 26px;
+  width: 100%;
+  /* background-color: rgba(221, 221, 221, 0.3); */
+  margin-left: 0px;
+  border-bottom: solid #636363 1px;
+  border-top: solid #636363 1px;
+}
+
+.card-text {
+    padding-left: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    position: relative;
+}
+
+.cardcount {
+  display: inline-block;
+  padding-top: 3px;
+  background-color: #0f4e61;
+  height: 23px;
+  padding-left: 7px;
+  width: 25px;
+}
+
+.back-link {
+  visibility: hidden;
+  height: 0;
+  padding: 0;
+}
+
+.back-draft {
+  top: -32px;
+  position: relative;
+}
+
+.back-link:after {
+  content: "<";
+  visibility: visible;
+  display: block;
+  position: relative;
+  left: 10px;
+  top: -20px;
+}
+
+.deck-title {
+  left: 20px;
+  position: relative;
+  padding-top: 0px;
+  max-width: 245px;
+}
+
+.game-deck-title {
+  max-width: 245px;
+  display: inline-block;
+}
+
+.cardsleft {
+  padding-top: 0px;
+}
+
+.gamecomplete {
+  padding-left: 25px;
+}

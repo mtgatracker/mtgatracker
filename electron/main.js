@@ -94,6 +94,8 @@ let leftMouseEvents = settings.get('leftMouseEvents', true);
 let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
 let sortMethod = settings.get('sortMethod', 'draw');
+let useFlat = settings.get('useFlat', true);
+let useMinimal = settings.get('useMinimal', true);
 
 let kill_server = true;
 let noFollow = false;
@@ -317,6 +319,8 @@ global.version = app.getVersion()
 global.messagesAcknowledged = settings.get("messagesAcknowledged", [])
 global.runFromSource = runFromSource
 global.sortMethod = sortMethod
+global.useFlat = useFlat
+global.useMinimal = useMinimal
 
 /*************************************************************
  * window management
@@ -346,6 +350,7 @@ const createMainWindow = () => {
                                   title: false,
                                   maximizable: false,
                                   icon: "img/icon_small.ico"})
+
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',

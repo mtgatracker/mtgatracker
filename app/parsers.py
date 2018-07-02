@@ -74,23 +74,30 @@ def parse_event_decksubmit(blob):
 #     deckId = params['deckId']  # TODO: this will probably now cause a crash
 #     return mtga_app.mtga_watch_app.player_decks[deckId]
 
+#153167
+#153749
+#155101
+
 
 @util.debug_log_trace
 def parse_game_state_message(message):
     # DOM: ok
     import app.mtga_app as mtga_app
     with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
+        if "turnInfo" in message.keys():
+            app.mtga_app.mtga_logger.debug(message["turnInfo"])
         if 'gameInfo' in message.keys():
             if 'matchState' in message['gameInfo']:
                 game_number = message['gameInfo']['gameNumber']
                 game_player_id = "-game{}-{}".format(game_number, mtga_app.mtga_watch_app.game.hero.player_id)
+                match_id_raw = message['gameInfo']['matchID']
                 match_id = message['gameInfo']['matchID'] + game_player_id
 
                 if 'results' in message['gameInfo']:
                     results = message['gameInfo']['results']
                     parse_game_results(True, match_id, results)
-
-                if message['gameInfo']['matchState'] == "MatchState_GameInProgress":
+                if message['gameInfo']['matchState'] == "MatchState_GameInProgress" and \
+                        game_number > max(len(app.mtga_app.mtga_watch_app.match.game_results), 1):
                     shared_battlefield = Zone("battlefield")
                     shared_exile = Zone("exile")
                     shared_limbo = Zone("limbo")
@@ -109,7 +116,7 @@ def parse_game_state_message(message):
                     new_hero.is_hero = True
                     if mtga_app.mtga_watch_app.intend_to_join_game_with:
                         new_hero.original_deck = mtga_app.mtga_watch_app.intend_to_join_game_with
-                        new_match_id = match_id + "-game{}-{}".format(game_number, new_hero.player_id)
+                        new_match_id = match_id_raw + "-game{}-{}".format(game_number, new_hero.player_id)
                         mtga_app.mtga_watch_app.game = Game(new_match_id, new_hero, new_oppo, shared_battlefield,
                                                             shared_exile, shared_limbo, shared_stack)
         if 'annotations' in message.keys():
@@ -124,6 +131,12 @@ def parse_game_state_message(message):
                             if detail['key'] == "orig_id":
                                 original_id = detail["valueInt32"][0]
                                 mtga_app.mtga_watch_app.game.ignored_iids.add(original_id)
+                                # NOTE: at one point Spencer thought it might be correct to ignore these AFTER
+                                # parsing the whole gameStateMessage, i.e. put these in a list here, and only add them
+                                # to ignored_iid's at the end of this function.
+                                #
+                                # That was incorrect, and led to cards flip-flopping in the UI.
+                                # This is correct as is.
                             elif detail['key'] == "new_id":
                                 new_id = detail["valueInt32"][0]
                         card_with_iid = mtga_app.mtga_watch_app.game.find_card_by_iid(original_id)
@@ -174,7 +187,9 @@ def parse_game_state_message(message):
                     app.mtga_app.mtga_logger.error("{}error parsing zone:".format(util.ld(True)))
                     app.mtga_app.mtga_logger.error(pprint.pformat(zone))
                     app.mtga_app.mtga_watch_app.send_error("Exception during parse zone. Check log for more details")
-                    raise
+                    import traceback
+                    exc = traceback.format_exc()
+                    app.mtga_app.mtga_logger.error(exc)
             for zone_id in cards_to_remove_from_zones.keys():
                 remove_these = cards_to_remove_from_zones[zone_id]
                 player, zone = mtga_app.mtga_watch_app.game.get_owner_zone_tup(zone_id)
@@ -191,6 +206,7 @@ def parse_zone(zone_blob):
     zone_type = zone_blob["type"]
     if zone_type not in trackable_zones:
         return []
+    owner_seat = None
     mtga_app.mtga_watch_app.game.register_zone(zone_blob)  # make sure we will find the zone later
     zone_id = zone_blob["zoneId"]
     player, zone = mtga_app.mtga_watch_app.game.get_owner_zone_tup(zone_id)
@@ -209,12 +225,14 @@ def parse_zone(zone_blob):
                 continue
             if "ownerSeatId" not in zone_blob:
                 card = mtga_app.mtga_watch_app.game.find_card_by_iid(instance_id)
-                owner_seat = card.owner_seat_id
-            else:
+                if card:
+                    owner_seat = card.owner_seat_id
+            if not owner_seat and "ownerSeatId" in zone_blob:
                 owner_seat = zone_blob["ownerSeatId"]
             # TODO: logging
             # mtga_logger.info("adding {} to {}".format(instance_id, zone))
-            player.put_instance_id_in_zone(instance_id, owner_seat,  zone)
+            if owner_seat:
+                player.put_instance_id_in_zone(instance_id, owner_seat,  zone)
         cards_to_remove_from_zone = []
         for card in zone.cards:
             if card.game_id not in zone_blob['objectInstanceIds']:

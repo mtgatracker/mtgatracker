@@ -7,7 +7,7 @@
     padding: 0;
     border: none;
     -webkit-user-select: none;
-    text-shadow: 2px 2px #111;
+    text-shadow: 2px 2px rgba(17, 17, 17, 0.5);
 }
 
 .mi {
@@ -17,7 +17,7 @@
 
 @font-face {
     font-family: beleren;
-    src: url(fonts/Beleren-Bold.woff);
+    src: url(fonts/JaceBeleren-Bold.woff);
 }
 
 @font-face {
@@ -41,6 +41,11 @@ h1 {
     -webkit-app-region: drag;
 }
 
+.header-title {
+  max-width: 180px;
+  display: inline-block;
+}
+
 h2 {
     padding: 8px;
 }
@@ -58,23 +63,19 @@ p {
     padding-left: 8px;
 }
 
-.deck-title {
-    max-width: 200px;
-}
-
 .header-warning {
     color: rgb(250, 146, 146);
-    text-shadow: 2px 2px #1c1c1c;
+    text-shadow: 2px 2px rgba(28, 28, 28, 0.5);
 }
 
 .update-message a {
     color: #cccc00;
-    text-shadow: 2px 2px #1c1c1c;
+    text-shadow: 2px 2px rgba(28, 28, 28, 0.5);
 }
 
 .update-message {
     color: #cccc00;
-    text-shadow: 2px 2px #1c1c1c;
+    text-shadow: 2px 2px rgba(28, 28, 28, 0.5);
     margin: 5px 0;
 }
 
@@ -230,6 +231,9 @@ p {
 .card-text {
     padding-top: 11px;
     padding-left: 16px;
+}
+
+.card-text span, .card-text span span {
     text-shadow: 0 0 0;
 }
 
@@ -251,7 +255,6 @@ p {
 
 .card-w .card-text-limit:before {
     background-image: -webkit-linear-gradient(left, rgba(182, 176, 174, 0), #f1f1e1);
-        <h3 class="zoom-panel"><span id="zoom-out" class="zoom">-</span> / <span id="zoom-in" class="zoom">+</span></h3>
     background-image: linear-gradient(left, rgba(182, 176, 174, 0), #f1f1e1);
 }
 
@@ -290,8 +293,12 @@ p {
     background-image: linear-gradient(left, rgba(182, 176, 174, 0), #c1bab8);
 }
 
-.card-text-limit b, .card-text-limit i, .card-text-limit {
+.card-text-limit div, .card-text-limit {
     text-shadow: 0 0 0;
+}
+
+.cardname, .cardcount {
+  display: inline-block;
 }
 
 .link {
@@ -324,7 +331,7 @@ p {
     left: 298px;
     top: 67px;
     z-index: 100;
-    opacity: 0.3;
+    opacity: 0.8;
     cursor: pointer;
 }
 
