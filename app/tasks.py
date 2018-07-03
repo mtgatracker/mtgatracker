@@ -44,7 +44,6 @@ def block_watch_task(in_queue, out_queue):
 
         request_or_response = None
         json_str = ""  # hit the ex
-
         if block_lines[1] and block_lines[1].startswith("==>") or block_lines[1].startswith("<=="):
             """
             these logs looks like:

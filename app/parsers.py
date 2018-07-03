@@ -60,7 +60,6 @@ def parse_event_decksubmit(blob):
     course_deck = blob["CourseDeck"]
     app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     if course_deck:
-        app.mtga_app.mtga_logger.info("WE HAVE A COURSE DECK")
         deck = util.process_deck(course_deck, save_deck=False)
         mtga_app.mtga_watch_app.intend_to_join_game_with = deck
 
@@ -85,6 +84,20 @@ def parse_game_state_message(message):
     import app.mtga_app as mtga_app
     with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
         if "turnInfo" in message.keys():
+            if "turnNumber" in message["turnInfo"].keys():
+                app.mtga_app.mtga_watch_app.game.turn_number = message["turnInfo"]["turnNumber"]
+                player = app.mtga_app.mtga_watch_app.game.get_player_in_seat(message["turnInfo"]["activePlayer"])
+                other_player_seat = 2 if message["turnInfo"]["activePlayer"] == 1 else 1
+                other_player = app.mtga_app.mtga_watch_app.game.get_player_in_seat(other_player_seat)
+                app.mtga_app.mtga_watch_app.game.current_player = player.player_name
+                if not app.mtga_app.mtga_watch_app.game.on_the_play:
+                    if message["turnInfo"]["turnNumber"] % 2 == 1:
+                        app.mtga_app.mtga_watch_app.game.on_the_play = player.player_name
+                    else:
+                        app.mtga_app.mtga_watch_app.game.on_the_play = other_player.player_name
+                app.mtga_app.mtga_watch_app.game.current_phase = message["turnInfo"]["phase"]
+                if "step" in message["turnInfo"].keys():
+                    app.mtga_app.mtga_watch_app.game.current_phase += "-{}".format(message["turnInfo"]["step"])
             app.mtga_app.mtga_logger.debug(message["turnInfo"])
         if 'gameInfo' in message.keys():
             if 'matchState' in message['gameInfo']:

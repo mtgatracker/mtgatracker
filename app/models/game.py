@@ -1,3 +1,4 @@
+import datetime
 import sys
 
 import app.models.set as mset
@@ -166,11 +167,13 @@ class Match(object):
     def add_result(self, result):
         self.game_results.append(result)
 
+
 class Game(object):
     def __init__(self, match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo, shared_stack):
         self.match_id = match_id
         self.final = False
         self.winner = None
+        self.on_the_play = None
 
         self.hero = hero
         assert isinstance(self.hero, Player)
@@ -185,9 +188,18 @@ class Game(object):
         self.last_hero_library_hash = None
         self.last_opponent_hand_hash = None
 
+        self.start_time = datetime.datetime.now()
+        self.turn_number = 1
+        self.current_player = None
+        self.current_phase = "Game_Start"
+
     def game_state(self):
-        game_state = {"draw_odds": self.hero.calculate_draw_odds(self.ignored_iids),
-                      "opponent_hand": [c.to_serializable() for c in self.opponent.hand.cards]}
+        game_state = {
+            "draw_odds": self.hero.calculate_draw_odds(self.ignored_iids),
+            "opponent_hand": [c.to_serializable() for c in self.opponent.hand.cards],
+            "elapsed_time": str(datetime.datetime.now() - self.start_time),
+            "turn_number": self.turn_number
+        }
         return game_state
 
     def register_zone(self, zone_blob):
@@ -275,6 +287,11 @@ class Game(object):
             "players": [hero_obj, opponent_obj],
             "winner": self.winner.player_name,
             "gameID": self.match_id,
+            "turnNumber": self.turn_number,
+            "elapsedTime": str(datetime.datetime.now() - self.start_time),
+            "currentPlayer": self.current_player,
+            "currentPhase": self.current_phase,
+            "onThePlay": self.on_the_play,
         }
         gameJSON["game_hash"] = hash_json_object(gameJSON)
         return gameJSON
