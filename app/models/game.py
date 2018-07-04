@@ -149,13 +149,11 @@ class Player(object):
 
 
 class Match(object):
-    def __init__(self, match_id, event_id, hero_id, hero_seat, opponent_id, opponent_seat):
+    def __init__(self, match_id, event_id, opponent_name, opponent_rank):
         self.match_id = match_id
         self.event_id = event_id
-        self.hero_id = hero_id
-        self.opponent_id = opponent_id
-        self.hero_seat = hero_seat
-        self.opponent_seat = opponent_seat
+        self.opponent_name = opponent_name
+        self.opponent_rank = opponent_rank
         self.game_results = []
 
     def current_game_number(self):
@@ -169,7 +167,8 @@ class Match(object):
 
 
 class Game(object):
-    def __init__(self, match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo, shared_stack):
+    def __init__(self, match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo, shared_stack,
+                 event_id, opponent_rank="Unknown"):
         self.match_id = match_id
         self.final = False
         self.winner = None
@@ -192,6 +191,8 @@ class Game(object):
         self.turn_number = 1
         self.current_player = None
         self.current_phase = "Game_Start"
+        self.opponent_rank = opponent_rank
+        self.event_id = event_id
 
     def game_state(self):
         game_state = {
@@ -292,6 +293,8 @@ class Game(object):
             "currentPlayer": self.current_player,
             "currentPhase": self.current_phase,
             "onThePlay": self.on_the_play,
+            "opponentStartingRank": self.opponent_rank,
+            "eventID": self.event_id,
         }
         gameJSON["game_hash"] = hash_json_object(gameJSON)
         return gameJSON

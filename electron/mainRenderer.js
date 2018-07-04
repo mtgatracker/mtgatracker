@@ -4,6 +4,7 @@ const request = require("request")
 const crypto = require("crypto")
 const ReconnectingWebSocket = require('./vendor/rws.js')
 const fs = require('fs')
+const jwt = require('jsonwebtoken')
 
 const { remote, ipcRenderer, shell } = require('electron')
 const { Menu, MenuItem } = remote
@@ -24,6 +25,8 @@ const menuItem = new MenuItem({
 })
 menu.append(menuItem)
 
+const API_URL = "https://gxt.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-pt/mtgatracker-prod-EhDvLyq7PNb"
+
 var debug = remote.getGlobal('debug');
 var useFrame = remote.getGlobal('useFrame');
 var showIIDs = remote.getGlobal('showIIDs');
@@ -36,6 +39,8 @@ var zoom = remote.getGlobal('zoom');
 
 var lastUseTheme = remote.getGlobal('useTheme')
 var lastThemeFile = remote.getGlobal('themeFile')
+
+var token = null;
 
 if (debug) {
   window.addEventListener('contextmenu', (e) => {
@@ -127,7 +132,7 @@ var dismissMessage = (element) => {
 }
 
 request.get({
-    url: "https://wt.mtgatracker.com/wt-bd90f3fae00b1572ed028d0340861e6a-0/mtgatracker-prod-EhDvLyq7PNb/public-api/tracker-notifications",
+    url: `${API_URL}/public-api/tracker-notifications`,
     json: true,
     headers: {'User-Agent': 'MTGATracker-App'}
 }, (err, res, data) => {
@@ -264,7 +269,6 @@ rivets.formatters.drawStatsSort = function(decklist) {
 };
 
 rivets.formatters.drawStatsMergeDuplicates = function(decklist) {
-    console.log(decklist);
     let mergedDecklist = new Map();
     decklist.forEach((card) => {
         if (mergedDecklist.get(card.card)) {
@@ -486,6 +490,72 @@ function unpopulateDecklist() {
     resizeWindow()
 }
 
+function getAnonToken(attempt, errors) {
+  return new Promise((resolve, reject) => {
+    let tokenOK = true;
+    if (token) {
+      if (jwt.decode(token).exp < Date.now() / 1000) tokenOK = false
+    } else {
+      tokenOK = false;
+    }
+    if (tokenOK) {
+      console.log("old token was fine")
+      resolve(token)
+    } else {
+      console.log("sending token request...")
+      request.get({
+          url: `${API_URL}/public-api/anon-api-token`,
+          json: true,
+          headers: {'User-Agent': 'MTGATracker-App'}
+      }, (err, res, data) => {
+        if (err || res.statusCode != 200) {
+          errors.push({on: "get_token", error: err || res})
+          resolve({attempt: attempt, errors: errors})
+        } else {
+          console.log("got anon token")
+          token = data.token;
+          resolve(data.token)
+        }
+      })
+    }
+  })
+}
+
+function uploadRankChange(rankData, errors) {
+  if (!errors) {
+    errors = []
+  }
+  return new Promise((resolve, reject) => {
+
+    setTimeout(() => {
+      getAnonToken().then(token => {
+        if (!remote.getGlobal("incognito")) {  // we're only allowed to use rank data if not incognito
+        console.log("posting rank request... with token " + token)
+          request.post({
+            url: `${API_URL}/anon-api/rankChange`,
+            json: true,
+            body: rankData,
+            headers: {'User-Agent': 'MTGATracker-App', token: token}
+          }, (err, res, data) => {
+            console.log("finished posting rank request...")
+            console.log(res)
+            console.log(err)
+            if (err || res.statusCode != 200) {
+              errors.push({on: "post_rankChange", error: err || res})
+              reject({errors: errors})
+            } else {
+              console.log("rank uploaded! huzzah!")
+              console.log(res)
+              resolve({
+                success: true
+              })
+            }
+          })
+        }
+      })
+    }, 3000)  // wait a second to let the game result be saved before trying to modify it's rank
+  })
+}
 
 function uploadGame(attempt, gameData, errors) {
   if (!errors) {
@@ -515,24 +585,18 @@ function uploadGame(attempt, gameData, errors) {
     } else {
       let delay = 1000 * attempt;
       setTimeout(() => {
-        console.log("sending token request...")
-        request.get({
-            url: "https://wt.mtgatracker.com/wt-bd90f3fae00b1572ed028d0340861e6a-0/mtgatracker-prod-EhDvLyq7PNb/public-api/anon-api-token",
-            json: true,
-            headers: {'User-Agent': 'MTGATracker-App'}
-        }, (err, res, data) => {
-          if (err || res.statusCode != 200) {
+        getAnonToken().then(token => {
+          if (token.errors) {
             errors.push({on: "get_token", error: err || res})
             resolve({attempt: attempt, errors: errors})
           } else {
-            let token = data.token
             gameData.client_version = appData.version
             if (remote.getGlobal("incognito")) {  // we're not allowed to use this game data :(
               gameData = {anonymousUserID: crypto.createHash('md5').update(gameData.players[0].name).digest("hex")}
             }
             console.log("posting game request...")
             request.post({
-              url: "https://wt.mtgatracker.com/wt-bd90f3fae00b1572ed028d0340861e6a-0/mtgatracker-prod-EhDvLyq7PNb/anon-api/game",
+              url: `${API_URL}/anon-api/game`,
               json: true,
               body: gameData,
               headers: {'User-Agent': 'MTGATracker-App', token: token}
@@ -632,14 +696,20 @@ let onMessage = (data) => {
         } else if (data.left_click && remote.getGlobal("leftMouseEvents")) {
             toggleOpacity(false)
         } else if (data.draft_collection_count) {
-            console.log("handle draft stuff")
-            console.log(data.draft_collection_count)
+          console.log("handle draft stuff")
+          console.log(data.draft_collection_count)
 
-            appData.game_in_progress = false;
-            appData.show_available_decklists = false;
-            appData.showDraftStats = true;
+          appData.game_in_progress = false;
+          appData.show_available_decklists = false;
+          appData.showDraftStats = true;
 
-            appData.draftStats = data.draft_collection_count
+          appData.draftStats = data.draft_collection_count
+        } else if (data.rank_change) {
+          console.log("handle rank stuff")
+          uploadRankChange(data.rank_change).catch(e => {
+            console.log("error uploading rank data: ")
+            console.log(e)
+          })
         }
     } else if (data.data_type=="decklist_change") {
         console.log("got a dl change")

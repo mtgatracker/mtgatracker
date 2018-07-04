@@ -30,6 +30,12 @@ def parse_get_player_cards_v3(blob):
 
 
 @util.debug_log_trace
+def parse_rank_updated(blob):
+    general_output_queue.put({"rank_change": blob})
+    # hey, that was easy!
+
+
+@util.debug_log_trace
 def parse_draft_status(blob):
     # TODO: need to implement the sorting algo shown here:
     # TODO: https://github.com/Fugiman/deckmaster/blob/559e3b94bb105387a0e33463e4b5f718ab91721d/client/updater.go#L113
@@ -72,10 +78,6 @@ def parse_event_decksubmit(blob):
 #     params = blob['params']
 #     deckId = params['deckId']  # TODO: this will probably now cause a crash
 #     return mtga_app.mtga_watch_app.player_decks[deckId]
-
-#153167
-#153749
-#155101
 
 
 @util.debug_log_trace
@@ -131,7 +133,9 @@ def parse_game_state_message(message):
                         new_hero.original_deck = mtga_app.mtga_watch_app.intend_to_join_game_with
                         new_match_id = match_id_raw + "-game{}-{}".format(game_number, new_hero.player_id)
                         mtga_app.mtga_watch_app.game = Game(new_match_id, new_hero, new_oppo, shared_battlefield,
-                                                            shared_exile, shared_limbo, shared_stack)
+                                                            shared_exile, shared_limbo, shared_stack,
+                                                            app.mtga_app.mtga_watch_app.match.event_id,
+                                                            app.mtga_app.mtga_watch_app.match.opponent_rank)
         if 'annotations' in message.keys():
             for annotation in message['annotations']:
                 annotation_type = annotation['type'][0]
@@ -305,6 +309,16 @@ def parse_game_results(_unused_locked, match_id, result_list):
 
 
 @util.debug_log_trace
+def parse_match_created(blob):
+    import app.mtga_app as mtga_app
+    with mtga_app.mtga_watch_app.game_lock:
+        mtga_app.mtga_watch_app.match = Match(blob["matchId"],
+                                              blob["eventId"],
+                                              blob["opponentScreenName"],
+                                              blob["opponentRankingClass"] + " " + str(blob["opponentRankingTier"]))
+
+
+@util.debug_log_trace
 def parse_match_playing(blob):
     # MatchGameRoomStateType_Playing
     import app.mtga_app as mtga_app
@@ -357,8 +371,9 @@ def parse_match_playing(blob):
         hero.is_hero = True
         if mtga_app.mtga_watch_app.intend_to_join_game_with:
             hero.original_deck = mtga_app.mtga_watch_app.intend_to_join_game_with
-
+        opponent_rank = "Unknown"
+        if mtga_app.mtga_watch_app.match.opponent_name == opponent.player_name:
+            opponent_rank = mtga_app.mtga_watch_app.match.opponent_rank
         match_id = game_room_info['gameRoomConfig']['matchId'] + "-game1-{}".format(hero.player_id)
         mtga_app.mtga_watch_app.game = Game(match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo,
-                                            shared_stack)
-        mtga_app.mtga_watch_app.match = Match(match_id, event_id, hero.player_id, hero.seat, opponent.player_id, opponent.seat)
+                                            shared_stack, event_id, opponent_rank)
