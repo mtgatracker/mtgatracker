@@ -151,12 +151,14 @@ Here are some examples of information **we do** reserve the right to share publi
 
 ## Specifically, what data does MTGATracker collect, and how often?
 
-_Last updated with version 3.3.0_
+_Last updated with version 3.5.0_
 
 ### Game Information
 
-MTGATracker sends one request to our servers at the end of each game played with the tracker running.
-The following is an example payload sent to our server **with incognito mode enabled**:
+MTGATracker sends one request to our servers at the end of each game played with the tracker running, and one request
+whenever your rank changes.
+
+The following is an example payload sent to our server at the end of a game **with incognito mode enabled**:
 
 ```
 {
@@ -176,7 +178,8 @@ The following is what the database goes on to store after the request has been p
 
 In this case, no user entry will be generated.
 
-The following is an example payload sent to our server **without incognito mode enabled.** Some fields have been
+The following is an example payload sent to our server at the end of a game 
+**without incognito mode enabled.** Some fields have been
 partially obscured, the opponent's name has been redacted, and the opponent's deck has been replaced with the 
 partial contents of one of Spencatro's decks, but the record is otherwise real:
 
@@ -187,6 +190,13 @@ partial contents of one of Spencatro's decks, but the record is otherwise real:
  "game_hash": "...R3D4CT3D...",
  "hero": "Spencatro",
  "opponent": "Opponent's MTGA Username",
+ "turnNumber": 10,
+ "elapsedTime": "0:04:57.944322",
+ "currentPlayer": "Morethanafro",
+ "currentPhase": "Phase_Main1",
+ "onThePlay": "Spencatro",
+ "opponentStartingRank": "Gold 4",
+ "eventID": "CompCons_DOM_06072018",
  "players": [{"deck": {"cards": {"65081": 2,
      "65463": 2,
      "65643": 1,
@@ -253,6 +263,13 @@ The following is what the database goes on to store after the request has been p
  "hero": "Spencatro",
  "latestVersionAtPost": "2.1.0-beta",
  "opponent": "Opponent's MTGA Username",
+ "turnNumber": 10,
+ "elapsedTime": "0:04:57.944322",
+ "currentPlayer": "Morethanafro",
+ "currentPhase": "Phase_Main1",
+ "onThePlay": "Spencatro",
+ "opponentStartingRank": "Gold 4",
+ "eventID": "CompCons_DOM_06072018",
  "players": [{"deck": {"cards": {"65081": 2,
      "65463": 2,
      "65643": 1,
@@ -307,6 +324,53 @@ The following is what the database goes on to store after the request has been p
  "winner": "Spencatro"}
 ```
 
+When incognito mode is enabled, no requests are sent when rank changes are observed in MTGATracker.
+
+The following is an example payload sent to our server when a rankChange event is observed
+**without incognito mode enabled.**
+
+```
+{
+   "playerId": "...R3D4CT3D...",
+   "newTier": 1,
+   "oldTier": 1,
+   "newClass": "Silver",
+   "oldClass": "Silver",
+   "oldProgress": 59.88731236824992,
+   "newProgress": 48.64644868982941,
+   "newStreak": 0,
+   "oldStreak": 0,
+   "rankUpdateType": "Constructed",
+   "block_title": "Rank.Updated",
+   "block_title_sequence": "398"
+}
+```
+
+After this request, the most recent game record will be updated with the following:
+
+```
+{
+  ...
+  "hero": "Spencatro",
+  "opponent": "Spencatro's Opponent",
+  "rankChange": {
+      "playerId": "...R3D4CT3D...",
+      "newTier": 1,
+      "oldTier": 1,
+      "newClass": "Silver",
+      "oldClass": "Silver",
+      "oldProgress": 59.88731236824992,
+      "newProgress": 48.64644868982941,
+      "newStreak": 0,
+      "oldStreak": 0,
+      "rankUpdateType": "Constructed",
+      "block_title": "Rank.Updated",
+      "block_title_sequence": "398"
+  },
+  ...
+}
+```
+
 ### User information
 
 The following is what MTGATracker stores for each user record, created the first time a user
@@ -344,15 +408,38 @@ this, please contact us at devs.mtgatracker@gmail.com .
 policy [here](https://auth0.com/privacy), and their security practices [here](https://auth0.com/security).
 
 - MTGATracker shares your incomplete IP address, anonymized by dropping the last octet (192.126.90.123 -> 192.168.90.0),
-with Google Analytics.
+with Google Analytics and Google Adsense.
 
 - MTGATracker "shares" the following information with Discord (to message you your accessCode during Inspector login)
   - Your Discord username
   - Your MTGA username
   - Your unique, rolling login accessCode's
   - Your accessCode's expiration date
-  
-## How do I opt out? (Turning on "incognito mode")
+
+### Third-Parties and Privacy
+
+#### Google Adsense
+
+We reserve the right to use Google Adsense to serve users ads from any MTGATracker site. You can read
+more about Google Adsense's privacy policy [here](https://policies.google.com/technologies/ads).
+
+By default, Adsense will only show non-personalized ads to users located in the EU. We will only show
+personalized ads, which may use technology such as fingerprinting cookies, to users in the EU with their
+consent. We appreciate your choice to support MTGATracker by allowing these technologies to
+better serve you and us. You can read more about how Google Adsense
+uses cookies [here](https://support.google.com/adsense/answer/7549925?hl=en).
+
+Per Google Adsense's policy, we are obligated to include the following in our policy:
+
+- Third party vendors, including Google, use cookies to serve ads based on a user’s prior visits to your website
+- Google’s use of the DoubleClick cookie enables it and its partners to serve ads to your users based on their
+visit to your sites and/or other sites on the internet
+- Users may opt out of the use of the DoubleClick cookie for interest-based advertising by
+visiting [Ad Settings [Google]](https://www.google.com/settings/ads).
+(Alternatively, you can direct users to opt out of a third-party vendor’s use of cookies for interest-based
+advertising by visiting aboutads.info)
+
+## How do I opt out of MTGATracker data collection? (Turning on "incognito mode")
 
 ![Where to enable incognito mode](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/incognito.png)
 
@@ -360,7 +447,6 @@ with Google Analytics.
 - Click the settings button
 - Select the "Privacy" tab
 - Enable "Incognito Mode"
-
 
 #### The Right to be Forgotten
 
