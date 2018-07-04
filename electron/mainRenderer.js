@@ -32,7 +32,7 @@ var appVersionStr = remote.getGlobal('version');
 var runFromSource = remote.getGlobal('runFromSource');
 var showWinLossCounter = remote.getGlobal('showWinLossCounter');
 var sortMethod = remote.getGlobal('sortMethod');
-var zoom = 0.8;
+var zoom = remote.getGlobal('zoom');
 
 var lastUseTheme = remote.getGlobal('useTheme')
 var lastThemeFile = remote.getGlobal('themeFile')
@@ -66,7 +66,7 @@ let calcMainMaxHeight = () => {
   let windowBounds = browserWindow.getBounds()
   let windowY = windowBounds.y
   let maxHeight = displayHeight - (windowY - displayY)
-  return maxHeight
+  return maxHeight + 10;  // add some buffer; 10px won't hide anything
 }
 
 var appData = {
@@ -450,7 +450,7 @@ function resizeWindow() {
     bounds = browserWindow.getBounds()
     bounds.height = Math.min(parseInt(totalHeight), calcMainMaxHeight());
     container.style.height = "" + parseInt(totalHeight) + "px"
-    if (!debug) {
+    if (!(debug || useFrame)) {
         browserWindow.setBounds(bounds)
     }
 }
@@ -670,10 +670,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
     $(".zoom-out").click(() => {
         zoom -= 0.1
         browserWindow.webContents.setZoomFactor(zoom)
+        ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
     })
     $(".zoom-in").click(() => {
         zoom += 0.1
         browserWindow.webContents.setZoomFactor(zoom)
+        ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
     })
     //open links externally by default
     $(document).on('click', 'a[href^="http"]', function(event) {

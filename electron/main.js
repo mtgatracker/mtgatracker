@@ -96,6 +96,7 @@ let showWinLossCounter = settings.get('showWinLossCounter', true);
 let sortMethod = settings.get('sortMethod', 'draw');
 let useFlat = settings.get('useFlat', true);
 let useMinimal = settings.get('useMinimal', true);
+let zoom = settings.get('zoom', 0.8);
 
 let kill_server = true;
 let noFollow = false;
@@ -321,6 +322,7 @@ global.runFromSource = runFromSource
 global.sortMethod = sortMethod
 global.useFlat = useFlat
 global.useMinimal = useMinimal
+global.zoom = zoom
 
 /*************************************************************
  * window management
@@ -369,7 +371,7 @@ const createMainWindow = () => {
     mainWindow.webContents.send('settingsChanged')
     mainWindow.show()
     console.timeEnd('init')
-    mainWindow.webContents.setZoomFactor(0.8)
+    mainWindow.webContents.setZoomFactor(zoom)
   })
 
   let versionsAcknowledged = settings.get('versionsAcknowledged', [])
