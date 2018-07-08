@@ -71,8 +71,8 @@ let getBooleanArg = (short, long) => {
 }
 
 let debugCmdOpt = getBooleanArg('-d', '--debug')
-let frameCmdOpt = getBooleanArg('-uf', '--framed')
-let fullFileCmdOpt = getBooleanArg('-f', '--framed')
+let frameCmdOpt = getBooleanArg('-uf', '--use_framed')
+let fullFileCmdOpt = getBooleanArg('-f', '--full_file')
 
 if (debugCmdOpt) {
   settings.set('debug', true)
