@@ -274,11 +274,6 @@ class Game(object):
         oppo_chess_time_total = datetime.timedelta(0)
 
         for chunk in self.chess_timer:
-            print("`{}` / {} == `{}` / {}".format(
-                chunk["countsAgainst"],
-                type(chunk["countsAgainst"]),
-                self.hero.seat,
-                type(self.hero.seat)))
             if chunk["countsAgainst"] == self.hero:
                 hero_chess_time_total = chunk["diff"] + hero_chess_time_total
             if chunk["countsAgainst"] == self.opponent:

@@ -30,7 +30,7 @@ cp -r legal electron/legal
 
 yes | ./node_modules/.bin/electron-packager electron/ MTGATracker \
   --overwrite --version=$cleanVer --electron-version=1.7.6 \
-  --ignore="\.git.*" --ignore=".*psd" --ignore="mtga_watch\.log.*" \
+  --ignore="\.git.*" --ignore=".*psd" --ignore="upload_failure\.log" --ignore="mtga_watch\.log.*" \
   --extra-resource="appdist" \
   --icon="electron/img/icon_small.ico" \
   --version-string.CompanyName='MTGATracker' \

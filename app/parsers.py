@@ -73,6 +73,30 @@ def parse_event_decksubmit(blob):
         mtga_app.mtga_watch_app.intend_to_join_game_with = deck
 
 
+@util.debug_log_trace
+def parse_sideboard_submit(blob):
+    import app.mtga_app as mtga_app
+    og_deck_id = mtga_app.mtga_watch_app.intend_to_join_game_with.deck_id
+    og_deck_name = mtga_app.mtga_watch_app.intend_to_join_game_with.pool_name
+
+    deck_card_ids = blob["deck"]["deckCards"]
+    main_deck_lookup = {}
+    for card_id in deck_card_ids:
+        if card_id not in main_deck_lookup.keys():
+            main_deck_lookup[card_id] = {"id": str(card_id), "quantity": 0}
+        main_deck_lookup[card_id]["quantity"] += 1
+    new_main_deck_list = [i for i in main_deck_lookup.values()]
+
+    new_deck_obj = {
+        "id": og_deck_id,
+        "name": og_deck_name,
+        "mainDeck": new_main_deck_list
+    }
+    app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
+    deck = util.process_deck(new_deck_obj, save_deck=False)
+    mtga_app.mtga_watch_app.intend_to_join_game_with = deck
+
+
 # @util.debug_log_trace
 # def parse_event_joinqueue(blob):
 #     """ TODO: deprecated? """

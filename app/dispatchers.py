@@ -75,6 +75,9 @@ def dispatch_gre_to_client(blob):
         message_type = message["type"]
         if message_type in dont_care_types:
             pass
+        # TODO: fix this once sideboard logs are also fixed
+        # elif message_type == "GREMessageType_SubmitDeckReq":
+        #     parsers.parse_sideboard_submit(message["submitDeckReq"])
         elif message_type in ["GREMessageType_GameStateMessage", "GREMessageType_QueuedGameStateMessage"]:
             game_state_message = message['gameStateMessage']
             try:
