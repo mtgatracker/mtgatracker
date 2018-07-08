@@ -151,7 +151,7 @@ Here are some examples of information **we do** reserve the right to share publi
 
 ## Specifically, what data does MTGATracker collect, and how often?
 
-_Last updated with version 3.5.0_
+_Last updated with version 3.5.5_
 
 ### Game Information
 
@@ -184,7 +184,7 @@ partially obscured, the opponent's name has been redacted, and the opponent's de
 partial contents of one of Spencatro's decks, but the record is otherwise real:
 
 ```
-{"client_version": "2.1.0-beta",
+{"client_version": "3.5.5",
  "date": "2018-05-08 03:20:36.619000",
  "gameID": "...R3D4CT3D...",
  "game_hash": "...R3D4CT3D...",
@@ -228,9 +228,20 @@ partial contents of one of Spencatro's decks, but the record is otherwise real:
      "66929": 2,
      "67019": 9,
      "67021": 12},
+    "playedCards": {
+     "65463": 2,
+     "65643": 1,
+     "65683": 1,
+     "65687": 1,
+     "66411": 2,
+     "66449": 1,
+     "66753": 1,
+    },
+    "timeSpent": "0:00:42.856671",
     "deckID": "...R3D4CT3D...",
     "poolName": "The Brazen Coalition"},
    "name": "Spencatro",
+   
    "userID": "...R3D4CT3D..."},
   {"deck": {"cards": {"-1": 39,
      "66003": 2,
@@ -247,6 +258,7 @@ partial contents of one of Spencatro's decks, but the record is otherwise real:
     "deckID": "unknown",
     "poolName": "Opponent's MTGA Username's visible cards"},
    "name": "Opponent's MTGA Username",
+   "timeSpent": "0:01:12.86429",
    "userID": "...R3D4CT3D..."}],
  "winner": "Spencatro"}
 ```
@@ -256,12 +268,12 @@ The following is what the database goes on to store after the request has been p
 ```
 {"_id": ObjectId('...R3D4CT3D...'),
  "clientVersionOK": true,
- "client_version": "2.1.0-beta",
+ "client_version": "3.5.5",
  "date": "2018-05-08 03:20:36.619000",
  "gameID": "...R3D4CT3D...",
  "game_hash": "...R3D4CT3D...",
  "hero": "Spencatro",
- "latestVersionAtPost": "2.1.0-beta",
+ "latestVersionAtPost": "3.5.5",
  "opponent": "Opponent's MTGA Username",
  "turnNumber": 10,
  "elapsedTime": "0:04:57.944322",
