@@ -14,6 +14,10 @@ var settingsData = {
   mouseEvents: remote.getGlobal('mouseEvents'),
   leftMouseEvents: remote.getGlobal('leftMouseEvents'),
   showWinLossCounter: remote.getGlobal('showWinLossCounter'),
+  showGameTimer: remote.getGlobal('showGameTimer'),
+  showChessTimers: remote.getGlobal('showChessTimers'),
+  hideDelay: remote.getGlobal('hideDelay'),
+  invertHideMode: remote.getGlobal('invertHideMode'),
   runFromSource: remote.getGlobal('runFromSource'),
   sortMethodSelected: remote.getGlobal('sortMethod'),
   useFlat: remote.getGlobal('useFlat'),
@@ -109,6 +113,21 @@ document.addEventListener("DOMContentLoaded", function(event) {
     console.log("resetting win/loss")
     ipcRenderer.send('settingsChanged', {key: "winLossCounter", value: {win: 0, loss: 0}})
   })
+  document.getElementById("hide-delay").value = "" + settingsData.hideDelay;
+  let initialValue = settingsData.hideDelay
+  if (initialValue == 100) initialValue = "∞"
+  $(".slidevalue").html(initialValue)
+  document.getElementById("hide-delay").onchange = function() {
+    let value = parseInt(this.value)
+    ipcRenderer.send('settingsChanged', {key: "hideDelay", value: value})
+  }
+  document.getElementById("hide-delay").oninput = function() {
+    let value = this.value
+    if(value == 100) {
+      value = "∞"
+    }
+    $(".slidevalue").html(value)
+  }
 })
 
 // ipcRenderer.send('settingsChanged', {cool: true})

@@ -72,6 +72,7 @@ let getBooleanArg = (short, long) => {
 
 let debugCmdOpt = getBooleanArg('-d', '--debug')
 let frameCmdOpt = getBooleanArg('-uf', '--framed')
+let fullFileCmdOpt = getBooleanArg('-f', '--framed')
 
 if (debugCmdOpt) {
   settings.set('debug', true)
@@ -91,6 +92,10 @@ let showIIDs = settings.get('showIIDs', false);
 let no_server = settings.get('no_server', false);
 let mouseEvents = settings.get('mouseEvents', true);
 let leftMouseEvents = settings.get('leftMouseEvents', true);
+let showGameTimer = settings.get('showGameTimer', true);
+let showChessTimers = settings.get('showChessTimers', true);
+let hideDelay = settings.get('hideDelay', 10);
+let invertHideMode = settings.get('invertHideMode', false);
 let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
 let sortMethod = settings.get('sortMethod', 'draw');
@@ -102,6 +107,9 @@ let kill_server = true;
 let noFollow = false;
 let server_killed = false;
 let readFullFile = false;
+if (fullFileCmdOpt) {
+  readFullFile = true;
+}
 let debugFile = false;
 
 ipcMain.on('messageAcknowledged', (event, arg) => {
@@ -288,10 +296,16 @@ const createPyProc = () => {
   if (pyProc != null) {
     console.log('child process success on port ' + port)
     pyProc.stderr.on('data', function(data) {
-      console.log("err: " + data.toString());
+      console.log("py stderr: " + data.toString());
+      if (mainWindow) {
+        mainWindow.webContents.send('stdout', {text: "py stderr:" + data.toString()})
+      }
     });
     pyProc.stdout.on('data', function(data) {
-      console.log("out:" + data.toString());
+      console.log("py stdout:" + data.toString());
+      if (mainWindow) {
+        mainWindow.webContents.send('stdout', {text: "py stdout:" + data.toString()})
+      }
     });
     pyProc.on('exit', function(code) {
       console.log(`python exited with code ${code}`);
@@ -313,6 +327,10 @@ global.useTheme = useTheme;
 global.themeFile = themeFile;
 global.showIIDs = showIIDs;
 global.leftMouseEvents = leftMouseEvents;
+global.showGameTimer = showGameTimer;
+global.showChessTimers = showChessTimers;
+global.invertHideMode = invertHideMode;
+global.hideDelay = hideDelay;
 global.mouseEvents = mouseEvents;
 global.winLossCounter = winLossCounter;
 global.showWinLossCounter = showWinLossCounter;

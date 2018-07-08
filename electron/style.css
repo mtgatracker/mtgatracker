@@ -350,3 +350,35 @@ p {
     cursor: pointer;
     text-shadow: 0 0 0;
 }
+
+#overall-timer {
+    height: 26px;
+    width: 100%;
+    text-align: center;
+    background-color: #414141;
+    padding: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: solid #636363 1px;
+}
+
+.chess-timer.active {
+    background-color: #7f5d5d;
+}
+
+.chess-timer {
+    display: inline-block;
+    width: 50%;
+    margin: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+    background-color: #414141;
+    border-bottom: solid #636363 1px;
+}
+
+#opponent-timer {
+    float: right;
+}

@@ -110,12 +110,20 @@
       <div id="general-pane" value="general" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
-            <p><i>Note: after changing these settings, you must restart MTGATracker to see effects</i></p>
+            <p><i>Note: after changing these settings, you should restart MTGATracker to see effects</i></p>
+          </div>
+
+          <hr />
+
+          <div class="settings-row">
             <input rv-checked="debug" class="tf-toggle" type="checkbox" key="debug" data-toggle="toggle"> Debug Mode
           </div>
           <div class="settings-row">
             <input rv-checked="useFrame" class="tf-toggle" type="checkbox" key="useFrame" data-toggle="toggle"> Streamer Mode
           </div>
+
+          <hr />
+
           <div class="settings-row">
             <input rv-checked="showErrors" class="tf-toggle" type="checkbox" key="showErrors" data-toggle="toggle"> Show error count in game
           </div>
@@ -123,15 +131,41 @@
             <input rv-checked="showInspector" class="tf-toggle" type="checkbox" key="showInspector" data-toggle="toggle"> Show inspector reminders
           </div>
           <div class="settings-row">
+            <input rv-checked="showGameTimer" class="tf-toggle" type="checkbox" key="showGameTimer" data-toggle="toggle"> Show Game Timer
+          </div>
+          <div class="settings-row">
+            <input rv-checked="showChessTimers" class="tf-toggle" type="checkbox" key="showChessTimers" data-toggle="toggle"> Show "Chess" Timers
+          </div>
+
+          <div class="settings-row">
             <input rv-checked="showWinLossCounter" class="tf-toggle" type="checkbox" key="showWinLossCounter" data-toggle="toggle"> Show win/loss counter
           </div>
           <button id="resetWinLoss" class="btn btnbtn btn-negative">Reset Win / Loss counter</button>
+
+          <hr />
+
           <div class="settings-row">
             <input rv-checked="mouseEvents" class="tf-toggle" type="checkbox" key="mouseEvents" data-toggle="toggle"> Hide tracker on all right clicks
           </div>
           <div class="settings-row">
             <input rv-checked="leftMouseEvents" class="tf-toggle" type="checkbox" key="leftMouseEvents" data-toggle="toggle"> Un-hide tracker on all left clicks
           </div>
+
+          <div class="settings-row">
+            <p>"Hide" delay (how many seconds should the tracker stay hidden on right clicks or hide button presses?)</p>
+            <div class="slidecontainer">
+              <input type="range" min="1" max="100" value="50" class="slider" id="hide-delay">
+            </div>
+            <div class="slidevalue">
+              40
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="invertHideMode" class="tf-toggle" type="checkbox" key="invertHideMode" data-toggle="toggle"> Invert Hide Mode (<i>always</i> hide the tracker, only show it on right clicks)
+          </div>
+
+          <hr />
 
           <div class="settings-row">
             Use the following sorting method on deck lists <a class="link" onclick='$("#sorting-help").slideToggle()'><span class="icon icon-help-circled link"></span></a>

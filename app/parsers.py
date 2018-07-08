@@ -1,4 +1,7 @@
 import pprint
+
+import datetime
+
 import util
 from app.models.game import Game, Match, Player
 from app.models.set import Zone
@@ -81,14 +84,40 @@ def parse_event_decksubmit(blob):
 
 
 @util.debug_log_trace
-def parse_game_state_message(message):
+def parse_game_state_message(message, timestamp=None):
     # DOM: ok
     import app.mtga_app as mtga_app
     with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
         if "turnInfo" in message.keys():
             if "turnNumber" in message["turnInfo"].keys():
-                app.mtga_app.mtga_watch_app.game.turn_number = message["turnInfo"]["turnNumber"]
                 player = app.mtga_app.mtga_watch_app.game.get_player_in_seat(message["turnInfo"]["activePlayer"])
+                if "decisionPlayer" in message["turnInfo"].keys():
+                    decisionPlayer = app.mtga_app.mtga_watch_app.game.get_player_in_seat(message["turnInfo"]["decisionPlayer"])
+                else:
+                    decisionPlayer = app.mtga_app.mtga_watch_app.game.last_decision_player
+                if timestamp:
+                    now = datetime.datetime.now()
+                    if app.mtga_app.mtga_watch_app.game.last_log_timestamp is None:
+                        app.mtga_app.mtga_watch_app.game.last_log_timestamp = timestamp
+                        app.mtga_app.mtga_watch_app.game.last_measured_timestamp = now
+                        app.mtga_app.mtga_watch_app.game.log_start_time = timestamp
+                        app.mtga_app.mtga_watch_app.game.last_decision_player = decisionPlayer
+
+                    measured_time_diff = now - app.mtga_app.mtga_watch_app.game.last_measured_timestamp
+                    log_time_diff = timestamp - app.mtga_app.mtga_watch_app.game.last_log_timestamp
+
+                    if measured_time_diff > log_time_diff:
+                        log_time_diff = measured_time_diff  # some turns are really fast, and the logs see it as 0 seconds. Add what we measured instead,
+
+                    app.mtga_app.mtga_watch_app.game.last_log_timestamp = timestamp
+                    app.mtga_app.mtga_watch_app.game.last_measured_timestamp = now
+                    ct_obj = {"turnInfo": message["turnInfo"],
+                              "diff": log_time_diff,
+                              "countsAgainst": app.mtga_app.mtga_watch_app.game.last_decision_player}
+                    app.mtga_app.mtga_watch_app.game.chess_timer.append(ct_obj)
+                    general_output_queue.put({"decisionPlayerChange": True, "heroIsDeciding": decisionPlayer == app.mtga_app.mtga_watch_app.game.hero})
+                    app.mtga_app.mtga_watch_app.game.last_decision_player = decisionPlayer
+                app.mtga_app.mtga_watch_app.game.turn_number = message["turnInfo"]["turnNumber"]
                 other_player_seat = 2 if message["turnInfo"]["activePlayer"] == 1 else 1
                 other_player = app.mtga_app.mtga_watch_app.game.get_player_in_seat(other_player_seat)
                 app.mtga_app.mtga_watch_app.game.current_player = player.player_name

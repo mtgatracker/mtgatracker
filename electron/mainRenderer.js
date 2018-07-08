@@ -5,6 +5,7 @@ const crypto = require("crypto")
 const ReconnectingWebSocket = require('./vendor/rws.js')
 const fs = require('fs')
 const jwt = require('jsonwebtoken')
+const Timer = require('easytimer.js');
 
 const { remote, ipcRenderer, shell } = require('electron')
 const { Menu, MenuItem } = remote
@@ -36,6 +37,12 @@ var runFromSource = remote.getGlobal('runFromSource');
 var showWinLossCounter = remote.getGlobal('showWinLossCounter');
 var sortMethod = remote.getGlobal('sortMethod');
 var zoom = remote.getGlobal('zoom');
+var showChessTimers = remote.getGlobal('showChessTimers');
+var hideDelay = remote.getGlobal('hideDelay');
+var invertHideMode = remote.getGlobal('invertHideMode');
+var showGameTimer = remote.getGlobal('showGameTimer');
+var zoom = remote.getGlobal('zoom');
+var timerRunning = false;
 
 var lastUseTheme = remote.getGlobal('useTheme')
 var lastThemeFile = remote.getGlobal('themeFile')
@@ -55,6 +62,14 @@ var ws = new ReconnectingWebSocket("ws://127.0.0.1:5678/", null, {constructor: W
 var gameLookup = {}
 var lastGameState = null;
 var resizing = false;
+
+var overallTimer = new Timer();
+var heroTimer = new Timer();
+var opponentTimer = new Timer();
+
+window.overallTimer = overallTimer
+window.heroTimer = heroTimer
+window.opponentTimer = opponentTimer
 
 var winLossCounterInitial = remote.getGlobal("winLossCounter")
 
@@ -104,7 +119,11 @@ var appData = {
     version: appVersionStr,
     showWinLossCounter: showWinLossCounter,
     winCounter: winLossCounterInitial.win,
-    lossCounter: winLossCounterInitial.loss
+    lossCounter: winLossCounterInitial.loss,
+    showGameTimer: showGameTimer,
+    showChessTimers: showChessTimers,
+    hideDelay: hideDelay,
+    invertHideMode: invertHideMode,
 }
 
 var parseVersionString = (versionStr) => {
@@ -422,10 +441,12 @@ var toggleOpacity = function(hide) {
         clearTimeout(hideTimeoutId)
         hideTimeoutId = null;
     }
-    hideTimeoutId = setTimeout(function() {
-        all_hidden = false;
-        updateOpacity()
-    }, 10000)
+    if (appData.hideDelay < 100) {
+      hideTimeoutId = setTimeout(function() {
+          all_hidden = appData.invertHideMode;
+          updateOpacity()
+      }, 1000 * appData.hideDelay)
+    }
 }
 
 document.getElementById("floating-eye").addEventListener("click", function() {
@@ -632,8 +653,16 @@ let gameAlreadyUploaded = (gameID) => {
 
 let onMessage = (data) => {
     data = JSON.parse(event.data)
-    if(data.data_type == "game_state") {
+    if (data.data_type == "game_state") {
         if (data.match_complete) {
+
+            timerRunning = false;
+            $("#opponent-timer").removeClass("active")
+            $("#hero-timer").removeClass("active")
+            overallTimer.pause()
+            heroTimer.pause()
+            opponentTimer.pause()
+
             console.log("match over")
             if (data.game && gameAlreadyUploaded(data.game.gameID)) {
               console.log(`Backend sent match_complete for ${data.game.gameID}, but already know that game`)
@@ -672,7 +701,18 @@ let onMessage = (data) => {
             }
         } else {
             lastGameState = data
-
+            if (!timerRunning) {
+              timerRunning = true;
+              console.log("TIMER: resetcss")
+              // this is transition into a game. reset all the timers
+              overallTimer.reset()
+              opponentTimer.reset()
+              heroTimer.reset()
+              overallTimer.start()
+              // pause each player's timer. we'll unpause them soon, with a decisionPlayerChange event.
+              opponentTimer.pause()
+              heroTimer.pause()
+            }
             appData.game_in_progress = true;
             appData.show_available_decklists = false;
             appData.showDraftStats = false;
@@ -692,9 +732,9 @@ let onMessage = (data) => {
         appData.last_error = data.msg;
     } else if (data.data_type == "message") {
         if (data.right_click) {
-            toggleOpacity(true)
+            toggleOpacity(!appData.invertHideMode)
         } else if (data.left_click && remote.getGlobal("leftMouseEvents")) {
-            toggleOpacity(false)
+            toggleOpacity(appData.invertHideMode)
         } else if (data.draft_collection_count) {
           console.log("handle draft stuff")
           console.log(data.draft_collection_count)
@@ -710,6 +750,18 @@ let onMessage = (data) => {
             console.log("error uploading rank data: ")
             console.log(e)
           })
+        } else if (data.decisionPlayerChange) {
+            if (data.heroIsDeciding) {
+                opponentTimer.start()
+                heroTimer.pause()
+                $("#opponent-timer").removeClass("active")
+                $("#hero-timer").addClass("active")
+            } else {
+                opponentTimer.pause()
+                heroTimer.start()
+                $("#opponent-timer").addClass("active")
+                $("#hero-timer").removeClass("active")
+            }
         }
     } else if (data.data_type=="decklist_change") {
         console.log("got a dl change")
@@ -728,6 +780,13 @@ let onMessage = (data) => {
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
+
+    setInterval(() => {
+        $('#overall-timer').html(overallTimer.getTimeValues().toString());
+        $('#hero-timer').html(opponentTimer.getTimeValues().toString());
+        $('#opponent-timer').html(heroTimer.getTimeValues().toString());
+    }, 1000)
+
     if (debug || useFrame) {
         $("#container").addClass("container-framed")
         $("body").css("background-color", "green")
@@ -772,6 +831,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
   ws.onmessage = onMessage
 });
 
+ipcRenderer.on('stdout', (event, data) => {
+  console.log(data.text)
+})
+
 ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
   console.log("got an update ready message")
   console.log(messageInfo)
@@ -798,6 +861,18 @@ ipcRenderer.on('settingsChanged', () => {
 
   showWinLossCounter = remote.getGlobal('showWinLossCounter');
   appData.showWinLossCounter = showWinLossCounter
+
+  showGameTimer = remote.getGlobal('showGameTimer');
+  appData.showGameTimer = showGameTimer
+
+  showChessTimers = remote.getGlobal('showChessTimers');
+  appData.showChessTimers = showChessTimers
+
+  hideDelay = remote.getGlobal('hideDelay');
+  appData.hideDelay = hideDelay
+
+  invertHideMode = remote.getGlobal('invertHideMode');
+  appData.invertHideMode = invertHideMode
 
   winLossCounter = remote.getGlobal('winLossCounter');
   appData.winCounter = winLossCounter.win

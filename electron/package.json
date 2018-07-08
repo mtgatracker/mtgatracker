@@ -18,6 +18,7 @@
     "author": "shawkins",
     "license": "MIT",
     "dependencies": {
+        "easytimer.js": "^2.2.3",
         "electron-settings": "^3.1.4",
         "find-process": "^1.1.0",
         "jsonwebtoken": "^8.3.0",
