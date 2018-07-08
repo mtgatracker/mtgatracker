@@ -133,6 +133,16 @@ class Player(object):
         }
         return info
 
+    def played_cards_to_min_json(self):
+        known_cards = {}
+        for zone in self.shared_zones + [self.hand, self.graveyard]:
+            for card in zone.cards:
+                if card.owner_seat_id == self.seat and card.mtga_id:
+                    if card.mtga_id not in known_cards:
+                        known_cards[card.mtga_id] = 0
+                    known_cards[card.mtga_id] += 1
+        return known_cards
+
     def seen_cards_to_min_json(self):
         known_cards = {}
         for zone in self.all_zones:
@@ -188,6 +198,15 @@ class Game(object):
         self.last_opponent_hand_hash = None
 
         self.start_time = datetime.datetime.now()
+
+        self.log_start_time = None
+
+        self.last_log_timestamp = None
+        self.last_measured_timestamp = None
+        self.last_decision_player = None
+
+        self.chess_timer = []
+
         self.turn_number = 1
         self.current_player = None
         self.current_phase = "Game_Start"
@@ -195,11 +214,15 @@ class Game(object):
         self.event_id = event_id
 
     def game_state(self):
+        hero_chess_time_total, oppo_chess_time_total = self.calculate_chess_timer_total()
         game_state = {
             "draw_odds": self.hero.calculate_draw_odds(self.ignored_iids),
             "opponent_hand": [c.to_serializable() for c in self.opponent.hand.cards],
             "elapsed_time": str(datetime.datetime.now() - self.start_time),
-            "turn_number": self.turn_number
+            "turn_number": self.turn_number,
+            "hero_time_spent": hero_chess_time_total,
+            "oppo_time_spent": oppo_chess_time_total,
+            "heroIsDeciding": self.last_decision_player == self.hero
         }
         return game_state
 
@@ -246,6 +269,17 @@ class Game(object):
             return card
         return None
 
+    def calculate_chess_timer_total(self):
+        hero_chess_time_total = datetime.timedelta(0)
+        oppo_chess_time_total = datetime.timedelta(0)
+
+        for chunk in self.chess_timer:
+            if chunk["countsAgainst"] == self.hero:
+                hero_chess_time_total = chunk["diff"] + hero_chess_time_total
+            if chunk["countsAgainst"] == self.opponent:
+                oppo_chess_time_total = chunk["diff"] + oppo_chess_time_total
+        return str(hero_chess_time_total), str(oppo_chess_time_total)
+
     def to_json(self):
         """
         const Game = backbone.Model.extend({
@@ -273,16 +307,21 @@ class Game(object):
         """
         assert isinstance(self.hero, Player)
         assert isinstance(self.opponent, Player)
-        print(self.hero.original_deck)
+
+        hero_chess_time_total, oppo_chess_time_total = self.calculate_chess_timer_total()
+
         hero_obj = {
             "name": self.hero.player_name,
             "userID": self.hero.player_id,
-            "deck": self.hero.original_deck.to_min_json()
+            "deck": self.hero.original_deck.to_min_json(),
+            "playedCards": self.hero.played_cards_to_min_json(),
+            "timeSpent": str(hero_chess_time_total),
         }
         opponent_obj = {
             "name": self.opponent.player_name,
             "userID": self.opponent.player_id,
-            "deck": self.opponent.seen_cards_to_min_json()
+            "deck": self.opponent.seen_cards_to_min_json(),
+            "timeSpent": str(oppo_chess_time_total),
         }
         gameJSON = {
             "players": [hero_obj, opponent_obj],

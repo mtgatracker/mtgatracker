@@ -1,3 +1,4 @@
+import dateutil.parser
 import json
 import app.dispatchers as dispatchers
 from app.mtga_app import mtga_watch_app, mtga_logger
@@ -25,6 +26,7 @@ import util
 {
 """
 
+
 def block_watch_task(in_queue, out_queue):
     while all_die_queue.empty():
         block_recieved = in_queue.get()
@@ -44,6 +46,7 @@ def block_watch_task(in_queue, out_queue):
 
         request_or_response = None
         json_str = ""  # hit the ex
+        timestamp = None
         if block_lines[1] and block_lines[1].startswith("==>") or block_lines[1].startswith("<=="):
             """
             these logs looks like:
@@ -77,6 +80,10 @@ def block_watch_task(in_queue, out_queue):
               "json": "stuff"
             }
             """
+            try:
+                timestamp = dateutil.parser.parse(block_lines[0].split("]")[1].split(": ")[0])
+            except:
+                pass
             block_title = block_lines[0].split(" ")[-1]
             json_str = "\n".join(block_lines[1:])
         elif block_lines[0].strip().endswith("{"):
@@ -96,6 +103,8 @@ def block_watch_task(in_queue, out_queue):
                 blob = json.loads(json_str)
                 if log_line:
                     blob["log_line"] = log_line
+                if timestamp:
+                    blob["timestamp"] = timestamp
                 mtga_logger.info("{}success parsing blob: {}({}) / log_line {}".format(util.ld(), block_title, block_title_seq, log_line))
                 if request_or_response:
                     blob["request_or_response"] = request_or_response
