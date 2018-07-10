@@ -87,7 +87,7 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
 
 Building from windows? Try `sh build.sh` from git bash. If that doesn't work, get in touch with @shawkinsl to figure it
 out. There's an open issue to improve this process--help us get CI/CD set up? See
-[contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors) ;)
+[contributing](https://github.com/mtgatracker/mtgatracker/blob/master/CONTRIBUTING.md) ;)
 
 Output will end up in `MTGATracker-<os>-<arch>` .
 
@@ -153,7 +153,7 @@ Number of errors: 0
 All changes by non core-contributors must go through a code-review process. For non-contributors, this is accomplished
 by forking, making changes in the fork, and submitting PR's.
 
-For more information, see [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
+For more information, see [contributing](https://github.com/mtgatracker/mtgatracker/blob/master/CONTRIBUTING.md)
 
 ## Disclaimers
 
