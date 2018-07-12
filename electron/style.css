@@ -313,6 +313,8 @@ p {
     float: right;
     margin-right: 17px;
     margin-top: 2px;
+    position: absolute;
+    right: 0;
 }
 
 #floating-eye {
@@ -322,6 +324,11 @@ p {
     left: 295px;
     top: 25px;
     z-index: 100;
+}
+
+.deck-name {
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 #floating-settings {
