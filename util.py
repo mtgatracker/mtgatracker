@@ -6,22 +6,11 @@ import json
 import os
 import sys
 import time
-import app.models.set as set
-import app.set_data.xln as xln
-import app.set_data.rix as rix
-import app.set_data.hou as hou
-import app.set_data.akh as akh
-import app.set_data.dom as dom
-import app.set_data.weird as weird
-import app.set_data.kld as kld
-import app.set_data.aer as aer
-import app.set_data.w17 as w17
 from tailer import Tailer
 
-all_mtga_cards = set.Pool.from_sets("mtga_cards",
-                                    sets=[rix.RivalsOfIxalan, xln.Ixalan, hou.HourOfDevastation, akh.Amonkhet,
-                                          dom.Dominaria, kld.Kaladesh, aer.AetherRevolt, w17.WelcomeDecks2017,
-                                          weird.WeirdLands])
+import app.models.set as set
+from mtga.set_data import all_mtga_cards
+
 
 depth = {"depth_counter": 0}
 
