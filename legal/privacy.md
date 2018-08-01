@@ -74,9 +74,9 @@ choose to do so.
 
 ### Legal Basis
 
-While we do not consider any information MTGATracker collects to be Individual Person Information or PII, our legal
-basis for processing & storing PII now or in the future is to fulfill the contract of providing MTGA Game Data Analysis,
-as outlined in the MTGATracker
+While we do not consider any information MTGATracker collects to be Individual Person Information, our legal
+basis for processing & storing any data that may be considered PII (namely, MTGA Usernames), now or in the future is and will always be
+to fulfill the contract of providing MTGA Game Data Analysis to individual users, as outlined in the MTGATracker
 [Terms of Services](https://github.com/mtgatracker/mtgatracker/commits/master/legal/tos.md),
 per GDPR Article 6(1)(b).
 
@@ -84,8 +84,7 @@ While you must agree to our Terms of Services in order to use MTGATracker servic
 your agreement to the Terms of Services contract _is not_ considered consent for your
 information to be used for marketing purposes, or any other purpose than to directly carry out our contract with you.
 Before using your information for any purposes outside of fulfilling the contract outlined in our Terms of Services,
-we will ask for your consent. We ask for "soft-consent"
-and point you to this document from our downloads page only as a courtesy,
+we will ask for your consent. We ask for "soft-consent" and point you to this document from our downloads page only as a courtesy,
 as well as to notify you of your ability to opt-out of our data processing, collection, and storage entirely.
 
 ### What we do and don't do with your data
