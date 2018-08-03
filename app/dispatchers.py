@@ -29,9 +29,11 @@ def dispatch_blob(blob):
     elif "block_title" in blob and (blob["block_title"] == "Draft.DraftStatus" or
                                     blob["block_title"] == "Draft.MakePick"):
         parsers.parse_draft_status(blob)
-
+    # PlayerInventory.GetPlayerInventory
+    elif "block_title" in blob and blob["block_title"] == "PlayerInventory.GetPlayerInventory":
+        parsers.pass_through("inventory", blob)
     elif "block_title" in blob and blob["block_title"] == "Rank.Updated":
-        parsers.parse_rank_updated(blob)
+        parsers.pass_through("rank_change", blob)
     elif "matchGameRoomStateChangedEvent" in blob:
         dispatch_match_gametoom_state_change(blob)
     elif "block_title" in blob and blob["block_title"] == "Event.MatchCreated":
@@ -54,17 +56,10 @@ def dispatch_jsonrpc_method(blob):
 
     :param blob: dict, must contain "method" as top level key
     """
-    from app.mtga_app import mtga_watch_app
-    dont_care_rpc_methods = ['Event.DeckSelect', "Log.Info", "Deck.GetDeckLists", "Quest.CompletePlayerQuest"]
-    current_method = blob['method']
-    request_or_response = blob['request_or_response']
-    if current_method in dont_care_rpc_methods:
-        pass
-    elif current_method == "PlayerInventory.GetPlayerInventory":
-        # TODO: keep an eye on this one. currently empty, but maybe it will show up sometime
-        app.mtga_app.mtga_logger.info("{}PlayerInventory.GetPlayerInventory found".format(util.ld()))
-    else:
-        app.mtga_app.mtga_logger.debug("{}not sure what to do with jsonrpc method {}".format(util.ld(), current_method))
+    # from app.mtga_app import mtga_watch_app
+    # dont_care_rpc_methods = ['Event.DeckSelect', "Log.Info", "Deck.GetDeckLists", "Quest.CompletePlayerQuest"]
+    # NOTE: pretty sure these are all useless. Just metadata about RPC methods being called, maybe?
+    pass
 
 
 @util.debug_log_trace

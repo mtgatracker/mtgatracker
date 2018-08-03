@@ -33,9 +33,8 @@ def parse_get_player_cards_v3(blob):
 
 
 @util.debug_log_trace
-def parse_rank_updated(blob):
-    general_output_queue.put({"rank_change": blob})
-    # hey, that was easy!
+def pass_through(title, blob):
+    general_output_queue.put({title: blob})
 
 
 @util.debug_log_trace

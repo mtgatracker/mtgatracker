@@ -545,7 +545,7 @@ function getAnonToken(attempt, errors) {
   })
 }
 
-function uploadRankChange(rankData, errors) {
+function passThrough(endpoint, passData, errors) {
   if (!errors) {
     errors = []
   }
@@ -553,23 +553,20 @@ function uploadRankChange(rankData, errors) {
 
     setTimeout(() => {
       getAnonToken().then(token => {
-        if (!remote.getGlobal("incognito")) {  // we're only allowed to use rank data if not incognito
-        console.log("posting rank request... with token " + token)
+        if (!remote.getGlobal("incognito")) {  // we're only allowed to use passThrough data if not incognito
+        console.log(`posting ${endpoint} request... with token ${token}`)
           request.post({
-            url: `${API_URL}/anon-api/rankChange`,
+            url: `${API_URL}/${endpoint}`,
             json: true,
-            body: rankData,
+            body: passData,
             headers: {'User-Agent': 'MTGATracker-App', token: token}
           }, (err, res, data) => {
-            console.log("finished posting rank request...")
-            console.log(res)
-            console.log(err)
+            console.log("finished posting ${endpoint} request...")
             if (err || res.statusCode != 200) {
-              errors.push({on: "post_rankChange", error: err || res})
+              errors.push({on: `post_${endpoint}`, error: err || res})
               reject({errors: errors})
             } else {
-              console.log("rank uploaded! huzzah!")
-              console.log(res)
+              console.log("${endpoint} uploaded! huzzah!")
               resolve({
                 success: true
               })
@@ -756,9 +753,13 @@ let onMessage = (data) => {
 
           appData.draftStats = data.draft_collection_count
         } else if (data.rank_change) {
-          console.log("handle rank stuff")
-          uploadRankChange(data.rank_change).catch(e => {
+          passThrough("anon-api/rankChange", data.rank_change).catch(e => {
             console.log("error uploading rank data: ")
+            console.log(e)
+          })
+        } else if (data.inventory) {
+          passThrough("anon-api/inventory", data.inventory).catch(e => {
+            console.log("error uploading inventory data: ")
             console.log(e)
           })
         } else if (data.decisionPlayerChange) {
