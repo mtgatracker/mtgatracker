@@ -102,6 +102,27 @@ class Player(object):
                 current_list.remove(simple_card)
             except:
                 mtga_watch_app.send_error("Card wasn't in library to remove?")
+        # #155: send unmodified odds for static mode
+        original_deck_odds = {}
+        for card in self.original_deck.cards:
+            if card.mtga_id not in original_deck_odds.keys():
+                original_deck_odds[card.mtga_id] = {
+                    "card": card.pretty_name,
+                    "iid": None,
+                    "colors": card.colors,
+                    "cost": card.cost,
+                    "card_type": card.card_type,
+                    "card_subtype": card.sub_types,
+                    "count_in_deck": 0,
+                    "odds_unf": 0,
+                    "odds_of_draw": 0,
+                }
+                if isinstance(card, GameCard):
+                    original_deck_odds[card.mtga_id]['iid'] = card.game_id
+
+            original_deck_odds[card.mtga_id]["count_in_deck"] += 1
+            original_deck_odds[card.mtga_id]["odds_unf"] = 100 * original_deck_odds[card.mtga_id]["count_in_deck"] / len(self.original_deck.cards)
+            original_deck_odds[card.mtga_id]["odds_of_draw"] = "{:.2f}".format(original_deck_odds[card.mtga_id]["odds_unf"])
         odds = {}
         for card in current_list:
             if card.mtga_id not in odds.keys():
@@ -124,10 +145,14 @@ class Player(object):
             odds[card.mtga_id]["odds_of_draw"] = "{:.2f}".format(odds[card.mtga_id]["odds_unf"])
         odds_list = [odds[k] for k in odds.keys()]
         odds_list.sort(key=lambda x: x["odds_unf"])
+        original_odds_list = [original_deck_odds[k] for k in original_deck_odds.keys()]
+        original_odds_list.sort(key=lambda x: x["odds_unf"])
         info = {
             "stats": list(reversed(odds_list)),
+            "original_deck_stats": list(reversed(original_odds_list)),
             "deck_name": self.original_deck.pool_name,
             "total_cards_in_deck": len(current_list),
+            "original_decklist_total": len(self.original_deck.cards),
             "library_contents": [c.to_serializable() for c in current_list],
             "last_drawn": None
         }

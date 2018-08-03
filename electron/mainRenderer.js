@@ -30,6 +30,7 @@ const API_URL = "https://gxt.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387
 
 var debug = remote.getGlobal('debug');
 var useFrame = remote.getGlobal('useFrame');
+var staticMode = remote.getGlobal('staticMode');
 var showIIDs = remote.getGlobal('showIIDs');
 var showErrors = remote.getGlobal('showErrors');
 var appVersionStr = remote.getGlobal('version');
@@ -148,6 +149,7 @@ var dismissMessage = (element) => {
      ipcRenderer.send('messageAcknowledged', messageID)
    }
    appData.messages[elementIdx]["show"] = false;
+   resizeWindow()
 }
 
 request.get({
@@ -157,6 +159,7 @@ request.get({
 }, (err, res, data) => {
   if (appData.messages)
     appData.messages = appData.messages.concat(...data.notifications)
+    resizeWindow()
 })
 
 let cardtypeCompare = function (a, b) {
@@ -599,6 +602,7 @@ function uploadGame(attempt, gameData, errors) {
     if (attempt > 5) {
       if (!remote.getGlobal("incognito")) {
         appData.messages.push({text: "WARNING! Could not upload game result to inspector! Error log generated @ uploadfailure.log ... please send this log to our discord #bug_reports channel!"})
+        resizeWindow()
       }
       let filePath = runFromSource ? "uploadfailure.log" : "../uploadfailure.log";
       fs.writeFile(filePath, JSON.stringify({fatal: "too_many_attempts", errors: errors}))
@@ -675,6 +679,7 @@ let onMessage = (data) => {
                 .then(() => {
                   if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
                     appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
+                    resizeWindow()
                   }
                 })
             } else if (data.gameID) {
@@ -689,6 +694,7 @@ let onMessage = (data) => {
                           console.log("successfully uploaded game!")
                           if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
                             appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
+                            resizeWindow()
                           }
                         })
                     }
@@ -716,15 +722,20 @@ let onMessage = (data) => {
             appData.game_in_progress = true;
             appData.show_available_decklists = false;
             appData.showDraftStats = false;
-
             appData.game_complete = false;
             $(".cardsleft").removeClass("gamecomplete")
-            appData.draw_stats = data.draw_odds.stats;
-            appData.deck_name = data.draw_odds.deck_name;
-            appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
-            appData.opponent_hand = data.opponent_hand
-        }
 
+            appData.deck_name = data.draw_odds.deck_name;
+            appData.opponent_hand = data.opponent_hand
+
+            if (staticMode) {
+              appData.draw_stats = data.draw_odds.original_deck_stats;
+              appData.total_cards_in_deck = data.draw_odds.original_decklist_total;
+            } else {
+              appData.draw_stats = data.draw_odds.stats;
+              appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
+            }
+        }
     } else if (data.data_type == "error") {
         if (data.count) {
             appData.error_count = data.count;
@@ -839,6 +850,7 @@ ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
   console.log("got an update ready message")
   console.log(messageInfo)
   appData.messages.push({text: "A new tracker update will be applied on next launch!", mayfollow:"https://github.com/shawkinsl/mtga-tracker/releases/latest"})
+  resizeWindow()
 })
 
 ipcRenderer.on('settingsChanged', () => {
@@ -849,6 +861,9 @@ ipcRenderer.on('settingsChanged', () => {
 
   useFrame = remote.getGlobal('useFrame');
   appData.useFrame = useFrame
+
+  staticMode = remote.getGlobal('staticMode');
+  appData.staticMode = staticMode
 
   showIIDs = remote.getGlobal('showIIDs');
   appData.showIIDs = showIIDs
@@ -934,6 +949,7 @@ ipcRenderer.on('settingsChanged', () => {
       head.appendChild(link)
     }
   }
+  resizeWindow()
 })
 
 console.timeEnd('init')

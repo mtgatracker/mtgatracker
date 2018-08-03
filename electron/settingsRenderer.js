@@ -9,6 +9,7 @@ var settingsData = {
   showInspector: remote.getGlobal('showInspector'),
   incognito: remote.getGlobal('incognito'),
   useFrame: remote.getGlobal('useFrame'),
+  staticMode: remote.getGlobal('staticMode'),
   useTheme: remote.getGlobal('useTheme'),
   themeFile: remote.getGlobal('themeFile'),
   mouseEvents: remote.getGlobal('mouseEvents'),
