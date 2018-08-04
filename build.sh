@@ -25,9 +25,12 @@ yes | pyinstaller.exe mtgatracker_backend.spec --distpath appdist
 rm -r MTGATracker-win32-x64 || echo "nothing to remove, moving on"
 rm -r MTGATracker-win32-x64_$version* || echo "nothing to remove, moving on"
 
+rm -r electron/legal || echo "no legal to update"
+cp -r legal electron/legal
+
 yes | ./node_modules/.bin/electron-packager electron/ MTGATracker \
   --overwrite --version=$cleanVer --electron-version=1.7.6 \
-  --ignore="\.git.*" --ignore=".*psd" --ignore="mtga_watch\.log.*" \
+  --ignore="\.git.*" --ignore=".*psd" --ignore="upload_failure\.log" --ignore="mtga_watch\.log.*" \
   --extra-resource="appdist" \
   --icon="electron/img/icon_small.ico" \
   --version-string.CompanyName='MTGATracker' \

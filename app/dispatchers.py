@@ -1,10 +1,18 @@
+import pprint
+
 import app.parsers as parsers
 import app.mtga_app
+import util
 
 # HIGHEST LEVEL DISPATCHERS: any json blob
 
 
+@util.debug_log_trace
 def dispatch_blob(blob):
+    seq = blob.get("block_title_sequence", -1)
+    log_line = blob.get("log_line", -1)
+    if seq:
+        app.mtga_app.mtga_logger.debug("{}dispatching seq ({}) / log_line {}".format(util.ld(), seq, log_line))
     if "method" in blob and "jsonrpc" in blob:
         dispatch_jsonrpc_method(blob)
     elif "greToClientEvent" in blob:
@@ -13,22 +21,34 @@ def dispatch_blob(blob):
         dispatch_client_to_gre(blob)
     elif "Deck.GetDeckLists" in blob:  # this looks like it's a response to a jsonrpc method
         parsers.parse_get_decklists(blob)
-    elif "block_title" in blob and (blob["block_title"] == "Event.DeckSubmit" or \
+    elif "block_title" in blob and (blob["block_title"] == "Event.DeckSubmit" or
                                     blob["block_title"] == "Event.GetPlayerCourse"):
         parsers.parse_event_decksubmit(blob)
+    elif "block_title" in blob and blob["block_title"] == "PlayerInventory.GetPlayerCardsV3":
+        parsers.parse_get_player_cards_v3(blob)
+    elif "block_title" in blob and (blob["block_title"] == "Draft.DraftStatus" or
+                                    blob["block_title"] == "Draft.MakePick"):
+        parsers.parse_draft_status(blob)
+
+    elif "block_title" in blob and blob["block_title"] == "Rank.Updated":
+        parsers.parse_rank_updated(blob)
     elif "matchGameRoomStateChangedEvent" in blob:
         dispatch_match_gametoom_state_change(blob)
+    elif "block_title" in blob and blob["block_title"] == "Event.MatchCreated":
+        parsers.parse_match_created(blob)
 
 
 # MID-LEVER DISPATCHERS: first depth level of a blob
+@util.debug_log_trace
 def dispatch_match_gametoom_state_change(blob):
     state_type = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']['stateType']
     if state_type == "MatchGameRoomStateType_Playing":
         parsers.parse_match_playing(blob)
-    elif state_type == "MatchGameRoomStateType_MatchCompleted":
-        parsers.parse_match_complete(blob)
+    # elif state_type == "MatchGameRoomStateType_MatchCompleted":
+    #     parsers.parse_match_complete(blob)
 
 
+@util.debug_log_trace
 def dispatch_jsonrpc_method(blob):
     """ route what parser to run on this jsonrpc methoc blob
 
@@ -37,17 +57,17 @@ def dispatch_jsonrpc_method(blob):
     from app.mtga_app import mtga_watch_app
     dont_care_rpc_methods = ['Event.DeckSelect', "Log.Info", "Deck.GetDeckLists", "Quest.CompletePlayerQuest"]
     current_method = blob['method']
+    request_or_response = blob['request_or_response']
     if current_method in dont_care_rpc_methods:
         pass
-    # TODO: deprecated, cleanup
-    # elif current_method == "Event.JoinQueue":
-    #     intend_to_join = parsers.parse_event_joinqueue(blob)
-    #     mtga_watch_app.intend_to_join_game_with = intend_to_join
     elif current_method == "PlayerInventory.GetPlayerInventory":
         # TODO: keep an eye on this one. currently empty, but maybe it will show up sometime
-        pass
+        app.mtga_app.mtga_logger.info("{}PlayerInventory.GetPlayerInventory found".format(util.ld()))
+    else:
+        app.mtga_app.mtga_logger.debug("{}not sure what to do with jsonrpc method {}".format(util.ld(), current_method))
 
 
+@util.debug_log_trace
 def dispatch_gre_to_client(blob):
     client_messages = blob["greToClientEvent"]['greToClientMessages']
     dont_care_types = ["GREMessageType_UIMessage"]
@@ -55,11 +75,24 @@ def dispatch_gre_to_client(blob):
         message_type = message["type"]
         if message_type in dont_care_types:
             pass
+        # TODO: fix this once sideboard logs are also fixed
+        # elif message_type == "GREMessageType_SubmitDeckReq":
+        #     parsers.parse_sideboard_submit(message["submitDeckReq"])
         elif message_type in ["GREMessageType_GameStateMessage", "GREMessageType_QueuedGameStateMessage"]:
             game_state_message = message['gameStateMessage']
-            parsers.parse_game_state_message(game_state_message)
+            try:
+                parsers.parse_game_state_message(game_state_message, blob["timestamp"] if "timestamp" in blob.keys() else None)
+            except:
+                import traceback
+                exc = traceback.format_exc()
+                stack = traceback.format_stack()
+                app.mtga_app.mtga_logger.error("{}Exception @ count {}".format(util.ld(True), app.mtga_app.mtga_watch_app.error_count))
+                app.mtga_app.mtga_logger.error(exc)
+                app.mtga_app.mtga_logger.error(stack)
+                app.mtga_app.mtga_watch_app.send_error("Exception during parse game state. Check log for more details")
 
 
+@util.debug_log_trace
 def dispatch_client_to_gre(blob):
     client_message = blob['clientToGreMessage']
     message_type = client_message['type']
@@ -77,7 +110,7 @@ def dispatch_client_to_gre(blob):
         # TODO: log ?
         pass
     else:
-        app.mtga_app.mtga_logger.info("WARNING: unknown clientToGreMessage type: {}".format(message_type))
+        app.mtga_app.mtga_logger.warning("{}WARNING: unknown clientToGreMessage type: {}".format(util.ld(), message_type))
 
 
 # LOWER LEVEL DISPATCHERS: a message or game object (?)

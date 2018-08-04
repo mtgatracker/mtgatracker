@@ -87,7 +87,7 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
 
 Building from windows? Try `sh build.sh` from git bash. If that doesn't work, get in touch with @shawkinsl to figure it
 out. There's an open issue to improve this process--help us get CI/CD set up? See
-[contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors) ;)
+[contributing](https://github.com/mtgatracker/mtgatracker/blob/master/CONTRIBUTING.md) ;)
 
 Output will end up in `MTGATracker-<os>-<arch>` .
 
@@ -153,7 +153,7 @@ Number of errors: 0
 All changes by non core-contributors must go through a code-review process. For non-contributors, this is accomplished
 by forking, making changes in the fork, and submitting PR's.
 
-For more information, see [contributors](https://github.com/shawkinsl/mtga-tracker/tree/master/contributors)
+For more information, see [contributing](https://github.com/mtgatracker/mtgatracker/blob/master/CONTRIBUTING.md)
 
 ## Disclaimers
 
@@ -168,7 +168,7 @@ In accordance with the [MTG Fan Art policy](http://company.wizards.com/fanconten
 Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used
 are property of Wizards of the Coast. ©Wizards of the Coast LLC.
 
-Please take a moment to read our [privacy policy](https://github.com/shawkinsl/mtga-tracker/blob/master/privacy.md).
+Please take a moment to read our [privacy policy](https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md).
 The use of MTGATracker is considered an implicit agreement to this policy.
 
 ### Credits, License

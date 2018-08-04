@@ -43,9 +43,71 @@
             <h3><i>About MTGATracker</i></h3>
             <p class="about-p"><b>Version:</b> { version }</p>
             <p class="about-p"><b>Homepage:</b> <a href="https://mtgatracker.com/">mtgatracker.com</a></p>
-            <p class="about-p"><b>Privacy:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/privacy.md">privacy.md</a></p>
+            <p class="about-p"><b>Privacy:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md">privacy.md</a></p>
             <p class="about-p"><b>Documentation:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/README.md">README.md</a></p>
             <p class="about-p"><b>Inspector:</b> <a href="https://inspector.mtgatracker.com/">inspector.mtgatracker.com</a></p>
+            <br />
+
+            <h3>Release notes for 3.5.7</h3>
+            <ul>
+              <li class="about-p">Support for Core Set 19 cards</li>
+            </ul>
+            <br />
+
+            <h3>Release notes for 3.5.5</h3>
+            <ul>
+              <li class="about-p">Cards that were played by you are now reported to Inspector</li>
+              <li class="about-p">Implemented "Chess Timers" in the tracker</li>
+              <li class="about-p">The hide timeout can now be configured in Settings</li>
+              <li class="about-p">Hide functionality can now be inverted (not recommended unless you know you want it)</li>
+              <li class="about-p">Improved logging between python backend and electron frontend</li>
+            </ul>
+            <br />
+
+            <h3>Release notes for 3.5.0</h3>
+            <ul>
+              <li class="about-p">Player who is "on the play" for each game now reported to inspector</li>
+              <li class="about-p">Rank change now reported to inspector</li>
+              <li class="about-p">Opponent's rank (before game) now reported to inspector</li>
+              <li class="about-p">Length of games (elapsed time & turn count) will now be reported to Inspector</li>
+              <li style="list-style-type:none">
+                <ul>
+                  <li class="about-p">(Keep an eye out for an inspector update soon!)</li>
+                </ul>
+              </li>
+              <li class="about-p">When using streamer mode, window will no longer resize dynamically</li>
+              <li class="about-p">Tracker will now remember previous zoom level on launch</li>
+            </ul>
+            <br />
+
+            <h3>Release notes for 3.4.2</h3>
+            <ul>
+              <li class="about-p">Implemented a new default theme; read more about it <a href="https://blog.mtgatracker.com/new-default-theme">here!</a></li>
+              <li class="about-p">Fixed an issue that could in rare occasions cause the tracker to get stuck / games to fail to upload to inspector</li>
+              <li class="about-p">MTGATracker will now be scrollable when the window is too large to fit on the screen</li>
+            </ul>
+            <br />
+
+            <h3>Release notes for 3.4.0</h3>
+            <ul>
+              <li class="about-p">Added new Draft Collection View feature. When drafting, MTGATracker will show you how many copies you own of each pick!</li>
+              <li class="about-p">Added Terms of Services agreeement</li>
+            </ul>
+            <br />
+
+            <h3>Release notes for 3.2.2</h3>
+            <ul>
+              <li class="about-p">Fixed an issue in 3.2.1 & under where the 2nd+ game in competitive draft would upload multiple times and/or cause upload error messages</li>
+              <li class="about-p">Added deck list sorting options to General tab of settings; sorting method "Emerald" implemented</li>
+              <li class="about-p">When using multiple arts for the same card in the same deck, that card will now be condensed into a single row</li>
+            </ul>
+            <br />
+
+            <h3>Release notes for 3.2.0</h3>
+            <ul>
+              <li class="about-p">Added support for KLD, AER, W17 sets</li>
+              <li class="about-p">Refactored json-blob parser task post-KLD patch</li>
+            </ul>
             <br />
 
             <h3>Release notes for 3.1.0</h3>
@@ -64,12 +126,20 @@
       <div id="general-pane" value="general" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
-            <p><i>Note: after changing these settings, you must restart MTGATracker to see effects</i></p>
+            <p><i>Note: after changing these settings, you should restart MTGATracker to see effects</i></p>
+          </div>
+
+          <hr />
+
+          <div class="settings-row">
             <input rv-checked="debug" class="tf-toggle" type="checkbox" key="debug" data-toggle="toggle"> Debug Mode
           </div>
           <div class="settings-row">
             <input rv-checked="useFrame" class="tf-toggle" type="checkbox" key="useFrame" data-toggle="toggle"> Streamer Mode
           </div>
+
+          <hr />
+
           <div class="settings-row">
             <input rv-checked="showErrors" class="tf-toggle" type="checkbox" key="showErrors" data-toggle="toggle"> Show error count in game
           </div>
@@ -77,15 +147,56 @@
             <input rv-checked="showInspector" class="tf-toggle" type="checkbox" key="showInspector" data-toggle="toggle"> Show inspector reminders
           </div>
           <div class="settings-row">
+            <input rv-checked="showGameTimer" class="tf-toggle" type="checkbox" key="showGameTimer" data-toggle="toggle"> Show Game Timer
+          </div>
+          <div class="settings-row">
+            <input rv-checked="showChessTimers" class="tf-toggle" type="checkbox" key="showChessTimers" data-toggle="toggle"> Show "Chess" Timers
+          </div>
+
+          <div class="settings-row">
             <input rv-checked="showWinLossCounter" class="tf-toggle" type="checkbox" key="showWinLossCounter" data-toggle="toggle"> Show win/loss counter
           </div>
           <button id="resetWinLoss" class="btn btnbtn btn-negative">Reset Win / Loss counter</button>
+
+          <hr />
+
           <div class="settings-row">
             <input rv-checked="mouseEvents" class="tf-toggle" type="checkbox" key="mouseEvents" data-toggle="toggle"> Hide tracker on all right clicks
           </div>
           <div class="settings-row">
             <input rv-checked="leftMouseEvents" class="tf-toggle" type="checkbox" key="leftMouseEvents" data-toggle="toggle"> Un-hide tracker on all left clicks
           </div>
+
+          <div class="settings-row">
+            <p>"Hide" delay (how many seconds should the tracker stay hidden on right clicks or hide button presses?)</p>
+            <div class="slidecontainer">
+              <input type="range" min="1" max="100" value="50" class="slider" id="hide-delay">
+            </div>
+            <div class="slidevalue">
+              40
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="invertHideMode" class="tf-toggle" type="checkbox" key="invertHideMode" data-toggle="toggle"> Invert Hide Mode (<i>always</i> hide the tracker, only show it on right clicks)
+          </div>
+
+          <hr />
+
+          <div class="settings-row">
+            Use the following sorting method on deck lists <a class="link" onclick='$("#sorting-help").slideToggle()'><span class="icon icon-help-circled link"></span></a>
+          </div>
+          <div class="settings-row">
+            <select id="sorting-method-select" class="form-control">
+              <option rv-each-sortingmethod="sortingMethods" rv-value="sortingmethod.id">{ sortingmethod.text }</option>
+            </select>
+          </div>
+
+          <div class="settings-row well" id="sorting-help" style="display: none;">
+            <h5>What do these sorting methods mean?</h5>
+            <p class="about-p" rv-each-sortingmethod="sortingMethods"><b>{ sortingmethod.text }</b>: { sortingmethod.help }</p>
+          </div>
+
         </div>
       </div>
       <div id="theme-pane" value="theme" rv-showsettingspane="settingsPaneIndex">
@@ -101,6 +212,20 @@
             <select id="custom-theme-select" class="form-control">
               <option rv-each-theme="customStyleFiles">{ theme }</option>
             </select>
+          </div>
+          <div class="settings-row">
+            <div class="checkbox">
+              <label>
+                <input rv-checked="useFlat" id="enable-flat-theme-toggle" type="checkbox" data-toggle="toggle"> Enable flat theme
+              </label>
+            </div>
+          </div>
+          <div class="settings-row" rv-show="useFlat">
+            <div class="checkbox">
+              <label>
+                <input rv-checked="useMinimal" id="enable-minimal-theme-toggle" type="checkbox" data-toggle="toggle"> Enable minimal theme
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -122,11 +247,11 @@
 <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
 <script type="text/javascript" src="rivets.bundled.min.js"></script>
 <script type="text/javascript" src="settingsRenderer.js"></script>
-  <script>
-    let $ = require("./jquery.js")
-    let jQuery = $
-    // let renderer = require('./renderer.js')
-  </script>
-  <script>if (window.module) module = window.module;</script>
-  <script src="vendor/toggle/bootstrap-toggle.min.js"></script>
+<script>
+  let $ = require("./jquery.js")
+  let jQuery = $
+  // let renderer = require('./renderer.js')
+</script>
+<script>if (window.module) module = window.module;</script>
+<script src="vendor/toggle/bootstrap-toggle.min.js"></script>
 </html>

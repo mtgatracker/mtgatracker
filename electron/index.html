@@ -10,18 +10,17 @@
   </head>
   <body>
     <div id="floating-eye">
-      <img src="hide-512.png" width="30px" height="30px">
+      <img class="settings-img" src="hide-512.png" width="30px" height="30px">
     </div>
 
     <div id="floating-settings">
-      <img src="gear.png" width="25px" height="25px">
+      <img class="settings-img" src="gear.png" width="25px" height="25px">
     </div>
     <div id="container">
       <div id="game-deck-list" rv-show="game_in_progress">
-         <h1 class="deck-title">{ deck_name }</h1>
-        <h3 rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
+        <h1 class="game-deck-title">{ deck_name }</h1>
         <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
-        <h3 class="beleren link" onclick="unpopulateDecklist()" rv-show="game_complete">Back to decklists</h3>
+        <h3 class="win-loss" rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
         <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
         <div class="messages">
           <p rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
@@ -29,22 +28,45 @@
             <span class="update-message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mustfollow">{ message.text } [x]</a></span>
           </p>
         </div>
-        <h3>{ total_cards_in_deck } cards in deck</h3>
-        <div class="card" rv-each-stat="draw_stats | drawStatsSort" rv-card_color="stat.colors">
+        <h3 class="beleren link back-link" onclick="unpopulateDecklist()" rv-show="game_complete">Back to decklists</h3>
+        <h3 class="cardsleft">{ total_cards_in_deck } cards in deck</h3>
+        <div class="card" rv-each-stat="draw_stats | drawStatsMergeDuplicates | drawStatsSort" rv-card_color="stat.colors">
           <div class="card-text">
-            <span class="card-text-limit"><i>{ stat.card.iid }</i>{ stat.count_in_deck }x <i>{ stat.card }</i></span>
+            <div class="card-text-limit"><div class="cardcount">{ stat.count_in_deck }x</div> <div class="cardname">{ stat.card }</div></div>
             <span class="cost">
               <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
             </span>
           </div>
         </div>
+        <h2 rv-show="showGameTimer" id="overall-timer"></h2>
+        <h3 rv-show="showChessTimers" class="chess-timer" id="hero-timer"></h3>
+        <h3 rv-show="showChessTimers" class="chess-timer" id="opponent-timer"></h3>
       </div>
-      <div id="available-deck-list" rv-show="show_available_decklists">
-        <h1 class="beleren">MTGATracker</h1>
-        <h3 rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
+
+      <div id="draft-collection-list" rv-show="showDraftStats">
+         <h1 class="game-deck-title gamecomplete">Draft Picks</h1>
         <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
+        <h3 class="beleren link back-link back-draft" onclick="exitDraft()">Exit collection view</h3>
+        <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
+        <div class="messages">
+          <p rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
+            <span class="update-message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mayfollow">{ message.text }</a> [x]</span>
+            <span class="update-message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mustfollow">{ message.text } [x]</a></span>
+          </p>
+        </div>
+        <div class="card" rv-each-stat="draftStats" rv-card_color="stat.colors">
+          <div class="card-text">
+            <div class="card-text-limit"><div class="cardcount">{ stat.count }x</div> <div class="cardname">{ stat.pretty_name } owned</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="available-deck-list" rv-show="show_available_decklists">
+        <h1 class="beleren header-title">MTGATracker</h1>
+        <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
+        <h3 class="win-loss" rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
         <div id="decklists-container" rv-show="no_list_selected">
-          <h3>Pick a deck, or start a game!</h3>
+          <h3 class="reminder">Pick a deck, or start a game!</h3>
           <div class="messages">
             <p rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
               <span class="update-message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mayfollow">{ message.text }</a> [x]</span>
@@ -55,15 +77,15 @@
             MTGATracker couldn't find any decks. If this is the first time launching MTGATracker, please edit, then save any deck in MTGA now!
           </p>
           <div rv-each-deck="player_decks" class="deck-container link" rv-data-deckid="deck.deck_id" onclick="populateDeck(this)">
-            <h3 class="beleren link">{deck.pool_name}</h3>
+            <h3 class="beleren link deck-name">{deck.pool_name}</h3>
           </div>
         </div>
         <div id="deck-list" rv-show="list_selected">
-          <h3 class="beleren link" onclick="unpopulateDecklist()">Back to decklists</h3>
-          <h1> <i class="fas fa-chevron-left"></i> { selected_list_name }</h1>
-          <div class="card" rv-each-stat="selected_list | decklistSort" rv-card_color="stat.colors">
+          <h3 class="beleren link back-link" onclick="unpopulateDecklist()">Back to decklists</h3>
+          <h1 class="deck-title"> <i class="fas fa-chevron-left"></i> { selected_list_name }</h1>
+          <div class="card" rv-each-stat="selected_list | decklistMergeDuplicates | decklistSort" rv-card_color="stat.colors">
             <div class="card-text">
-              <span class="card-text-limit">{ stat.count_in_deck }x <i>{ stat.pretty_name }</i></span>
+              <div class="card-text-limit"><div class="cardcount">{ stat.count_in_deck }x</div> <div class="cardname">{ stat.pretty_name }</div></div>
               <span class="cost">
                 <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
               </span>

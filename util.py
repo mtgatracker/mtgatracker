@@ -6,19 +6,40 @@ import json
 import os
 import sys
 import time
-import app.models.set as set
-import app.set_data.xln as xln
-import app.set_data.rix as rix
-import app.set_data.hou as hou
-import app.set_data.akh as akh
-import app.set_data.dom as dom
-import app.set_data.weird as weird
 from tailer import Tailer
 
+import app.models.set as set
+from mtga.set_data import all_mtga_cards
 
-all_mtga_cards = set.Pool.from_sets("mtga_cards",
-                                    sets=[rix.RivalsOfIxalan, xln.Ixalan, hou.HourOfDevastation, akh.Amonkhet,
-                                          dom.Dominaria, weird.WeirdLands])
+
+depth = {"depth_counter": 0}
+
+
+def ld(reset=False):
+    if reset:
+        depth["depth_counter"] = 0
+    depth["depth_counter"] = max(depth["depth_counter"], 0)
+    return "---" * depth["depth_counter"]
+
+
+def debug_log_trace(decorated_function):
+    import app.mtga_app as mtga_app
+    from functools import wraps
+
+    @wraps(decorated_function)
+    def wrapper(*dec_fn_args, **dec_fn_kwargs):
+        # Log function entry
+        func_name = decorated_function.__name__
+        mtga_app.mtga_logger.debug('{}Entering {}()...'.format(ld(), func_name))
+        # Execute wrapped (decorated) function:
+        depth["depth_counter"] += 1
+        out = decorated_function(*dec_fn_args, **dec_fn_kwargs)
+        depth["depth_counter"] -= 1
+        mtga_app.mtga_logger.debug('{}Exiting {}()!'.format(ld(), func_name))
+
+        return out
+    return wrapper
+
 
 example_deck = {
     'id': '32e22460-c165-48a3-881a-b6fad5d963b0',
@@ -70,7 +91,7 @@ def id_to_card(card_id):
     try:
         return all_mtga_cards.find_one(card_id)
     except:
-        mtga_app.mtga_logger.error("Unknown mtga_id: {}".format(card_id))
+        mtga_app.mtga_logger.error("{}Unknown mtga_id: {}".format(ld(), card_id))
         mtga_app.mtga_watch_app.send_error("Unknown mtga_id: {}".format(card_id))
 
 
@@ -84,25 +105,67 @@ def process_deck(deck_dict, save_deck=True):
             for i in range(card_obj["quantity"]):
                 deck.cards.append(card)
         except:
-            mtga_app.mtga_logger.error("Unknown mtga_id: {}".format(card_obj))
+            mtga_app.mtga_logger.error("{}Unknown mtga_id: {}".format(ld(), card_obj))
             mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck_dict["name"], card_obj))
     if save_deck:
         with mtga_app.mtga_watch_app.game_lock:
             mtga_app.mtga_watch_app.player_decks[deck_id] = deck
-            mtga_app.mtga_logger.debug("deck {} is being saved".format(deck_dict["name"]))
+            mtga_app.mtga_logger.info("{}deck {} is being saved".format(ld(), deck_dict["name"]))
             mtga_app.mtga_watch_app.save_settings()
-    print("RETURNING: {}".format(deck))
     return deck
+
+
+def rank_rarity(rarity):
+    # mythic rare, rare, uncommon, common, basic land; for sorting
+    rarity_lower = rarity.lower()
+    if "mythic" in rarity_lower:
+        return 100
+    elif "rare" in rarity_lower:
+        return 80
+    elif "uncommon" in rarity_lower:
+        return 50
+    elif "common" in rarity_lower:
+        return 20
+    return 0
+
+
+def rank_colors(colors):
+    color_val = 0
+    if "W" in colors:
+        color_val += 1
+    if "U" in colors:
+        color_val += 2
+    if "B" in colors:
+        color_val += 4
+    if "R" in colors:
+        color_val += 8
+    if "G" in colors:
+        color_val += 16
+    if color_val == 0:
+        color_val = 33
+    return color_val
+
+
+def rank_cost(cost):
+    cost_total = 0
+    for cost_bubble in cost:
+        try:
+            cost_total += int(cost_bubble)
+        except:
+            cost_total += 1
+            if "x" in cost_bubble.lower():
+                cost_total += 20  # ??
+    return cost_total
 
 
 def print_deck(deck_pool):
     import app.mtga_app as mtga_app
     print("Deck: {} ({} cards)".format(deck_pool.pool_name, len(deck_pool.cards)))
-    mtga_app.mtga_logger.info("Deck: {} ({} cards)".format(deck_pool.pool_name, len(deck_pool.cards)))
+    mtga_app.mtga_logger.info("{}Deck: {} ({} cards)".format(ld(), deck_pool.pool_name, len(deck_pool.cards)))
     grouped = deck_pool.group_cards()
     for card in grouped.keys():
         print("  {}x {}".format(grouped[card], card))
-        mtga_app.mtga_logger.info("  {}x {}".format(grouped[card], card))
+        mtga_app.mtga_logger.info("{}  {}x {}".format(ld(), grouped[card], card))
 
 
 def deepsearch_blob_for_ids(blob, ids_only=True):
@@ -145,7 +208,6 @@ try:
 except FileNotFoundError:
     with open(resource_path(os.path.join('..', 'electron', 'package.json')), 'r') as package_file:
         client_version = json.load(package_file)["version"]
-
 
 
 class KillableTailer(Tailer):

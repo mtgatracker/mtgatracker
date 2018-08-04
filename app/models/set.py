@@ -149,7 +149,7 @@ class Deck(Pool):
         library = Library(self.pool_name, self.deck_id, owner_id, -1)
         for card in self.cards:
             game_card = mcard.GameCard(card.name, card.pretty_name, card.cost, card.color_identity, card.card_type,
-                                       card.sub_types, card.set, card.set_number, card.mtga_id, owner_id, -1)
+                                       card.sub_types, card.set, card.rarity, card.set_number, card.mtga_id, owner_id, -1)
             library.cards.append(game_card)
         return library
 

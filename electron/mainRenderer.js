@@ -4,6 +4,8 @@ const request = require("request")
 const crypto = require("crypto")
 const ReconnectingWebSocket = require('./vendor/rws.js')
 const fs = require('fs')
+const jwt = require('jsonwebtoken')
+const Timer = require('easytimer.js');
 
 const { remote, ipcRenderer, shell } = require('electron')
 const { Menu, MenuItem } = remote
@@ -24,6 +26,8 @@ const menuItem = new MenuItem({
 })
 menu.append(menuItem)
 
+const API_URL = "https://gxt.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-pt/mtgatracker-prod-EhDvLyq7PNb"
+
 var debug = remote.getGlobal('debug');
 var useFrame = remote.getGlobal('useFrame');
 var showIIDs = remote.getGlobal('showIIDs');
@@ -31,10 +35,19 @@ var showErrors = remote.getGlobal('showErrors');
 var appVersionStr = remote.getGlobal('version');
 var runFromSource = remote.getGlobal('runFromSource');
 var showWinLossCounter = remote.getGlobal('showWinLossCounter');
-var zoom = 0.8;
+var sortMethod = remote.getGlobal('sortMethod');
+var zoom = remote.getGlobal('zoom');
+var showChessTimers = remote.getGlobal('showChessTimers');
+var hideDelay = remote.getGlobal('hideDelay');
+var invertHideMode = remote.getGlobal('invertHideMode');
+var showGameTimer = remote.getGlobal('showGameTimer');
+var zoom = remote.getGlobal('zoom');
+var timerRunning = false;
 
 var lastUseTheme = remote.getGlobal('useTheme')
 var lastThemeFile = remote.getGlobal('themeFile')
+
+var token = null;
 
 if (debug) {
   window.addEventListener('contextmenu', (e) => {
@@ -48,8 +61,33 @@ var ws = new ReconnectingWebSocket("ws://127.0.0.1:5678/", null, {constructor: W
 
 var gameLookup = {}
 var lastGameState = null;
+var resizing = false;
+
+var overallTimer = new Timer();
+var heroTimer = new Timer();
+var opponentTimer = new Timer();
+
+window.overallTimer = overallTimer
+window.heroTimer = heroTimer
+window.opponentTimer = opponentTimer
 
 var winLossCounterInitial = remote.getGlobal("winLossCounter")
+
+let getMainWindowDisplay = () => {
+  let {x, y} = browserWindow.getBounds()
+  let display = remote.screen.getDisplayNearestPoint({x: x, y: y})
+  return display;
+}
+
+let calcMainMaxHeight = () => {
+  let displayBounds = getMainWindowDisplay().bounds
+  let displayY= displayBounds.y
+  let displayHeight = displayBounds.height
+  let windowBounds = browserWindow.getBounds()
+  let windowY = windowBounds.y
+  let maxHeight = displayHeight - (windowY - displayY)
+  return maxHeight + 10;  // add some buffer; 10px won't hide anything
+}
 
 var appData = {
     deck_name: "loading...",
@@ -62,6 +100,8 @@ var appData = {
     last_connect: 0,
     last_connect_as_seconds: 0,
     game_in_progress: false,
+    showDraftStats: false,
+    draftStats: [],
     game_complete: false,
     game_dismissed: false,
     show_available_decklists: true,
@@ -79,7 +119,11 @@ var appData = {
     version: appVersionStr,
     showWinLossCounter: showWinLossCounter,
     winCounter: winLossCounterInitial.win,
-    lossCounter: winLossCounterInitial.loss
+    lossCounter: winLossCounterInitial.loss,
+    showGameTimer: showGameTimer,
+    showChessTimers: showChessTimers,
+    hideDelay: hideDelay,
+    invertHideMode: invertHideMode,
 }
 
 var parseVersionString = (versionStr) => {
@@ -107,7 +151,7 @@ var dismissMessage = (element) => {
 }
 
 request.get({
-    url: "https://wt.mtgatracker.com/wt-bd90f3fae00b1572ed028d0340861e6a-0/mtgatracker-prod-EhDvLyq7PNb/public-api/tracker-notifications",
+    url: `${API_URL}/public-api/tracker-notifications`,
     json: true,
     headers: {'User-Agent': 'MTGATracker-App'}
 }, (err, res, data) => {
@@ -228,30 +272,64 @@ rivets.formatters.drawStatsSort = function(decklist) {
     if (decklist.length === 0) {
         return decklist;
     }
-    return decklist.sort(
-            function (a, b) {
-                // Sort by cardtype first
-                return cardtypeCompare(a.card_type, b.card_type)
+    if (sortMethod == "draw") {
+        return decklist;
+    } else if (sortMethod == "emerald") {
+        return decklist.sort(
+                function (a, b) {
+                    // Sort by cardtype first
+                    return cardtypeCompare(a.card_type, b.card_type)
                         // Then sort by mana cost
                         || manaCostCompare(a.cost, b.cost)
                         // Then sort by name
                         || nameCompare(a.card, b.card);
-            });
+                });
+    }
+};
+
+rivets.formatters.drawStatsMergeDuplicates = function(decklist) {
+    let mergedDecklist = new Map();
+    decklist.forEach((card) => {
+        if (mergedDecklist.get(card.card)) {
+            mergedDecklist.get(card.card).count_in_deck += card.count_in_deck;
+        }
+        else {
+            mergedDecklist.set(card.card, card);
+        }
+    });
+    return Array.from(mergedDecklist.values());
 };
 
 rivets.formatters.decklistSort = function(decklist) {
     if (decklist.length === 0) {
         return decklist;
     }
-    return decklist.sort(
-        function (a, b) {
-            // Sort by cardtype first
-            return cardtypeCompare(a.card_type, b.card_type)
-                    // Then sort by mana cost
-                    || manaCostCompare(a.cost, b.cost)
-                    // Then sort by name
-                    || nameCompare(a.pretty_name, b.pretty_name);
+    if (sortMethod == "draw") {
+        return decklist;
+    } else if (sortMethod == "emerald") {
+        return decklist.sort(
+            function (a, b) {
+                // Sort by cardtype first
+                return cardtypeCompare(a.card_type, b.card_type)
+                        // Then sort by mana cost
+                        || manaCostCompare(a.cost, b.cost)
+                        // Then sort by name
+                        || nameCompare(a.pretty_name, b.pretty_name);
+        });
+    }
+};
+
+rivets.formatters.decklistMergeDuplicates = function(decklist) {
+    let mergedDecklist = new Map();
+    decklist.forEach((card) => {
+        if (mergedDecklist.get(card.pretty_name)) {
+            mergedDecklist.get(card.pretty_name).count_in_deck += card.count_in_deck;
+        }
+        else {
+            mergedDecklist.set(card.pretty_name, card);
+        }
     });
+    return Array.from(mergedDecklist.values());
 };
 
 rivets.bind(document.getElementById('container'), appData)
@@ -363,10 +441,12 @@ var toggleOpacity = function(hide) {
         clearTimeout(hideTimeoutId)
         hideTimeoutId = null;
     }
-    hideTimeoutId = setTimeout(function() {
-        all_hidden = false;
-        updateOpacity()
-    }, 10000)
+    if (appData.hideDelay < 100) {
+      hideTimeoutId = setTimeout(function() {
+          all_hidden = appData.invertHideMode;
+          updateOpacity()
+      }, 1000 * appData.hideDelay)
+    }
 }
 
 document.getElementById("floating-eye").addEventListener("click", function() {
@@ -376,16 +456,6 @@ document.getElementById("floating-eye").addEventListener("click", function() {
 ws.addEventListener('open', () => {
     ws.send('hello!');
     console.log("sent hello")
-    ws.addEventListener('message', (m) => {
-        console.debug(m)
-        let mdata = JSON.parse(m.data)
-        if (mdata.right_click) {
-            toggleOpacity(true)
-        }
-        if (mdata.left_click && remote.getGlobal("leftMouseEvents")) {
-            toggleOpacity(false)
-        }
-    })
 });
 
 function resizeWindow() {
@@ -403,12 +473,10 @@ function resizeWindow() {
             totalHeight += $(e).outerHeight(true);
     });
     bounds = browserWindow.getBounds()
-    bounds.height = parseInt(totalHeight);
+    bounds.height = Math.min(parseInt(totalHeight), calcMainMaxHeight());
     container.style.height = "" + parseInt(totalHeight) + "px"
-    if (!debug) {
+    if (!(debug || useFrame)) {
         browserWindow.setBounds(bounds)
-    } else {
-        // console.log("would set height: " + totalHeight)
     }
 }
 
@@ -425,14 +493,90 @@ function populateDeck(elem) {
     resizeWindow()
 }
 
-function unpopulateDecklist() {
-    appData.list_selected = false;
-    appData.no_list_selected = true;
-    appData.show_available_decklists = true;
+function exitDraft() {
     appData.game_in_progress = false;
+    appData.show_available_decklists = true;
+    appData.showDraftStats = false;
     resizeWindow()
 }
 
+function unpopulateDecklist() {
+    appData.list_selected = false;
+    appData.no_list_selected = true;
+
+    appData.game_in_progress = false;
+    appData.show_available_decklists = true;
+    appData.showDraftStats = false;
+
+    resizeWindow()
+}
+
+function getAnonToken(attempt, errors) {
+  return new Promise((resolve, reject) => {
+    let tokenOK = true;
+    if (token) {
+      if (jwt.decode(token).exp < Date.now() / 1000) tokenOK = false
+    } else {
+      tokenOK = false;
+    }
+    if (tokenOK) {
+      console.log("old token was fine")
+      resolve(token)
+    } else {
+      console.log("sending token request...")
+      request.get({
+          url: `${API_URL}/public-api/anon-api-token`,
+          json: true,
+          headers: {'User-Agent': 'MTGATracker-App'}
+      }, (err, res, data) => {
+        if (err || res.statusCode != 200) {
+          errors.push({on: "get_token", error: err || res})
+          resolve({attempt: attempt, errors: errors})
+        } else {
+          console.log("got anon token")
+          token = data.token;
+          resolve(data.token)
+        }
+      })
+    }
+  })
+}
+
+function uploadRankChange(rankData, errors) {
+  if (!errors) {
+    errors = []
+  }
+  return new Promise((resolve, reject) => {
+
+    setTimeout(() => {
+      getAnonToken().then(token => {
+        if (!remote.getGlobal("incognito")) {  // we're only allowed to use rank data if not incognito
+        console.log("posting rank request... with token " + token)
+          request.post({
+            url: `${API_URL}/anon-api/rankChange`,
+            json: true,
+            body: rankData,
+            headers: {'User-Agent': 'MTGATracker-App', token: token}
+          }, (err, res, data) => {
+            console.log("finished posting rank request...")
+            console.log(res)
+            console.log(err)
+            if (err || res.statusCode != 200) {
+              errors.push({on: "post_rankChange", error: err || res})
+              reject({errors: errors})
+            } else {
+              console.log("rank uploaded! huzzah!")
+              console.log(res)
+              resolve({
+                success: true
+              })
+            }
+          })
+        }
+      })
+    }, 3000)  // wait a second to let the game result be saved before trying to modify it's rank
+  })
+}
 
 function uploadGame(attempt, gameData, errors) {
   if (!errors) {
@@ -462,24 +606,18 @@ function uploadGame(attempt, gameData, errors) {
     } else {
       let delay = 1000 * attempt;
       setTimeout(() => {
-        console.log("sending token request...")
-        request.get({
-            url: "https://wt.mtgatracker.com/wt-bd90f3fae00b1572ed028d0340861e6a-0/mtgatracker-prod-EhDvLyq7PNb/public-api/anon-api-token",
-            json: true,
-            headers: {'User-Agent': 'MTGATracker-App'}
-        }, (err, res, data) => {
-          if (err || res.statusCode != 200) {
+        getAnonToken().then(token => {
+          if (token.errors) {
             errors.push({on: "get_token", error: err || res})
             resolve({attempt: attempt, errors: errors})
           } else {
-            let token = data.token
             gameData.client_version = appData.version
             if (remote.getGlobal("incognito")) {  // we're not allowed to use this game data :(
               gameData = {anonymousUserID: crypto.createHash('md5').update(gameData.players[0].name).digest("hex")}
             }
             console.log("posting game request...")
             request.post({
-              url: "https://wt.mtgatracker.com/wt-bd90f3fae00b1572ed028d0340861e6a-0/mtgatracker-prod-EhDvLyq7PNb/anon-api/game",
+              url: `${API_URL}/anon-api/game`,
               json: true,
               body: gameData,
               headers: {'User-Agent': 'MTGATracker-App', token: token}
@@ -509,14 +647,28 @@ function uploadGame(attempt, gameData, errors) {
   })
 }
 
-let processGameState = (data) => {
-    // data is already parsed as JSON:
+let gameAlreadyUploaded = (gameID) => {
+  return Object.keys(gameLookup).includes(gameID)
+}
+
+let onMessage = (data) => {
     data = JSON.parse(event.data)
-    if(data.data_type == "game_state") {
+    if (data.data_type == "game_state") {
         if (data.match_complete) {
+
+            timerRunning = false;
+            $("#opponent-timer").removeClass("active")
+            $("#hero-timer").removeClass("active")
+            overallTimer.pause()
+            heroTimer.pause()
+            opponentTimer.pause()
+
             console.log("match over")
-            if (data.game) {
+            if (data.game && gameAlreadyUploaded(data.game.gameID)) {
+              console.log(`Backend sent match_complete for ${data.game.gameID}, but already know that game`)
+            } else if (data.game) {
               appData.game_complete = true;
+              $(".cardsleft").addClass("gamecomplete")
 
               gameLookup[data.game.gameID] = {count: 0, uploaded: true}
               uploadGame(0, data.game)
@@ -527,7 +679,7 @@ let processGameState = (data) => {
                 })
             } else if (data.gameID) {
               console.log(`match_complete and gameID ${data.gameID} but no game data`)
-              if (Object.keys(gameLookup).includes(data.gameID)) {
+              if (gameAlreadyUploaded(data.gameID)) {
                 if (gameLookup[data.gameID].count++ > 5) {
                   if (!gameLookup[data.gameID].uploaded) {
                     gameLookup[data.gameID].uploaded = true
@@ -549,9 +701,24 @@ let processGameState = (data) => {
             }
         } else {
             lastGameState = data
+            if (!timerRunning) {
+              timerRunning = true;
+              console.log("TIMER: resetcss")
+              // this is transition into a game. reset all the timers
+              overallTimer.reset()
+              opponentTimer.reset()
+              heroTimer.reset()
+              overallTimer.start()
+              // pause each player's timer. we'll unpause them soon, with a decisionPlayerChange event.
+              opponentTimer.pause()
+              heroTimer.pause()
+            }
             appData.game_in_progress = true;
-            appData.game_complete = false;
             appData.show_available_decklists = false;
+            appData.showDraftStats = false;
+
+            appData.game_complete = false;
+            $(".cardsleft").removeClass("gamecomplete")
             appData.draw_stats = data.draw_odds.stats;
             appData.deck_name = data.draw_odds.deck_name;
             appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
@@ -564,7 +731,38 @@ let processGameState = (data) => {
         }
         appData.last_error = data.msg;
     } else if (data.data_type == "message") {
-        // TODO
+        if (data.right_click) {
+            toggleOpacity(!appData.invertHideMode)
+        } else if (data.left_click && remote.getGlobal("leftMouseEvents")) {
+            toggleOpacity(appData.invertHideMode)
+        } else if (data.draft_collection_count) {
+          console.log("handle draft stuff")
+          console.log(data.draft_collection_count)
+
+          appData.game_in_progress = false;
+          appData.show_available_decklists = false;
+          appData.showDraftStats = true;
+
+          appData.draftStats = data.draft_collection_count
+        } else if (data.rank_change) {
+          console.log("handle rank stuff")
+          uploadRankChange(data.rank_change).catch(e => {
+            console.log("error uploading rank data: ")
+            console.log(e)
+          })
+        } else if (data.decisionPlayerChange) {
+            if (data.heroIsDeciding) {
+                opponentTimer.start()
+                heroTimer.pause()
+                $("#opponent-timer").removeClass("active")
+                $("#hero-timer").addClass("active")
+            } else {
+                opponentTimer.pause()
+                heroTimer.start()
+                $("#opponent-timer").addClass("active")
+                $("#hero-timer").removeClass("active")
+            }
+        }
     } else if (data.data_type=="decklist_change") {
         console.log("got a dl change")
         if (data.decks.no_decks_defined) {
@@ -582,6 +780,13 @@ let processGameState = (data) => {
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
+
+    setInterval(() => {
+        $('#overall-timer').html(overallTimer.getTimeValues().toString());
+        $('#hero-timer').html(opponentTimer.getTimeValues().toString());
+        $('#opponent-timer').html(heroTimer.getTimeValues().toString());
+    }, 1000)
+
     if (debug || useFrame) {
         $("#container").addClass("container-framed")
         $("body").css("background-color", "green")
@@ -594,10 +799,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
     $(".zoom-out").click(() => {
         zoom -= 0.1
         browserWindow.webContents.setZoomFactor(zoom)
+        ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
     })
     $(".zoom-in").click(() => {
         zoom += 0.1
         browserWindow.webContents.setZoomFactor(zoom)
+        ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
     })
     //open links externally by default
     $(document).on('click', 'a[href^="http"]', function(event) {
@@ -621,8 +828,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
       head.appendChild(link)
     }
   }
-  ws.onmessage = processGameState
+  ws.onmessage = onMessage
 });
+
+ipcRenderer.on('stdout', (event, data) => {
+  console.log(data.text)
+})
 
 ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
   console.log("got an update ready message")
@@ -633,6 +844,8 @@ ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
 ipcRenderer.on('settingsChanged', () => {
   debug = remote.getGlobal('debug');
   appData.debug = debug
+
+  sortMethod = remote.getGlobal('sortMethod');
 
   useFrame = remote.getGlobal('useFrame');
   appData.useFrame = useFrame
@@ -649,12 +862,59 @@ ipcRenderer.on('settingsChanged', () => {
   showWinLossCounter = remote.getGlobal('showWinLossCounter');
   appData.showWinLossCounter = showWinLossCounter
 
+  showGameTimer = remote.getGlobal('showGameTimer');
+  appData.showGameTimer = showGameTimer
+
+  showChessTimers = remote.getGlobal('showChessTimers');
+  appData.showChessTimers = showChessTimers
+
+  hideDelay = remote.getGlobal('hideDelay');
+  appData.hideDelay = hideDelay
+
+  invertHideMode = remote.getGlobal('invertHideMode');
+  appData.invertHideMode = invertHideMode
+
   winLossCounter = remote.getGlobal('winLossCounter');
   appData.winCounter = winLossCounter.win
   appData.lossCounter = winLossCounter.loss
 
   let useTheme = remote.getGlobal("useTheme")
   let themeFile = remote.getGlobal("themeFile")
+  let useFlat = remote.getGlobal("useFlat")
+
+  let currentFlatLink = $("#flat")
+  if (useFlat) {
+    if(!currentFlatLink.length) {
+      let head  = document.getElementsByTagName('head')[0];
+      let link  = document.createElement('link');
+      link.id   = 'flat';
+      link.rel  = 'stylesheet';
+      link.type = 'text/css';
+      link.href = 'flat.css';
+      head.appendChild(link)
+    } else {
+      console.log(currentFlatLink)
+    }
+  } else if (currentFlatLink) {
+    currentFlatLink.remove()
+  }
+
+  let useMinimal = remote.getGlobal("useMinimal")
+
+  let currentMinimalLink = $("#minimal")
+  if (useMinimal) {
+    if (!currentMinimalLink.length) {
+      let head  = document.getElementsByTagName('head')[0];
+      let link  = document.createElement('link');
+      link.id   = 'minimal';
+      link.rel  = 'stylesheet';
+      link.type = 'text/css';
+      link.href = 'minimal.css';
+      head.appendChild(link)
+    }
+  } else if (currentMinimalLink) {
+    currentMinimalLink.remove()
+  }
 
   if ((themeFile && (themeFile != lastThemeFile)) || useTheme != lastUseTheme) {
     lastThemeFile = themeFile

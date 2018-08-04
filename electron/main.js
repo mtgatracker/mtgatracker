@@ -13,7 +13,8 @@ const { app, ipcMain, BrowserWindow, autoUpdater } = require('electron')
 const fs = require('fs');
 const path = require('path')
 
-let firstRun = process.argv[1] == '--squirrel-firstrun';
+const firstRun = process.argv[1] == '--squirrel-firstrun';
+const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
 if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
   autoUpdater.checkForUpdates()
@@ -27,7 +28,32 @@ autoUpdater.on('update-downloaded', (e) => {
     text: "A new version has been downloaded. Restart to update!"
   })
 })
+const crypto = require("crypto")
 
+let checksum = (str, algorithm, encoding) => {
+    return crypto
+        .createHash(algorithm || 'md5')
+        .update(str, 'utf8')
+        .digest(encoding || 'hex')
+}
+
+// check if we need to show the ToS
+let tosAcks = settings.get("tosAcks", [])
+let tosPath = 'resources/app.asar/legal/tos.md';
+if (runFromSource) {
+  tosPath = 'legal/tos.md';
+}
+
+let currentTOSChecksum = checksum(fs.readFileSync(tosPath))
+
+let tosAcked = false;
+
+if (tosAcks.includes(currentTOSChecksum)) {
+   tosAcked = true;
+   console.log("TOS already acked, ok to launch")
+} else {
+   console.log("must ack TOS before launch")
+}
 
 /*************************************************************
  * py process
@@ -47,7 +73,8 @@ let getBooleanArg = (short, long) => {
 }
 
 let debugCmdOpt = getBooleanArg('-d', '--debug')
-let frameCmdOpt = getBooleanArg('-uf', '--framed')
+let frameCmdOpt = getBooleanArg('-uf', '--use_framed')
+let fullFileCmdOpt = getBooleanArg('-f', '--full_file')
 
 if (debugCmdOpt) {
   settings.set('debug', true)
@@ -67,17 +94,25 @@ let showIIDs = settings.get('showIIDs', false);
 let no_server = settings.get('no_server', false);
 let mouseEvents = settings.get('mouseEvents', true);
 let leftMouseEvents = settings.get('leftMouseEvents', true);
-let kill_server = settings.get('kill_server', false);
+let showGameTimer = settings.get('showGameTimer', true);
+let showChessTimers = settings.get('showChessTimers', true);
+let hideDelay = settings.get('hideDelay', 10);
+let invertHideMode = settings.get('invertHideMode', false);
 let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
+let sortMethod = settings.get('sortMethod', 'draw');
+let useFlat = settings.get('useFlat', true);
+let useMinimal = settings.get('useMinimal', true);
+let zoom = settings.get('zoom', 0.8);
 
-let runFromSource = !process.execPath.endsWith("MTGATracker.exe")
-
+let kill_server = true;
 let noFollow = false;
 let server_killed = false;
 let readFullFile = false;
+if (fullFileCmdOpt) {
+  readFullFile = true;
+}
 let debugFile = false;
-
 
 ipcMain.on('messageAcknowledged', (event, arg) => {
   let acked = settings.get("messagesAcknowledged", [])
@@ -90,6 +125,17 @@ ipcMain.on('settingsChanged', (event, arg) => {
   global[arg.key] = arg.value;
   settings.set(arg.key, arg.value)
   mainWindow.webContents.send('settingsChanged')
+})
+
+ipcMain.on('tosAgreed', (event, arg) => {
+  let tosAcks = settings.get("tosAcks", [])
+  let currentTOSChecksum = checksum(fs.readFileSync(tosPath))
+  if (!tosAcks.includes(currentTOSChecksum)) {
+    tosAcks.push(currentTOSChecksum)
+  }
+  settings.set('tosAcks', tosAcks)
+  createMainWindow()
+  tosWindow.close()
 })
 
 let openSettingsWindow = () => {
@@ -117,6 +163,34 @@ let openSettingsWindow = () => {
   }
   settingsWindow.once('ready-to-show', () => {
     settingsWindow.show()
+  })
+}
+
+let openTOSWindow = () => {
+  if(tosWindow == null) {
+    tosWindow  = new BrowserWindow({width: 800,
+                                        height: 560,
+                                        toolbar: false,
+                                        titlebar: false,
+                                        title: false,
+                                        maximizable: false,
+                                        show: false,
+                                        icon: "img/icon_small.ico"})
+    tosWindow.setMenu(null)
+    tosWindow.loadURL(require('url').format({
+      pathname: path.join(__dirname, 'tos.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+    if (debug) {
+      tosWindow.webContents.openDevTools()
+    }
+    tosWindow.on('closed', function () {
+      tosWindow = null;
+    })
+  }
+  tosWindow.once('ready-to-show', () => {
+    tosWindow.show()
   })
 }
 
@@ -154,7 +228,7 @@ const getPyBinPath = () => {
 
 const getLogFilePath = () => {
     // TODO: make this cmd-line configurable
-    return path.join(__dirname, "..", "example_logs", "output_log.txt")
+    return path.join(__dirname, "..", "app", "example_logs", "kld", "output_log.txt")
 }
 
 const selectPort = () => {
@@ -222,10 +296,16 @@ const createPyProc = () => {
   if (pyProc != null) {
     console.log('child process success on port ' + port)
     pyProc.stderr.on('data', function(data) {
-      console.log("err: " + data.toString());
+      console.log("py stderr: " + data.toString());
+      if (mainWindow) {
+        mainWindow.webContents.send('stdout', {text: "py stderr:" + data.toString()})
+      }
     });
     pyProc.stdout.on('data', function(data) {
-      console.log("out:" + data.toString());
+      console.log("py stdout:" + data.toString());
+      if (mainWindow) {
+        mainWindow.webContents.send('stdout', {text: "py stdout:" + data.toString()})
+      }
     });
     pyProc.on('exit', function(code) {
       console.log(`python exited with code ${code}`);
@@ -247,12 +327,20 @@ global.useTheme = useTheme;
 global.themeFile = themeFile;
 global.showIIDs = showIIDs;
 global.leftMouseEvents = leftMouseEvents;
+global.showGameTimer = showGameTimer;
+global.showChessTimers = showChessTimers;
+global.invertHideMode = invertHideMode;
+global.hideDelay = hideDelay;
 global.mouseEvents = mouseEvents;
 global.winLossCounter = winLossCounter;
 global.showWinLossCounter = showWinLossCounter;
 global.version = app.getVersion()
 global.messagesAcknowledged = settings.get("messagesAcknowledged", [])
 global.runFromSource = runFromSource
+global.sortMethod = sortMethod
+global.useFlat = useFlat
+global.useMinimal = useMinimal
+global.zoom = zoom
 
 /*************************************************************
  * window management
@@ -260,6 +348,7 @@ global.runFromSource = runFromSource
 
 let mainWindow = null
 let settingsWindow = null
+let tosWindow = null
 
 let window_width = 354;
 let window_height = 200;
@@ -268,7 +357,7 @@ if (debug) {
     window_height = 700;
 }
 
-const createWindow = () => {
+const createMainWindow = () => {
   mainWindow = new BrowserWindow({width: window_width,
                                   height: window_height,
                                   show: false,
@@ -281,6 +370,7 @@ const createWindow = () => {
                                   title: false,
                                   maximizable: false,
                                   icon: "img/icon_small.ico"})
+
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
@@ -299,7 +389,7 @@ const createWindow = () => {
     mainWindow.webContents.send('settingsChanged')
     mainWindow.show()
     console.timeEnd('init')
-    mainWindow.webContents.setZoomFactor(0.8)
+    mainWindow.webContents.setZoomFactor(zoom)
   })
 
   let versionsAcknowledged = settings.get('versionsAcknowledged', [])
@@ -309,6 +399,15 @@ const createWindow = () => {
     versionsAcknowledged.push(app.getVersion())
     settings.set("versionsAcknowledged", versionsAcknowledged)
     openSettingsWindow()
+  }
+}
+
+const openFirstWindow = () => {
+  if (tosAcked) {
+    createMainWindow()
+  } else {
+    openTOSWindow()
+//    createMainWindow()
   }
 }
 
@@ -322,16 +421,13 @@ const killServer = () => {
     if (!server_killed && kill_server) {
         server_killed = true;
         if (!no_server) {
+            console.log("cleaning up")
             freeze(2000)
             cleanupPyProc(() => {})
         }
         pyProc = null
         pyPort = null
     }
-//    if (settingsWindow) {
-//      settingsWindow.close()
-//      settingsWindow = null;
-//    }
     if (global.updateReady) {
       console.log("doing quitAndInstall")
       autoUpdater.quitAndInstall()
@@ -341,7 +437,7 @@ const killServer = () => {
     }
 }
 
-app.on('ready', createWindow)
+app.on('ready', openFirstWindow)
 
 app.on('will-quit', function() {
   console.log("will quit")

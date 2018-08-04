@@ -11,7 +11,7 @@ COLORMAP = {
 
 class Card(object):
 
-    def __init__(self, name, pretty_name, cost, color_identity, card_type, sub_types, set_id, set_number, mtga_id):
+    def __init__(self, name, pretty_name, cost, color_identity, card_type, sub_types, set_id, rarity, set_number, mtga_id):
         self.name = name
         self.set = set_id
         self.pretty_name = pretty_name
@@ -21,6 +21,7 @@ class Card(object):
         self.sub_types = sub_types
         self.set_number = set_number
         self.mtga_id = mtga_id
+        self.rarity = rarity
 
     @property
     def colors(self):
@@ -54,6 +55,7 @@ class Card(object):
             "color_identity": self.color_identity,
             "card_type": self.card_type,
             "sub_types": self.sub_types,
+            "rarity": self.rarity,
             "set_number": self.set_number,
             "mtga_id": self.mtga_id
         }
@@ -76,8 +78,8 @@ class Card(object):
 
 class GameCard(Card):
 
-    def __init__(self, name, pretty_name, cost, color_identity, card_type, sub_types, set_id, set_number, mtga_id, owner_seat_id, game_id=-1):
-        super().__init__(name, pretty_name, cost, color_identity, card_type, sub_types, set_id, set_number, mtga_id)
+    def __init__(self, name, pretty_name, cost, color_identity, card_type, sub_types, set_id, rarity, set_number, mtga_id, owner_seat_id, game_id=-1):
+        super().__init__(name, pretty_name, cost, color_identity, card_type, sub_types, set_id, rarity, set_number, mtga_id)
         self.game_id = game_id
         self.previous_iids = []
         self.owner_seat_id = owner_seat_id

@@ -1,6 +1,6 @@
 {
     "name": "mtgatracker",
-    "version": "3.1.0",
+    "version": "3.5.7",
     "description": "Application to track MTGA decks in-game",
     "main": "main.js",
     "scripts": {
@@ -18,8 +18,11 @@
     "author": "shawkins",
     "license": "MIT",
     "dependencies": {
+        "easytimer.js": "^2.2.3",
         "electron-settings": "^3.1.4",
         "find-process": "^1.1.0",
+        "jsonwebtoken": "^8.3.0",
+        "markdown": "^0.5.0",
         "npm": "^5.7.1",
         "reconnecting-websocket": "^3.2.2",
         "request": "^2.85.0",
