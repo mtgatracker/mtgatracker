@@ -163,13 +163,25 @@ if __name__ == "__main__":
                 kt = KillableTailer(log_file, queues.all_die_queue)
                 kt.seek_end()
                 for line in kt.follow(1):
-                    if line.strip() == "":
+                    if line and line.startswith("[UnityCrossThreadLogger]"):
+                        # this is the start of a new block (with title), end the last one
+                        # print(current_block)
+                        if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
+                                                  # which is likely the slowest
+                            queues.block_read_queue.put(current_block)
+                        current_block = line.strip() + "\n"
+                    elif line and line.startswith("]") or line.startswith("}"):
+                        current_block += line.strip() + "\n"
+                        # this is the END of a block, end it and start a new one
                         if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
                                                   # which is likely the slowest
                             queues.block_read_queue.put(current_block)
                         current_block = ""
                     else:
-                        current_block += line.strip() + "\n"
+                        # we're in the middle of a block somewhere
+                        stripped = line.strip()
+                        if stripped:
+                            current_block += stripped + "\n"
                     if not all_die_queue.empty():
                         break
         else:
