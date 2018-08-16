@@ -56,7 +56,7 @@ class MTGAWatchApplication(object):
         self.player_id = None
         self.intend_to_join_game_with = None
         self.player_decks = {}
-        self.draft_history = []
+        self.draft_history = {}
         self.last_blob = None
         self.error_count = 0
         self.collection = {}
