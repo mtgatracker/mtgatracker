@@ -288,7 +288,7 @@ const createPyProc = () => {
   let script = getScriptPath()
 
   if (guessPackaged()) {
-    pyProc = require('child_process').execFile(script, generateArgs())
+    pyProc = require('child_process').spawn(script, generateArgs())
   } else {
     pyProc = require('child_process').spawn(getPyBinPath(), [script].concat(generateArgs()), {shell: true})
   }
