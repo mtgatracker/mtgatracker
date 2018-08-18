@@ -48,19 +48,53 @@ def parse_draft_status(blob):
             (a.RarityRank() == b.RarityRank() && a.ColorRank() == b.ColorRank() && a.CMC < b.CMC) ||
             (a.RarityRank() == b.RarityRank() && a.ColorRank() == b.ColorRank() && a.CMC == b.CMC && a.Name < b.Name)"""
     import app.mtga_app as mtga_app
+
     collection_count = []
     picked_cards_this_draft = []
     if "pickedCards" in blob and blob["pickedCards"]:
         picked_cards_this_draft = blob["pickedCards"]
-    for card in blob["draftPack"]:
-        card_obj = util.all_mtga_cards.find_one(card).to_serializable()
-        if card in mtga_app.mtga_watch_app.collection:
-            card_obj["count"] = min(mtga_app.mtga_watch_app.collection[card] + picked_cards_this_draft.count(card), 4)
-        else:
-            card_obj["count"] = min(0 + picked_cards_this_draft.count(card), 4)
-        collection_count.append(card_obj)
-    collection_count.sort(key=lambda x: (-1 * util.rank_rarity(x["rarity"]), util.rank_colors(x["color_identity"]), util.rank_cost(x["cost"]), x["pretty_name"]))
-    general_output_queue.put({"draft_collection_count": collection_count})
+
+    if blob["draftPack"]:
+        for card in blob["draftPack"]:
+            card_obj = util.all_mtga_cards.find_one(card).to_serializable()
+            if card in mtga_app.mtga_watch_app.collection:
+                card_obj["count"] = min(mtga_app.mtga_watch_app.collection[card] + picked_cards_this_draft.count(card), 4)
+            else:
+                card_obj["count"] = min(0 + picked_cards_this_draft.count(card), 4)
+            collection_count.append(card_obj)
+        collection_count.sort(key=lambda x: (-1 * util.rank_rarity(x["rarity"]), util.rank_colors(x["color_identity"]), util.rank_cost(x["cost"]), x["pretty_name"]))
+        general_output_queue.put({"draft_collection_count": collection_count})
+    else:
+        blob["draftPack"] = []
+
+    draftId = blob["draftId"]
+    picks = picked_cards_this_draft[:]
+    pack = blob['draftPack'][:]
+
+    draft_history = mtga_app.mtga_watch_app.draft_history
+    if draft_history.get(draftId, None):
+        report = {}
+        #report['picks'] = [int(grpid) for grpid in draft_history[draftId]['picks'] ]
+        report['draftId'] = draftId
+        report['hero'] = blob["playerId"]
+        report['pickNumber'] = draft_history[draftId]['picknum']
+        report['packNumber'] = draft_history[draftId]['packnum']
+        report['pack'] = [int(grpid) for grpid in draft_history[draftId]['pack'] ]
+
+        old = draft_history[draftId]['picks'][:]
+        new = picks[:]
+        for c in old:
+            new.remove(c)
+        report['pick'] = int(new[0])
+
+        #send report to inspector
+        #app.mtga_app.mtga_logger.debug("{}%s".format(util.ld())%report )
+
+    if pack:
+        draft_history[draftId] = {'picks': picks, 'pack': pack, 'picknum': blob["pickNumber"], 'packnum': blob["packNumber"]}
+    else:
+        draft_history[draftId] = None
+
 
 
 @util.debug_log_trace
