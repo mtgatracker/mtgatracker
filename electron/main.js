@@ -10,6 +10,8 @@ if (handleStartupEvent()) {
 const { app, ipcMain, BrowserWindow, autoUpdater } = require('electron')
 const fs = require('fs');
 const path = require('path')
+const keytar = require('keytar')
+const request = require('request')
 
 const firstRun = process.argv[1] == '--squirrel-firstrun';
 const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
@@ -103,6 +105,24 @@ let sortMethod = settings.get('sortMethod', 'draw');
 let useFlat = settings.get('useFlat', true);
 let useMinimal = settings.get('useMinimal', true);
 let zoom = settings.get('zoom', 0.8);
+let userMap = settings.get('userMap', [])
+
+// check for user token
+userMap.forEach(user => {
+  keytar.getPassword("mtgatracker-long-token", user.username).then(token => {
+    if (token) {
+      request.get({
+        url: `${API_URL}/tracker-api/`,
+        json: true,
+        headers: {'User-Agent': 'MTGATracker-App', 'token': token}
+      }, (err, res, data) => {
+        if(res.statusCode == 200) {
+          user.auth = true;
+        }
+      })
+    }
+  })
+})
 
 let kill_server = true;
 let noFollow = false;
@@ -118,6 +138,24 @@ ipcMain.on('messageAcknowledged', (event, arg) => {
   acked.push(arg)
   settings.set("messagesAcknowledged", acked)
   global["messagesAcknowledged"] = acked;
+})
+
+ipcMain.on('userMap', (event, arg) => {
+  let newUsername = arg.screenName
+  let newUserId = arg.clientId
+  let foundUser = userMap.find(x => x.username == newUsername)
+  if (!foundUser) {
+    // need to insert new mapping
+    userMap.push({username: newUsername, userId: newUserId, auth: false})
+    settings.set('userMap', userMap)
+    if (settingsWindow) {
+      settingsWindow.webContents.send("userMap", userMap)
+    }
+  } else {
+    if (!foundUser.auth) {
+      mainWindow.webContents.send("gameUserNotAuthed", foundUser.username)
+    }
+  }
 })
 
 ipcMain.on('settingsChanged', (event, arg) => {
@@ -139,7 +177,8 @@ ipcMain.on('tosAgreed', (event, arg) => {
 
 let openSettingsWindow = () => {
   if(settingsWindow == null) {
-    settingsWindow = new BrowserWindow({width: 800,
+    let settingsWidth = debug ? 1400 : 800;
+    settingsWindow = new BrowserWindow({width: settingsWidth,
                                         height: 800,
                                         toolbar: false,
                                         titlebar: false,
@@ -319,6 +358,7 @@ if (!no_server) {
     cleanupPyProc(createPyProc)
 }
 
+global.API_URL = API_URL;
 global.debug = debug;
 global.showErrors = showErrors;
 global.incognito = incognito;
@@ -343,6 +383,7 @@ global.sortMethod = sortMethod
 global.useFlat = useFlat
 global.useMinimal = useMinimal
 global.zoom = zoom
+global.userMap = userMap
 
 /*************************************************************
  * window management

@@ -1,10 +1,11 @@
 {
     "name": "mtgatracker",
-    "version": "3.5.7",
+    "version": "3.5.11",
     "description": "Application to track MTGA decks in-game",
     "main": "main.js",
     "scripts": {
-        "start": "electron ."
+        "start": "electron .",
+        "postinstall": "./node_modules/.bin/electron-rebuild -m . -w keytar -p -f"
     },
     "repository": "https://github.com/shawkinsl/mtga-tools",
     "keywords": [
@@ -19,9 +20,13 @@
     "license": "MIT",
     "dependencies": {
         "easytimer.js": "^2.2.3",
+        "electron": "^1.8.7",
+        "electron-rebuild": "^1.8.2",
         "electron-settings": "^3.1.4",
+        "electron-tooltip": "^1.1.5",
         "find-process": "^1.1.0",
         "jsonwebtoken": "^8.3.0",
+        "keytar": "^4.2.1",
         "markdown": "^0.5.0",
         "npm": "^5.7.1",
         "reconnecting-websocket": "^3.2.2",
@@ -29,7 +34,6 @@
         "ws": "4.1.0"
     },
     "devDependencies": {
-        "electron": "^1.7.6",
         "electron-packager": "^9.0.1",
         "grunt-electron-installer": "^2.1.0"
     }

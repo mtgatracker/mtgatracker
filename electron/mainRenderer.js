@@ -6,6 +6,7 @@ const ReconnectingWebSocket = require('./vendor/rws.js')
 const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const Timer = require('easytimer.js');
+const keytar = require('keytar')
 
 const { remote, ipcRenderer, shell } = require('electron')
 const { Menu, MenuItem } = remote
@@ -26,7 +27,9 @@ const menuItem = new MenuItem({
 })
 menu.append(menuItem)
 
-const API_URL = "https://gxt.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-pt/mtgatracker-prod-EhDvLyq7PNb"
+const API_URL = remote.getGlobal('API_URL');
+
+var lastUsedUsername = null;
 
 var debug = remote.getGlobal('debug');
 var useFrame = remote.getGlobal('useFrame');
@@ -524,7 +527,7 @@ function getAnonToken(attempt, errors) {
     }
     if (tokenOK) {
       console.log("old token was fine")
-      resolve(token)
+      resolve({token: token, anonymous: true})
     } else {
       console.log("sending token request...")
       request.get({
@@ -534,39 +537,63 @@ function getAnonToken(attempt, errors) {
       }, (err, res, data) => {
         if (err || res.statusCode != 200) {
           errors.push({on: "get_token", error: err || res})
-          resolve({attempt: attempt, errors: errors})
+          reject({attempt: attempt, errors: errors})
         } else {
           console.log("got anon token")
           token = data.token;
-          resolve(data.token)
+          resolve({token: data.token, anonymous: true})
         }
       })
     }
   })
 }
 
-function passThrough(endpoint, passData, errors) {
+function getTokenOrAnon(username, attempt, errors) {
+  return new Promise((resolve, reject) => {
+    if (!username) username = lastUsedUsername;
+    lastUsedUsername = username;
+    let mappedUser = remote.getGlobal("userMap").find(x => x.username == username || x.userId == username)
+    if (mappedUser && mappedUser.auth) {
+      keytar.getPassword("mtgatracker-long-token", mappedUser.username).then(userToken => {
+        if (userToken) {
+          console.log(`userToken for ${mappedUser.username} was good, using that one!`)
+          resolve({token: userToken, anonymous: false, username: mappedUser.username})
+        } else {
+          console.log("usertoken was not good, need to get anontoken")
+          getAnonToken().then(resolve)
+        }
+      })
+    } else {
+      console.log(`no mapped user for ${username}, using anontoken`)
+      getAnonToken().then(resolve)
+    }
+  })
+}
+
+function passThrough(endpoint, passData, playerKey, errors) {
   if (!errors) {
     errors = []
   }
   return new Promise((resolve, reject) => {
-
     setTimeout(() => {
-      getAnonToken().then(token => {
+      getTokenOrAnon(playerKey).then(tokenObj => {
+        let {token, anonymous, username} = tokenObj;
+        passData.hero = username;
+        console.log(`got ${username}'s token: ${token}`)
         if (!remote.getGlobal("incognito")) {  // we're only allowed to use passThrough data if not incognito
-        console.log(`posting ${endpoint} request... with token ${token}`)
+          console.log(`posting ${endpoint} request... with token ${token}`)
           request.post({
             url: `${API_URL}/${endpoint}`,
             json: true,
             body: passData,
             headers: {'User-Agent': 'MTGATracker-App', token: token}
           }, (err, res, data) => {
-            console.log("finished posting ${endpoint} request...")
+            console.log(`finished posting ${endpoint} request...`)
             if (err || res.statusCode != 200) {
               errors.push({on: `post_${endpoint}`, error: err || res})
               reject({errors: errors})
             } else {
-              console.log("${endpoint} uploaded! huzzah!")
+              console.log(`${endpoint} uploaded! huzzah!`)
               resolve({
                 success: true
               })
@@ -607,7 +634,8 @@ function uploadGame(attempt, gameData, errors) {
     } else {
       let delay = 1000 * attempt;
       setTimeout(() => {
-        getAnonToken().then(token => {
+        getTokenOrAnon(gameData.players[0].name).then(tokenObj => {
+          let {token, anonymous} = tokenObj;
           if (token.errors) {
             errors.push({on: "get_token", error: err || res})
             resolve({attempt: attempt, errors: errors})
@@ -617,8 +645,12 @@ function uploadGame(attempt, gameData, errors) {
               gameData = {anonymousUserID: crypto.createHash('md5').update(gameData.players[0].name).digest("hex")}
             }
             console.log("posting game request...")
+            let postGameUrl = `${API_URL}/tracker-api/game`
+            if (anonymous || remote.getGlobal("incognito")) {
+              postGameUrl = `${API_URL}/anon-api/game`
+            }
             request.post({
-              url: `${API_URL}/anon-api/game`,
+              url: postGameUrl,
               json: true,
               body: gameData,
               headers: {'User-Agent': 'MTGATracker-App', token: token}
@@ -753,13 +785,25 @@ let onMessage = (data) => {
 
           appData.draftStats = data.draft_collection_count
         } else if (data.rank_change) {
-          passThrough("anon-api/rankChange", data.rank_change).catch(e => {
+          // TODO: swap this to tracker-api
+          passThrough("anon-api/rankChange", data.rank_change, data.player_key).catch(e => {
             console.log("error uploading rank data: ")
             console.log(e)
           })
+        } else if (data.inventory_update) {
+          passThrough("tracker-api/inventory-update", data.inventory_update, data.player_key).catch(e => {
+          // TODO: check for wildcard redemptions? or should we do that in the API?
+            console.log("error uploading inventory-update data: ")
+            console.log(e)
+          })
         } else if (data.inventory) {
-          passThrough("anon-api/inventory", data.inventory).catch(e => {
+          passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
             console.log("error uploading inventory data: ")
+            console.log(e)
+          })
+        }  else if (data.draftPick) {
+          passThrough("tracker-api/draft-pick", data.draftPick, data.player_key).catch(e => {
+            console.log("error uploading draftPick data: ")
             console.log(e)
           })
         } else if (data.decisionPlayerChange) {
@@ -774,6 +818,9 @@ let onMessage = (data) => {
                 $("#opponent-timer").addClass("active")
                 $("#hero-timer").removeClass("active")
             }
+        } else if (data.authenticateResponse) {
+          console.log("handle authenticateResponse")
+          ipcRenderer.send('userMap', data.authenticateResponse)
         }
     } else if (data.data_type=="decklist_change") {
         console.log("got a dl change")
@@ -852,6 +899,15 @@ ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
   console.log(messageInfo)
   appData.messages.push({text: "A new tracker update will be applied on next launch!", mayfollow:"https://github.com/shawkinsl/mtga-tracker/releases/latest"})
   resizeWindow()
+})
+
+ipcRenderer.on("gameUserNotAuthed", (event, username) => {
+  let msg = `WARNING! ${username} is not signed in to MTGATracker! After 9/1/18, records will no longer be sent to inspector without signing in! (Click for more info, including how to disable this warning)`
+  let exists = appData.messages.find(x => x.text == msg)
+  console.log(username)
+  if (!exists) {
+    appData.messages.push({text: msg, mayfollow: "https://blog.mtgatracker.com/new-sign-in-requirements"})
+  }
 })
 
 ipcRenderer.on('settingsChanged', () => {

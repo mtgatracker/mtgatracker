@@ -88,3 +88,35 @@ a {
     background: #3fa7b3;
     cursor: pointer;
 }
+
+.authorize-button, .authorize-submit-button {
+  float: right;
+  height: 23px;
+  font-size: 12px!important;
+  margin: 0 5px;
+  padding-top: 2px!important;
+}
+
+.authorize-submit-button{
+  margin-top: 8px;
+}
+
+.account-entry {
+  padding: 5px 5px;
+  border-top: solid rgb(220,220,220) 1px;
+  border-bottom: solid rgb(220,220,220) 1px;
+}
+
+.account-entry:first-child {
+  border-top: solid rgb(220,220,220) 2px;
+}
+
+.account-entry:last-child {
+  border-bottom: solid rgb(220,220,220) 2px;
+}
+
+.access-container {
+  display: none;
+  padding-top: 10px;
+}
+

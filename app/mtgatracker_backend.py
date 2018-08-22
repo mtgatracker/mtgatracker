@@ -66,7 +66,8 @@ async def output(websocket):
             message["data_type"] = "error"
         else:
             message["data_type"] = "message"
-        await websocket.send(json.dumps(message))
+        message_to_send = json.dumps(message)
+        await websocket.send(message_to_send)
     await asyncio.sleep(0.01)
 
 
@@ -148,12 +149,25 @@ if __name__ == "__main__":
         with open(args.log_file, 'r') as rf:
             previous_block_end = 0
             for idx, line in enumerate(rf):
-                if line.strip() == "":
-                    queues.block_read_queue.put((previous_block_end, current_block))  # THIS IS THE BAD LINE :(
+                if line and line.startswith("[UnityCrossThreadLogger]"):
+                    # this is the start of a new block (with title), end the last one
+                    # print(current_block)
+                    if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
+                        # which is likely the slowest
+                        queues.block_read_queue.put(current_block)
+                    current_block = line.strip() + "\n"
+                elif line and line.startswith("]") or line.startswith("}"):
+                    current_block += line.strip() + "\n"
+                    # this is the END of a block, end it and start a new one
+                    if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
+                        # which is likely the slowest
+                        queues.block_read_queue.put(current_block)
                     current_block = ""
                 else:
-                    current_block += line.strip() + "\n"
-                    previous_block_end = idx
+                    # we're in the middle of a block somewhere
+                    stripped = line.strip()
+                    if stripped:
+                        current_block += stripped + "\n"
                 if not all_die_queue.empty():
                     break
     count = 0

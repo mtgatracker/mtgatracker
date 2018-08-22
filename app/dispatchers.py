@@ -31,9 +31,11 @@ def dispatch_blob(blob):
         parsers.parse_draft_status(blob)
     # PlayerInventory.GetPlayerInventory
     elif "block_title" in blob and blob["block_title"] == "PlayerInventory.GetPlayerInventory":
-        parsers.pass_through("inventory", blob)
+        parsers.pass_through("inventory", blob["playerId"], blob)
     elif "block_title" in blob and blob["block_title"] == "Rank.Updated":
-        parsers.pass_through("rank_change", blob)
+        parsers.pass_through("rank_change", blob["playerId"], blob)
+    elif "block_title" in blob and blob["block_title"] == "Inventory.Updated":
+        parsers.pass_through("inventory_update", None, blob)
     elif "matchGameRoomStateChangedEvent" in blob:
         dispatch_match_gametoom_state_change(blob)
     elif "block_title" in blob and blob["block_title"] == "Event.MatchCreated":

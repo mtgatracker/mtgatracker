@@ -34,6 +34,10 @@
           <span class="icon icon-lock"></span>
           Privacy
         </a>
+        <a value="account" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="account-nav">
+          <span class="icon icon-user"></span>
+          Inspector
+        </a>
       </nav>
     </div>
     <div class="pane">
@@ -46,6 +50,19 @@
             <p class="about-p"><b>Privacy:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md">privacy.md</a></p>
             <p class="about-p"><b>Documentation:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/README.md">README.md</a></p>
             <p class="about-p"><b>Inspector:</b> <a href="https://inspector.mtgatracker.com/">inspector.mtgatracker.com</a></p>
+            <br />
+
+            <h3>Release notes for 3.6.0</h3>
+            <ul>
+              <li class="about-p">
+                You can now authorize MTGATracker to upload data to your inspector account, in the "Inspector" tab.
+                <b>Note: This will be required after [TBD]!</b>
+              </li>
+              <li>
+                MTGATracker now tracks your draft history (thanks <a href="http://isharacomix.org">isharacomix</a> for
+                <a href="https://github.com/mtgatracker/mtgatracker/pull/275">the PR</a>!)
+              </li>
+            </ul>
             <br />
 
             <h3>Release notes for 3.5.8</h3>
@@ -248,6 +265,27 @@
           </div>
         </div>
       </div>
+      <div id="account-pane" value="account" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <h3>Inspector Accounts</h3>
+            <div class="well">
+              <div rv-each-account="accounts" class="account-entry">
+                <div class="account-container">
+                  <span rv-authcolor="account.auth" class="icon icon-record" data-tooltip-position="top" rv-datatooltip="account.auth"></span>
+                  { account.username }
+                  <button class="btn btn-secondary authorize-button" rv-value="account.username">Authorize (discord)</button>
+                </div>
+                <!-- <button class="authorize-button">Authorize (password)</button> -->
+                <div class="access-container">
+                  <input class="form-control accessCode" name="accessCode">
+                  <button class="btn btn-info authorize-submit-button" rv-value="account.username">Submit Code</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -263,4 +301,6 @@
 </script>
 <script>if (window.module) module = window.module;</script>
 <script src="vendor/toggle/bootstrap-toggle.min.js"></script>
+<link href="vendor/bootstrap-pin-input/bootstrap-pincode-input.css" rel="stylesheet">
+<script src="vendor/bootstrap-pin-input/bootstrap-pincode-input.js"></script>
 </html>

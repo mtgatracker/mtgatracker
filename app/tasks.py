@@ -2,7 +2,7 @@ import dateutil.parser
 import json
 import app.dispatchers as dispatchers
 from app.mtga_app import mtga_watch_app, mtga_logger
-from app.queues import all_die_queue, game_state_change_queue, decklist_change_queue
+from app.queues import all_die_queue, game_state_change_queue, decklist_change_queue, general_output_queue
 import util
 
 """
@@ -123,11 +123,13 @@ def json_blob_reader_task(in_queue, out_queue):
     def check_for_client_id(blob):
         if "authenticateResponse" in blob:
             if "clientId" in blob["authenticateResponse"]:
+                # screw it, no one else is going to use this message, mess up the timestamp, who cares
                 with mtga_watch_app.game_lock:
                     if mtga_watch_app.player_id != blob["authenticateResponse"]['clientId']:
                         mtga_watch_app.player_id = blob["authenticateResponse"]['clientId']
                         mtga_logger.debug("{}check_for_client_id: got new clientId".format(util.ld()))
                         mtga_watch_app.save_settings()
+                general_output_queue.put({"authenticateResponse": blob["authenticateResponse"]})
 
     last_blob = None
     last_decklist = None
