@@ -24,6 +24,7 @@
         "electron-rebuild": "^1.8.2",
         "electron-settings": "^3.1.4",
         "electron-tooltip": "^1.1.5",
+        "electron-winstaller": "^2.6.4",
         "find-process": "^1.1.0",
         "jsonwebtoken": "^8.3.0",
         "keytar": "^4.2.1",
@@ -34,7 +35,7 @@
         "ws": "4.1.0"
     },
     "devDependencies": {
-        "electron-packager": "^9.0.1",
+        "electron-packager": "^9.1.0",
         "grunt-electron-installer": "^2.1.0"
     }
 }

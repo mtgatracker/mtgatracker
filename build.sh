@@ -28,8 +28,8 @@ rm -r MTGATracker-win32-x64_$version* || echo "nothing to remove, moving on"
 rm -r electron/legal || echo "no legal to update"
 cp -r legal electron/legal
 
-yes | ./node_modules/.bin/electron-packager electron/ MTGATracker \
-  --overwrite --version=$cleanVer --electron-version=1.7.6 \
+yes | ./electron/node_modules/.bin/electron-packager electron/ MTGATracker \
+  --overwrite --version=$cleanVer --electron-version=1.8.7 \
   --ignore="\.git.*" --ignore=".*psd" --ignore="upload_failure\.log" --ignore="mtga_watch\.log.*" \
   --extra-resource="appdist" \
   --icon="electron/img/icon_small.ico" \
@@ -45,16 +45,17 @@ yes | ./node_modules/.bin/electron-packager electron/ MTGATracker \
 mv MTGATracker-win32-x64 MTGATracker-win32-x64_$version
 /c/Program\ Files/7-Zip/7z.exe a -tzip MTGATracker-win32-x64_$version.zip MTGATracker-win32-x64_$version
 
+cd electron
 cat > testbuild.js <<- EOM
 console.log("enter winstaller")
 var electronInstaller = require('electron-winstaller');
 
 resultPromise = electronInstaller.createWindowsInstaller({
-    appDirectory: 'MTGATracker-win32-x64_$version',
-    outputDirectory: 'MTGATracker-win32-x64_$version-SQUIRREL',
+    appDirectory: '../MTGATracker-win32-x64_$version',
+    outputDirectory: '../MTGATracker-win32-x64_$version-SQUIRREL',
     authors: 'MTGATracker',
     exe: 'MTGATracker.exe',
-    loadingGif: 'updating.gif',
+    loadingGif: '../updating.gif',
     remoteReleases: 'https://s3-us-west-1.amazonaws.com/mtgatracker/autoupdates/win',
   });
 
@@ -66,7 +67,7 @@ sleep 1
 
 node testbuild.js
 
-md5sum MTGATracker-win32-x64_$version.zip
+md5sum ../MTGATracker-win32-x64_$version.zip
 end=$(date +%s)
 secs=$((end-start))
 printf 'build took %dh:%dm:%ds\n' $(($secs/3600)) $(($secs%3600/60)) $(($secs%60))
