@@ -13,6 +13,8 @@ const path = require('path')
 const keytar = require('keytar')
 const request = require('request')
 
+const API_URL = "https://gxt.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-pt/mtgatracker-prod-EhDvLyq7PNb";
+
 const firstRun = process.argv[1] == '--squirrel-firstrun';
 const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
