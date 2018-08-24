@@ -52,16 +52,22 @@
             <p class="about-p"><b>Inspector:</b> <a href="https://inspector.mtgatracker.com/">inspector.mtgatracker.com</a></p>
             <br />
 
+            <h4>Current Vault Progress: { lastVaultProgress }%</h4>
+
+            <br />
             <h3>Release notes for 3.6.0</h3>
             <ul>
               <li class="about-p">
                 You can now authorize MTGATracker to upload data to your inspector account, in the "Inspector" tab.
-                <b>Note: This will be required after [TBD]!</b>
+                <b>Note: This will be required after 9/10/18!</b> Read more on the
+                <a href="https://blog.mtgatracker.com/new-sign-in-requirements">MTGATracker blog.</a>
               </li>
               <li>
                 MTGATracker now tracks your draft history (thanks <a href="http://isharacomix.org">isharacomix</a> for
-                <a href="https://github.com/mtgatracker/mtgatracker/pull/275">the PR</a>!)
+                <a href="https://github.com/mtgatracker/mtgatracker/pull/275">the PR</a>!) Look for an inspector update
+                in the near future to see your draft history! (requires authorizing inspector)
               </li>
+              <li>MTGATracker now tracks changes to your collection (vaultProgress, Gold, and Gems--requires authorizing inspector)</li>
             </ul>
             <br />
 
@@ -182,6 +188,21 @@
           <div class="settings-row">
             <input rv-checked="showWinLossCounter" class="tf-toggle" type="checkbox" key="showWinLossCounter" data-toggle="toggle"> Show win/loss counter
           </div>
+
+          <div class="settings-row">
+            <input rv-checked="showVaultProgress" class="tf-toggle" type="checkbox" key="showVaultProgress" data-toggle="toggle"> Show vault progress in main UI
+          </div>
+
+          <div class="settings-row">
+            <p>Minimum progress required to show vault progress in main UI</p>
+            <div class="slidecontainer">
+              <input type="range" min="1" max="100" value="0" class="slider" id="min-vault-progress">
+            </div>
+            <div class="slidevalue-vault">
+              0
+            </div>
+          </div>
+
           <button id="resetWinLoss" class="btn btnbtn btn-negative">Reset Win / Loss counter</button>
 
           <hr />

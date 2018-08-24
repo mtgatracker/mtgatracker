@@ -28,6 +28,9 @@ var settingsData = {
   mouseEvents: remote.getGlobal('mouseEvents'),
   leftMouseEvents: remote.getGlobal('leftMouseEvents'),
   showWinLossCounter: remote.getGlobal('showWinLossCounter'),
+  lastVaultProgress: remote.getGlobal('lastVaultProgress'),
+  showVaultProgress: remote.getGlobal('showVaultProgress'),
+  minVaultProgress: remote.getGlobal('minVaultProgress'),
   showGameTimer: remote.getGlobal('showGameTimer'),
   showChessTimers: remote.getGlobal('showChessTimers'),
   hideDelay: remote.getGlobal('hideDelay'),
@@ -246,6 +249,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     console.log("resetting win/loss")
     ipcRenderer.send('settingsChanged', {key: "winLossCounter", value: {win: 0, loss: 0}})
   })
+
   document.getElementById("hide-delay").value = "" + settingsData.hideDelay;
   let initialValue = settingsData.hideDelay
   if (initialValue == 100) initialValue = "∞"
@@ -260,6 +264,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
       value = "∞"
     }
     $(".slidevalue").html(value)
+  }
+
+  document.getElementById("min-vault-progress").value = "" + settingsData.minVaultProgress;
+  let initialValueVault = settingsData.minVaultProgress;
+
+  $(".slidevalue-vault").html(initialValueVault)
+  document.getElementById("min-vault-progress").onchange = function() {
+    let value = parseInt(this.value)
+    ipcRenderer.send('settingsChanged', {key: "minVaultProgress", value: value})
+  }
+  document.getElementById("min-vault-progress").oninput = function() {
+    let value = this.value
+    $(".slidevalue-vault").html(value)
   }
 })
 

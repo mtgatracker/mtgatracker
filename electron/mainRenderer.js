@@ -39,6 +39,9 @@ var showErrors = remote.getGlobal('showErrors');
 var appVersionStr = remote.getGlobal('version');
 var runFromSource = remote.getGlobal('runFromSource');
 var showWinLossCounter = remote.getGlobal('showWinLossCounter');
+var showVaultProgress = remote.getGlobal('showVaultProgress');
+var lastVaultProgress = remote.getGlobal('lastVaultProgress');
+var minVaultProgress = remote.getGlobal('minVaultProgress');
 var sortMethod = remote.getGlobal('sortMethod');
 var zoom = remote.getGlobal('zoom');
 var showChessTimers = remote.getGlobal('showChessTimers');
@@ -103,6 +106,8 @@ var appData = {
     show_iids: showIIDs,
     last_connect: 0,
     last_connect_as_seconds: 0,
+    lastVaultProgress: lastVaultProgress,
+    minVaultProgress: minVaultProgress,
     game_in_progress: false,
     showDraftStats: false,
     draftStats: [],
@@ -122,6 +127,7 @@ var appData = {
     messages: [],
     version: appVersionStr,
     showWinLossCounter: showWinLossCounter,
+    showVaultProgress: showVaultProgress,
     winCounter: winLossCounterInitial.win,
     lossCounter: winLossCounterInitial.loss,
     showGameTimer: showGameTimer,
@@ -338,13 +344,19 @@ rivets.formatters.decklistMergeDuplicates = function(decklist) {
     return Array.from(mergedDecklist.values());
 };
 
-rivets.bind(document.getElementById('container'), appData)
-
 rivets.binders.showmessage = function(el, value) {
   if (value && remote.getGlobal('messagesAcknowledged').includes(value)) {
     el.style.display = "none"
   } else {
     el.style.display = "block"
+  }
+}
+
+rivets.binders.showvault = function(el, value) {
+  if (value > appData.minVaultProgress && appData.showVaultProgress) {
+    el.style.display = "block"
+  } else {
+    el.style.display = "none";
   }
 }
 
@@ -370,7 +382,6 @@ rivets.binders.mana = function(el, value) {
 }
 
 rivets.binders.card_color = function(el, value) {
-
   el.classList.remove("card-b")
   el.classList.remove("card-g")
   el.classList.remove("card-r")
@@ -420,6 +431,8 @@ rivets.binders.card_color = function(el, value) {
 rivets.formatters.as_seconds = function(value) {
     return value / 100;
 }
+
+rivets.bind(document.getElementById('container'), appData)
 
 let all_hidden = false;
 var hideTimeoutId;
@@ -797,6 +810,14 @@ let onMessage = (data) => {
             console.log(e)
           })
         } else if (data.inventory) {
+          if (data.inventory.vaultProgress) {
+            appData.lastVaultProgress = data.inventory.vaultProgress;
+
+            ipcRenderer.send('settingsChanged', {
+              key: "lastVaultProgress",
+              value: appData.lastVaultProgress
+            })
+          }
           passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
             console.log("error uploading inventory data: ")
             console.log(e)
@@ -933,6 +954,9 @@ ipcRenderer.on('settingsChanged', () => {
 
   showWinLossCounter = remote.getGlobal('showWinLossCounter');
   appData.showWinLossCounter = showWinLossCounter
+
+  showVaultProgress = remote.getGlobal('showVaultProgress');
+  appData.showVaultProgress = showVaultProgress
 
   showGameTimer = remote.getGlobal('showGameTimer');
   appData.showGameTimer = showGameTimer
