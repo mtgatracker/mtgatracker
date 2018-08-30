@@ -1,3 +1,5 @@
+process.traceProcessWarnings = true
+
 const console = require('console');
 
 global.updateReady = false
@@ -212,17 +214,15 @@ const getScriptPath = () => {
 }
 
 const getPyBinPath = () => {
-  if (process.platform === 'win32') {
-    venv_path_win = path.join(__dirname, "..", "venv", "Scripts", "python.exe")
-    venv_path_x = path.join(__dirname, "..", "venv", "Scripts", "python")
-    fallback_path = "python"
-    if (fs.existsSync(venv_path_win)) {
-        return venv_path_win + " -u"
-    } else if (fs.existsSync(venv_path_x)) {
-        return venv_path_x + " -u"
-    } else {
-        return fallback_path + " -u" // ? shrug
-    }
+  venv_path_win = path.join(__dirname, "..", "venv", "Scripts", "python.exe")
+  venv_path_x = path.join(__dirname, "..", "venv", "bin", "python")
+  fallback_path = "python"
+  if (fs.existsSync(venv_path_win)) {
+      return venv_path_win + " -u"
+  } else if (fs.existsSync(venv_path_x)) {
+      return venv_path_x + " -u"
+  } else {
+      return fallback_path + " -u" // ? shrug
   }
 }
 

@@ -96,8 +96,12 @@ async def handler(websocket, _):
     loop = asyncio.get_event_loop()
     loop.stop()
 
-if args.log_file is None:  # assume we're on windows for now # TODO
-    appdata_roaming = os.getenv("APPDATA")
+if args.log_file is None:  # assume we're on windows or wine for now # TODO
+    appdata_roaming = None
+    if sys.platform == 'win32':
+        appdata_roaming = os.getenv("APPDATA")
+    else:
+        appdata_roaming = os.path.join(os.getenv('HOME'), '.wine', 'drive_c', 'users', os.getenv('USER'), 'AppData', 'Roaming')
     wotc_locallow_path = os.path.join(appdata_roaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA")
     output_log = os.path.join(wotc_locallow_path, "output_log.txt")
     if not os.path.exists(output_log):

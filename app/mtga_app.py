@@ -61,7 +61,10 @@ class MTGAWatchApplication(object):
         self.error_count = 0
         self.collection = {}
 
-        appdata_roaming = os.getenv("APPDATA")
+        if sys.platform == 'win32':
+            appdata_roaming = os.getenv("APPDATA")
+        else:
+            appdata_roaming = os.path.join(os.getenv('HOME'), '.wine', 'drive_c', 'users', os.getenv('USER'), 'AppData', 'Roaming')
         self._settings_path = os.path.join(appdata_roaming, "..", "LocalLow", "MTGATracker")
         self._settings_json_path = os.path.join(self._settings_path, "settings.json")
         self.load_settings()
