@@ -139,6 +139,19 @@ def parse_sideboard_submit(blob):
 #     return mtga_app.mtga_watch_app.player_decks[deckId]
 
 
+def parse_mulligan_req_message(message, timestamp=None):
+    number_cards = message["prompt"]["parameters"][0]["numberValue"]
+    player_seat_id = message["systemSeatIds"][0]
+
+    if number_cards < 6:
+        number_mulligans = 6 - number_cards
+        starting_hand_size = 7 - number_mulligans
+        import app.mtga_app as mtga_app
+        with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
+            player = app.mtga_app.mtga_watch_app.game.get_player_in_seat(player_seat_id)
+            player.mulligan_count = number_mulligans
+
+
 @util.debug_log_trace
 def parse_game_state_message(message, timestamp=None):
     # DOM: ok
