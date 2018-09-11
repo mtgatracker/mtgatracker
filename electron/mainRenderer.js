@@ -798,8 +798,7 @@ let onMessage = (data) => {
 
           appData.draftStats = data.draft_collection_count
         } else if (data.rank_change) {
-          // TODO: swap this to tracker-api
-          passThrough("anon-api/rankChange", data.rank_change, data.player_key).catch(e => {
+          passThrough("tracker-api/rankChange", data.rank_change, data.player_key).catch(e => {
             console.log("error uploading rank data: ")
             console.log(e)
           })
@@ -878,6 +877,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     })
     $(".zoom-out").click(() => {
         zoom -= 0.1
+        zoom = Math.max(zoom, 0.2)
         browserWindow.webContents.setZoomFactor(zoom)
         ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
     })
@@ -923,7 +923,7 @@ ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
 })
 
 ipcRenderer.on("gameUserNotAuthed", (event, username) => {
-  let msg = `WARNING! ${username} is not signed in to MTGATracker! After 9/1/18, records will no longer be sent to inspector without signing in! (Click for more info, including how to disable this warning)`
+  let msg = `WARNING! ${username} is not signed in to MTGATracker! Records will no longer be sent to inspector without signing in! (Click for more info, including how to disable this warning)`
   let exists = appData.messages.find(x => x.text == msg)
   console.log(username)
   if (!exists) {
