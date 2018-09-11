@@ -87,10 +87,23 @@ def dispatch_gre_to_client(blob):
                 app.mtga_app.mtga_logger.error(exc)
                 app.mtga_app.mtga_logger.error(stack)
                 app.mtga_app.mtga_watch_app.send_error("Exception during parse game state. Check log for more details")
+        elif message_type == "GREMessageType_MulliganReq":
+            try:
+                parsers.parse_mulligan_req_message(message, blob["timestamp"] if "timestamp" in blob.keys() else None)
+            except:
+                import traceback
+                exc = traceback.format_exc()
+                stack = traceback.format_stack()
+                app.mtga_app.mtga_logger.error(
+                    "{}Exception @ count {}".format(util.ld(True), app.mtga_app.mtga_watch_app.error_count))
+                app.mtga_app.mtga_logger.error(exc)
+                app.mtga_app.mtga_logger.error(stack)
+                app.mtga_app.mtga_watch_app.send_error("Exception during parse game state. Check log for more details")
 
 
 @util.debug_log_trace
 def dispatch_client_to_gre(blob):
+    # TODO: seems this is dead code (9/10/18) :(
     client_message = blob['clientToGreMessage']
     message_type = client_message['type']
     dont_care_types = ["ClientMessageType_UIMessage"]

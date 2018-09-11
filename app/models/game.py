@@ -19,6 +19,9 @@ class Player(object):
         self.player_id = player_id
         self.seat = seat
 
+        self.mulligan_count = 0
+        self.starting_hand = 0
+
         self.library = mset.Library("{}'s library".format(self.player_name), deck_cards, seat)
         self.hand = mset.Zone("{}'s hand".format(self.player_name))
         self.graveyard = mset.Zone("{}'s graveyard".format(self.player_name))
@@ -39,10 +42,6 @@ class Player(object):
         total = sum([zone.total_count for zone in self.private_zones])
         total += sum([zone.count_cards_owned_by(self.seat) for zone in self.shared_zones])
         return total
-
-    def do_mulligan(self):
-        # TODO: this
-        pass
 
     def get_zone_by_name(self, name):
         # ["ZoneType_Hand", "ZoneType_Library", "ZoneType_Graveyard", "ZoneType_Exile", "ZoneType_Limbo"]
@@ -340,12 +339,14 @@ class Game(object):
             "userID": self.hero.player_id,
             "deck": self.hero.original_deck.to_min_json(),
             "playedCards": self.hero.played_cards_to_min_json(),
+            "mulliganCount": self.hero.mulligan_count,
             "timeSpent": str(hero_chess_time_total),
         }
         opponent_obj = {
             "name": self.opponent.player_name,
             "userID": self.opponent.player_id,
             "deck": self.opponent.seen_cards_to_min_json(),
+            "mulliganCount": self.opponent.mulligan_count,
             "timeSpent": str(oppo_chess_time_total),
         }
         gameJSON = {
