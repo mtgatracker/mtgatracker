@@ -6,6 +6,7 @@ const ReconnectingWebSocket = require('./vendor/rws.js')
 const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const Timer = require('easytimer.js');
+const keytar = require('keytar')
 
 const { remote, ipcRenderer, shell } = require('electron')
 const { Menu, MenuItem } = remote
@@ -26,15 +27,21 @@ const menuItem = new MenuItem({
 })
 menu.append(menuItem)
 
-const API_URL = "https://gxt.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-pt/mtgatracker-prod-EhDvLyq7PNb"
+const API_URL = remote.getGlobal('API_URL');
+
+var lastUsedUsername = null;
 
 var debug = remote.getGlobal('debug');
 var useFrame = remote.getGlobal('useFrame');
+var staticMode = remote.getGlobal('staticMode');
 var showIIDs = remote.getGlobal('showIIDs');
 var showErrors = remote.getGlobal('showErrors');
 var appVersionStr = remote.getGlobal('version');
 var runFromSource = remote.getGlobal('runFromSource');
 var showWinLossCounter = remote.getGlobal('showWinLossCounter');
+var showVaultProgress = remote.getGlobal('showVaultProgress');
+var lastVaultProgress = remote.getGlobal('lastVaultProgress');
+var minVaultProgress = remote.getGlobal('minVaultProgress');
 var sortMethod = remote.getGlobal('sortMethod');
 var zoom = remote.getGlobal('zoom');
 var showChessTimers = remote.getGlobal('showChessTimers');
@@ -99,6 +106,8 @@ var appData = {
     show_iids: showIIDs,
     last_connect: 0,
     last_connect_as_seconds: 0,
+    lastVaultProgress: lastVaultProgress,
+    minVaultProgress: minVaultProgress,
     game_in_progress: false,
     showDraftStats: false,
     draftStats: [],
@@ -118,6 +127,7 @@ var appData = {
     messages: [],
     version: appVersionStr,
     showWinLossCounter: showWinLossCounter,
+    showVaultProgress: showVaultProgress,
     winCounter: winLossCounterInitial.win,
     lossCounter: winLossCounterInitial.loss,
     showGameTimer: showGameTimer,
@@ -148,6 +158,7 @@ var dismissMessage = (element) => {
      ipcRenderer.send('messageAcknowledged', messageID)
    }
    appData.messages[elementIdx]["show"] = false;
+   resizeWindow()
 }
 
 request.get({
@@ -157,6 +168,7 @@ request.get({
 }, (err, res, data) => {
   if (appData.messages)
     appData.messages = appData.messages.concat(...data.notifications)
+    resizeWindow()
 })
 
 let cardtypeCompare = function (a, b) {
@@ -332,13 +344,19 @@ rivets.formatters.decklistMergeDuplicates = function(decklist) {
     return Array.from(mergedDecklist.values());
 };
 
-rivets.bind(document.getElementById('container'), appData)
-
 rivets.binders.showmessage = function(el, value) {
   if (value && remote.getGlobal('messagesAcknowledged').includes(value)) {
     el.style.display = "none"
   } else {
     el.style.display = "block"
+  }
+}
+
+rivets.binders.showvault = function(el, value) {
+  if (value > appData.minVaultProgress && appData.showVaultProgress) {
+    el.style.display = "block"
+  } else {
+    el.style.display = "none";
   }
 }
 
@@ -364,7 +382,6 @@ rivets.binders.mana = function(el, value) {
 }
 
 rivets.binders.card_color = function(el, value) {
-
   el.classList.remove("card-b")
   el.classList.remove("card-g")
   el.classList.remove("card-r")
@@ -414,6 +431,8 @@ rivets.binders.card_color = function(el, value) {
 rivets.formatters.as_seconds = function(value) {
     return value / 100;
 }
+
+rivets.bind(document.getElementById('container'), appData)
 
 let all_hidden = false;
 var hideTimeoutId;
@@ -521,7 +540,7 @@ function getAnonToken(attempt, errors) {
     }
     if (tokenOK) {
       console.log("old token was fine")
-      resolve(token)
+      resolve({token: token, anonymous: true})
     } else {
       console.log("sending token request...")
       request.get({
@@ -531,42 +550,63 @@ function getAnonToken(attempt, errors) {
       }, (err, res, data) => {
         if (err || res.statusCode != 200) {
           errors.push({on: "get_token", error: err || res})
-          resolve({attempt: attempt, errors: errors})
+          reject({attempt: attempt, errors: errors})
         } else {
           console.log("got anon token")
           token = data.token;
-          resolve(data.token)
+          resolve({token: data.token, anonymous: true})
         }
       })
     }
   })
 }
 
-function uploadRankChange(rankData, errors) {
+function getTokenOrAnon(username, attempt, errors) {
+  return new Promise((resolve, reject) => {
+    if (!username) username = lastUsedUsername;
+    lastUsedUsername = username;
+    let mappedUser = remote.getGlobal("userMap").find(x => x.username == username || x.userId == username)
+    if (mappedUser && mappedUser.auth) {
+      keytar.getPassword("mtgatracker-long-token", mappedUser.username).then(userToken => {
+        if (userToken) {
+          console.log(`userToken for ${mappedUser.username} was good, using that one!`)
+          resolve({token: userToken, anonymous: false, username: mappedUser.username})
+        } else {
+          console.log("usertoken was not good, need to get anontoken")
+          getAnonToken().then(resolve)
+        }
+      })
+    } else {
+      console.log(`no mapped user for ${username}, using anontoken`)
+      getAnonToken().then(resolve)
+    }
+  })
+}
+
+function passThrough(endpoint, passData, playerKey, errors) {
   if (!errors) {
     errors = []
   }
   return new Promise((resolve, reject) => {
-
     setTimeout(() => {
-      getAnonToken().then(token => {
-        if (!remote.getGlobal("incognito")) {  // we're only allowed to use rank data if not incognito
-        console.log("posting rank request... with token " + token)
+      getTokenOrAnon(playerKey).then(tokenObj => {
+        let {token, anonymous, username} = tokenObj;
+        passData.hero = username;
+        console.log(`got ${username}'s token: ${token}`)
+        if (!remote.getGlobal("incognito")) {  // we're only allowed to use passThrough data if not incognito
+          console.log(`posting ${endpoint} request... with token ${token}`)
           request.post({
-            url: `${API_URL}/anon-api/rankChange`,
+            url: `${API_URL}/${endpoint}`,
             json: true,
-            body: rankData,
+            body: passData,
             headers: {'User-Agent': 'MTGATracker-App', token: token}
           }, (err, res, data) => {
-            console.log("finished posting rank request...")
-            console.log(res)
-            console.log(err)
+            console.log(`finished posting ${endpoint} request...`)
             if (err || res.statusCode != 200) {
-              errors.push({on: "post_rankChange", error: err || res})
+              errors.push({on: `post_${endpoint}`, error: err || res})
               reject({errors: errors})
             } else {
-              console.log("rank uploaded! huzzah!")
-              console.log(res)
+              console.log(`${endpoint} uploaded! huzzah!`)
               resolve({
                 success: true
               })
@@ -599,6 +639,7 @@ function uploadGame(attempt, gameData, errors) {
     if (attempt > 5) {
       if (!remote.getGlobal("incognito")) {
         appData.messages.push({text: "WARNING! Could not upload game result to inspector! Error log generated @ uploadfailure.log ... please send this log to our discord #bug_reports channel!"})
+        resizeWindow()
       }
       let filePath = runFromSource ? "uploadfailure.log" : "../uploadfailure.log";
       fs.writeFile(filePath, JSON.stringify({fatal: "too_many_attempts", errors: errors}))
@@ -606,7 +647,8 @@ function uploadGame(attempt, gameData, errors) {
     } else {
       let delay = 1000 * attempt;
       setTimeout(() => {
-        getAnonToken().then(token => {
+        getTokenOrAnon(gameData.players[0].name).then(tokenObj => {
+          let {token, anonymous} = tokenObj;
           if (token.errors) {
             errors.push({on: "get_token", error: err || res})
             resolve({attempt: attempt, errors: errors})
@@ -616,8 +658,12 @@ function uploadGame(attempt, gameData, errors) {
               gameData = {anonymousUserID: crypto.createHash('md5').update(gameData.players[0].name).digest("hex")}
             }
             console.log("posting game request...")
+            let postGameUrl = `${API_URL}/tracker-api/game`
+            if (anonymous || remote.getGlobal("incognito")) {
+              postGameUrl = `${API_URL}/anon-api/game`
+            }
             request.post({
-              url: `${API_URL}/anon-api/game`,
+              url: postGameUrl,
               json: true,
               body: gameData,
               headers: {'User-Agent': 'MTGATracker-App', token: token}
@@ -675,6 +721,7 @@ let onMessage = (data) => {
                 .then(() => {
                   if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
                     appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
+                    resizeWindow()
                   }
                 })
             } else if (data.gameID) {
@@ -689,6 +736,7 @@ let onMessage = (data) => {
                           console.log("successfully uploaded game!")
                           if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
                             appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
+                            resizeWindow()
                           }
                         })
                     }
@@ -716,15 +764,20 @@ let onMessage = (data) => {
             appData.game_in_progress = true;
             appData.show_available_decklists = false;
             appData.showDraftStats = false;
-
             appData.game_complete = false;
             $(".cardsleft").removeClass("gamecomplete")
-            appData.draw_stats = data.draw_odds.stats;
-            appData.deck_name = data.draw_odds.deck_name;
-            appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
-            appData.opponent_hand = data.opponent_hand
-        }
 
+            appData.deck_name = data.draw_odds.deck_name;
+            appData.opponent_hand = data.opponent_hand
+
+            if (staticMode) {
+              appData.draw_stats = data.draw_odds.original_deck_stats;
+              appData.total_cards_in_deck = data.draw_odds.original_decklist_total;
+            } else {
+              appData.draw_stats = data.draw_odds.stats;
+              appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
+            }
+        }
     } else if (data.data_type == "error") {
         if (data.count) {
             appData.error_count = data.count;
@@ -745,9 +798,33 @@ let onMessage = (data) => {
 
           appData.draftStats = data.draft_collection_count
         } else if (data.rank_change) {
-          console.log("handle rank stuff")
-          uploadRankChange(data.rank_change).catch(e => {
+          // TODO: swap this to tracker-api
+          passThrough("anon-api/rankChange", data.rank_change, data.player_key).catch(e => {
             console.log("error uploading rank data: ")
+            console.log(e)
+          })
+        } else if (data.inventory_update) {
+          passThrough("tracker-api/inventory-update", data.inventory_update, data.player_key).catch(e => {
+          // TODO: check for wildcard redemptions? or should we do that in the API?
+            console.log("error uploading inventory-update data: ")
+            console.log(e)
+          })
+        } else if (data.inventory) {
+          if (data.inventory.vaultProgress) {
+            appData.lastVaultProgress = data.inventory.vaultProgress;
+
+            ipcRenderer.send('settingsChanged', {
+              key: "lastVaultProgress",
+              value: appData.lastVaultProgress
+            })
+          }
+          passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
+            console.log("error uploading inventory data: ")
+            console.log(e)
+          })
+        }  else if (data.draftPick) {
+          passThrough("tracker-api/draft-pick", data.draftPick, data.player_key).catch(e => {
+            console.log("error uploading draftPick data: ")
             console.log(e)
           })
         } else if (data.decisionPlayerChange) {
@@ -762,6 +839,9 @@ let onMessage = (data) => {
                 $("#opponent-timer").addClass("active")
                 $("#hero-timer").removeClass("active")
             }
+        } else if (data.authenticateResponse) {
+          console.log("handle authenticateResponse")
+          ipcRenderer.send('userMap', data.authenticateResponse)
         }
     } else if (data.data_type=="decklist_change") {
         console.log("got a dl change")
@@ -839,6 +919,16 @@ ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
   console.log("got an update ready message")
   console.log(messageInfo)
   appData.messages.push({text: "A new tracker update will be applied on next launch!", mayfollow:"https://github.com/shawkinsl/mtga-tracker/releases/latest"})
+  resizeWindow()
+})
+
+ipcRenderer.on("gameUserNotAuthed", (event, username) => {
+  let msg = `WARNING! ${username} is not signed in to MTGATracker! After 9/1/18, records will no longer be sent to inspector without signing in! (Click for more info, including how to disable this warning)`
+  let exists = appData.messages.find(x => x.text == msg)
+  console.log(username)
+  if (!exists) {
+    appData.messages.push({text: msg, mayfollow: "https://blog.mtgatracker.com/new-sign-in-requirements"})
+  }
 })
 
 ipcRenderer.on('settingsChanged', () => {
@@ -849,6 +939,9 @@ ipcRenderer.on('settingsChanged', () => {
 
   useFrame = remote.getGlobal('useFrame');
   appData.useFrame = useFrame
+
+  staticMode = remote.getGlobal('staticMode');
+  appData.staticMode = staticMode
 
   showIIDs = remote.getGlobal('showIIDs');
   appData.showIIDs = showIIDs
@@ -861,6 +954,9 @@ ipcRenderer.on('settingsChanged', () => {
 
   showWinLossCounter = remote.getGlobal('showWinLossCounter');
   appData.showWinLossCounter = showWinLossCounter
+
+  showVaultProgress = remote.getGlobal('showVaultProgress');
+  appData.showVaultProgress = showVaultProgress
 
   showGameTimer = remote.getGlobal('showGameTimer');
   appData.showGameTimer = showGameTimer
@@ -934,6 +1030,7 @@ ipcRenderer.on('settingsChanged', () => {
       head.appendChild(link)
     }
   }
+  resizeWindow()
 })
 
 console.timeEnd('init')

@@ -21,6 +21,7 @@
         <h1 class="game-deck-title">{ deck_name }</h1>
         <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
         <h3 class="win-loss" rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
+        <h3 class="beleren" rv-showvault="lastVaultProgress">Vault Progress: { lastVaultProgress }%</h3>
         <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
         <div class="messages">
           <p rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
@@ -65,6 +66,7 @@
         <h1 class="beleren header-title">MTGATracker</h1>
         <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
         <h3 class="win-loss" rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
+        <h3 class="beleren" rv-showvault="lastVaultProgress">Vault Progress: { lastVaultProgress }%</h3>
         <div id="decklists-container" rv-show="no_list_selected">
           <h3 class="reminder">Pick a deck, or start a game!</h3>
           <div class="messages">

@@ -166,15 +166,6 @@ The following is an example payload sent to our server at the end of a game **wi
 }
 ```
 
-The following is what the database goes on to store after the request has been processed:
-
-```
-{
-  "anonymousUserID": "<hash>",  /* this is a hash (numeric representation) of your MTGA username */
-  "date": "2018-05-08 14:40:26.809448"
-}
-```
-
 In this case, no user entry will be generated.
 
 The following is an example payload sent to our server at the end of a game 
@@ -262,79 +253,6 @@ partial contents of one of Spencatro's decks, but the record is otherwise real:
  "winner": "Spencatro"}
 ```
 
-The following is what the database goes on to store after the request has been processed:
-
-```
-{"_id": ObjectId('...R3D4CT3D...'),
- "clientVersionOK": true,
- "client_version": "3.5.5",
- "date": "2018-05-08 03:20:36.619000",
- "gameID": "...R3D4CT3D...",
- "game_hash": "...R3D4CT3D...",
- "hero": "Spencatro",
- "latestVersionAtPost": "3.5.5",
- "opponent": "Opponent's MTGA Username",
- "turnNumber": 10,
- "elapsedTime": "0:04:57.944322",
- "currentPlayer": "Morethanafro",
- "currentPhase": "Phase_Main1",
- "onThePlay": "Spencatro",
- "opponentStartingRank": "Gold 4",
- "eventID": "CompCons_DOM_06072018",
- "players": [{"deck": {"cards": {"65081": 2,
-     "65463": 2,
-     "65643": 1,
-     "65683": 1,
-     "65687": 1,
-     "66173": 1,
-     "66177": 1,
-     "66185": 1,
-     "66189": 1,
-     "66225": 1,
-     "66237": 1,
-     "66239": 1,
-     "66249": 1,
-     "66251": 2,
-     "66263": 1,
-     "66279": 2,
-     "66289": 1,
-     "66411": 2,
-     "66449": 1,
-     "66753": 1,
-     "66761": 2,
-     "66765": 2,
-     "66783": 1,
-     "66809": 1,
-     "66813": 2,
-     "66819": 2,
-     "66827": 1,
-     "66851": 1,
-     "66929": 2,
-     "67019": 9,
-     "67021": 12},
-    "deckID": "...R3D4CT3D...",
-    "poolName": "The Brazen Coalition"},
-   "name": "Spencatro",
-   "userID": "...R3D4CT3D..."},
-  {"deck": {"cards": {"-1": 39,
-     "66003": 2,
-     "66009": 1,
-     "66029": 1,
-     "66175": 2,
-     "66185": 4,
-     "66219": 2,
-     "66223": 2,
-     "66431": 1,
-     "66619": 2,
-     "66627": 2,
-     "66631": 2},
-    "deckID": "unknown",
-    "poolName": "Opponent's MTGA Username's visible cards"},
-   "name": "Opponent's MTGA Username",
-   "userID": "...R3D4CT3D..."}],
- "winner": "Spencatro"}
-```
-
 When incognito mode is enabled, no requests are sent when rank changes are observed in MTGATracker.
 
 The following is an example payload sent to our server when a rankChange event is observed
@@ -357,29 +275,49 @@ The following is an example payload sent to our server when a rankChange event i
 }
 ```
 
-After this request, the most recent game record will be updated with the following:
+When incognito mode is enabled, no requests are sent when inventory changes (gold, gems, or vault progress)
+are observed in MTGATracker.
+
+MTGATracker sends a request to our servers when it detects a change in a user's inventory. The following is an example
+payload sent to our servers on an inventory change event **without incognito mode enabled.**
 
 ```
 {
-  ...
-  "hero": "Spencatro",
-  "opponent": "Spencatro's Opponent",
-  "rankChange": {
-      "playerId": "...R3D4CT3D...",
-      "newTier": 1,
-      "oldTier": 1,
-      "newClass": "Silver",
-      "oldClass": "Silver",
-      "oldProgress": 59.88731236824992,
-      "newProgress": 48.64644868982941,
-      "newStreak": 0,
-      "oldStreak": 0,
-      "rankUpdateType": "Constructed",
-      "block_title": "Rank.Updated",
-      "block_title_sequence": "398"
-  },
-  ...
+    "type": "gold",
+    "value": 20175,
+    "playerId": "...R3D4CT3D...",
 }
+
+```
+
+When incognito mode is enabled, no requests are sent when draft picks are observed in MTGATracker.
+
+MTGATracker sends a request to our servers when a draft pick is observed. The following is an example
+payload sent to our servers on an draft pick event **without incognito mode enabled.**
+
+```
+{
+    "playerID": "...R3D4CT3D...",
+    "pickNumber": 1,
+    "packNumber": 0,
+    "pack": [
+        67916,
+        68078,
+        67972,
+        67844,
+        67928,
+        67756,
+        68040,
+        67944,
+        68172,
+        67958,
+        67790,
+        67960,
+        68154,
+        68182
+    ],
+    "pick": 68182
+},
 ```
 
 ### User information

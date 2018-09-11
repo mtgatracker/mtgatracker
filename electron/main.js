@@ -10,6 +10,10 @@ if (handleStartupEvent()) {
 const { app, ipcMain, BrowserWindow, autoUpdater } = require('electron')
 const fs = require('fs');
 const path = require('path')
+const keytar = require('keytar')
+const request = require('request')
+
+const API_URL = "https://gxt.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-pt/mtgatracker-prod-EhDvLyq7PNb";
 
 const firstRun = process.argv[1] == '--squirrel-firstrun';
 const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
@@ -86,6 +90,7 @@ let showErrors = settings.get('showErrors', false);
 let incognito = settings.get('incognito', false);
 let showInspector = settings.get('showInspector', true);
 let useFrame = settings.get('useFrame', false);
+let staticMode = settings.get('staticMode', false);
 let useTheme = settings.get('useTheme', false);
 let themeFile = settings.get('themeFile', "");
 let showIIDs = settings.get('showIIDs', false);
@@ -98,10 +103,31 @@ let hideDelay = settings.get('hideDelay', 10);
 let invertHideMode = settings.get('invertHideMode', false);
 let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
+let showVaultProgress = settings.get('showVaultProgress', true);
+let lastVaultProgress = settings.get('lastVaultProgress', 0);
+let minVaultProgress = settings.get('minVaultProgress', 0);
 let sortMethod = settings.get('sortMethod', 'draw');
 let useFlat = settings.get('useFlat', true);
 let useMinimal = settings.get('useMinimal', true);
 let zoom = settings.get('zoom', 0.8);
+let userMap = settings.get('userMap', [])
+
+// check for user token
+userMap.forEach(user => {
+  keytar.getPassword("mtgatracker-long-token", user.username).then(token => {
+    if (token) {
+      request.get({
+        url: `${API_URL}/tracker-api/`,
+        json: true,
+        headers: {'User-Agent': 'MTGATracker-App', 'token': token}
+      }, (err, res, data) => {
+        if(res.statusCode == 200) {
+          user.auth = true;
+        }
+      })
+    }
+  })
+})
 
 let kill_server = true;
 let noFollow = false;
@@ -117,6 +143,24 @@ ipcMain.on('messageAcknowledged', (event, arg) => {
   acked.push(arg)
   settings.set("messagesAcknowledged", acked)
   global["messagesAcknowledged"] = acked;
+})
+
+ipcMain.on('userMap', (event, arg) => {
+  let newUsername = arg.screenName
+  let newUserId = arg.clientId
+  let foundUser = userMap.find(x => x.username == newUsername)
+  if (!foundUser) {
+    // need to insert new mapping
+    userMap.push({username: newUsername, userId: newUserId, auth: false})
+    settings.set('userMap', userMap)
+    if (settingsWindow) {
+      settingsWindow.webContents.send("userMap", userMap)
+    }
+  } else {
+    if (!foundUser.auth) {
+      mainWindow.webContents.send("gameUserNotAuthed", foundUser.username)
+    }
+  }
 })
 
 ipcMain.on('settingsChanged', (event, arg) => {
@@ -138,7 +182,8 @@ ipcMain.on('tosAgreed', (event, arg) => {
 
 let openSettingsWindow = () => {
   if(settingsWindow == null) {
-    settingsWindow = new BrowserWindow({width: 800,
+    let settingsWidth = debug ? 1400 : 800;
+    settingsWindow = new BrowserWindow({width: settingsWidth,
                                         height: 800,
                                         toolbar: false,
                                         titlebar: false,
@@ -318,11 +363,13 @@ if (!no_server) {
     cleanupPyProc(createPyProc)
 }
 
+global.API_URL = API_URL;
 global.debug = debug;
 global.showErrors = showErrors;
 global.incognito = incognito;
 global.showInspector = showInspector;
 global.useFrame = useFrame;
+global.staticMode = staticMode;
 global.useTheme = useTheme;
 global.themeFile = themeFile;
 global.showIIDs = showIIDs;
@@ -334,6 +381,9 @@ global.hideDelay = hideDelay;
 global.mouseEvents = mouseEvents;
 global.winLossCounter = winLossCounter;
 global.showWinLossCounter = showWinLossCounter;
+global.showVaultProgress = showVaultProgress;
+global.lastVaultProgress = lastVaultProgress;
+global.minVaultProgress = minVaultProgress;
 global.version = app.getVersion()
 global.messagesAcknowledged = settings.get("messagesAcknowledged", [])
 global.runFromSource = runFromSource
@@ -341,6 +391,7 @@ global.sortMethod = sortMethod
 global.useFlat = useFlat
 global.useMinimal = useMinimal
 global.zoom = zoom
+global.userMap = userMap
 
 /*************************************************************
  * window management

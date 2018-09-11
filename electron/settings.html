@@ -34,6 +34,10 @@
           <span class="icon icon-lock"></span>
           Privacy
         </a>
+        <a value="account" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="account-nav">
+          <span class="icon icon-user"></span>
+          Inspector
+        </a>
       </nav>
     </div>
     <div class="pane">
@@ -46,6 +50,25 @@
             <p class="about-p"><b>Privacy:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md">privacy.md</a></p>
             <p class="about-p"><b>Documentation:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/README.md">README.md</a></p>
             <p class="about-p"><b>Inspector:</b> <a href="https://inspector.mtgatracker.com/">inspector.mtgatracker.com</a></p>
+            <br />
+
+            <h4>Current Vault Progress: { lastVaultProgress }%</h4>
+
+            <br />
+            <h3>Release notes for 3.6.0</h3>
+            <ul>
+              <li class="about-p">
+                You can now authorize MTGATracker to upload data to your inspector account, in the "Inspector" tab.
+                <b>Note: This will be required after 9/10/18!</b> Read more on the
+                <a href="https://blog.mtgatracker.com/new-sign-in-requirements">MTGATracker blog.</a>
+              </li>
+              <li>
+                MTGATracker now tracks your draft history (thanks <a href="http://isharacomix.org">isharacomix</a> for
+                <a href="https://github.com/mtgatracker/mtgatracker/pull/275">the PR</a>!) Look for an inspector update
+                in the near future to see your draft history! (requires authorizing inspector)
+              </li>
+              <li>MTGATracker now tracks changes to your collection (vaultProgress, Gold, and Gems--requires authorizing inspector)</li>
+            </ul>
             <br />
 
             <h3>Release notes for 3.5.8</h3>
@@ -141,6 +164,9 @@
             <input rv-checked="debug" class="tf-toggle" type="checkbox" key="debug" data-toggle="toggle"> Debug Mode
           </div>
           <div class="settings-row">
+            <input rv-checked="staticMode" class="tf-toggle" type="checkbox" key="staticMode" data-toggle="toggle"> Static Mode
+          </div>
+          <div class="settings-row">
             <input rv-checked="useFrame" class="tf-toggle" type="checkbox" key="useFrame" data-toggle="toggle"> Streamer Mode
           </div>
 
@@ -162,6 +188,21 @@
           <div class="settings-row">
             <input rv-checked="showWinLossCounter" class="tf-toggle" type="checkbox" key="showWinLossCounter" data-toggle="toggle"> Show win/loss counter
           </div>
+
+          <div class="settings-row">
+            <input rv-checked="showVaultProgress" class="tf-toggle" type="checkbox" key="showVaultProgress" data-toggle="toggle"> Show vault progress in main UI
+          </div>
+
+          <div class="settings-row">
+            <p>Minimum progress required to show vault progress in main UI</p>
+            <div class="slidecontainer">
+              <input type="range" min="1" max="100" value="0" class="slider" id="min-vault-progress">
+            </div>
+            <div class="slidevalue-vault">
+              0
+            </div>
+          </div>
+
           <button id="resetWinLoss" class="btn btnbtn btn-negative">Reset Win / Loss counter</button>
 
           <hr />
@@ -245,6 +286,27 @@
           </div>
         </div>
       </div>
+      <div id="account-pane" value="account" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <h3>Inspector Accounts</h3>
+            <div class="well">
+              <div rv-each-account="accounts" class="account-entry">
+                <div class="account-container">
+                  <span rv-authcolor="account.auth" class="icon icon-record" data-tooltip-position="top" rv-datatooltip="account.auth"></span>
+                  { account.username }
+                  <button class="btn btn-secondary authorize-button" rv-value="account.username">Authorize (discord)</button>
+                </div>
+                <!-- <button class="authorize-button">Authorize (password)</button> -->
+                <div class="access-container">
+                  <input class="form-control accessCode" name="accessCode">
+                  <button class="btn btn-info authorize-submit-button" rv-value="account.username">Submit Code</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -260,4 +322,6 @@
 </script>
 <script>if (window.module) module = window.module;</script>
 <script src="vendor/toggle/bootstrap-toggle.min.js"></script>
+<link href="vendor/bootstrap-pin-input/bootstrap-pincode-input.css" rel="stylesheet">
+<script src="vendor/bootstrap-pin-input/bootstrap-pincode-input.js"></script>
 </html>
