@@ -1,4 +1,4 @@
-# MTGA Tracker
+# MTGATracker
 
 [![Discord](https://img.shields.io/discord/425145310684250112.svg)](https://discordapp.com/channels/425145310684250112/425145310684250114)
 [![Build Status](https://travis-ci.org/shawkinsl/mtga-tracker.svg?branch=master)](https://travis-ci.org/shawkinsl/mtga-tracker)

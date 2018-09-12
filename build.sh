@@ -29,7 +29,7 @@ rm -r electron/legal || echo "no legal to update"
 cp -r legal electron/legal
 
 yes | ./electron/node_modules/.bin/electron-packager electron/ MTGATracker \
-  --overwrite --version=$cleanVer --electron-version=1.8.7 \
+  --overwrite --version=$cleanVer --electron-version=1.8.8 \
   --ignore="\.git.*" --ignore=".*psd" --ignore="upload_failure\.log" --ignore="mtga_watch\.log.*" \
   --extra-resource="appdist" \
   --icon="electron/img/icon_small.ico" \
