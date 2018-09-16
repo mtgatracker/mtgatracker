@@ -1,6 +1,6 @@
 {
     "name": "mtgatracker",
-    "version": "3.6.1",
+    "version": "3.7.0",
     "description": "Application to track MTGA decks in-game",
     "main": "main.js",
     "scripts": {
@@ -21,6 +21,8 @@
     "dependencies": {
         "easytimer.js": "^2.2.3",
         "electron": "^1.8.8",
+        "cryptiles": "^4.1.2",
+        "electron-gh-releases": "^2.0.4",
         "electron-rebuild": "^1.8.2",
         "electron-settings": "^3.1.4",
         "electron-tooltip": "^1.1.5",
@@ -29,6 +31,7 @@
         "jsonwebtoken": "^8.3.0",
         "keytar": "^4.2.1",
         "markdown": "^0.5.0",
+        "mtga": "^1.2.2",
         "npm": "^5.7.1",
         "reconnecting-websocket": "^3.2.2",
         "request": "^2.85.0",
@@ -37,5 +40,8 @@
     "devDependencies": {
         "electron-packager": "^9.1.0",
         "grunt-electron-installer": "^2.1.0"
-    }
+    },
+    "//": [
+        "cryptiles not a requirement, but locked due to https://nvd.nist.gov/vuln/detail/CVE-2018-1000620"
+    ]
 }

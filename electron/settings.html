@@ -38,6 +38,10 @@
           <span class="icon icon-user"></span>
           Inspector
         </a>
+        <a value="collection" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="collection-nav">
+          <span class="icon icon-archive"></span>
+          Collection
+        </a>
       </nav>
     </div>
     <div class="pane">
@@ -45,7 +49,7 @@
         <div class="settings-container">
           <div class="settings-row">
             <h3><i>About MTGATracker</i></h3>
-            <p class="about-p"><b>Version:</b> { version }</p>
+            <p class="about-p"><b>Version:</b> { version } <i rv-if="firstRun">(MTGATracker cannot check for updates on first launch after installation or an update)</i> <i rv-if="updateDownloading | andnot updateReady">(an update is downloading...)</i> <i rv-if="updateReady">(an update is ready!)</i></p>
             <p class="about-p"><b>Homepage:</b> <a href="https://mtgatracker.com/">mtgatracker.com</a></p>
             <p class="about-p"><b>Privacy:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md">privacy.md</a></p>
             <p class="about-p"><b>Documentation:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/README.md">README.md</a></p>
@@ -53,6 +57,20 @@
             <br />
 
             <h4>Current Vault Progress: { lastVaultProgress }%</h4>
+
+            <br />
+            <h3>Release notes for 3.7.0</h3>
+            <ul>
+              <li class="about-p">
+                MTGATracker now tracks your collection. Watch out for an inspector update, soon!
+              </li>
+              <li>
+                MTGATracker can now export your MTGA collection (MTGGoldfish format)
+              </li>
+              <li>
+                MTGATracker now checks for updates more reliably, and shows if an update is processing in the settings window
+              </li>
+            </ul>
 
             <br />
             <h3>Release notes for 3.6.1</h3>
@@ -318,6 +336,17 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div id="collection-pane" value="collection" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <h3>Collection</h3>
+            <p><b>Basic info</b>: { lastCollection | countcollection }</p>
+            <button id="exportCollectionMTGGButton" class="btn btnbtn btn-secondary">Export collection (MTGGoldfish .csv format)</button>
+            <br>
+            <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
           </div>
         </div>
       </div>

@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
 start=$(date +%s)
+start_raw=$(date)
 
 if (( "$#" != 1 ))
 then
     echo "Must provide version string to use (e.g. 0.1.0-alpha)"
 exit 1
 fi
+
+echo "Build start: $start_raw"
 
 version=$1
 cleanVer=$(echo $version | cut -f1 -d "-")
@@ -47,25 +50,41 @@ mv MTGATracker-win32-x64 MTGATracker-win32-x64_$version
 
 cd electron
 cat > testbuild.js <<- EOM
+const request = require("request")
 console.log("enter winstaller")
 var electronInstaller = require('electron-winstaller');
 
-resultPromise = electronInstaller.createWindowsInstaller({
+let releasesUrl = "https://api.github.com/repos/mtgatracker/mtgatracker-updates/releases"
+let requestOptions = {
+  url: releasesUrl,
+  headers: {
+    'User-Agent': 'mtgatracker-build-script'
+  }
+}
+
+request(requestOptions, (err, res, body) => {
+
+  let { tag_name } = JSON.parse(body)[0]
+  let remoteReleasesURL = \`https://github.com/mtgatracker/mtgatracker-updates/releases/download/\${tag_name}\`
+
+  let resultPromise = electronInstaller.createWindowsInstaller({
     appDirectory: '../MTGATracker-win32-x64_$version',
     outputDirectory: '../MTGATracker-win32-x64_$version-SQUIRREL',
     authors: 'MTGATracker',
     exe: 'MTGATracker.exe',
     loadingGif: '../updating.gif',
-    remoteReleases: 'https://s3-us-west-1.amazonaws.com/mtgatracker/autoupdates/win',
+    remoteReleases: remoteReleasesURL,
   });
 
-resultPromise.then(() => console.log("It worked!"), (e) => console.log(e));
-console.log("waiting on winstaller to finish...")
+  resultPromise.then(() => console.log("It worked!"), (e) => console.log(e));
+  console.log("waiting on winstaller to finish...")
+})
+
 EOM
 
 sleep 1
 
-node testbuild.js
+DEBUG=electron-windows-installer:main node testbuild.js
 
 md5sum ../MTGATracker-win32-x64_$version.zip
 end=$(date +%s)

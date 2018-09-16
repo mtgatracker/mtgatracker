@@ -40,6 +40,7 @@ var appVersionStr = remote.getGlobal('version');
 var runFromSource = remote.getGlobal('runFromSource');
 var showWinLossCounter = remote.getGlobal('showWinLossCounter');
 var showVaultProgress = remote.getGlobal('showVaultProgress');
+var lastCollection = remote.getGlobal('lastCollection');
 var lastVaultProgress = remote.getGlobal('lastVaultProgress');
 var minVaultProgress = remote.getGlobal('minVaultProgress');
 var sortMethod = remote.getGlobal('sortMethod');
@@ -106,6 +107,7 @@ var appData = {
     show_iids: showIIDs,
     last_connect: 0,
     last_connect_as_seconds: 0,
+    lastCollection: lastCollection,
     lastVaultProgress: lastVaultProgress,
     minVaultProgress: minVaultProgress,
     game_in_progress: false,
@@ -821,7 +823,20 @@ let onMessage = (data) => {
             console.log("error uploading inventory data: ")
             console.log(e)
           })
-        }  else if (data.draftPick) {
+        } else if (data.collection) {
+          if (data.collection) {
+            appData.lastCollection = data.collection
+            ipcRenderer.send('settingsChanged', {
+              key: "lastCollection",
+              value: appData.lastCollection
+            })
+
+            passThrough("tracker-api/collection", data.collection, data.player_key).catch(e => {
+              console.log("error uploading collections data: ")
+              console.log(e)
+            })
+          }
+        } else if (data.draftPick) {
           passThrough("tracker-api/draft-pick", data.draftPick, data.player_key).catch(e => {
             console.log("error uploading draftPick data: ")
             console.log(e)
