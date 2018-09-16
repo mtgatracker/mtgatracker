@@ -20,6 +20,20 @@ const firstRun = process.argv[1] == '--squirrel-firstrun';
 global.firstRun = firstRun
 const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
+if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
+  setInterval(() => {
+    if (!global.updateDownloading) {
+      updater.check((err, status) => {
+        if (!err && status) {
+          // Download the update
+          updater.download()
+          global.updateDownloading = true;
+        }
+      })
+    }
+  }, 1000)
+}
+
 const findProcess = require('find-process');
 const settings = require('electron-settings');
 updater.autoUpdater.on('update-downloaded', (e) => {
