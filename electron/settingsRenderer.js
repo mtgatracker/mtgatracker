@@ -3,6 +3,11 @@ const fs = require('fs')
 
 const API_URL = remote.getGlobal("API_URL")
 const keytar = require('keytar')
+const mtga = require('mtga')
+const path = require('path')
+const os = require('os')
+
+let desktopPath = path.join(os.homedir(), 'Desktop')
 
 const tt = require('electron-tooltip')
 tt({
@@ -28,6 +33,7 @@ var settingsData = {
   mouseEvents: remote.getGlobal('mouseEvents'),
   leftMouseEvents: remote.getGlobal('leftMouseEvents'),
   showWinLossCounter: remote.getGlobal('showWinLossCounter'),
+  lastCollection: remote.getGlobal('lastCollection'),
   lastVaultProgress: remote.getGlobal('lastVaultProgress'),
   showVaultProgress: remote.getGlobal('showVaultProgress'),
   minVaultProgress: remote.getGlobal('minVaultProgress'),
@@ -39,6 +45,9 @@ var settingsData = {
   sortMethodSelected: remote.getGlobal('sortMethod'),
   useFlat: remote.getGlobal('useFlat'),
   useMinimal: remote.getGlobal('useMinimal'),
+  updateDownloading: remote.getGlobal('updateDownloading'),
+  updateReady: remote.getGlobal('updateReady'),
+  firstRun: remote.getGlobal('firstRun'),
   customStyleFiles: [],
   sortingMethods: [
     {id: "draw", text: "By likelihood of next draw (default)",
@@ -48,7 +57,6 @@ var settingsData = {
   ],
   accounts: remote.getGlobal("userMap")
 }
-
 
 const { Menu, MenuItem } = remote
 const menu = new Menu()
@@ -67,6 +75,26 @@ if (settingsData.debug) {
     menu.popup(remote.getCurrentWindow())
   }, false)
 }
+
+rivets.formatters.countcollection = function(collection) {
+    let total = 0;
+    let unique = 0;
+    for (let key in collection) {
+      if (collection[key] && Number.isInteger(collection[key])) {
+        total += collection[key]
+        unique += 1
+      }
+    }
+    return `${unique} unique cards, ${total} total cards`
+};
+
+rivets.formatters.and = function(comparee, comparator) {
+    return comparee && comparator;
+};
+
+rivets.formatters.andnot = function(comparee, comparator) {
+    return comparee && !comparator;
+};
 
 rivets.binders.settingspaneactive = (el, val) => {
   console.log("active")
@@ -248,6 +276,35 @@ document.addEventListener("DOMContentLoaded", function(event) {
   $("#resetWinLoss").click((e) => {
     console.log("resetting win/loss")
     ipcRenderer.send('settingsChanged', {key: "winLossCounter", value: {win: 0, loss: 0}})
+  })
+  $("#exportCollectionMTGGButton").click((e) => {
+    console.log("exporting mtgg to desktop")
+    let allPromises = []
+    for (let cardKey in settingsData.lastCollection) {
+      allPromises.push(mtga.allCards.findCard(cardKey))
+    }
+
+    Promise.all(allPromises).then(allCards => {
+      let mtggExportPath = path.join(desktopPath, 'mtga_collection_mtggoldfish.csv')
+      let csvContents = "Name,Edition,Qty,Foil\n"
+      for (let card of allCards) {
+        if (card) {
+          let mtgaID = card.get("mtgaID")
+          let prettyName = card.get("prettyName")
+          let set = card.get("set")
+          if (set == "DAR") set = "DOM"  // sigh, c'mon arena devs
+          let count = settingsData.lastCollection[mtgaID]
+          csvContents +=`"${prettyName}",${set},${count},No\n`
+        }
+      }
+      fs.writeFile(mtggExportPath, csvContents, (err) => {
+        if (err) {
+          alert(`error saving export: ${err}`)
+        } else {
+          alert(`Saved to ${mtggExportPath} !`)
+        }
+      })
+    })
   })
 
   document.getElementById("hide-delay").value = "" + settingsData.hideDelay;

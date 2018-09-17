@@ -53,33 +53,16 @@ var handleStartupEvent = function() {
   }
 };
 
-var updateFeed = 'https://s3-us-west-1.amazonaws.com/mtgatracker/autoupdates/win';
+const GhReleases = require('electron-gh-releases')
 
-//if (process.env.NODE_ENV !== 'development') {
-//  updateFeed = process.platform === 'darwin' ?
-//    'https://s3-us-west-1.amazonaws.com/mtgatracker/autoupdates/osx' :
-//    'https://s3-us-west-1.amazonaws.com/mtgatracker/autoupdates/win';
-//}
-if (process.env.NODE_ENV !== 'development') {
-  updateFeed = process.platform === 'darwin' ?
-    'https://s3-us-west-1.amazonaws.com/mtgatracker/autoupdates/osx' :
-    'https://s3-us-west-1.amazonaws.com/mtgatracker/autoupdates/win';
+let options = {
+  repo: 'mtgatracker/mtgatracker-updates',
+  currentVersion: app.getVersion()
 }
 
-autoUpdater.setFeedURL(updateFeed);
-
-autoUpdater.on('update-available', () => {
-  console.log('update available v2.2.5')
-})
-
-autoUpdater.on('checking-for-update', () => {
-  console.log('checking-for-update v2.2.5')
-})
-
-autoUpdater.on('update-not-available', () => {
-  console.log('update-not-available v2.2.5')
-})
+const updater = new GhReleases(options)
 
 module.exports = {
   handleStartupEvent: handleStartupEvent,
+  updater: updater,
 }

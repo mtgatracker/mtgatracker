@@ -1,13 +1,14 @@
 const console = require('console');
 
 global.updateReady = false
-const { handleStartupEvent } = require("./updates")
+global.updateDownloading = false
+const { handleStartupEvent, updater } = require("./updates")
 
 if (handleStartupEvent()) {
   return;
 }
 
-const { app, ipcMain, BrowserWindow, autoUpdater } = require('electron')
+const { app, ipcMain, BrowserWindow } = require('electron')
 const fs = require('fs');
 const path = require('path')
 const keytar = require('keytar')
@@ -16,15 +17,26 @@ const request = require('request')
 const API_URL = "https://gxt.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-pt/mtgatracker-prod-EhDvLyq7PNb";
 
 const firstRun = process.argv[1] == '--squirrel-firstrun';
+global.firstRun = firstRun
 const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
 if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
-  autoUpdater.checkForUpdates()
+  setInterval(() => {
+    if (!global.updateDownloading) {
+      updater.check((err, status) => {
+        if (!err && status) {
+          // Download the update
+          updater.download()
+          global.updateDownloading = true;
+        }
+      })
+    }
+  }, 1000)
 }
 
 const findProcess = require('find-process');
 const settings = require('electron-settings');
-autoUpdater.on('update-downloaded', (e) => {
+updater.autoUpdater.on('update-downloaded', (e) => {
   global.updateReady = true
   mainWindow.webContents.send('updateReadyToInstall', {
     text: "A new version has been downloaded. Restart to update!"
@@ -104,6 +116,7 @@ let invertHideMode = settings.get('invertHideMode', false);
 let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
 let showVaultProgress = settings.get('showVaultProgress', true);
+let lastCollection = settings.get('lastCollection', {});
 let lastVaultProgress = settings.get('lastVaultProgress', 0);
 let minVaultProgress = settings.get('minVaultProgress', 0);
 let sortMethod = settings.get('sortMethod', 'draw');
@@ -121,7 +134,10 @@ userMap.forEach(user => {
         json: true,
         headers: {'User-Agent': 'MTGATracker-App', 'token': token}
       }, (err, res, data) => {
-        if(res.statusCode == 200) {
+        if (err) {
+          console.log(err)
+        }
+        if(res && res.statusCode == 200) {
           user.auth = true;
         }
       })
@@ -383,6 +399,7 @@ global.winLossCounter = winLossCounter;
 global.showWinLossCounter = showWinLossCounter;
 global.showVaultProgress = showVaultProgress;
 global.lastVaultProgress = lastVaultProgress;
+global.lastCollection = lastCollection;
 global.minVaultProgress = minVaultProgress;
 global.version = app.getVersion()
 global.messagesAcknowledged = settings.get("messagesAcknowledged", [])
@@ -481,7 +498,7 @@ const killServer = () => {
     }
     if (global.updateReady) {
       console.log("doing quitAndInstall")
-      autoUpdater.quitAndInstall()
+      updater.install()
     } else {
       console.log("app.quit()")
       app.quit()

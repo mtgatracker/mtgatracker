@@ -28,6 +28,7 @@ def parse_get_decklists(blob):
 @util.debug_log_trace
 def parse_get_player_cards_v3(blob):
     import app.mtga_app as mtga_app
+    pass_through("collection", None, blob)
     mtga_app.mtga_watch_app.collection = blob
     mtga_app.mtga_watch_app.save_settings()
 
