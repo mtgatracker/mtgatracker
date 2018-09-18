@@ -20,6 +20,15 @@ const firstRun = process.argv[1] == '--squirrel-firstrun';
 global.firstRun = firstRun
 const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
+const findProcess = require('find-process');
+const settings = require('electron-settings');
+updater.autoUpdater.on('update-downloaded', (e) => {
+  global.updateReady = true
+  mainWindow.webContents.send('updateReadyToInstall', {
+    text: "A new version has been downloaded. Restart to update!"
+  })
+})
+
 if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
   setInterval(() => {
     if (!global.updateDownloading) {
@@ -34,16 +43,71 @@ if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..'
   }, 1000)
 }
 
-const findProcess = require('find-process');
-const settings = require('electron-settings');
-updater.autoUpdater.on('update-downloaded', (e) => {
-  global.updateReady = true
-  mainWindow.webContents.send('updateReadyToInstall', {
-    text: "A new version has been downloaded. Restart to update!"
-  })
-})
-const crypto = require("crypto")
 
+// adapted from the excellent medium post:
+// https://medium.com/@hql287/persisting-windows-state-in-electron-using-javascript-closure-17fc0821d37
+function windowStateKeeper(windowName) {
+  let window, windowState;
+  function setBounds() {
+    // Restore from settings
+    if (settings.has(`windowState.${windowName}`)) {
+
+      windowState = settings.get(`windowState.${windowName}`);
+      // we also need to check if the screen x and y would end up on is available, if not fix it
+      // app is ready at this point, we can use screen
+      const { screen } = require("electron")
+
+      let positionIsValid = false;
+      for (let display of screen.getAllDisplays()) {
+        let lowestX = display.bounds.x;
+        let highestX = lowestX + display.bounds.width;
+
+        let lowestY = display.bounds.y;
+        let highestY = lowestY + display.bounds.height;
+        if (lowestX < windowState.x && windowState.x < highestX && lowestY < windowState.y && windowState.y < highestY) {
+          positionIsValid = true;
+        }
+      }
+      if (!positionIsValid) {
+        console.log(`windowState ${windowState.x} / ${windowState.y} is not valid, resetting to (10, 10)`)
+        windowState.x = 10
+        windowState.y = 10
+      }
+      return;
+    }
+    // Default
+    windowState = {
+      x: undefined,
+      y: undefined,
+      width: 1000,
+      height: 800,
+    };
+  }
+  function saveState() {
+    if (!windowState.isMaximized) {
+      windowState = window.getBounds();
+    }
+    windowState.isMaximized = window.isMaximized();
+    settings.set(`windowState.${windowName}`, windowState);
+  }
+  function track(win) {
+    window = win;
+    ['resize', 'move', 'close'].forEach(event => {
+      win.on(event, saveState);
+    });
+  }
+  setBounds();
+  return({
+    x: windowState.x,
+    y: windowState.y,
+    width: windowState.width,
+    height: windowState.height,
+    isMaximized: windowState.isMaximized,
+    track,
+  });
+}
+
+const crypto = require("crypto")
 let checksum = (str, algorithm, encoding) => {
     return crypto
         .createHash(algorithm || 'md5')
@@ -98,6 +162,7 @@ if (frameCmdOpt) {
 }
 
 let debug = settings.get('debug', false);
+let mtgaOverlayOnly = settings.get('mtgaOverlayOnly', true);
 let showErrors = settings.get('showErrors', false);
 let incognito = settings.get('incognito', false);
 let showInspector = settings.get('showInspector', true);
@@ -199,6 +264,8 @@ ipcMain.on('tosAgreed', (event, arg) => {
 let openSettingsWindow = () => {
   if(settingsWindow == null) {
     let settingsWidth = debug ? 1400 : 800;
+
+    const settingsWindowStateMgr = windowStateKeeper('settings')
     settingsWindow = new BrowserWindow({width: settingsWidth,
                                         height: 800,
                                         toolbar: false,
@@ -206,7 +273,10 @@ let openSettingsWindow = () => {
                                         title: false,
                                         maximizable: false,
                                         show: false,
-                                        icon: "img/icon_small.ico"})
+                                        icon: "img/icon_small.ico",
+                                        x: settingsWindowStateMgr.x,
+                                        y: settingsWindowStateMgr.y})
+    settingsWindowStateMgr.track(settingsWindow)
     settingsWindow.setMenu(null)
     settingsWindow.loadURL(require('url').format({
       pathname: path.join(__dirname, 'settings.html'),
@@ -381,6 +451,7 @@ if (!no_server) {
 
 global.API_URL = API_URL;
 global.debug = debug;
+global.mtgaOverlayOnly = mtgaOverlayOnly;
 global.showErrors = showErrors;
 global.incognito = incognito;
 global.showInspector = showInspector;
@@ -426,6 +497,7 @@ if (debug) {
 }
 
 const createMainWindow = () => {
+  const mainWindowStateMgr = windowStateKeeper('main')
   mainWindow = new BrowserWindow({width: window_width,
                                   height: window_height,
                                   show: false,
@@ -437,8 +509,10 @@ const createMainWindow = () => {
                                   titlebar: false,
                                   title: false,
                                   maximizable: false,
-                                  icon: "img/icon_small.ico"})
-
+                                  icon: "img/icon_small.ico",
+                                  x: mainWindowStateMgr.x,
+                                  y: mainWindowStateMgr.y})
+  mainWindowStateMgr.track(mainWindow)
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
@@ -475,7 +549,6 @@ const openFirstWindow = () => {
     createMainWindow()
   } else {
     openTOSWindow()
-//    createMainWindow()
   }
 }
 
