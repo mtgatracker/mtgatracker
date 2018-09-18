@@ -21,6 +21,7 @@ tt({
 
 var settingsData = {
   version: remote.getGlobal("version"),
+  mtgaOverlayOnly: remote.getGlobal("mtgaOverlayOnly"),
   settingsPaneIndex: "about",
   debug: remote.getGlobal('debug'),
   showErrors: remote.getGlobal('showErrors'),

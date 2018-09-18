@@ -5,7 +5,7 @@
     "main": "main.js",
     "scripts": {
         "start": "electron .",
-        "postinstall": "./node_modules/.bin/electron-rebuild -m . -w keytar -p -f"
+        "postinstall": "./node_modules/.bin/electron-rebuild -m . -w keytar,active-win -p -f"
     },
     "repository": "https://github.com/shawkinsl/mtga-tools",
     "keywords": [
@@ -19,9 +19,10 @@
     "author": "shawkins",
     "license": "MIT",
     "dependencies": {
+        "active-win": "^3.0.0",
+        "cryptiles": "^4.1.2",
         "easytimer.js": "^2.2.3",
         "electron": "^1.8.8",
-        "cryptiles": "^4.1.2",
         "electron-gh-releases": "^2.0.4",
         "electron-rebuild": "^1.8.2",
         "electron-settings": "^3.1.4",

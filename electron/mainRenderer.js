@@ -11,6 +11,24 @@ const keytar = require('keytar')
 const { remote, ipcRenderer, shell } = require('electron')
 const { Menu, MenuItem } = remote
 let browserWindow = remote.getCurrentWindow()
+const activeWin = require("active-win")
+
+// poll for active window semi-regularly; if it's not MTGA or MTGATracker, minimize / unset alwaysontop
+setInterval(() => {
+  if (appData.mtgaOverlayOnly) {
+    console.log("doing overlay check")
+    activeWin().then(win => {
+      if (win.owner.name == "MTGA.exe" || win.owner.name == "MTGATracker.exe" || win.title == "MTGA Tracker") {
+        if(!browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(true)
+      } else {
+        if(browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(false)
+      }
+    })
+  } else {
+    console.log("skipping overlay check and turning on always on top")
+    if(!browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(true)
+  }
+}, 200)
 
 window.addEventListener('beforeunload', function() {
     ws.send("die")
@@ -949,6 +967,9 @@ ipcRenderer.on("gameUserNotAuthed", (event, username) => {
 ipcRenderer.on('settingsChanged', () => {
   debug = remote.getGlobal('debug');
   appData.debug = debug
+
+  mtgaOverlayOnly = remote.getGlobal('mtgaOverlayOnly');
+  appData.mtgaOverlayOnly = mtgaOverlayOnly
 
   sortMethod = remote.getGlobal('sortMethod');
 
