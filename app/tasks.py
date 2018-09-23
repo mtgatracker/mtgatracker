@@ -87,7 +87,6 @@ def block_watch_task(in_queue, out_queue):
             block_title = block_lines[0].split(" ")[-1]
             json_str = "\n".join(block_lines[1:])
         elif block_lines[0].strip().endswith("{"):
-            print("got one!!!!")
             """
             these blocks looks like: 
             
@@ -97,7 +96,6 @@ def block_watch_task(in_queue, out_queue):
             """
             block_title = block_lines[0].strip().split(" ")[-2]  # skip trailing {
             json_str = "{" + "\n".join(block_lines[1:])       # just cut the first line and manually add { back in
-
         if json_str:
             try:
                 blob = json.loads(json_str)
