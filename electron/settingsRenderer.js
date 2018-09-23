@@ -49,6 +49,7 @@ var settingsData = {
   updateDownloading: remote.getGlobal('updateDownloading'),
   updateReady: remote.getGlobal('updateReady'),
   firstRun: remote.getGlobal('firstRun'),
+  trackerID: remote.getGlobal('trackerID'),
   customStyleFiles: [],
   sortingMethods: [
     {id: "draw", text: "By likelihood of next draw (default)",
@@ -125,92 +126,9 @@ rivets.binders.datatooltip = (el, val) => {
   }
 }
 
-// plundered and modified from inspector
-var authAttempt = function(e) {
-  let accountContainer = $(e.target).parent().parent()
-  let accessCode = accountContainer.find(".accessCode").val()
-  let username = e.target.value
-
-  accountContainer.find(".authorize-submit-button").html("Attempting to log in...").prop("disabled", true)
-
-  $.ajax({
-    url: `${API_URL}/public-api/auth-attempt/long-exp/`,
-    type: "POST",
-    data: JSON.stringify({"username": username, "accessCode": accessCode}),
-    dataType: "json",
-    contentType: "application/json",
-    success: function(data) {
-      keytar.setPassword("mtgatracker-long-token", username, data.token)
-      settingsData.accounts.filter(x => x.username == username)[0].auth = true
-      accountContainer.find(".authorize-button").html("Success!")
-      accountContainer.find(".access-container").slideUp()
-      accountContainer.find(".icon").attr('data-tooltip', 'Account is authorized!').css("color", "green");
-    },
-    error: function(xhr, status, err) {
-      accountContainer.find(".authorize-submit-button").html("Submit code").prop("disabled", false)
-      accountContainer.find('.accessCode').pincodeInput().data('plugin_pincodeInput').clear()
-      console.log("error! " + status)
-      console.log(xhr)
-      console.log(status)
-      console.log(err)
-      if (xhr.responseJSON.error.includes("auth_error")) {
-        alert("Incorrect code, try again")
-      } else {
-        alert("An unknown error occurred, please try again")
-      }
-    }
-  })
+rivets.binders.authref = (el, val) => {
+  el.href = "https://inspector.mtgatracker.com/trackerAuth?code=" + val
 }
-
-var authRequest = function(e) {
-  let username = e.target.value;
-  $(e.target).prop("disabled", true)
-  e.target.innerHTML = "Requesting code..."
-  $.ajax({
-    url: `${API_URL}/public-api/auth-request/long-exp/`,
-    type: "POST",
-    data: JSON.stringify({"username": username}),
-    dataType: "json",
-    contentType: "application/json",
-    success: function(data) {
-      e.target.innerHTML = "Enter code"
-      let accountContainer = $(e.target).parent().parent()
-      accountContainer.find(".access-container").slideDown()
-      // to clear: $('#access-code').pincodeInput().data('plugin_pincodeInput').clear()
-      // to disable: $('#access-code').pincodeInput().data('plugin_pincodeInput').disable()
-      // to enable: $('#access-code').pincodeInput().data('plugin_pincodeInput').enable()
-      accountContainer.find(".accessCode").pincodeInput({
-        hideDigits: false,
-        keydown : function(k_ev) {console.log(k_ev)},
-        inputs:6,
-        // callback when all inputs are filled in (keyup event)
-        complete:function(value, complete_event, errorElement) {
-          authAttempt(e)
-        }
-      });
-    },
-    error: function(xhr, status, err) {
-      $("#token-loading").css("opacity", "0")
-      console.log("error! " + status)
-      console.log(xhr)
-      console.log(status)
-      console.log(err)
-      $(e.target).prop("disabled", false)
-      if (xhr.responseJSON.error.includes("no user found")) {
-        $(e.target).prop("disabled", false).html("Authorize (discord)")
-        alert("User not found.\n\nNote that you must have used MTGATracker to track at least one game in order to log in!")
-      } else if (xhr.responseJSON.error.includes("discord mapping not found")) {
-        alert("It looks like this is your first time logging in to inspector!\n\nWhen you dismiss this dialog, you will be taken to the first-time login instructions.")
-        shell.openExternal("https://github.com/shawkinsl/mtga-tracker/blob/master/logging_in.md");
-        $(e.target).prop("disabled", false).html("Authorize (discord)")
-      } else {
-        $(e.target).prop("disabled", false).html("Authorize (discord)")
-        alert("An unknown error occurred, please try again")
-      }
-    }
-  })
-}
-
 
 document.addEventListener("DOMContentLoaded", function(event) {
   rivets.bind(document.getElementById('container'), settingsData)
@@ -226,8 +144,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
     $("#custom-theme-select").val(settingsData.themeFile)
   })
-  $(".authorize-button").click(authRequest)
 
+  $("#showTrackerID").on('click', function(event) {
+    this.innerHTML = settingsData.trackerID;
+  })
   $("#sorting-method-select").val(settingsData.sortMethodSelected)
   $(document).on('click', 'a[href^="http"]', function(event) {
       event.preventDefault();
