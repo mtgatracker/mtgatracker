@@ -1,16 +1,11 @@
 # How to log in to inspector
 
 Howdy! You probably got dumped here after attempting to log in to
-[MTGA Tracker: Inspector](https://inspector.mtgatracker.com/) for the first time. Unfortunately, we need to
-verify that you own the MTGA account you're trying to log in with before we allow you to log in to
-MTGATracker: Inspector.
+[MTGA Tracker: Inspector](https://inspector.mtgatracker.com/) for the first time. Don't worry, it's easy!
+Just log in to inspector with one of our identity providers, and then click the "Authorize Inspector" link
+in MTGATracker!
 
-We'll be happy to get you set up over in the discord. **First, please check your discord privacy settings.** When
-you join our discord, our bot will try to PM you with important instructions. Your privacy settings must
-be set to allow private messages from at least **users in the same server.** Once that's set, simply join our
-server using [this link](https://discord.gg/Ygfv25w).
-
-You can stop reading now and go get logged in, or you can keep reading here to learn about what we're doing here & why.
+![Authorize MTGATracker](https://blog.mtgatracker.com/img/tracker_auth.png)
 
 ### MTGA Tracker is "passwordless"
 
@@ -20,24 +15,6 @@ to follow. Passwords are inherently insecure, as they are created by fallible hu
 to predict, and who are terrible at remembering long, truly random passwords. We also never want to put our users in
 a scenario where they might mistakenly or otherwise share their MTGA password with us. Therefore, we just don't use 
 passwords!
-
-Instead, we will use MTGA as the source of trust (once MTGA has a friends list). We will simply message your MTGA
-account a 6-digit rotating access code as you try to log in. Since you, and only you, are able to log in to your MTGA
-account, when you tell us that same 6 digit passcode, we know it's you!
-
-Of course, MTGA doesn't have a friends list, or buddy messaging, yet. So in the meantime, we're using discord, a bot,
-and a team of mods who can manually verify your identity if our bots get hung up on something. Once a bot or mod has
-verified your identity (one-time only), our discord bots will PM you your passcode, which you can then use to log in
-to inspector.
-
-**Note** that you only need to verify your Discord username **once!** (Unless you need to make a new
-Discord account for whatever reason, in which case you can verify the new account again, no problem.)
-
-### Verifying your identity
-
-All that's required for this step is that you are in the [mtgatracker discord server](https://discord.gg/Ygfv25w)
-(it's free!), and are logged in to the MTGA beta forums. The bot will send you a message as you join the
-server that will walk you through the rest!
 
 # MTGA Tracker, its bots, and its mods, will NEVER ask for your MTGA password
 
