@@ -317,6 +317,10 @@ p {
     right: 0;
 }
 
+.mi-split-color {
+  color: black; /* idk there's a bug in magic-font */
+}
+
 #floating-eye {
     position: absolute;
     height: 30px;

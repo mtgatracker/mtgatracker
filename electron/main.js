@@ -12,9 +12,52 @@ const { app, ipcMain, BrowserWindow } = require('electron')
 const fs = require('fs');
 const path = require('path')
 const keytar = require('keytar')
+const uuidv4 = require('uuid/v4');
 const request = require('request')
+const crypto = require("crypto")
 
-const API_URL = "https://gxt.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-pt/mtgatracker-prod-EhDvLyq7PNb";
+let checksum = (str, algorithm, encoding) => {
+    return crypto
+        .createHash(algorithm || 'md5')
+        .update(str, 'utf8')
+        .digest(encoding || 'hex')
+}
+
+const API_URL = "https://gx3.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-p3/mtgatracker-prod-EhDvLyq7PNb";
+
+// check if we have saved a UUID for this tracker. If not, generate one
+keytar.getPassword("mtgatracker", "tracker-id").then(savedTrackerID => {
+  let uuidIsNew = false;
+  if (!savedTrackerID) {
+    // we need to make one
+    let trackerID = uuidv4() + "_" + crypto.randomBytes(10).toString('hex');
+    keytar.setPassword("mtgatracker", "tracker-id", trackerID)
+    uuidIsNew = true;
+    global.trackerID = trackerID;
+  } else {
+    global.trackerID = savedTrackerID;
+  }
+
+  // now we check if we have a token with that uuid
+  keytar.getPassword("mtgatracker", "tracker-id-token").then(token => {
+    if (!token || uuidIsNew) {
+      // we need to get a token and save it
+      request.post({
+        url: `${API_URL}/public-api/tracker-token/`,
+        json: true,
+        body: {trackerID: global.trackerID},
+        headers: {'User-Agent': 'MTGATracker-App'}
+      }, (err, res, data) => {
+        if (err) console.log(err)
+        if(res && res.statusCode == 200) {
+          keytar.setPassword("mtgatracker", "tracker-id-token", data.token)
+        } else {
+          console.log(`unknown status code while getting tracker-token: ${res.statusCode}`)
+        }
+      })
+    }
+  })
+})
 
 const firstRun = process.argv[1] == '--squirrel-firstrun';
 global.firstRun = firstRun
@@ -121,13 +164,6 @@ function windowStateKeeper(windowName) {
   });
 }
 
-const crypto = require("crypto")
-let checksum = (str, algorithm, encoding) => {
-    return crypto
-        .createHash(algorithm || 'md5')
-        .update(str, 'utf8')
-        .digest(encoding || 'hex')
-}
 
 // check if we need to show the ToS
 let tosAcks = settings.get("tosAcks", [])
@@ -204,25 +240,6 @@ let useMinimal = settings.get('useMinimal', true);
 let zoom = settings.get('zoom', 0.8);
 let userMap = settings.get('userMap', [])
 
-// check for user token
-userMap.forEach(user => {
-  keytar.getPassword("mtgatracker-long-token", user.username).then(token => {
-    if (token) {
-      request.get({
-        url: `${API_URL}/tracker-api/`,
-        json: true,
-        headers: {'User-Agent': 'MTGATracker-App', 'token': token}
-      }, (err, res, data) => {
-        if (err) {
-          console.log(err)
-        }
-        if(res && res.statusCode == 200) {
-          user.auth = true;
-        }
-      })
-    }
-  })
-})
 
 let kill_server = true;
 let noFollow = false;

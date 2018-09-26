@@ -1,5 +1,3 @@
-import pprint
-
 import app.parsers as parsers
 import app.mtga_app
 import util

@@ -16,7 +16,6 @@ const activeWin = require("active-win")
 // poll for active window semi-regularly; if it's not MTGA or MTGATracker, minimize / unset alwaysontop
 setInterval(() => {
   if (appData.mtgaOverlayOnly) {
-    console.log("doing overlay check")
     activeWin().then(win => {
       if (win.owner.name == "MTGA.exe" || win.owner.name == "MTGATracker.exe" || win.title == "MTGA Tracker") {
         if(!browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(true)
@@ -69,11 +68,20 @@ var invertHideMode = remote.getGlobal('invertHideMode');
 var showGameTimer = remote.getGlobal('showGameTimer');
 var zoom = remote.getGlobal('zoom');
 var timerRunning = false;
+var uploadDelay = 0;
+
+setInterval(() => {
+  uploadDelay -= 1
+  if (uploadDelay < 0) uploadDelay = 0;
+}, 200)
 
 var lastUseTheme = remote.getGlobal('useTheme')
 var lastThemeFile = remote.getGlobal('themeFile')
 
 var token = null;
+keytar.getPassword("mtgatracker", "tracker-id-token").then(savedToken => {
+  token = savedToken;
+})
 
 if (debug) {
   window.addEventListener('contextmenu', (e) => {
@@ -380,6 +388,16 @@ rivets.binders.showvault = function(el, value) {
   }
 }
 
+rivets.binders.wholemana = function(el, value) {
+  if (value.length == 1) el.style.display = "inline-block"
+  else el.style.display = "none"
+}
+
+rivets.binders.splitmana = function(el, value) {
+  if (value.length > 1) el.style.display = "inline-block"
+  else el.style.display = "none"
+}
+
 rivets.binders.mana = function(el, value) {
     mi_class = "mi-" + value.toLowerCase()
     el.classList.remove("mi-w")
@@ -399,6 +417,22 @@ rivets.binders.mana = function(el, value) {
     el.classList.remove("mi-10")
     el.classList.remove("mi-x")
     el.classList.add(mi_class)
+}
+
+rivets.binders.splitmanafill = function(el, value) {
+    if (!value.length > 1) return
+    while (el.firstChild) {
+        el.removeChild(el.firstChild);
+    }
+    value = value.slice(1, -1)
+    value = value.split("/")
+    for (let idx in value) {
+      let splitColor = value[idx]
+      let newI = document.createElement("i")
+      newI.classList.add("mi")
+      newI.classList.add(`mi-${splitColor.toLowerCase()}`)
+      el.appendChild(newI)
+    }
 }
 
 rivets.binders.card_color = function(el, value) {
@@ -550,7 +584,7 @@ function unpopulateDecklist() {
     resizeWindow()
 }
 
-function getAnonToken(attempt, errors) {
+let getTrackerToken = () => {
   return new Promise((resolve, reject) => {
     let tokenOK = true;
     if (token) {
@@ -560,45 +594,25 @@ function getAnonToken(attempt, errors) {
     }
     if (tokenOK) {
       console.log("old token was fine")
-      resolve({token: token, anonymous: true})
+      resolve({token: token})
     } else {
-      console.log("sending token request...")
-      request.get({
-          url: `${API_URL}/public-api/anon-api-token`,
-          json: true,
-          headers: {'User-Agent': 'MTGATracker-App'}
-      }, (err, res, data) => {
-        if (err || res.statusCode != 200) {
-          errors.push({on: "get_token", error: err || res})
-          reject({attempt: attempt, errors: errors})
-        } else {
-          console.log("got anon token")
-          token = data.token;
-          resolve({token: data.token, anonymous: true})
-        }
+      keytar.getPassword("mtgatracker", "tracker-id").then(trackerID => {
+        console.log("sending token request...")
+        request.post({
+            url: `${API_URL}/public-api/tracker-token`,
+            json: true,
+            body: {trackerID: trackerID},
+            headers: {'User-Agent': 'MTGATracker-App'}
+        }, (err, res, data) => {
+          if (err || res.statusCode != 200) {
+            errors.push({on: "get_token", error: err || res})
+            reject({attempt: attempt, errors: errors})
+          } else {
+            token = data.token;
+            resolve({token: data.token})
+          }
+        })
       })
-    }
-  })
-}
-
-function getTokenOrAnon(username, attempt, errors) {
-  return new Promise((resolve, reject) => {
-    if (!username) username = lastUsedUsername;
-    lastUsedUsername = username;
-    let mappedUser = remote.getGlobal("userMap").find(x => x.username == username || x.userId == username)
-    if (mappedUser && mappedUser.auth) {
-      keytar.getPassword("mtgatracker-long-token", mappedUser.username).then(userToken => {
-        if (userToken) {
-          console.log(`userToken for ${mappedUser.username} was good, using that one!`)
-          resolve({token: userToken, anonymous: false, username: mappedUser.username})
-        } else {
-          console.log("usertoken was not good, need to get anontoken")
-          getAnonToken().then(resolve)
-        }
-      })
-    } else {
-      console.log(`no mapped user for ${username}, using anontoken`)
-      getAnonToken().then(resolve)
     }
   })
 }
@@ -609,29 +623,30 @@ function passThrough(endpoint, passData, playerKey, errors) {
   }
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      getTokenOrAnon(playerKey).then(tokenObj => {
-        let {token, anonymous, username} = tokenObj;
-        passData.hero = username;
-        console.log(`got ${username}'s token: ${token}`)
+      getTrackerToken().then(tokenObj => {
+        let {token} = tokenObj;
+        passData.hero = playerKey;
         if (!remote.getGlobal("incognito")) {  // we're only allowed to use passThrough data if not incognito
-          console.log(`posting ${endpoint} request... with token ${token}`)
-          request.post({
-            url: `${API_URL}/${endpoint}`,
-            json: true,
-            body: passData,
-            headers: {'User-Agent': 'MTGATracker-App', token: token}
-          }, (err, res, data) => {
-            console.log(`finished posting ${endpoint} request...`)
-            if (err || res.statusCode != 200) {
-              errors.push({on: `post_${endpoint}`, error: err || res})
-              reject({errors: errors})
-            } else {
-              console.log(`${endpoint} uploaded! huzzah!`)
-              resolve({
-                success: true
-              })
-            }
-          })
+          setTimeout(() => {
+            console.log(`posting ${endpoint} request... with token ${token}`)
+            request.post({
+              url: `${API_URL}/${endpoint}`,
+              json: true,
+              body: passData,
+              headers: {'User-Agent': 'MTGATracker-App', token: token}
+            }, (err, res, data) => {
+              console.log(`finished posting ${endpoint} request...`)
+              if (err || res.statusCode != 200) {
+                errors.push({on: `post_${endpoint}`, error: err || res})
+                reject({errors: errors})
+              } else {
+                console.log(`${endpoint} uploaded! huzzah!`)
+                resolve({
+                  success: true
+                })
+              }
+            })
+          }, 100 * uploadDelay)
         }
       })
     }, 3000)  // wait a second to let the game result be saved before trying to modify it's rank
@@ -667,8 +682,8 @@ function uploadGame(attempt, gameData, errors) {
     } else {
       let delay = 1000 * attempt;
       setTimeout(() => {
-        getTokenOrAnon(gameData.players[0].name).then(tokenObj => {
-          let {token, anonymous} = tokenObj;
+        getTrackerToken().then(tokenObj => {
+          let {token} = tokenObj;
           if (token.errors) {
             errors.push({on: "get_token", error: err || res})
             resolve({attempt: attempt, errors: errors})
@@ -679,27 +694,29 @@ function uploadGame(attempt, gameData, errors) {
             }
             console.log("posting game request...")
             let postGameUrl = `${API_URL}/tracker-api/game`
-            if (anonymous || remote.getGlobal("incognito")) {
+            if (remote.getGlobal("incognito")) {
               postGameUrl = `${API_URL}/anon-api/game`
             }
-            request.post({
-              url: postGameUrl,
-              json: true,
-              body: gameData,
-              headers: {'User-Agent': 'MTGATracker-App', token: token}
-            }, (err, res, data) => {
-              console.log("finished posting game request...")
-              console.log(res)
-              console.log(err)
-              if (err || res.statusCode != 201) {
-                errors.push({on: "post_game", error: err || res})
-                resolve({attempt: attempt, errors: errors})
-              } else {
-                resolve({
-                  success: true
-                })
-              }
-            })
+            setTimeout(() => {
+              request.post({
+                url: postGameUrl,
+                json: true,
+                body: gameData,
+                headers: {'User-Agent': 'MTGATracker-App', token: token}
+              }, (err, res, data) => {
+                console.log("finished posting game request...")
+                console.log(res)
+                console.log(err)
+                if (err || res.statusCode != 201) {
+                  errors.push({on: "post_game", error: err || res})
+                  resolve({attempt: attempt, errors: errors})
+                } else {
+                  resolve({
+                    success: true
+                  })
+                }
+              })
+            }, 100 * uploadDelay)
           }
         })
       }, delay)
@@ -876,7 +893,6 @@ let onMessage = (data) => {
           ipcRenderer.send('userMap', data.authenticateResponse)
         }
     } else if (data.data_type=="decklist_change") {
-        console.log("got a dl change")
         if (data.decks.no_decks_defined) {
             appData.no_decks = true;
         } else {
