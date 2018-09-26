@@ -95,9 +95,21 @@ def id_to_card(card_id):
         mtga_app.mtga_watch_app.send_error("Unknown mtga_id: {}".format(card_id))
 
 
+# TODO: this is ugly but I'm tired of precon's uglifying the tracker.
+PRECON_MAP = {
+    "?=?Loc/Decks/Precon/Precon_Red": "Dragon's Fire",
+    "?=?Loc/Decks/Precon/Precon_Blue": "Arcane Inventions",
+    "?=?Loc/Decks/Precon/Precon_Black": "Graveyard Bash",
+    "?=?Loc/Decks/Precon/Precon_Green": "Forest's Might",
+    "?=?Loc/Decks/Precon/Precon_White": "Tactical Assault",
+}
+
+
 def process_deck(deck_dict, save_deck=True):
     import app.mtga_app as mtga_app
     deck_id = deck_dict['id']
+    if deck_dict["name"] in PRECON_MAP:
+        deck_dict["name"] = PRECON_MAP[deck_dict["name"]]
     deck = set.Deck(deck_dict["name"], deck_id)
     for card_obj in deck_dict["mainDeck"]:
         try:

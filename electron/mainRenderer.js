@@ -388,6 +388,16 @@ rivets.binders.showvault = function(el, value) {
   }
 }
 
+rivets.binders.wholemana = function(el, value) {
+  if (value.length == 1) el.style.display = "inline-block"
+  else el.style.display = "none"
+}
+
+rivets.binders.splitmana = function(el, value) {
+  if (value.length > 1) el.style.display = "inline-block"
+  else el.style.display = "none"
+}
+
 rivets.binders.mana = function(el, value) {
     mi_class = "mi-" + value.toLowerCase()
     el.classList.remove("mi-w")
@@ -407,6 +417,22 @@ rivets.binders.mana = function(el, value) {
     el.classList.remove("mi-10")
     el.classList.remove("mi-x")
     el.classList.add(mi_class)
+}
+
+rivets.binders.splitmanafill = function(el, value) {
+    if (!value.length > 1) return
+    while (el.firstChild) {
+        el.removeChild(el.firstChild);
+    }
+    value = value.slice(1, -1)
+    value = value.split("/")
+    for (let idx in value) {
+      let splitColor = value[idx]
+      let newI = document.createElement("i")
+      newI.classList.add("mi")
+      newI.classList.add(`mi-${splitColor.toLowerCase()}`)
+      el.appendChild(newI)
+    }
 }
 
 rivets.binders.card_color = function(el, value) {
