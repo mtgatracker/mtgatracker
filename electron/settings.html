@@ -43,12 +43,23 @@
           Collection
         </a>
       </nav>
+
+      <nav class="nav-group">
+        <h5 class="nav-group-title">Other Stuff</h5>
+        <a value="supporters" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="supporters-nav">
+          <span class="icon icon-heart"></span>
+          Supporters
+        </a>
+      </nav>
     </div>
     <div class="pane">
       <div id="about-pane" value="about" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
             <h3><i>About MTGATracker</i></h3>
+            <hr />
+            <p class="about-p disclaimer">MTGA Tracker is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
+            <hr />
             <p class="about-p"><b>Version:</b> { version } <i rv-if="firstRun">(MTGATracker cannot check for updates on first launch after installation or an update)</i> <i rv-if="updateDownloading | andnot updateReady">(an update is downloading...)</i> <i rv-if="updateReady">(an update is ready!)</i></p>
             <p class="about-p"><b>Homepage:</b> <a href="https://mtgatracker.com/">mtgatracker.com</a></p>
             <p class="about-p"><b>Privacy:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md">privacy.md</a></p>
@@ -57,6 +68,23 @@
             <br />
 
             <h4>Current Vault Progress: { lastVaultProgress }%</h4>
+
+            <br />
+            <h3>Release notes for 4.0.0</h3>
+            <ul>
+              <li class="about-p">
+                Support for Guilds of Ravnica! <i class="disclaimer">(Open Beta HYYYYYPE)</i>
+              </li>
+              <li>
+                We've redesigned MTGATracker's core model of trust to make Inspector logins easier
+              </li>
+              <li>
+                Notifications styling has been improved
+              </li>
+              <li>
+                Added our supporters to the Settings panel. We ❤ our supporters!
+              </li>
+            </ul>
 
             <br />
             <h3>Release notes for 3.7.0</h3>
@@ -178,9 +206,6 @@
               <li class="about-p">Tracker will now open settings to about page on first launch after an update (so you can see this changelog!)</li>
               <li class="about-p">Tracker will now attempt to upload at end of game slightly more aggressively, to help prevent lost inspector data</li>
             </ul>
-            <br />
-
-            <p class="about-p disclaimer">MTGA Tracker is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
           </div>
         </div>
       </div>
@@ -342,6 +367,26 @@
             <button id="exportCollectionMTGGButton" class="btn btnbtn btn-secondary">Export collection (MTGGoldfish .csv format)</button>
             <br>
             <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
+          </div>
+        </div>
+      </div>
+      <div id="supporters-pane" value="supporters" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <h3>Thank you for your support!</h3>
+            <p>MTGATracker is an open-source project, built as a labor of love, with code contributions from developers
+              all over the world. MTGATracker and Inspector are presented ad-free for your enjoyment.</p>
+            <p>The bills associated with MTGATracker are paid for out-of-pocket by
+              MTGATracker's lead dev, but our supporters on Patreon help lighten the load (and keep us motivated to keep
+              working on MTGATracker).</p>
+            <p><b>We can't thank you enough!</b></p>
+            <h2>Our Scout-Captain Level Supporters</h2>
+            <ul>
+              <li>Maël</li>
+              <li>Andrew</li>
+              <li>isharacomix [<a href="http://isharacomix.org">web</a>]</li>
+            </ul>
+            <p>Support us <a href="https://www.patreon.com/mtgatracker">on Patreon</a> to get your name on the list!</p>
           </div>
         </div>
       </div>
