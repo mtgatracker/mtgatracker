@@ -546,8 +546,16 @@ function resizeWindow() {
             totalHeight += $(e).outerHeight(true);
     });
     bounds = browserWindow.getBounds()
-    bounds.height = Math.min(parseInt(totalHeight), calcMainMaxHeight());
     container.style.height = "" + parseInt(totalHeight) + "px"
+    if (zoom > 0.85) {
+      // tbh this is stupid but it works for now
+      // (and is probably better than setting max width and height and hoping transparent window works)
+      totalHeight += parseInt(100 * (zoom ** 3))
+      bounds.width = parseInt(354 * (zoom ** 2))
+    } else {
+      bounds.width = parseInt(354 * zoom);
+    }
+    bounds.height = Math.min(parseInt(totalHeight), calcMainMaxHeight());
     if (!(debug || useFrame)) {
         browserWindow.setBounds(bounds)
     }
