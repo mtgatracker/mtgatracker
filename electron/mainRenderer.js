@@ -673,7 +673,7 @@ function uploadGame(attempt, gameData, errors) {
   return new Promise((resolve, reject) => {
     if (attempt > 5) {
       if (!remote.getGlobal("incognito")) {
-        appData.messages.push({text: "WARNING! Could not upload game result to inspector! Error log generated @ uploadfailure.log ... please send this log to our discord #bug_reports channel!"})
+        appData.messages.push({text: "WARNING! Could not upload game result to inspector! Error log generated @ uploadfailure.log ... please send this log to our discord #bug_reports channel!", "mayfollow": "#"})
         resizeWindow()
       }
       let filePath = runFromSource ? "uploadfailure.log" : "../uploadfailure.log";
@@ -890,7 +890,7 @@ let onMessage = (data) => {
             }
         } else if (data.authenticateResponse) {
           console.log("handle authenticateResponse")
-          ipcRenderer.send('userMap', data.authenticateResponse)
+          // TODO save user?
         }
     } else if (data.data_type=="decklist_change") {
         if (data.decks.no_decks_defined) {
@@ -969,15 +969,6 @@ ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
   console.log(messageInfo)
   appData.messages.push({text: "A new tracker update will be applied on next launch!", mayfollow:"https://github.com/shawkinsl/mtga-tracker/releases/latest"})
   resizeWindow()
-})
-
-ipcRenderer.on("gameUserNotAuthed", (event, username) => {
-  let msg = `WARNING! ${username} is not signed in to MTGATracker! Records will no longer be sent to inspector without signing in! (Click for more info, including how to disable this warning)`
-  let exists = appData.messages.find(x => x.text == msg)
-  console.log(username)
-  if (!exists) {
-    appData.messages.push({text: msg, mayfollow: "https://blog.mtgatracker.com/new-sign-in-requirements"})
-  }
 })
 
 ipcRenderer.on('settingsChanged', () => {

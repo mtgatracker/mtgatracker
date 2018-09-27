@@ -47,6 +47,8 @@ def block_watch_task(in_queue, out_queue):
         request_or_response = None
         json_str = ""  # hit the ex
         timestamp = None
+        block_title_seq = None
+
         if block_lines[1] and block_lines[1].startswith("==>") or block_lines[1].startswith("<=="):
             """
             these logs looks like:
@@ -111,7 +113,7 @@ def block_watch_task(in_queue, out_queue):
                 if block_title_seq:
                     blob["block_title_sequence"] = block_title_seq
                 out_queue.put(blob)
-            except:
+            except Exception as e:
                 mtga_logger.error("{}Could not parse json_blob `{}`".format(util.ld(), json_str))
                 mtga_watch_app.send_error("Could not parse json_blob {}".format(json_str))
 
