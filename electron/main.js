@@ -141,15 +141,16 @@ function windowStateKeeper(windowName) {
     };
   }
   function saveState() {
-    if (!windowState.isMaximized) {
-      windowState = window.getBounds();
+    if(window) {
+      if (!windowState.isMaximized) {
+        windowState = window.getBounds();
+      }
+      windowState.isMaximized = window.isMaximized();
+      settings.set(`windowState.${windowName}`, windowState);
     }
-    windowState.isMaximized = window.isMaximized();
-    settings.set(`windowState.${windowName}`, windowState);
   }
   function track(win) {
     window = win;
-    setInterval(saveState, 500)
     win.on('close', saveState);
   }
   setBounds();
