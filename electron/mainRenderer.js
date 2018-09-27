@@ -784,7 +784,7 @@ let onMessage = (data) => {
                 gameLookup[data.gameID] = {count: 0, uploaded: false}
               }
             }
-        } else {
+        } else if (!gameAlreadyUploaded(data.game_id)) {
             lastGameState = data
             if (!timerRunning) {
               timerRunning = true;

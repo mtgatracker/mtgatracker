@@ -149,9 +149,8 @@ function windowStateKeeper(windowName) {
   }
   function track(win) {
     window = win;
-    ['resize', 'move', 'close'].forEach(event => {
-      win.on(event, saveState);
-    });
+    setInterval(saveState, 500)
+    win.on('close', saveState);
   }
   setBounds();
   return({
@@ -210,7 +209,7 @@ if (debugCmdOpt) {
 }
 
 let debugFile = false;
-if (debugCmdOpt) {
+if (debugFileCmdOpt) {
     debugFile = true;
     console.log("Using debug file")
 }

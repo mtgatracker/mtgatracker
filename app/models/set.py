@@ -128,9 +128,8 @@ class Zone(Pool):
         for card in self.cards:
             assert isinstance(card, GameCard)
             if card.game_id == instance_id or instance_id in card.previous_iids:
-                if card.mtga_id != -1 and card.mtga_id != card_id:
-                    raise Exception("WHOA. tried to match iid {} to {}, but already has card {}".format(
-                        str(instance_id), str(card_id), str(card.mtga_id)))
+                # if card.mtga_id != -1 and card.mtga_id != card_id:
+                #     raise Exception("WHOA. tried to match iid {} to {}, but already has card {}".format(str(instance_id), str(card_id), str(card.mtga_id)))
                 card.transform_to(card_id)
             elif card.mtga_id == card_id:
                 # only allowed to set it if it's still -1 (should probably never hit this!)

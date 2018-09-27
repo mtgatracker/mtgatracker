@@ -149,7 +149,7 @@ if __name__ == "__main__":
         with open(args.log_file, 'r') as rf:
             previous_block_end = 0
             for idx, line in enumerate(rf):
-                if line and line.startswith("[UnityCrossThreadLogger]") or line.startswith("[Client GRE]"):
+                if line and (line.startswith("[UnityCrossThreadLogger]") or line.startswith("[Client GRE]")):
                     # this is the start of a new block (with title), end the last one
                     # print(current_block)
                     if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
@@ -177,7 +177,7 @@ if __name__ == "__main__":
                 kt = KillableTailer(log_file, queues.all_die_queue)
                 kt.seek_end()
                 for line in kt.follow(1):
-                    if line and line.startswith("[UnityCrossThreadLogger]"):
+                    if line and (line.startswith("[UnityCrossThreadLogger]") or line.startswith("[Client GRE]")):
                         # this is the start of a new block (with title), end the last one
                         # print(current_block)
                         if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
