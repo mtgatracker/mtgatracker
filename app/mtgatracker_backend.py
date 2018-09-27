@@ -149,19 +149,19 @@ if __name__ == "__main__":
         with open(args.log_file, 'r') as rf:
             previous_block_end = 0
             for idx, line in enumerate(rf):
-                if line and line.startswith("[UnityCrossThreadLogger]"):
+                if line and (line.startswith("[UnityCrossThreadLogger]") or line.startswith("[Client GRE]")):
                     # this is the start of a new block (with title), end the last one
                     # print(current_block)
                     if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
                         # which is likely the slowest
-                        queues.block_read_queue.put(current_block)
+                        queues.block_read_queue.put((idx, current_block))
                     current_block = line.strip() + "\n"
                 elif line and line.startswith("]") or line.startswith("}"):
                     current_block += line.strip() + "\n"
                     # this is the END of a block, end it and start a new one
                     if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
                         # which is likely the slowest
-                        queues.block_read_queue.put(current_block)
+                        queues.block_read_queue.put((idx, current_block))
                     current_block = ""
                 else:
                     # we're in the middle of a block somewhere
@@ -177,7 +177,7 @@ if __name__ == "__main__":
                 kt = KillableTailer(log_file, queues.all_die_queue)
                 kt.seek_end()
                 for line in kt.follow(1):
-                    if line and line.startswith("[UnityCrossThreadLogger]"):
+                    if line and (line.startswith("[UnityCrossThreadLogger]") or line.startswith("[Client GRE]")):
                         # this is the start of a new block (with title), end the last one
                         # print(current_block)
                         if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task

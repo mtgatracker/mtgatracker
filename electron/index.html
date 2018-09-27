@@ -25,7 +25,7 @@
         <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
         <div class="messages">
           <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
-            <span rv-show="message.mayfollow" class="dismiss-message mayfollow" rv-index="index" onclick="dismissMessage(this)">X</span>
+            <span rv-show="message.mayfollow" class="dismiss-message mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)">X</span>
             <span class="update-message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
 
             <span rv-hide="message.mayfollow" class="dismiss-message">!!</span>
@@ -54,7 +54,7 @@
         <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
         <div class="messages">
           <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
-            <span rv-show="message.mayfollow" class="dismiss-message mayfollow" rv-index="index" onclick="dismissMessage(this)">X</span>
+            <span rv-show="message.mayfollow" class="dismiss-message mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)">X</span>
             <span class="update-message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
 
             <span rv-hide="message.mayfollow" class="dismiss-message">!!</span>
@@ -77,7 +77,7 @@
           <h3 class="reminder">Pick a deck, or start a game!</h3>
           <div class="messages">
             <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
-              <span rv-show="message.mayfollow" class="dismiss-message mayfollow" rv-index="index" onclick="dismissMessage(this)">X</span>
+              <span rv-show="message.mayfollow" class="dismiss-message mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)">X</span>
               <span class="update-message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
 
               <span rv-hide="message.mayfollow" class="dismiss-message">!!</span>

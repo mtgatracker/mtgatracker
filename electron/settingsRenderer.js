@@ -57,7 +57,6 @@ var settingsData = {
     {id: "emerald", text: '"Emerald" method',
     help: "This method sorts cards by card type, then by cost, then by name."}
   ],
-  accounts: remote.getGlobal("userMap")
 }
 
 const { Menu, MenuItem } = remote
@@ -256,11 +255,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     let value = this.value
     $(".slidevalue-vault").html(value)
   }
-})
-
-ipcRenderer.on('userMap', (event, arg) => {
-  console.log("userMap!")
-  console.log(arg)
 })
 
 // ipcRenderer.send('settingsChanged', {cool: true})

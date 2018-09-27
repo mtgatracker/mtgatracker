@@ -240,6 +240,7 @@ class Game(object):
     def game_state(self):
         hero_chess_time_total, oppo_chess_time_total = self.calculate_chess_timer_total()
         game_state = {
+            "game_id": self.match_id,
             "draw_odds": self.hero.calculate_draw_odds(self.ignored_iids),
             "opponent_hand": [c.to_serializable() for c in self.opponent.hand.cards],
             "elapsed_time": str(datetime.datetime.now() - self.start_time),
