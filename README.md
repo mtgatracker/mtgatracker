@@ -152,7 +152,7 @@ Number of errors: 0
 
 ## Contributing
 
-All changes by non core-contributors must go through a code-review process. For non-contributors, this is accomplished
+All changes by non core-contributors must go through a code-review process. For non core-contributors, this is accomplished
 by forking, making changes in the fork, and submitting PR's.
 
 For more information, see [contributing](https://github.com/mtgatracker/mtgatracker/blob/master/CONTRIBUTING.md)
