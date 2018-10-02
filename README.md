@@ -12,6 +12,8 @@
 <!-- [![Coveralls github](https://img.shields.io/coveralls/github/shawkinsl/mtga-tracker.svg)](https://coveralls.io) <!-- TODO: this -->
 MTGA Tracker is an electron-based app that helps you track your MTGA decks!
 
+![Tracker Features](https://i.imgur.com/drjM4D7.png)
+
 <!-- [![Travis](https://img.shields.io/travis/shawkinsl/mtga-tracker.svg)](https://travis-ci.org/shawkinsl/mtga-tracker) --><!-- TODO: this -->
 <!-- [![Code Climate](https://img.shields.io/codeclimate/shawkinsl/mtga-tracker.svg)](https://codeclimate.com/github/shawkinsl/mtga-tracker) --><!-- TODO: this -->
 
@@ -150,7 +152,7 @@ Number of errors: 0
 
 ## Contributing
 
-All changes by non core-contributors must go through a code-review process. For non-contributors, this is accomplished
+All changes by non core-contributors must go through a code-review process. For non core-contributors, this is accomplished
 by forking, making changes in the fork, and submitting PR's.
 
 For more information, see [contributing](https://github.com/mtgatracker/mtgatracker/blob/master/CONTRIBUTING.md)
@@ -191,15 +193,12 @@ MTGA Tracker is licensed under the [MIT License](https://opensource.org/licenses
 If this list gets too heavy, please refer to [contributors/core.yml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yml)
 
 - [shawkinsl](https://github.com/shawkinsl)
+- MatteyRitch
 
 #### Collaborators
 
 If this list gets too heavy, please refer to [contributors/collab.yml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yml)
 
-- [daphpunk](https://github.com/daphpunk)
-
-#### Our wonderful discord mod team :)
-
-A list of moderators (who have helped at least one user get into inspector on discord)
-
-- [venerae](https://www.twitch.tv/venerae)
+- emerald000
+- isharacomix
+- windbagy
