@@ -176,6 +176,28 @@ var parseVersionString = (versionStr) => {
     return version;
 }
 
+var addMessage = (message, link, mustfollow, messageID) => {
+    if (!link) link = "#"
+    let existingMessage = appData.messages.filter(x => x["text"] == message && x["show"])
+    if (existingMessage.length) {
+      // we can just bump the count on this one
+      existingMessage[0]["count"] += 1
+    } else {
+      // we need a new one
+      let newMessage = {text: message, count: 1, show: true}
+      if (messageID) {
+        newMessage["messageID"] = messageID
+      }
+      if (mustfollow) {
+        newMessage["mustfollow"] = link
+      } else {
+        newMessage["mayfollow"] = link
+      }
+      appData.messages.push(newMessage)
+    }
+    resizeWindow()
+}
+
 var dismissMessage = (element) => {
    let elementIdx = element.attributes.index.value
    let messageID = false
@@ -194,9 +216,19 @@ request.get({
     json: true,
     headers: {'User-Agent': 'MTGATracker-App'}
 }, (err, res, data) => {
-  if (appData.messages)
-    appData.messages = appData.messages.concat(...data.notifications)
-    resizeWindow()
+  if (data.notifications) {
+    data.notifications.forEach(message => {
+      let link = "#"
+      let mustfollow = false;
+      if (message.mayfollow) {
+        link = message.mayfollow
+      } else if (message.mustfollow) {
+        link = message.mustfollow
+        mustfollow = true
+      }
+      addMessage(message.text, link, mustfollow, message.messageID)
+    })
+  }
 })
 
 let cardtypeCompare = function (a, b) {
@@ -486,6 +518,10 @@ rivets.formatters.as_seconds = function(value) {
     return value / 100;
 }
 
+rivets.formatters.more_than_one = function(value) {
+    return value > 1;
+}
+
 rivets.bind(document.getElementById('container'), appData)
 
 let all_hidden = false;
@@ -681,7 +717,7 @@ function uploadGame(attempt, gameData, errors) {
   return new Promise((resolve, reject) => {
     if (attempt > 5) {
       if (!remote.getGlobal("incognito")) {
-        appData.messages.push({text: "WARNING! Could not upload game result to inspector! Error log generated @ uploadfailure.log ... please send this log to our discord #bug_reports channel!", "mayfollow": "#"})
+        addMessage("WARNING! Could not upload game result to inspector! Error log generated @ uploadfailure.log ... please send this log to our discord #bug_reports channel!")
         resizeWindow()
       }
       let filePath = runFromSource ? "uploadfailure.log" : "../uploadfailure.log";
@@ -765,8 +801,7 @@ let onMessage = (data) => {
               uploadGame(0, data.game)
                 .then(() => {
                   if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
-                    appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
-                    resizeWindow()
+                    addMessage("Game sent to Inspector!", "https://inspector.mtgatracker.com")
                   }
                 })
             } else if (data.gameID) {
@@ -780,8 +815,7 @@ let onMessage = (data) => {
                         .then(() => {
                           console.log("successfully uploaded game!")
                           if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
-                            appData.messages.push({text: "Game result sent to inspector!", mayfollow: "https://inspector.mtgatracker.com"})
-                            resizeWindow()
+                            addMessage("Game sent to Inspector!", "https://inspector.mtgatracker.com")
                           }
                         })
                     }
@@ -973,10 +1007,7 @@ ipcRenderer.on('stdout', (event, data) => {
 })
 
 ipcRenderer.on('updateReadyToInstall', (messageInfo) => {
-  console.log("got an update ready message")
-  console.log(messageInfo)
-  appData.messages.push({text: "A new tracker update will be applied on next launch!", mayfollow:"https://github.com/shawkinsl/mtga-tracker/releases/latest"})
-  resizeWindow()
+  addMessage("A new tracker update will be applied on next launch!", "https://github.com/shawkinsl/mtga-tracker/releases/latest")
 })
 
 ipcRenderer.on('settingsChanged', () => {
