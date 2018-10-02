@@ -110,11 +110,17 @@ h1 {
   left: 20px;
   position: relative;
   padding-top: 0px;
-  max-width: 245px;
+  max-width: 15ch;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .game-deck-title {
-  max-width: 245px;
+  max-width: 15ch;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
   display: inline-block;
 }
 
