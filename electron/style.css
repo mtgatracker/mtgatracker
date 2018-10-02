@@ -90,7 +90,6 @@ p {
   margin-bottom: 17px;
 }
 
-
 .update-message a {
     color: #000000;
     text-shadow: none;
@@ -126,6 +125,23 @@ p {
 .mayfollow {
     cursor: pointer;
     color: white;
+}
+
+.message-count {
+    display: inline-block;
+    min-width: 11px;
+    padding: 2px 3px;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #0a5c73;
+    border-radius: 50%;
+    text-shadow: none;
+    margin-left: -5px;
 }
 
 #container {
