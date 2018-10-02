@@ -1,4 +1,5 @@
 const console = require('console');
+const jwt = require('jsonwebtoken');
 
 global.updateReady = false
 global.updateDownloading = false
@@ -40,7 +41,11 @@ keytar.getPassword("mtgatracker", "tracker-id").then(savedTrackerID => {
 
   // now we check if we have a token with that uuid
   keytar.getPassword("mtgatracker", "tracker-id-token").then(token => {
-    if (!token || uuidIsNew) {
+    var decodedTrackerIdToken
+    if (token !== null) {
+      decodedTrackerIdToken = jwt.decode(token)
+    }
+    if (!token || uuidIsNew || decodedTrackerIdToken.trackerID !== global.trackerID) {
       // we need to get a token and save it
       request.post({
         url: `${API_URL}/public-api/tracker-token/`,
