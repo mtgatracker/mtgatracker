@@ -43,9 +43,9 @@ h1 {
 }
 
 .zoom-panel {
-    left: 179px;
-    position: relative;
-    top: -31px;
+    left: 196px;
+    position: absolute;
+    top: 25px;
     height: 0px;
 }
 
@@ -117,7 +117,7 @@ h1 {
 }
 
 .game-deck-title {
-  max-width: 15ch;
+  max-width: 175px;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;

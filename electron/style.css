@@ -420,6 +420,7 @@ p {
 .zoom {
     cursor: pointer;
     text-shadow: 0 0 0;
+    z-index: 5;
 }
 
 #overall-timer {
