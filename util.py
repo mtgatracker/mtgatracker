@@ -97,11 +97,23 @@ def id_to_card(card_id):
 
 # TODO: this is ugly but I'm tired of precon's uglifying the tracker.
 PRECON_MAP = {
+    # initial single-color precons
     "?=?Loc/Decks/Precon/Precon_Red": "Dragon's Fire",
     "?=?Loc/Decks/Precon/Precon_Blue": "Arcane Inventions",
     "?=?Loc/Decks/Precon/Precon_Black": "Graveyard Bash",
     "?=?Loc/Decks/Precon/Precon_Green": "Forest's Might",
     "?=?Loc/Decks/Precon/Precon_White": "Tactical Assault",
+    # guilds precons
+    "?=?Loc/Decks/Precon/Precon_NPE_GRN_RG": "Primal Fury",
+    "?=?Loc/Decks/Precon/Precon_NPE_GRN_UB": "Walk the Plank",
+    "?=?Loc/Decks/Precon/Precon_NPE_GRN_UR": "Wrath of Mages",
+    "?=?Loc/Decks/Precon/Precon_NPE_GRN_GW": "Auras of Majesty",
+    "?=?Loc/Decks/Precon/Precon_NPE_GRN_WB": "Eternal Thirst",
+    "?=?Loc/Decks/Precon/Precon_NPE_GRN_BR": "Chaos and Mayhem",
+    "?=?Loc/Decks/Precon/Precon_NPE_GRN_BG": "Saproling Swarm",
+    "?=?Loc/Decks/Precon/Precon_NPE_GRN_UG": "Jungle Secrets",
+    "?=?Loc/Decks/Precon/Precon_NPE_GRN_RW": "Strength in Numbers",
+    "?=?Loc/Decks/Precon/Precon_NPE_GRN_WU": "Artifacts Attack",
 }
 
 
