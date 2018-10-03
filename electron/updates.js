@@ -61,6 +61,7 @@ let options = {
 }
 
 const updater = new GhReleases(options)
+updater.autoUpdater.autoDownload = false;  // fix issue where multiple downloaders fight over the lock
 
 module.exports = {
   handleStartupEvent: handleStartupEvent,
