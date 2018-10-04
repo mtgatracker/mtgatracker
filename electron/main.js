@@ -1,7 +1,9 @@
 const console = require('console');
+const jwt = require('jsonwebtoken');
 
 global.updateReady = false
 global.updateDownloading = false
+global.checkInProgress = false
 const { handleStartupEvent, updater } = require("./updates")
 
 if (handleStartupEvent()) {
@@ -40,7 +42,11 @@ keytar.getPassword("mtgatracker", "tracker-id").then(savedTrackerID => {
 
   // now we check if we have a token with that uuid
   keytar.getPassword("mtgatracker", "tracker-id-token").then(token => {
-    if (!token || uuidIsNew) {
+    var decodedTrackerIdToken
+    if (token !== null) {
+      decodedTrackerIdToken = jwt.decode(token)
+    }
+    if (!token || uuidIsNew || decodedTrackerIdToken.trackerID !== global.trackerID) {
       // we need to get a token and save it
       request.post({
         url: `${API_URL}/public-api/tracker-token/`,
@@ -65,16 +71,19 @@ const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
 if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
   setInterval(() => {
-    if (!global.updateDownloading) {
+    if (!global.updateDownloading && !global.checkInProgress) {
+      global.checkInProgress = true
       updater.check((err, status) => {
         if (!err && status) {
           // Download the update
-          updater.download()
           global.updateDownloading = true;
+          updater.download()
         }
+        // the check is complete, we can run the check again now
+        global.checkInProgress = false
       })
     }
-  }, 1000)
+  }, 10000)
 }
 
 const findProcess = require('find-process');

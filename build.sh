@@ -46,7 +46,6 @@ yes | ./electron/node_modules/.bin/electron-packager electron/ MTGATracker \
   --asar
 
 mv MTGATracker-win32-x64 MTGATracker-win32-x64_$version
-/c/Program\ Files/7-Zip/7z.exe a -tzip MTGATracker-win32-x64_$version.zip MTGATracker-win32-x64_$version
 
 cd electron
 cat > testbuild.js <<- EOM
@@ -86,7 +85,8 @@ sleep 1
 
 DEBUG=electron-windows-installer:main node testbuild.js
 
-md5sum ../MTGATracker-win32-x64_$version.zip
+mv MTGATracker-win32-x64_$version-SQUIRREL/Setup.exe MTGATracker-win32-x64_$version-SQUIRREL/setup_mtgatracker_$version.exe
+
 end=$(date +%s)
 secs=$((end-start))
 printf 'build took %dh:%dm:%ds\n' $(($secs/3600)) $(($secs%3600/60)) $(($secs%60))
