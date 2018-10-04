@@ -32,6 +32,10 @@ html {
     -webkit-user-select: none;
 }
 
+body {
+    -webkit-app-region: drag;
+}
+
 .inline-block {
     display: inline-block;
 }
@@ -453,4 +457,14 @@ p {
 
 #opponent-timer {
     float: right;
+}
+
+/* The following classes should be set to no-drag or they won't be clickable */
+.zoom,
+.dismiss-message,
+.update-message,
+.settings-img,
+.back-link:after,
+.deck-container {
+	-webkit-app-region: no-drag;
 }
