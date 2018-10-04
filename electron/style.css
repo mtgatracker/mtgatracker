@@ -33,7 +33,7 @@ html {
 }
 
 body {
-    -webkit-app-region: drag
+    -webkit-app-region: drag;
 }
 
 .inline-block {
