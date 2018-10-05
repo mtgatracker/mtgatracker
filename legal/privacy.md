@@ -41,9 +41,10 @@ share information from any category below with marketing partners without your c
 ### Linkable information
 
 "Linkable Information" includes data that reasonably could be tied to a user, but does not inherently do so. We
-consider things like complete IP Addresses, data about browsers, country-of-origin, etc. to be "Linkable information,"
-but not "Individual Person Information," or "Platform Information." In general, we only process Linkable
-Information when we are confident it is done so anonymously.
+consider things like anonymized IP Addresses, Unique Identity Codes from Identity Providers, Preferred Usernames
+from Identity Providers (e.g. Twitch or Discord usernames), data about browsers,
+country-of-origin, etc. to be "Linkable information," but not "Individual Person Information,"
+or "Platform Information." In general, we prefer to anonymize Linkable information whenever possible.
 
 ### Individual Person Information
 
@@ -93,27 +94,23 @@ We will never sell any of your information to any third parties. Ever.
 
 If we ever do use Individual Person Information or PII, we will do so only to operate and improve the app and the site.
 We must use third parties to process information from any of the definitions above, but we will we never
-display Linkable Information publicly to any user other than the owner of that information. We also
-will never share your information with any 3rd party without your express permission
-for any reason other than to operate the app and site. Again, we do not process, collect, store, or share
-Individual Person Information, but if we ever do, we will not share it with or sell it to any third party
-without your freely-given consent.
+display Linkable Information (e.g. your Twitch / Discord username) publicly to any user other than the owner of
+that information without that user's specific and express permission.
+We also will never share your information with any 3rd party without
+your express permission for any reason other than to operate the app and site. Again, we do not process,
+collect, store, or share Individual Person Information, but if we ever do, we will not share it with or
+sell it to any third party without your freely-given consent.
 
-We do share anonymized Linkable Information sent to the site with analytics services
+We do share anonymized IP Addresses sent to the site with analytics services
 (namely, Google Analytics, which you can read more about [here](https://www.google.com/policies/privacy/partners/)).
 We only share this information to understand our usage history, understand the
 scaling challenges ahead, plan future solutions, and generally to improve
-the app and site. Note that we do not collect or store Linkable Information in any form, and we do not
+the app and site. Note that we do not collect or store IP Addresses in any form, and we do not
 share any Individual Person Information or PII with Google Analytics--not even your entire IP address.
 
 We reserve the right to share raw data from any category with individuals affiliated with MTGATracker for the
 purpose of fulfilling MTGATracker's contract outlined in our Terms. These individuals will always have signed
 non-disclosure agreements on file.
-
-We reserve the right to share Linkable Information with advertisement agencies, with your consent, each of which, if
-any at all, will be outlined later in this document. We will never share Individual Person Information
-(which we do not process, collect, store, or share) or Platform Information with any third
-party for the purpose of monetary gain.
 
 We may share Platform Information with other services with your express permission for each service & 
 use case, each of which, if any at all, will be outlined later in this document.
@@ -134,6 +131,7 @@ Here are some examples of information we will **not** share without permission:
 - User James9876 has a playset of Belzenlok's!
 - User xXxJ4CExXx has 27 decks, all of which are blue!
 - User SPIKEBEST has won 3,000 games!
+- User SPIKEBEST who has won 3,000 games this month is Twitch user iheartdwaynetherockjohnson
 - Somewhere between one and nine anonymous users are running this exact decklist!
 
 Here are some examples of information **we do** reserve the right to share publicly:
@@ -144,13 +142,32 @@ Here are some examples of information **we do** reserve the right to share publi
 - The highest winrate of any user is 200:6, by an anonymous user.
 - 43% of all blue-green decks tracked contain at least these 30 cards: ...
 - 15% of users use or have used at least one profanity in the names of their decks.
-- The Scarab god has been used in 98% of all decks tracked with MTGATracker!
+- Zetalpha, Primal Dawn has been used in 98% of all decks tracked with MTGATracker!
 - No one has ever used Sphinx's Decree in any game tracked by MTGATracker, ever!
 
 
 ## Specifically, what data does MTGATracker collect, and how often?
 
-_Last updated with version 3.5.5_
+_Last updated with version 4.1.3_
+
+### Linkable Information
+
+When you sign in to MTGATracker: Inspector using an identity provider such as Twitch or Discord,
+we always request the smallest set of information and permissions as possible.
+
+We only collect this information to give you a method to uniquely authenticate with the Inspector service
+without the need to create a new username / password. We do not share this information with any third parties
+for marketing purposes or any other purposes, except sharing with the originating source while performing authentication (
+for example, if you authenticate using Twitch, we will send Twitch and only Twitch your access code to ensure you
+are authorized to represent your account on Twitch.)
+
+#### Twitch and Discord
+
+For Twitch and Discord, this set of information is:
+
+- A Unique ID Number assigned to you by the identity provider
+- Your preferred username in the service
+- An API "access code," "access token," and "refresh token" (all of which only allows us to verify with the ID provider that you are authorized to represent that identity, and that only--we don't request any other actionable permissions from either service)
 
 ### Game Information
 
