@@ -65,6 +65,7 @@ var zoom = remote.getGlobal('zoom');
 var showChessTimers = remote.getGlobal('showChessTimers');
 var hideDelay = remote.getGlobal('hideDelay');
 var invertHideMode = remote.getGlobal('invertHideMode');
+var rollupMode = remote.getGlobal('rollupMode');
 var showGameTimer = remote.getGlobal('showGameTimer');
 var zoom = remote.getGlobal('zoom');
 var timerRunning = false;
@@ -162,6 +163,7 @@ var appData = {
     showChessTimers: showChessTimers,
     hideDelay: hideDelay,
     invertHideMode: invertHideMode,
+    rollupMode: rollupMode,
 }
 
 var parseVersionString = (versionStr) => {
@@ -532,10 +534,39 @@ var updateOpacity = function() {
         document.getElementById("container").style.opacity = "0.1";
     } else {
         document.getElementById("container").style.opacity = "1";
-        if (hideTimeoutId) {
-            clearTimeout(hideTimeoutId)
-            hideTimeoutId = null;
-        }
+        resetTimeout();
+    }
+}
+
+var updateRollup = function() {
+    if (all_hidden) {
+      $('#container').animate({height: "0px"}, 200, function() {
+        document.getElementById("container").style.visibility = "hidden";
+      });
+    } else {
+      var container = document.getElementById("container");
+      if(container.style.visibility == "visible") {
+        return;
+      }
+      container.style.height = "0px";
+      container.style.visibility = "visible";
+      $('#container').animate({height: container.scrollHeight}, 200);
+      resetTimeout();
+    }
+}
+
+var resetTimeout = function () {
+    if (hideTimeoutId) {
+      clearTimeout(hideTimeoutId)
+      hideTimeoutId = null;
+    }
+}
+
+var updateVisibility = function () {
+    if(appData.rollupMode) {
+      updateRollup();
+    } else {
+      updateOpacity();
     }
 }
 
@@ -545,7 +576,7 @@ var toggleOpacity = function(hide) {
     } else {
       all_hidden = hide;
     }
-    updateOpacity();
+    updateVisibility();
     if (hideTimeoutId) {
         clearTimeout(hideTimeoutId)
         hideTimeoutId = null;
@@ -553,7 +584,7 @@ var toggleOpacity = function(hide) {
     if (appData.hideDelay < 100) {
       hideTimeoutId = setTimeout(function() {
           all_hidden = appData.invertHideMode;
-          updateOpacity()
+          updateVisibility()
       }, 1000 * appData.hideDelay)
     }
 }
@@ -1051,6 +1082,9 @@ ipcRenderer.on('settingsChanged', () => {
 
   invertHideMode = remote.getGlobal('invertHideMode');
   appData.invertHideMode = invertHideMode
+
+  rollupMode = remote.getGlobal('rollupMode');
+  appData.rollupMode = rollupMode
 
   winLossCounter = remote.getGlobal('winLossCounter');
   appData.winCounter = winLossCounter.win

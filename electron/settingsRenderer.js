@@ -42,6 +42,7 @@ var settingsData = {
   showChessTimers: remote.getGlobal('showChessTimers'),
   hideDelay: remote.getGlobal('hideDelay'),
   invertHideMode: remote.getGlobal('invertHideMode'),
+  rollupMode: remote.getGlobal('rollupMode'),
   runFromSource: remote.getGlobal('runFromSource'),
   sortMethodSelected: remote.getGlobal('sortMethod'),
   useFlat: remote.getGlobal('useFlat'),
