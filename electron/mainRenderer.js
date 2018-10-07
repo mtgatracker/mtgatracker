@@ -559,9 +559,13 @@ var updateRollup = function() {
               trackerBody.style.visibility = "hidden";
               isRolledup = true;
               hideBackButton();
+              $('#tracker-body').css({display: "none"});
+              // container.style.height = trackerHeaders.scrollHeight + "px";
+              // resizeWindow();
             }
           }
-        );
+        ); 
+        
         $('#container').animate({height: trackerHeaders.scrollHeight + "px"}, 
           {duration: 200, queue: false});
       }
@@ -569,21 +573,29 @@ var updateRollup = function() {
       if(isRolledup) {
         trackerBody.style.height = "0px";
         trackerBody.style.visibility = "visible";
+        $('#tracker-body').css({display: "inherit"});
         $('#tracker-body').animate({height: trackerBody.scrollHeight}, 
           {duration: 200, queue: false, complete:
             function() {
               trackerBody.style.visibility = "visible";
               isRolledup = false;
               hideBackButton();
+              resizeWindow();
+              // container.style.height = "auto";
             }
           }
         );
         var currentHeight = container.height;
-        container.style.height = "unset";
+        // container.style.height = "unset";
+        resizeWindow();
         var targetHeight = container.style.height;
         container.style.height = currentHeight;
         $('#container').animate({height: targetHeight + "px"}, 
-          {duration: 200, queue: false});
+          {duration: 200, queue: false, complete: 
+            function() {
+              // container.style.height = "auto";
+              // resizeWindow();
+            }});
       }
       resetTimeout();
     }
@@ -635,6 +647,7 @@ ws.addEventListener('open', () => {
 });
 
 function resizeWindow() {
+    console.log("in resizeWindow");
     let total = 0;
     $.each($(".card"), function(i, c) {
         total += c.offsetHeight;
@@ -644,7 +657,11 @@ function resizeWindow() {
 
     let totalHeight = 10;
 
-    $("#container").children().each(function(c, e) {
+    $("#tracker-header").children().each(function(c, e) {
+        if(e.style.display != "none")
+            totalHeight += $(e).outerHeight(true);
+    });
+    $("#tracker-body").children().each(function(c, e) {
         if(e.style.display != "none")
             totalHeight += $(e).outerHeight(true);
     });
