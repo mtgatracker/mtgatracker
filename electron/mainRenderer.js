@@ -528,6 +528,7 @@ rivets.bind(document.getElementById('container'), appData)
 
 let all_hidden = false;
 var hideTimeoutId;
+let isRolledup = false;
 
 var updateOpacity = function() {
     if (all_hidden) {
@@ -538,22 +539,45 @@ var updateOpacity = function() {
     }
 }
 
+var hideBackButton = function() {
+  if(isRolledup) {
+    $(".back-link").addClass("rollup-modifier");
+  } else {
+    $(".back-link").removeClass("rollup-modifier");
+  }
+}
+
 var updateRollup = function() {
+    var container = document.getElementById("container");
     if (all_hidden) {
-      $('#container').animate({height: "0px"}, 200, function() {
-        document.getElementById("container").style.visibility = "hidden";
-      });
-    } else {
-      var container = document.getElementById("container");
-      if(container.style.visibility == "visible") {
-        return;
+      if(!isRolledup) {
+        $('#container').animate({height: "0px"}, 
+          {duration: 200, queue: false, complete: 
+            function() {
+              container.style.visibility = "hidden";
+              isRolledup = true;
+              hideBackButton();
+            }
+          });
       }
-      container.style.height = "0px";
-      container.style.visibility = "visible";
-      $('#container').animate({height: container.scrollHeight}, 200);
+    } else {
+      if(isRolledup) {
+        container.style.height = "0px";
+        container.style.visibility = "visible";
+        $('#container').animate({height: container.scrollHeight}, 
+          {duration: 200, queue: false, complete:
+            function() {
+              container.style.visibility = "visible";
+              isRolledup = false; // causes click eye issue
+              hideBackButton();
+            }
+          });
+      }
       resetTimeout();
     }
 }
+
+
 
 var resetTimeout = function () {
     if (hideTimeoutId) {
