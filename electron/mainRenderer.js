@@ -560,8 +560,6 @@ var updateRollup = function() {
               isRolledup = true;
               hideBackButton();
               $('#tracker-body').css({display: "none"});
-              // container.style.height = trackerHeaders.scrollHeight + "px";
-              // resizeWindow();
             }
           }
         ); 
@@ -581,21 +579,15 @@ var updateRollup = function() {
               isRolledup = false;
               hideBackButton();
               resizeWindow();
-              // container.style.height = "auto";
             }
           }
         );
         var currentHeight = container.height;
-        // container.style.height = "unset";
         resizeWindow();
         var targetHeight = container.style.height;
         container.style.height = currentHeight;
         $('#container').animate({height: targetHeight + "px"}, 
-          {duration: 200, queue: false, complete: 
-            function() {
-              // container.style.height = "auto";
-              // resizeWindow();
-            }});
+          {duration: 200, queue: false});
       }
       resetTimeout();
     }
@@ -647,7 +639,6 @@ ws.addEventListener('open', () => {
 });
 
 function resizeWindow() {
-    console.log("in resizeWindow");
     let total = 0;
     $.each($(".card"), function(i, c) {
         total += c.offsetHeight;
