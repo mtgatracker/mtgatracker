@@ -548,30 +548,42 @@ var hideBackButton = function() {
 }
 
 var updateRollup = function() {
+    var trackerBody = document.getElementById("tracker-body");
+    var trackerHeaders = document.getElementById("tracker-header");
     var container = document.getElementById("container");
     if (all_hidden) {
       if(!isRolledup) {
-        $('#container').animate({height: "0px"}, 
+        $('#tracker-body').animate({height: "0px"}, 
           {duration: 200, queue: false, complete: 
             function() {
-              container.style.visibility = "hidden";
+              trackerBody.style.visibility = "hidden";
               isRolledup = true;
               hideBackButton();
             }
-          });
+          }
+        );
+        $('#container').animate({height: trackerHeaders.scrollHeight + "px"}, 
+          {duration: 200, queue: false});
       }
     } else {
       if(isRolledup) {
-        container.style.height = "0px";
-        container.style.visibility = "visible";
-        $('#container').animate({height: container.scrollHeight}, 
+        trackerBody.style.height = "0px";
+        trackerBody.style.visibility = "visible";
+        $('#tracker-body').animate({height: trackerBody.scrollHeight}, 
           {duration: 200, queue: false, complete:
             function() {
-              container.style.visibility = "visible";
-              isRolledup = false; // causes click eye issue
+              trackerBody.style.visibility = "visible";
+              isRolledup = false;
               hideBackButton();
             }
-          });
+          }
+        );
+        var currentHeight = container.height;
+        container.style.height = "unset";
+        var targetHeight = container.style.height;
+        container.style.height = currentHeight;
+        $('#container').animate({height: targetHeight + "px"}, 
+          {duration: 200, queue: false});
       }
       resetTimeout();
     }
