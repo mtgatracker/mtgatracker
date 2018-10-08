@@ -541,9 +541,9 @@ var updateOpacity = function() {
 
 var hideBackButton = function() {
   if(isRolledup) {
-    $(".back-link").addClass("rollup-modifier");
+    $(".hide-on-rollup").addClass("rollup-modifier");
   } else {
-    $(".back-link").removeClass("rollup-modifier");
+    $(".hide-on-rollup").removeClass("rollup-modifier");
   }
 }
 
@@ -560,6 +560,7 @@ var updateRollup = function() {
               isRolledup = true;
               hideBackButton();
               $('#tracker-body').css({display: "none"});
+              resizeWindow();
             }
           }
         ); 
@@ -649,11 +650,11 @@ function resizeWindow() {
     let totalHeight = 10;
 
     $("#tracker-header").children().each(function(c, e) {
-        if(e.style.display != "none")
+        if(e.style.display != "none" && !e.classList.contains("no-height-contribution"))
             totalHeight += $(e).outerHeight(true);
     });
     $("#tracker-body").children().each(function(c, e) {
-        if(e.style.display != "none")
+        if(e.style.display != "none" && !e.classList.contains("no-height-contribution"))
             totalHeight += $(e).outerHeight(true);
     });
     bounds = browserWindow.getBounds()

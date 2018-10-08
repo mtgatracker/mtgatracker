@@ -9,13 +9,6 @@
   <!-- TODO: https://github.com/magarena/magarena/tree/master/resources/cardbuilder/fonts -->
   </head>
   <body>
-    <div id="floating-eye">
-      <img class="settings-img" src="hide-512.png" width="30px" height="30px">
-    </div>
-
-    <div id="floating-settings">
-      <img class="settings-img" src="gear.png" width="25px" height="25px">
-    </div>
     <div id="container">
       <div id="tracker-header">
         <h1 class="game-deck-title gamecomplete" rv-show="showDraftStats">Draft Picks</h1>
@@ -23,6 +16,12 @@
           <h1 class="game-deck-title" rv-show="game_in_progress">{ deck_name }</h1>
           <h3 class="beleren link back-link back-draft" onclick="exitDraft()" rv-show="showDraftStats">Exit collection view</h3>
         <h3 class="zoom-panel"><span class="zoom-out zoom">-</span> / <span class="zoom-in zoom">+</span></h3>
+        <div id="floating-eye" class="no-height-contribution">
+          <img class="settings-img" src="hide-512.png" width="30px" height="30px">
+        </div>
+        <div id="floating-settings" class="no-height-contribution">
+          <img class="settings-img" src="gear.png" width="25px" height="25px">
+        </div>
       </div>
       <div id="tracker-body">
         <!-- START Game View -->
@@ -40,7 +39,7 @@
               <span class="update-message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
             </p>
           </div>
-          <h3 class="beleren link back-link" onclick="unpopulateDecklist()" rv-show="game_complete">Back to decklists</h3>
+          <h3 class="beleren link back-link hide-on-rollup" onclick="unpopulateDecklist()" rv-show="game_complete">Back to decklists</h3>
           <h3 class="cardsleft">{ total_cards_in_deck } cards in deck</h3>
           <div class="card" rv-each-stat="draw_stats | drawStatsMergeDuplicates | drawStatsSort" rv-card_color="stat.colors">
             <div class="card-text">
