@@ -541,9 +541,9 @@ var updateOpacity = function() {
 
 var hideBackButton = function() {
   if(isRolledup) {
-    $(".back-link").addClass("rollup-modifier");
+    $(".hide-on-rollup").addClass("rollup-modifier");
   } else {
-    $(".back-link").removeClass("rollup-modifier");
+    $(".hide-on-rollup").removeClass("rollup-modifier");
   }
 }
 
@@ -560,6 +560,7 @@ var updateRollup = function() {
               isRolledup = true;
               hideBackButton();
               $('#tracker-body').css({display: "none"});
+              resizeWindow();
             }
           }
         ); 
@@ -649,11 +650,11 @@ function resizeWindow() {
     let totalHeight = 10;
 
     $("#tracker-header").children().each(function(c, e) {
-        if(e.style.display != "none")
+        if(e.style.display != "none" && !e.classList.contains("no-height-contribution"))
             totalHeight += $(e).outerHeight(true);
     });
     $("#tracker-body").children().each(function(c, e) {
-        if(e.style.display != "none")
+        if(e.style.display != "none" && !e.classList.contains("no-height-contribution"))
             totalHeight += $(e).outerHeight(true);
     });
     bounds = browserWindow.getBounds()
@@ -747,7 +748,7 @@ function passThrough(endpoint, passData, playerKey, errors) {
         passData.hero = playerKey;
         if (!remote.getGlobal("incognito")) {  // we're only allowed to use passThrough data if not incognito
           setTimeout(() => {
-            console.log(`posting ${endpoint} request... with token ${token}`)
+            console.log(`posting ${endpoint} request...`)
             request.post({
               url: `${API_URL}/${endpoint}`,
               json: true,
@@ -770,6 +771,22 @@ function passThrough(endpoint, passData, playerKey, errors) {
       })
     }, 3000)  // wait a second to let the game result be saved before trying to modify it's rank
   })
+}
+
+function cleanError(error) {
+  if (error && typeof error === 'object') {
+    for (let key in error) {
+      if (key == "token") {
+        delete error[key]
+      } else {
+        cleanError(error[key])
+      }
+    }
+  }
+}
+
+function cleanErrors(errors) {
+  errors.forEach(cleanError)
 }
 
 function uploadGame(attempt, gameData, errors) {
@@ -796,6 +813,7 @@ function uploadGame(attempt, gameData, errors) {
         resizeWindow()
       }
       let filePath = runFromSource ? "uploadfailure.log" : "../uploadfailure.log";
+      cleanErrors(errors)
       fs.writeFile(filePath, JSON.stringify({fatal: "too_many_attempts", errors: errors}))
       reject({fatal: "too_many_attempts", errors: errors})
     } else {
@@ -956,38 +974,38 @@ let onMessage = (data) => {
             console.log("error uploading rank data: ")
             console.log(e)
           })
-        } else if (data.inventory_update) {
-          passThrough("tracker-api/inventory-update", data.inventory_update, data.player_key).catch(e => {
-          // TODO: check for wildcard redemptions? or should we do that in the API?
-            console.log("error uploading inventory-update data: ")
-            console.log(e)
-          })
-        } else if (data.inventory) {
-          if (data.inventory.vaultProgress) {
-            appData.lastVaultProgress = data.inventory.vaultProgress;
-
-            ipcRenderer.send('settingsChanged', {
-              key: "lastVaultProgress",
-              value: appData.lastVaultProgress
-            })
-          }
-          passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
-            console.log("error uploading inventory data: ")
-            console.log(e)
-          })
-        } else if (data.collection) {
-          if (data.collection) {
-            appData.lastCollection = data.collection
-            ipcRenderer.send('settingsChanged', {
-              key: "lastCollection",
-              value: appData.lastCollection
-            })
-
-            passThrough("tracker-api/collection", data.collection, data.player_key).catch(e => {
-              console.log("error uploading collections data: ")
-              console.log(e)
-            })
-          }
+//        } else if (data.inventory_update) {
+//          passThrough("tracker-api/inventory-update", data.inventory_update, data.player_key).catch(e => {
+//          // TODO: check for wildcard redemptions? or should we do that in the API?
+//            console.log("error uploading inventory-update data: ")
+//            console.log(e)
+//          })
+//        } else if (data.inventory) {
+//          if (data.inventory.vaultProgress) {
+//            appData.lastVaultProgress = data.inventory.vaultProgress;
+//
+//            ipcRenderer.send('settingsChanged', {
+//              key: "lastVaultProgress",
+//              value: appData.lastVaultProgress
+//            })
+//          }
+//          passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
+//            console.log("error uploading inventory data: ")
+//            console.log(e)
+//          })
+//        } else if (data.collection) {
+//          if (data.collection) {
+//            appData.lastCollection = data.collection
+//            ipcRenderer.send('settingsChanged', {
+//              key: "lastCollection",
+//              value: appData.lastCollection
+//            })
+//
+//            passThrough("tracker-api/collection", data.collection, data.player_key).catch(e => {
+//              console.log("error uploading collections data: ")
+//              console.log(e)
+//            })
+//          }
         } else if (data.draftPick) {
           passThrough("tracker-api/draft-pick", data.draftPick, data.player_key).catch(e => {
             console.log("error uploading draftPick data: ")

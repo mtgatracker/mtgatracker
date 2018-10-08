@@ -25,7 +25,7 @@ let checksum = (str, algorithm, encoding) => {
         .digest(encoding || 'hex')
 }
 
-const API_URL = "https://gx3.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-p3/mtgatracker-prod-EhDvLyq7PNb";
+const API_URL = "https://gxt.mtgatracker.com/str-85b6a06b2d213fac515a8ba7b582387a-pt/mtgatracker-prod-EhDvLyq7PNb";
 
 // check if we have saved a UUID for this tracker. If not, generate one
 keytar.getPassword("mtgatracker", "tracker-id").then(savedTrackerID => {
@@ -245,7 +245,7 @@ let showGameTimer = settings.get('showGameTimer', true);
 let showChessTimers = settings.get('showChessTimers', true);
 let hideDelay = settings.get('hideDelay', 10);
 let invertHideMode = settings.get('invertHideMode', false);
-let rollupMode = settings.get('rollupMode', false);
+let rollupMode = settings.get('rollupMode', true);
 let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
 let showVaultProgress = settings.get('showVaultProgress', true);

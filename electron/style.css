@@ -459,6 +459,11 @@ p {
     float: right;
 }
 
+.back-draft {
+  max-width: 230px;
+  z-index: 50;
+}
+
 /* The following classes should be set to no-drag or they won't be clickable */
 .zoom,
 .dismiss-message,
