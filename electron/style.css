@@ -410,7 +410,7 @@ p {
     cursor: pointer;
 }
 
-#floating-eye:hover {
+.glow-on-hover:hover {
     background-color: rgba(50, 180, 210, 0.4);
 }
 
