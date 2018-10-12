@@ -974,38 +974,38 @@ let onMessage = (data) => {
             console.log("error uploading rank data: ")
             console.log(e)
           })
-//        } else if (data.inventory_update) {
+        } else if (data.inventory_update) {
 //          passThrough("tracker-api/inventory-update", data.inventory_update, data.player_key).catch(e => {
 //          // TODO: check for wildcard redemptions? or should we do that in the API?
 //            console.log("error uploading inventory-update data: ")
 //            console.log(e)
 //          })
-//        } else if (data.inventory) {
-//          if (data.inventory.vaultProgress) {
-//            appData.lastVaultProgress = data.inventory.vaultProgress;
-//
-//            ipcRenderer.send('settingsChanged', {
-//              key: "lastVaultProgress",
-//              value: appData.lastVaultProgress
-//            })
-//          }
+        } else if (data.inventory) {
+          if (data.inventory.vaultProgress) {
+            appData.lastVaultProgress = data.inventory.vaultProgress;
+
+            ipcRenderer.send('settingsChanged', {
+              key: "lastVaultProgress",
+              value: appData.lastVaultProgress
+            })
+          }
 //          passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
 //            console.log("error uploading inventory data: ")
 //            console.log(e)
 //          })
-//        } else if (data.collection) {
-//          if (data.collection) {
-//            appData.lastCollection = data.collection
-//            ipcRenderer.send('settingsChanged', {
-//              key: "lastCollection",
-//              value: appData.lastCollection
-//            })
-//
+        } else if (data.collection) {
+          if (data.collection) {
+            appData.lastCollection = data.collection
+            ipcRenderer.send('settingsChanged', {
+              key: "lastCollection",
+              value: appData.lastCollection
+            })
+
 //            passThrough("tracker-api/collection", data.collection, data.player_key).catch(e => {
 //              console.log("error uploading collections data: ")
 //              console.log(e)
 //            })
-//          }
+          }
         } else if (data.draftPick) {
           passThrough("tracker-api/draft-pick", data.draftPick, data.player_key).catch(e => {
             console.log("error uploading draftPick data: ")
