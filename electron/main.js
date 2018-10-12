@@ -83,7 +83,7 @@ if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..'
         global.checkInProgress = false
       })
     }
-  }, 10000)
+  }, 30000)
 }
 
 const findProcess = require('find-process');
