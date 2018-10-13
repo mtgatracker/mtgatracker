@@ -71,7 +71,7 @@ request(requestOptions, (err, res, body) => {
     outputDirectory: '../MTGATracker-win32-x64_$version-SQUIRREL',
     authors: 'MTGATracker',
     exe: 'MTGATracker.exe',
-    loadingGif: '../updating.gif',
+    loadingGif: '../logo_animated.gif',
     remoteReleases: remoteReleasesURL,
   });
 
