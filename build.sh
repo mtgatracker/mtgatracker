@@ -63,7 +63,8 @@ let releasesUrl = "https://api.github.com/repos/mtgatracker/mtgatracker-updates/
 let requestOptions = {
   url: releasesUrl,
   headers: {
-    'User-Agent': 'mtgatracker-build-script'
+    'User-Agent': 'mtgatracker-build-script',
+    'Authorization': 'token $GITHUB_RELEASE_TOKEN'
   }
 }
 
