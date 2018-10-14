@@ -3,15 +3,21 @@
 start=$(date +%s)
 start_raw=$(date)
 
+version=$1
 if (( "$#" != 1 ))
 then
-    echo "Must provide version string to use (e.g. 0.1.0-alpha)"
-exit 1
+    appveyor_version=$(echo $APPVEYOR_REPO_BRANCH | cut -f2 -d "/")
+    if [[ "$appveyor_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "valid version / branch: $appveyor_version"
+    else
+        echo "invalid version: $appveyor_version using 9.9.9 instead"
+        appveyor_version="9.9.9"
+    fi
+    version=$appveyor_version
 fi
 
 echo "Build start: $start_raw"
 
-version=$1
 cleanVer=$(echo $version | cut -f1 -d "-")
 
 # to update wt secret: `openssl rand -hex 5 > webtask/on_demand/secret-name`
@@ -84,6 +90,7 @@ EOM
 sleep 1
 
 DEBUG=electron-windows-installer:main node testbuild.js
+sleep 1
 
 mv MTGATracker-win32-x64_$version-SQUIRREL/Setup.exe MTGATracker-win32-x64_$version-SQUIRREL/setup_mtgatracker_$version.exe
 
