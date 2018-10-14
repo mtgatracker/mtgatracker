@@ -203,6 +203,10 @@ const PY_MODULE = 'mtgatracker_backend' // without .py suffix
 let pyProc = null
 let pyPort = null
 
+let appDataRoaming = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + 'Library/Preferences' : '/var/local')
+let logPath = path.join(appDataRoaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA", "output_log.txt");
+
+
 let getBooleanArg = (short, long) => {
   let shortIdx = process.argv.indexOf(short)
   let longIdx = process.argv.indexOf(long)
@@ -216,12 +220,6 @@ let fullFileCmdOpt = getBooleanArg('-f', '--full_file')
 
 if (debugCmdOpt) {
   settings.set('debug', true)
-}
-
-let debugFile = false;
-if (debugFileCmdOpt) {
-    debugFile = true;
-    console.log("Using debug file")
 }
 
 if (frameCmdOpt) {
@@ -256,7 +254,14 @@ let sortMethod = settings.get('sortMethod', 'draw');
 let useFlat = settings.get('useFlat', true);
 let useMinimal = settings.get('useMinimal', true);
 let zoom = settings.get('zoom', 0.8);
+logPath = settings.get("logPath", logPath)
 
+let debugFile = false;
+if (debugFileCmdOpt) {
+    debugFile = true;
+    logPath = debugFileCmdOpt;
+    console.log("Using debug file")
+}
 
 let kill_server = true;
 let noFollow = false;
@@ -386,25 +391,17 @@ const getPyBinPath = () => {
   }
 }
 
-const getLogFilePath = () => {
-    // TODO: make this cmd-line configurable
-    return path.join(__dirname, "..", "app", "example_logs", "kld", "output_log.txt")
-}
-
 const selectPort = () => {
   pyPort = 8089
   return pyPort
 }
 
 port = selectPort()
-logPath = getLogFilePath()
 
 const generateArgs = () => {
     var args = ["-p", port]
-    if (debugFile) {
-        args.push("-i")
-        args.push(logPath)
-    }
+    args.push("-i")
+    args.push(logPath)
     if (noFollow) {
         args.push('-nf')
     }
@@ -509,6 +506,7 @@ global.sortMethod = sortMethod
 global.useFlat = useFlat
 global.useMinimal = useMinimal
 global.zoom = zoom
+global.logPath = logPath
 
 /*************************************************************
  * window management
