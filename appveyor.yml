@@ -1,0 +1,38 @@
+platform:
+  - x64
+
+cache:
+  - node_modules
+  - '%APPDATA%\npm-cache'
+  - '%USERPROFILE%\.electron'
+
+# thank you! https://github.com/chef-cookbooks/powershell/pull/113/files
+init:
+  - git config --global core.autocrlf true
+
+install:
+  - ps: Install-Product node 8 x64
+  - virtualenv venv -p C:\Python36\Python.exe
+  - venv/Scripts/activate
+  - where python
+  - python --version
+  - where pip
+  - pip install -r requirements.txt
+  - pip install -r requirements-tests.txt
+  - cd electron
+  - npm install
+  - npm audit fix
+
+build_script:
+  - cd ..
+  - sh build.sh
+
+test: off
+
+artifacts:
+  - path: 'MTGATracker-win32-x64_*-SQUIRREL/*.nupkg'
+  - path: 'MTGATracker-win32-x64_*-SQUIRREL/*.exe'
+
+#environment:
+#  GH_TOKEN:
+#     secure: H2b1mq+K/miUzkxP1jtaiNwonVsUPMDxqtQknijwNFCmIFjz0DFF7ktgXZ8nzA81
