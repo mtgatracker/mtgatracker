@@ -20,6 +20,7 @@ install:
   - pip install -r requirements.txt
   - pip install -r requirements-tests.txt
   - cd electron
+  - npm config set python python2.7
   - npm install
   - npm audit fix
 
@@ -35,4 +36,4 @@ artifacts:
 
 #environment:
 #  GH_TOKEN:
-#     secure: H2b1mq+K/miUzkxP1jtaiNwonVsUPMDxqtQknijwNFCmIFjz0DFF7ktgXZ8nzA81
+#     secure: <use appveyor to secure this, tbh not sure how though>
