@@ -54,6 +54,10 @@ yes | ./electron/node_modules/.bin/electron-packager electron/ MTGATracker \
 mv MTGATracker-win32-x64 MTGATracker-win32-x64_$version
 
 cd electron
+
+echo "$APPVEYOR_REPO_COMMIT" > version_commit.txt
+echo "$APPVEYOR_BUILD_NUMBER" > version_build.txt
+
 cat > testbuild.js <<- EOM
 const request = require("request")
 console.log("enter winstaller")

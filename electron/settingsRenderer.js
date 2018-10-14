@@ -21,6 +21,9 @@ tt({
 
 var settingsData = {
   version: remote.getGlobal("version"),
+  commit: "",
+  build: "",
+  version: remote.getGlobal("version"),
   mtgaOverlayOnly: remote.getGlobal("mtgaOverlayOnly"),
   settingsPaneIndex: "about",
   debug: remote.getGlobal('debug'),
@@ -60,6 +63,14 @@ var settingsData = {
   ],
 }
 
+fs.readFile("version_commit.txt", "utf8", (err, data) => {
+  settingsData.commit = data;
+})
+
+fs.readFile("version_build.txt", "utf8", (err, data) => {
+  settingsData.build = data;
+})
+
 const { Menu, MenuItem } = remote
 const menu = new Menu()
 const menuItem = new MenuItem({
@@ -97,6 +108,18 @@ rivets.formatters.and = function(comparee, comparator) {
 rivets.formatters.andnot = function(comparee, comparator) {
     return comparee && !comparator;
 };
+
+rivets.formatters.short = function(val) {
+  return val.substring(0, 6)
+}
+
+rivets.binders.ghlink = (el, val) => {
+   el.href = `https://github.com/mtgatracker/mtgatracker/commit/${val}`
+}
+
+rivets.binders.appveyorlink = (el, val) => {
+   el.href = `https://ci.appveyor.com/project/shawkinsl/mtgatracker/builds/${val}`
+}
 
 rivets.binders.settingspaneactive = (el, val) => {
   console.log("active")
