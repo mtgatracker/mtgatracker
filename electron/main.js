@@ -382,21 +382,22 @@ const getPyBinPath = () => {
     venv_path_x = path.join(__dirname, "..", "venv", "Scripts", "python")
     fallback_path = "python"
     if (fs.existsSync(venv_path_win)) {
-        return venv_path_win + " -u"
+        return venv_path_win
     } else if (fs.existsSync(venv_path_x)) {
-        return venv_path_x + " -u"
+        return venv_path_x
     } else {
-        return fallback_path + " -u" // ? shrug
+        return fallback_path // ? shrug
     }
   }
 }
 
 const selectPort = () => {
-  pyPort = 8089
+  pyPort = 5678
   return pyPort
 }
 
 port = selectPort()
+global.port = port;
 
 const generateArgs = () => {
     var args = ["-p", port]
@@ -443,11 +444,16 @@ const cleanupPyProc = (cb)  => {
 
 const createPyProc = () => {
   let script = getScriptPath()
+  let pbPath = getPyBinPath()
 
+  let args = generateArgs()
   if (guessPackaged()) {
-    pyProc = require('child_process').spawn(script, generateArgs())
+    mainWindow.webContents.send('stdout', {text: `calling: spawn(${script}, ${args}}`})
+    pyProc = require('child_process').spawn(script, args)
   } else {
-    pyProc = require('child_process').spawn(getPyBinPath(), [script].concat(generateArgs()), {shell: true})
+    let pbArgs = ['-u', script].concat(args)  // -u for unbuffered python
+    mainWindow.webContents.send('stdout', {text: `calling: spawn(${pbPath}, ${pbArgs})`})
+    pyProc = require('child_process').spawn(pbPath, pbArgs)
   }
 
   if (pyProc != null) {

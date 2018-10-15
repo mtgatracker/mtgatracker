@@ -1,5 +1,5 @@
 # -*- mode: python -*-
-
+options = [('u', None, 'OPTION')]
 block_cipher = None
 
 
@@ -18,6 +18,7 @@ pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
           a.scripts,
+          options,
           exclude_binaries=True,
           name='mtgatracker_backend',
           debug=False,
