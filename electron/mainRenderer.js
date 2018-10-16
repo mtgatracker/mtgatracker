@@ -994,7 +994,34 @@ let onMessage = (data) => {
 //            console.log(e)
 //          })
         } else if (data.collection) {
+          // console.log("data=----------------------:");
+          // console.log(data);
+          var cardQuantity;
           if (data.collection) {
+            var objectToPush = {time:data.now, cardsObtained:{}};
+            for(var cardID in data.collection) {
+                if(data.collection.hasOwnProperty(cardID)) {
+                    if(/^\d+$/.test(cardID)) {
+                      cardQuantity = data.collection[cardID] - appData.lastCollection[cardID];
+                      if(!cardQuantity) {
+                        cardQuantity = data.collection[cardID];
+                      }
+                      if(cardQuantity > 0) { 
+                        objectToPush.cardsObtained[cardID] = cardQuantity;
+                      }
+                    }
+                }
+            }
+            if(Object.keys(obj).length > 0) {
+              .push(objectToPush);
+            }
+            console.log("objectToPush from mainRenderer -------------");
+            console.log(objectToPush);
+            // console.log("in data.collection if block mainRenderer.j");
+            console.log("LASTCOLLECTION: "); // temp1
+            console.log(appData.lastCollection);
+            console.log("NEW COLLECTION: "); // temp2
+            console.log(data.collection);
             appData.lastCollection = data.collection
             ipcRenderer.send('settingsChanged', {
               key: "lastCollection",
