@@ -4,6 +4,7 @@
     "description": "Application to track MTGA decks in-game",
     "main": "main.js",
     "scripts": {
+        "prestart": "xcopy \"..\\legal\" \".\\legal\" /i /y",
         "start": "electron .",
         "postinstall": "./node_modules/.bin/electron-rebuild -m . -w keytar,active-win -p -f"
     },
