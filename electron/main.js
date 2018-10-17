@@ -254,6 +254,8 @@ let sortMethod = settings.get('sortMethod', 'draw');
 let useFlat = settings.get('useFlat', true);
 let useMinimal = settings.get('useMinimal', true);
 let zoom = settings.get('zoom', 0.8);
+let recentCards = settings.get('recentCards', []);
+let recentCardsQuantityToShow = settings.get('recentCardsQuantityToShow', 10);
 logPath = settings.get("logPath", logPath)
 
 let debugFile = false;
@@ -401,7 +403,7 @@ port = selectPort()
 const generateArgs = () => {
     var args = ["-p", port]
     args.push("-i")
-    args.push(logPath)
+    args.push(`"${logPath}"`)
     if (noFollow) {
         args.push('-nf')
     }
@@ -506,6 +508,8 @@ global.sortMethod = sortMethod
 global.useFlat = useFlat
 global.useMinimal = useMinimal
 global.zoom = zoom
+global.recentCards = recentCards
+global.recentCardsQuantityToShow = recentCardsQuantityToShow
 global.logPath = logPath
 
 /*************************************************************
