@@ -21,6 +21,10 @@ tt({
 
 var settingsData = {
   version: remote.getGlobal("version"),
+  commit: "",
+  build: "",
+  logPath: remote.getGlobal("logPath"),
+  version: remote.getGlobal("version"),
   mtgaOverlayOnly: remote.getGlobal("mtgaOverlayOnly"),
   settingsPaneIndex: "about",
   debug: remote.getGlobal('debug'),
@@ -60,7 +64,23 @@ var settingsData = {
   ],
 }
 
-const { Menu, MenuItem } = remote
+let commitFile = "version_commit.txt"
+let buildFile = "version_build.txt"
+
+if (!settingsData.runFromSource) {
+  commitFile = path.join(remote.app.getAppPath(), commitFile)
+  buildFile = path.join(remote.app.getAppPath(), buildFile)
+}
+
+fs.readFile(commitFile, "utf8", (err, data) => {
+  settingsData.commit = data;
+})
+
+fs.readFile(buildFile, "utf8", (err, data) => {
+  settingsData.build = data;
+})
+
+const { Menu, MenuItem, dialog } = remote
 const menu = new Menu()
 const menuItem = new MenuItem({
   label: 'Inspect Element',
@@ -98,6 +118,20 @@ rivets.formatters.andnot = function(comparee, comparator) {
     return comparee && !comparator;
 };
 
+rivets.formatters.short = function(val) {
+  if (val) {
+    return val.substring(0, 6)
+  }
+}
+
+rivets.binders.ghlink = (el, val) => {
+   el.href = `https://github.com/mtgatracker/mtgatracker/commit/${val}`
+}
+
+rivets.binders.appveyorlink = (el, val) => {
+   el.href = `https://ci.appveyor.com/project/shawkinsl/mtgatracker/builds/${val}`
+}
+
 rivets.binders.settingspaneactive = (el, val) => {
   console.log("active")
   el.classList.remove("active")
@@ -133,7 +167,7 @@ rivets.binders.authref = (el, val) => {
 document.addEventListener("DOMContentLoaded", function(event) {
   rivets.bind(document.getElementById('container'), settingsData)
 
-  let themePath = settingsData.runFromSource ? "themes" : "../themes";
+  let themePath = settingsData.runFromSource ? "themes" : path.join("..", "themes");
   fs.readdir(themePath, (err, files) => {
     if(files) {
       files.forEach((val) => {
@@ -147,6 +181,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   $("#showTrackerID").on('click', function(event) {
     this.innerHTML = settingsData.trackerID;
+  })
+  $("#log-select").click(function() {
+    dialog.showOpenDialog({
+      properties: ["openFile"],
+      defaultPath: remote.getGlobal("logPath")
+    }, filePath => {
+      if (filePath) {
+        console.log(`next launch will read from ${filePath}`)
+        settingsData.logPath = filePath
+        ipcRenderer.send('settingsChanged', {key: "logPath", value: filePath[0]})
+        alert("You must restart MTGATracker after changing this setting!")
+      }
+    })
   })
   $("#sorting-method-select").val(settingsData.sortMethodSelected)
   $(document).on('click', 'a[href^="http"]', function(event) {
