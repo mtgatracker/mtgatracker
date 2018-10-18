@@ -4,6 +4,8 @@
     "description": "Application to track MTGA decks in-game",
     "main": "main.js",
     "scripts": {
+        "copylegal": "node ./scripts/copy-legal.js",
+        "prestart": "npm run copylegal",
         "start": "electron .",
         "postinstall": "./node_modules/.bin/electron-rebuild -m . -w keytar,active-win -p -f"
     },
@@ -41,7 +43,8 @@
     },
     "devDependencies": {
         "electron-packager": "^9.1.0",
-        "grunt-electron-installer": "^2.1.0"
+        "grunt-electron-installer": "^2.1.0",
+        "node-fs-extra": "^0.8.2"
     },
     "//": [
         "cryptiles not a requirement, but locked due to https://nvd.nist.gov/vuln/detail/CVE-2018-1000620"
