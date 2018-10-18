@@ -998,11 +998,6 @@ let onMessage = (data) => {
 //            console.log(e)
 //          })
         } else if (data.collection) {
-          // console.log("data=----------------------:");
-          // console.log(data);
-          // 
-          // 
-          // (new Date(Date.now())).toLocaleDateString()
           var cardQuantity;
           if (data.collection) {
             if(appData.lastCollection && (Object.keys(appData.lastCollection).length != 0)) {
@@ -1020,16 +1015,9 @@ let onMessage = (data) => {
                       }
                   }
               }
-              // console.log("LASTCOLLECTION: "); // temp1
-              // console.log(appData.lastCollection);
-              // console.log("NEW COLLECTION: "); // temp2
-              // console.log(data.collection);
 
               if(Object.keys(objectToPush.cardsObtained).length > 0) {
-                // console.log("objectToPush from mainRenderer -------------");
-                // console.log(objectToPush);
                 appData.recentCards.unshift(objectToPush);
-                // console.log("appData.recentCards --------");
                 console.log(appData.recentCards);
                 ipcRenderer.send('settingsChanged', {
                   key: "recentCards",
@@ -1037,7 +1025,6 @@ let onMessage = (data) => {
                 })
               }
             }
-            
 
             appData.lastCollection = data.collection
             ipcRenderer.send('settingsChanged', {
