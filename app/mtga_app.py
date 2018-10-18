@@ -39,7 +39,10 @@ if os.path.exists(log_file):  # check before creating the handler, which creates
     must_rollover = True
 rotating_handler = logging.handlers.RotatingFileHandler(log_file, backupCount=10)
 if must_rollover:
-    rotating_handler.doRollover()
+    try:
+        rotating_handler.doRollover()
+    except PermissionError:
+        print("WARNING: couldn't rotate mtga_watch.log! we're probably not logging anything :(")
 formatter = LogFormatter()
 rotating_handler.setFormatter(formatter)
 stdout_handler.setFormatter(formatter)

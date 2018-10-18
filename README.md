@@ -1,7 +1,7 @@
 # MTGATracker
 
 [![Discord](https://img.shields.io/discord/425145310684250112.svg)](https://discordapp.com/channels/425145310684250112/425145310684250114)
-[![Build Status](https://travis-ci.org/shawkinsl/mtga-tracker.svg?branch=master)](https://travis-ci.org/shawkinsl/mtga-tracker)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/mtgatracker/mtgatracker?svg=true)](https://ci.appveyor.com/project/shawkinsl/mtgatracker)
 [![Github All Releases](https://img.shields.io/github/downloads/shawkinsl/mtga-tracker/total.svg)](https://github.com/shawkinsl/mtga-tracker/releases)
 [![Github All Releases](https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game/games/count?badge=true&fixcache)](https://github.com/shawkinsl/mtga-tracker/releases)
 [![Unique Users](https://wt-bd90f3fae00b1572ed028d0340861e6a-0.run.webtask.io/mtga-tracker-game/users/count?badge=true&fixcache)](https://github.com/shawkinsl/mtga-tracker/releases)
