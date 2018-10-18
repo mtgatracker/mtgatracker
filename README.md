@@ -78,7 +78,7 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
     ```
 1. If all went well, you should now be able to:
     ```bash
-    ./node_modules/.bin/electron .
+    npm start
     ```
     And the decktracker UI should launch!
     

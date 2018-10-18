@@ -18,6 +18,12 @@ const uuidv4 = require('uuid/v4');
 const request = require('request')
 const crypto = require("crypto")
 
+// Check if our instance is the primary instance
+if(app.makeSingleInstance(focusMTGATracker)) {
+  app.quit();
+  return;
+}
+
 let checksum = (str, algorithm, encoding) => {
     return crypto
         .createHash(algorithm || 'md5')
@@ -582,6 +588,15 @@ const openFirstWindow = () => {
     createMainWindow()
   } else {
     openTOSWindow()
+  }
+}
+
+function focusMTGATracker() {
+  if(mainWindow) {
+    if(mainWindow.isMinimized()) {
+      mainWindow.restore();
+    }
+    mainWindow.focus();
   }
 }
 
