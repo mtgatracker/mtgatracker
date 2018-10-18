@@ -403,7 +403,7 @@ port = selectPort()
 const generateArgs = () => {
     var args = ["-p", port]
     args.push("-i")
-    args.push(`"${logPath}"`)
+    args.push(logPath)
     if (noFollow) {
         args.push('-nf')
     }

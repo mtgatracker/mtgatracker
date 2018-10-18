@@ -180,9 +180,9 @@ rivets.binders.recentcardsbinder = (el, cardsObtained) => {
   for(var cardID in cardsObtained) {
     currentCard = mtga.allCards.findCard(cardID)
     if(currentCard) {
-      textNode = document.createTextNode(cardsObtained[cardID] + "x " + currentCard.attributes.prettyName);
+      textNode = document.createTextNode(`${cardsObtained[cardID]}x ${currentCard.attributes.prettyName}`);
     } else {
-      textNode = document.createTextNode(cardsObtained[cardID] + "x " + "card-name-not-found");
+      textNode = document.createTextNode(`${cardsObtained[cardID]}x card-name-not-found (${cardID})`);
     }
     node = document.createElement("li");
     node.style.webkitUserSelect = "auto";
