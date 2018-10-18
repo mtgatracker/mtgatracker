@@ -75,7 +75,8 @@ let requestOptions = {
 }
 
 request(requestOptions, (err, res, body) => {
-
+  console.log(err)
+  console.log(JSON.parse(body))
   let { tag_name } = JSON.parse(body)[0]
   let remoteReleasesURL = \`https://github.com/mtgatracker/mtgatracker-updates/releases/download/\${tag_name}\`
 

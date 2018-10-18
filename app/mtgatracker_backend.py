@@ -1,7 +1,9 @@
 import sys
 import os
+
 path_to_root = os.path.abspath(os.path.join(__file__, "..", ".."))
 sys.path.append(path_to_root)
+
 import threading
 import argparse
 from app import tasks, queues
@@ -23,6 +25,7 @@ arg_parser.add_argument('-m', '--mouse_events', action="store_true", default=Fal
 arg_parser.add_argument('-p', '--port', default=8089, type=int)
 args = arg_parser.parse_args()
 
+print("process started with args: {}".format(args))
 
 async def stats(websocket):
     try:
@@ -122,20 +125,24 @@ def start_mouse_listener():
 
 
 if __name__ == "__main__":
-
-    start_server = websockets.serve(handler, '127.0.0.1', 5678)
+    print("starting websocket server with port {}".format(args.port))
+    start_server = websockets.serve(handler, '127.0.0.1', args.port)
     asyncio.get_event_loop().run_until_complete(start_server)
 
+    print("starting block watch task server")
     block_watch_process = threading.Thread(target=tasks.block_watch_task, args=(queues.block_read_queue, queues.json_blob_queue, ))
     block_watch_process.start()
 
+    print("starting json watch task server")
     json_watch_process = threading.Thread(target=tasks.json_blob_reader_task, args=(queues.json_blob_queue, queues.json_blob_queue, ))
     json_watch_process.start()
     current_block = ""
 
+    print("starting websocket thread")
     websocket_thread = threading.Thread(target=asyncio.get_event_loop().run_forever)
     websocket_thread.start()
 
+    print("starting mouse thread")
     mouse_thread = None
     if args.mouse_events:
         mouse_thread = threading.Thread(target=start_mouse_listener)
@@ -172,6 +179,7 @@ if __name__ == "__main__":
                     break
     count = 0
     if not args.no_follow and all_die_queue.empty():
+        print("starting to tail file: {}".format(args.log_file))
         if args.log_file:
             with open(args.log_file) as log_file:
                 kt = KillableTailer(log_file, queues.all_die_queue)

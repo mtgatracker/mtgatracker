@@ -68,6 +68,7 @@ var invertHideMode = remote.getGlobal('invertHideMode');
 var rollupMode = remote.getGlobal('rollupMode');
 var showGameTimer = remote.getGlobal('showGameTimer');
 var zoom = remote.getGlobal('zoom');
+var port = remote.getGlobal('port');
 var timerRunning = false;
 var uploadDelay = 0;
 
@@ -92,7 +93,7 @@ if (debug) {
   }, false)
 }
 
-var ws = new ReconnectingWebSocket("ws://127.0.0.1:5678/", null, {constructor: WebSocket})
+var ws = new ReconnectingWebSocket(`ws://127.0.0.1:${port}/`, null, {constructor: WebSocket})
 
 var gameLookup = {}
 var lastGameState = null;
