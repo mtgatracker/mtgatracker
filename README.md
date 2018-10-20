@@ -89,14 +89,16 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
 
 **Something with the tracker isn't working for me! What do I do?**
 
-Check out our troubleshooting guide [here]. If nothing in here helps, please send us a message in the #troubleshooting
-channel on Discord with the following template:
+Check out our troubleshooting guide [here](https://github.com/mtgatracker/mtgatracker/wiki/Troubleshooting). If
+nothing in here helps, please send us a message in the #troubleshooting channel on Discord with the following template:
 
 > Help! My tracker is `<short description of issue>`.
 > 
 > Here's a screenshot of my tracker in debug mode:
 >
-> <insert a screenshot of MTGATracker in debug mode>
+> `<insert a screenshot of MTGATracker in debug mode, including the debug output in the console on the right side>`
+>
+> ![Example Screenshot](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/readme_1.png)
 
 **Something with Inspector isn't working for me! What do I do?**
 
@@ -105,9 +107,9 @@ Please message Spencatro#6059 on Discord **privately** with the following templa
 > Help! Inspector is `<short description of issue>`.
 >
 > I signed in to Inspector using `<discord or twitch>`, and my username is `<twitch or discord username>`.
-> My MTGA username is `<your username, case sensitive>`
+> My MTGA username is `<your username, case sensitive>`.
 > The first 8 digits of my trackerID is `<the first 8 digits of your tracker key, located in
-tracker settings under "Inspector">`
+tracker settings under "Inspector">`.
 
 **Why doesn't MTGATracker properly handle sideboarding in Competitive Draft (etc)?**
 
