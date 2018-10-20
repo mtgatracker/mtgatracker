@@ -47,6 +47,8 @@ var settingsData = {
   hideDelay: remote.getGlobal('hideDelay'),
   invertHideMode: remote.getGlobal('invertHideMode'),
   rollupMode: remote.getGlobal('rollupMode'),
+  recentCards: remote.getGlobal('recentCards'),
+  recentCardsQuantityToShow: remote.getGlobal('recentCardsQuantityToShow'),
   runFromSource: remote.getGlobal('runFromSource'),
   sortMethodSelected: remote.getGlobal('sortMethod'),
   useFlat: remote.getGlobal('useFlat'),
@@ -124,6 +126,13 @@ rivets.formatters.short = function(val) {
   }
 }
 
+rivets.formatters.filterBySlideValueRecentCards = function(arr, recentCardsQuantityToShow) {
+  if(recentCardsQuantityToShow >= 100) {
+    return arr;
+  }
+  return arr.slice(0,recentCardsQuantityToShow);
+}
+
 rivets.binders.ghlink = (el, val) => {
    el.href = `https://github.com/mtgatracker/mtgatracker/commit/${val}`
 }
@@ -163,6 +172,37 @@ rivets.binders.datatooltip = (el, val) => {
 rivets.binders.authref = (el, val) => {
   el.href = "https://inspector.mtgatracker.com/trackerAuth?code=" + val
 }
+
+rivets.binders.recentcardsbinder = (el, cardsObtained) => {
+  var node;
+  var textNode;
+  var currentCard
+  for(var cardID in cardsObtained) {
+    currentCard = mtga.allCards.findCard(cardID)
+    if(currentCard) {
+      textNode = document.createTextNode(`${cardsObtained[cardID]}x ${currentCard.attributes.prettyName}`);
+    } else {
+      textNode = document.createTextNode(`${cardsObtained[cardID]}x card-name-not-found (${cardID})`);
+    }
+    node = document.createElement("li");
+    node.style.webkitUserSelect = "auto";
+    node.appendChild(textNode);
+    el.appendChild(node);
+  }
+  if(Object.keys(cardsObtained).length > 0) {
+    document.getElementById("no-recently-obtained-cards").style.display = "none";
+  }
+}
+
+function recentCardsSectionClickHandler(event) {
+  var revealed = $(event.target).siblings(".recent-cards-container").is(":hidden"); 
+  if(revealed) {
+    $(event.target).siblings(".recent-cards-container").slideDown("fast");
+  } else {
+    $(event.target).siblings(".recent-cards-container").slideUp("fast");
+  }
+}
+
 
 document.addEventListener("DOMContentLoaded", function(event) {
   rivets.bind(document.getElementById('container'), settingsData)
@@ -302,6 +342,26 @@ document.addEventListener("DOMContentLoaded", function(event) {
   document.getElementById("min-vault-progress").oninput = function() {
     let value = this.value
     $(".slidevalue-vault").html(value)
+  }
+
+  document.getElementById("recent-cards-quantity-slider").value = "" + settingsData.recentCardsQuantityToShow;
+  let initialValueRecentCardsQuantityToShow = settingsData.recentCardsQuantityToShow;
+  if(initialValueRecentCardsQuantityToShow == 100) {
+    initialValueRecentCardsQuantityToShow = "∞"
+  }
+  $(".slidevalue-recent-cards").html(initialValueRecentCardsQuantityToShow)
+  document.getElementById("recent-cards-quantity-slider").onchange = function() {
+    let value = parseInt(this.value)
+    settingsData.recentCardsQuantityToShow = value;
+    ipcRenderer.send('settingsChanged', {key: "recentCardsQuantityToShow", value: value})
+  }
+  document.getElementById("recent-cards-quantity-slider").oninput = function() {
+    let value = this.value
+    settingsData.recentCardsQuantityToShow = value;
+    if(value == 100) {
+      value = "∞"
+    }
+    $(".slidevalue-recent-cards").html(value);
   }
 })
 

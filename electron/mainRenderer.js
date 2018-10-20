@@ -66,8 +66,10 @@ var showChessTimers = remote.getGlobal('showChessTimers');
 var hideDelay = remote.getGlobal('hideDelay');
 var invertHideMode = remote.getGlobal('invertHideMode');
 var rollupMode = remote.getGlobal('rollupMode');
+var recentCardsQuantityToShow = remote.getGlobal('recentCardsQuantityToShow');
 var showGameTimer = remote.getGlobal('showGameTimer');
 var zoom = remote.getGlobal('zoom');
+var recentCards = remote.getGlobal('recentCards');
 var port = remote.getGlobal('port');
 var timerRunning = false;
 var uploadDelay = 0;
@@ -165,6 +167,8 @@ var appData = {
     hideDelay: hideDelay,
     invertHideMode: invertHideMode,
     rollupMode: rollupMode,
+    recentCardsQuantityToShow: recentCardsQuantityToShow,
+    recentCards: recentCards,
 }
 
 var parseVersionString = (versionStr) => {
@@ -995,7 +999,34 @@ let onMessage = (data) => {
 //            console.log(e)
 //          })
         } else if (data.collection) {
+          var cardQuantity;
           if (data.collection) {
+            if(appData.lastCollection && (Object.keys(appData.lastCollection).length != 0)) {
+              var objectToPush = {time:(new Date(Date.now())).toLocaleString(), cardsObtained:{}};
+              for(var cardID in data.collection) {
+                  if(data.collection.hasOwnProperty(cardID)) {
+                      if(/^\d+$/.test(cardID)) {
+                        cardQuantity = data.collection[cardID] - appData.lastCollection[cardID];
+                        if(isNaN(cardQuantity)) {
+                          cardQuantity = data.collection[cardID];
+                        }
+                        if(cardQuantity > 0) { 
+                          objectToPush.cardsObtained[cardID] = cardQuantity;
+                        }
+                      }
+                  }
+              }
+
+              if(Object.keys(objectToPush.cardsObtained).length > 0) {
+                appData.recentCards.unshift(objectToPush);
+                console.log(appData.recentCards);
+                ipcRenderer.send('settingsChanged', {
+                  key: "recentCards",
+                  value: appData.recentCards
+                })
+              }
+            }
+
             appData.lastCollection = data.collection
             ipcRenderer.send('settingsChanged', {
               key: "lastCollection",
@@ -1148,6 +1179,9 @@ ipcRenderer.on('settingsChanged', () => {
 
   rollupMode = remote.getGlobal('rollupMode');
   appData.rollupMode = rollupMode
+
+  recentCards = remote.getGlobal('recentCards');
+  appData.recentCards = recentCards
 
   winLossCounter = remote.getGlobal('winLossCounter');
   appData.winCounter = winLossCounter.win
