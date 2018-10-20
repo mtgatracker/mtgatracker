@@ -466,7 +466,7 @@
               0
             </div>
             <div class="recent-cards-group-container" rv-each-recentcardgroup="recentCards | filterBySlideValueRecentCards recentCardsQuantityToShow">
-              <h5 onclick="recentCardsSectionClickHandler(event)">Cards updated: {recentcardgroup.time}</h5>
+              <h5 class="recent-cards-header" onclick="recentCardsSectionClickHandler(event)">Cards updated: {recentcardgroup.time}</h5>
               <ul class="recent-cards-container" rv-recentcardsbinder="recentcardgroup.cardsObtained">
                 <!-- cards appended here from settingsRenderer -->
               </ul>
