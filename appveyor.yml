@@ -31,6 +31,7 @@ build_script:
 test: off
 
 artifacts:
+  - path: 'MTGATracker-win32-x64_*-SQUIRREL/RELEASES'
   - path: 'MTGATracker-win32-x64_*-SQUIRREL/*.nupkg'
   - path: 'MTGATracker-win32-x64_*-SQUIRREL/*.exe'
 
