@@ -455,6 +455,23 @@
             <br>
             <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
           </div>
+          <div class="settings-row">
+            <h3>Recently collected cards</h3>
+            <p>How many new card events to display</p>
+            <div class="slidecontainer">
+              <input type="range" min="1" max="100" value="0" class="slider" id="recent-cards-quantity-slider">
+            </div>
+            <div class="slidevalue-recent-cards">
+              0
+            </div>
+            <div class="recent-cards-group-container" rv-each-recentcardgroup="recentCards | filterBySlideValueRecentCards recentCardsQuantityToShow">
+              <h5 onclick="recentCardsSectionClickHandler(event)">Cards updated: {recentcardgroup.time}</h5>
+              <ul class="recent-cards-container" rv-recentcardsbinder="recentcardgroup.cardsObtained">
+                <!-- cards appended here from settingsRenderer -->
+              </ul>
+            </div>
+            <div id="no-recently-obtained-cards">The tracker hasn't tracked any recently obtained cards (obtain cards to update this).</div>
+          </div>
         </div>
       </div>
       <div id="supporters-pane" value="supporters" rv-showsettingspane="settingsPaneIndex">
