@@ -98,7 +98,7 @@ nothing in here helps, please send us a message in the #troubleshooting channel 
 >
 > `<insert a screenshot of MTGATracker in debug mode, including the debug output in the console on the right side>`
 >
-> ![Example Screenshot](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/readme_1.png)
+> ![Example Screenshot](https://raw.githubusercontent.com/shawkinsl/mtga-tracker/master/.readme_data/example_debug_screenshot.png)
 
 **Something with Inspector isn't working for me! What do I do?**
 
