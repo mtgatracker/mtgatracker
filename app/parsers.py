@@ -7,6 +7,7 @@ from app.models.game import Game, Match, Player
 from app.models.set import Zone
 import app.mtga_app
 from app.queues import game_state_change_queue, general_output_queue
+from mtga import all_mtga_cards
 
 
 @util.debug_log_trace
@@ -269,7 +270,30 @@ def parse_game_state_message(message, timestamp=None):
                         app.mtga_app.mtga_logger.error("{}Exception @ count {}".format(util.ld(True), app.mtga_app.mtga_watch_app.error_count))
                         app.mtga_app.mtga_logger.error("{}parsers:parse_game_state_message - error parsing annotation:".format(util.ld(True)))
                         app.mtga_app.mtga_logger.error(pprint.pformat(annotation))
-                        app.mtga_app.mtga_watch_app.send_error("Exception during parse annotation. Check log for more details")
+                        app.mtga_app.mtga_watch_app.send_error("Exception during parse AnnotationType_ObjectIdChanged. Check log for more details")
+                if annotation_type == "AnnotationType_ResolutionComplete":
+                    try:
+                        affector_id = annotation["affectorId"]
+                        __unused_affected_ids = annotation["affectedIds"]
+                        grpid = None
+                        details = annotation["details"]
+                        for detail in details:
+                            if detail["key"] == "grpid":
+                                grpid = detail["valueInt32"][0]
+                        card_with_iid = mtga_app.mtga_watch_app.game.find_card_by_iid(affector_id)
+                        if not card_with_iid:
+                            ability = all_mtga_cards.find_one(grpid)
+                            # TODO: put this into a "history" queue instead of printing
+                            print("{}: '{}' resolved".format(affector_id, ability))
+                        else:
+                            # TODO: put this into a "history" queue instead of printing
+                            print("{}: {} resolved".format(affector_id, card_with_iid.pretty_name))
+                        pass
+                    except:
+                        app.mtga_app.mtga_logger.error("{}Exception @ count {}".format(util.ld(True), app.mtga_app.mtga_watch_app.error_count))
+                        app.mtga_app.mtga_logger.error("{}parsers:parse_game_state_message - error parsing annotation:".format(util.ld(True)))
+                        app.mtga_app.mtga_logger.error(pprint.pformat(annotation))
+                        app.mtga_app.mtga_watch_app.send_error("Exception during parse AnnotationType_ResolutionComplete. Check log for more details")
         if 'gameObjects' in message.keys():
             game_objects = message['gameObjects']
             for object in game_objects:
