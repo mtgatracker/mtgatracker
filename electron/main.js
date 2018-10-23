@@ -18,6 +18,12 @@ const uuidv4 = require('uuid/v4');
 const request = require('request')
 const crypto = require("crypto")
 
+// Check if our instance is the primary instance
+if(app.makeSingleInstance(focusMTGATracker)) {
+  app.quit();
+  return;
+}
+
 let checksum = (str, algorithm, encoding) => {
     return crypto
         .createHash(algorithm || 'md5')
@@ -83,7 +89,7 @@ if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..'
         global.checkInProgress = false
       })
     }
-  }, 10000)
+  }, 30000)
 }
 
 const findProcess = require('find-process');
@@ -203,6 +209,10 @@ const PY_MODULE = 'mtgatracker_backend' // without .py suffix
 let pyProc = null
 let pyPort = null
 
+let appDataRoaming = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + 'Library/Preferences' : '/var/local')
+let logPath = path.join(appDataRoaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA", "output_log.txt");
+
+
 let getBooleanArg = (short, long) => {
   let shortIdx = process.argv.indexOf(short)
   let longIdx = process.argv.indexOf(long)
@@ -216,12 +226,6 @@ let fullFileCmdOpt = getBooleanArg('-f', '--full_file')
 
 if (debugCmdOpt) {
   settings.set('debug', true)
-}
-
-let debugFile = false;
-if (debugFileCmdOpt) {
-    debugFile = true;
-    console.log("Using debug file")
 }
 
 if (frameCmdOpt) {
@@ -256,7 +260,16 @@ let sortMethod = settings.get('sortMethod', 'draw');
 let useFlat = settings.get('useFlat', true);
 let useMinimal = settings.get('useMinimal', true);
 let zoom = settings.get('zoom', 0.8);
+let recentCards = settings.get('recentCards', []);
+let recentCardsQuantityToShow = settings.get('recentCardsQuantityToShow', 10);
+logPath = settings.get("logPath", logPath)
 
+let debugFile = false;
+if (debugFileCmdOpt) {
+    debugFile = true;
+    logPath = debugFileCmdOpt;
+    console.log("Using debug file")
+}
 
 let kill_server = true;
 let noFollow = false;
@@ -377,34 +390,27 @@ const getPyBinPath = () => {
     venv_path_x = path.join(__dirname, "..", "venv", "Scripts", "python")
     fallback_path = "python"
     if (fs.existsSync(venv_path_win)) {
-        return venv_path_win + " -u"
+        return venv_path_win
     } else if (fs.existsSync(venv_path_x)) {
-        return venv_path_x + " -u"
+        return venv_path_x
     } else {
-        return fallback_path + " -u" // ? shrug
+        return fallback_path // ? shrug
     }
   }
 }
 
-const getLogFilePath = () => {
-    // TODO: make this cmd-line configurable
-    return path.join(__dirname, "..", "app", "example_logs", "kld", "output_log.txt")
-}
-
 const selectPort = () => {
-  pyPort = 8089
+  pyPort = 5678
   return pyPort
 }
 
 port = selectPort()
-logPath = getLogFilePath()
+global.port = port;
 
 const generateArgs = () => {
     var args = ["-p", port]
-    if (debugFile) {
-        args.push("-i")
-        args.push(logPath)
-    }
+    args.push("-i")
+    args.push(logPath)
     if (noFollow) {
         args.push('-nf')
     }
@@ -446,11 +452,16 @@ const cleanupPyProc = (cb)  => {
 
 const createPyProc = () => {
   let script = getScriptPath()
+  let pbPath = getPyBinPath()
 
+  let args = generateArgs()
   if (guessPackaged()) {
-    pyProc = require('child_process').spawn(script, generateArgs())
+    mainWindow.webContents.send('stdout', {text: `calling: spawn(${script}, ${args}}`})
+    pyProc = require('child_process').spawn(script, args)
   } else {
-    pyProc = require('child_process').spawn(getPyBinPath(), [script].concat(generateArgs()), {shell: true})
+    let pbArgs = ['-u', script].concat(args)  // -u for unbuffered python
+    mainWindow.webContents.send('stdout', {text: `calling: spawn(${pbPath}, ${pbArgs})`})
+    pyProc = require('child_process').spawn(pbPath, pbArgs)
   }
 
   if (pyProc != null) {
@@ -509,6 +520,9 @@ global.sortMethod = sortMethod
 global.useFlat = useFlat
 global.useMinimal = useMinimal
 global.zoom = zoom
+global.recentCards = recentCards
+global.recentCardsQuantityToShow = recentCardsQuantityToShow
+global.logPath = logPath
 
 /*************************************************************
  * window management
@@ -578,6 +592,15 @@ const openFirstWindow = () => {
     createMainWindow()
   } else {
     openTOSWindow()
+  }
+}
+
+function focusMTGATracker() {
+  if(mainWindow) {
+    if(mainWindow.isMinimized()) {
+      mainWindow.restore();
+    }
+    mainWindow.focus();
   }
 }
 

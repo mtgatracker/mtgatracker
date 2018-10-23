@@ -66,8 +66,11 @@ var showChessTimers = remote.getGlobal('showChessTimers');
 var hideDelay = remote.getGlobal('hideDelay');
 var invertHideMode = remote.getGlobal('invertHideMode');
 var rollupMode = remote.getGlobal('rollupMode');
+var recentCardsQuantityToShow = remote.getGlobal('recentCardsQuantityToShow');
 var showGameTimer = remote.getGlobal('showGameTimer');
 var zoom = remote.getGlobal('zoom');
+var recentCards = remote.getGlobal('recentCards');
+var port = remote.getGlobal('port');
 var timerRunning = false;
 var uploadDelay = 0;
 
@@ -92,7 +95,7 @@ if (debug) {
   }, false)
 }
 
-var ws = new ReconnectingWebSocket("ws://127.0.0.1:5678/", null, {constructor: WebSocket})
+var ws = new ReconnectingWebSocket(`ws://127.0.0.1:${port}/`, null, {constructor: WebSocket})
 
 var gameLookup = {}
 var lastGameState = null;
@@ -164,6 +167,8 @@ var appData = {
     hideDelay: hideDelay,
     invertHideMode: invertHideMode,
     rollupMode: rollupMode,
+    recentCardsQuantityToShow: recentCardsQuantityToShow,
+    recentCards: recentCards,
 }
 
 var parseVersionString = (versionStr) => {
@@ -974,38 +979,65 @@ let onMessage = (data) => {
             console.log("error uploading rank data: ")
             console.log(e)
           })
-//        } else if (data.inventory_update) {
+        } else if (data.inventory_update) {
 //          passThrough("tracker-api/inventory-update", data.inventory_update, data.player_key).catch(e => {
 //          // TODO: check for wildcard redemptions? or should we do that in the API?
 //            console.log("error uploading inventory-update data: ")
 //            console.log(e)
 //          })
-//        } else if (data.inventory) {
-//          if (data.inventory.vaultProgress) {
-//            appData.lastVaultProgress = data.inventory.vaultProgress;
-//
-//            ipcRenderer.send('settingsChanged', {
-//              key: "lastVaultProgress",
-//              value: appData.lastVaultProgress
-//            })
-//          }
+        } else if (data.inventory) {
+          if (data.inventory.vaultProgress) {
+            appData.lastVaultProgress = data.inventory.vaultProgress;
+
+            ipcRenderer.send('settingsChanged', {
+              key: "lastVaultProgress",
+              value: appData.lastVaultProgress
+            })
+          }
 //          passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
 //            console.log("error uploading inventory data: ")
 //            console.log(e)
 //          })
-//        } else if (data.collection) {
-//          if (data.collection) {
-//            appData.lastCollection = data.collection
-//            ipcRenderer.send('settingsChanged', {
-//              key: "lastCollection",
-//              value: appData.lastCollection
-//            })
-//
+        } else if (data.collection) {
+          var cardQuantity;
+          if (data.collection) {
+            if(appData.lastCollection && (Object.keys(appData.lastCollection).length != 0)) {
+              var objectToPush = {time:(new Date(Date.now())).toLocaleString(), cardsObtained:{}};
+              for(var cardID in data.collection) {
+                  if(data.collection.hasOwnProperty(cardID)) {
+                      if(/^\d+$/.test(cardID)) {
+                        cardQuantity = data.collection[cardID] - appData.lastCollection[cardID];
+                        if(isNaN(cardQuantity)) {
+                          cardQuantity = data.collection[cardID];
+                        }
+                        if(cardQuantity > 0) { 
+                          objectToPush.cardsObtained[cardID] = cardQuantity;
+                        }
+                      }
+                  }
+              }
+
+              if(Object.keys(objectToPush.cardsObtained).length > 0) {
+                appData.recentCards.unshift(objectToPush);
+                console.log(appData.recentCards);
+                ipcRenderer.send('settingsChanged', {
+                  key: "recentCards",
+                  value: appData.recentCards
+                })
+              }
+            }
+
+            appData.lastCollection = data.collection
+            ipcRenderer.send('settingsChanged', {
+              key: "lastCollection",
+              value: appData.lastCollection
+            })
+
 //            passThrough("tracker-api/collection", data.collection, data.player_key).catch(e => {
 //              console.log("error uploading collections data: ")
 //              console.log(e)
 //            })
-//          }
+          }
         } else if (data.draftPick) {
           passThrough("tracker-api/draft-pick", data.draftPick, data.player_key).catch(e => {
             console.log("error uploading draftPick data: ")
@@ -1147,6 +1179,9 @@ ipcRenderer.on('settingsChanged', () => {
 
   rollupMode = remote.getGlobal('rollupMode');
   appData.rollupMode = rollupMode
+
+  recentCards = remote.getGlobal('recentCards');
+  appData.recentCards = recentCards
 
   winLossCounter = remote.getGlobal('winLossCounter');
   appData.winCounter = winLossCounter.win

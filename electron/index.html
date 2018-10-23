@@ -44,9 +44,15 @@
           <div class="card" rv-each-stat="draw_stats | drawStatsMergeDuplicates | drawStatsSort" rv-card_color="stat.colors">
             <div class="card-text">
               <div class="card-text-limit"><div class="cardcount">{ stat.count_in_deck }x</div> <div class="cardname">{ stat.card }</div></div>
-              <span class="cost">
-                <i rv-each-mana="stat.cost" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
-              </span>
+                <span class="cost">
+                  <span rv-each-mana="stat.cost" style="display: inline-block">
+                    <i rv-wholemana="mana" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
+                    <!-- <span class="mi-split mi-2x"><i class="mi mi-b"></i><i class="mi mi-g"></i></span> -->
+                    <span rv-splitmana="mana" rv-splitmanafill="mana" class="mi-split mi-shadow mi-split-color">
+                      <i class="mi mi-b"></i><i class="mi mi-g"></i>
+                    </span>
+                  </span>
+                </span>
             </div>
           </div>
           <h2 rv-show="showGameTimer" id="overall-timer"></h2>

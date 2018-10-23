@@ -5,6 +5,7 @@
     <title>Settings</title>
     <link rel="stylesheet" type="text/css" href="settings_style.css">
     <link rel="stylesheet" type="text/css" href="vendor/photon/photon.css">
+    <link rel="stylesheet" type="text/css" href="vendor/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
     <link href="vendor/toggle/bootstrap-toggle.min.css" rel="stylesheet">
 </head>
@@ -60,7 +61,7 @@
             <hr />
             <p class="about-p disclaimer">MTGA Tracker is unofficial Fan Content permitted under the Fan Content Policy. Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC.</p>
             <hr />
-            <p class="about-p"><b>Version:</b> { version } <i rv-if="firstRun">(MTGATracker cannot check for updates on first launch after installation or an update)</i> <i rv-if="updateDownloading | andnot updateReady">(an update is downloading...)</i> <i rv-if="updateReady">(an update is ready!)</i></p>
+            <p class="about-p"><b>Version:</b> { version } <span class="disclaimer">(commit <a rv-ghlink="commit">{ commit | short }</a> / build <a rv-appveyorlink="build">{ build }</a>)</span><i rv-if="firstRun">(MTGATracker cannot check for updates on first launch after installation or an update)</i> <i rv-if="updateDownloading | andnot updateReady">(an update is downloading...)</i> <i rv-if="updateReady">(an update is ready!)</i></p>
             <p class="about-p"><b>Homepage:</b> <a href="https://mtgatracker.com/">mtgatracker.com</a></p>
             <p class="about-p"><b>Privacy:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md">privacy.md</a></p>
             <p class="about-p"><b>Documentation:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/README.md">README.md</a></p>
@@ -68,6 +69,55 @@
             <br />
 
             <h4>Current Vault Progress: { lastVaultProgress }%</h4>
+
+            <br />
+            <h3>Release notes for 4.2.3</h3>
+            <ul>
+              <li class="about-p">
+                Fixed an issue where GRN cards were not captured in collection exports
+              </li>
+              <li>
+                Fixed an issue with the display of split-cost mana symbols during a game
+              </li>
+              <li>
+                 <b>HUGE</b> thanks to <a href="https://github.com/WizardRubic">WizardRubic</a> for building out
+                 every other new feature in this release, including:
+              </li>
+              <li>
+                New "Recently Obtained" cards view in Settings / Collection.
+              </li>
+              <li>
+                If opened a second time, MTGATracker will detect the instance that is already running and bring it to
+                focus instead of creating a second window.
+              </li>
+            </ul>
+
+            <h3>Release notes for 4.2.2</h3>
+            <ul>
+              <li class="about-p">
+                You can now locate output_log.txt manually (may be required if you installed MTGA and MTGATracker
+                to separate / nonstandard disks)
+              </li>
+              <li>
+                MTGATracker now supports automatic <a href="https://ci.appveyor.com/project/shawkinsl/mtgatracker">Appveyor builds,</a> which
+                will help us release fixes faster!
+              </li>
+              <li>
+                "Installing" animation logo updated
+              </li>
+              <li>
+                Various minor security fixes
+              </li>
+            </ul>
+
+            <br />
+            <h3>Release notes for 4.2.1</h3>
+            <ul>
+              <li class="about-p">
+                Fixed an issue introduced in 4.2.0 that caused many inventory-based functions to not work properly
+                (vault progress, card collections, etc)
+              </li>
+            </ul>
 
             <br />
             <h3>Release notes for 4.2.0</h3>
@@ -281,6 +331,11 @@
           </div>
 
           <hr />
+          <div class="settings-row">
+            <button id="log-select" class="btn btnbtn btn-secondary">Locate output_log.txt file</button>
+          </div>
+          Currently selected: <span class="disclaimer">{ logPath }</span>
+          <hr />
 
           <div class="settings-row">
             <input rv-checked="showErrors" class="tf-toggle" type="checkbox" key="showErrors" data-toggle="toggle"> Show error count in game
@@ -422,6 +477,23 @@
             <br>
             <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
           </div>
+          <div class="settings-row">
+            <h3>Recently collected cards</h3>
+            <p>How many new card events to display</p>
+            <div class="slidecontainer">
+              <input type="range" min="1" max="100" value="0" class="slider" id="recent-cards-quantity-slider">
+            </div>
+            <div class="slidevalue-recent-cards">
+              0
+            </div>
+            <div class="recent-cards-group-container" rv-each-recentcardgroup="recentCards | filterBySlideValueRecentCards recentCardsQuantityToShow">
+              <h5 class="recent-cards-header" onclick="recentCardsSectionClickHandler(event)">Cards updated: {recentcardgroup.time}</h5>
+              <ul class="recent-cards-container" rv-recentcardsbinder="recentcardgroup.cardsObtained">
+                <!-- cards appended here from settingsRenderer -->
+              </ul>
+            </div>
+            <div id="no-recently-obtained-cards">The tracker hasn't tracked any recently obtained cards (obtain cards to update this).</div>
+          </div>
         </div>
       </div>
       <div id="supporters-pane" value="supporters" rv-showsettingspane="settingsPaneIndex">
@@ -434,11 +506,33 @@
               MTGATracker's lead dev, but our supporters on Patreon help lighten the load (and keep us motivated to keep
               working on MTGATracker).</p>
             <p><b>We can't thank you enough!</b></p>
+            <h2>Our Scout-Major Level Supporters</h2>
+            <div class="maj-container well">
+              <center>
+                <img class="maj-img" src="img/minionod.png" />
+                <hr class="small-hr" />
+                <div>MinionOd</div>
+                <a href="https://twitch.tv/minionod"> <i class="fa fa-twitch social-icon"></i></a>
+                <a href="https://twitter.com/minionod"> <i class="fa fa-twitter social-icon"></i></a>
+              </center>
+            </div>
+
+            <div class="maj-container well">
+              <center>
+                <img class="maj-img" src="img/spencatro.jpg" />
+                <hr class="small-hr" />
+                <div>Spencatro</div>
+                <a href="https://twitch.tv/spencatro"> <i class="fa fa-twitch social-icon"></i></a>
+                <a href="https://twitter.com/spencatro"> <i class="fa fa-twitter social-icon"></i></a>
+                <a href="https://github.com/shawkinsl"> <i class="fa fa-github social-icon"></i></a>
+              </center>
+            </div>
             <h2>Our Scout-Captain Level Supporters</h2>
             <ul>
               <li>emerald000</li>
-              <li>Andrew "MTGMAD" [<a href="https://twitter.com/mtgmad">twitter</a>]</li>
-              <li>isharacomix [<a href="http://isharacomix.org">web</a>]</li>
+              <li>MTGMAD <a href="https://twitter.com/mtgmad"><i class="fa fa-twitter social-icon"></i></a></li>
+              <li>isharacomix <a href="http://isharacomix.org"><i class="fa fa-link social-icon"></i></a></li>
+              <li>CommiePuddin <a href="https://www.twitch.tv/commiepuddin"><i class="fa fa-twitch social-icon"></i></a></li>
             </ul>
             <p>Support us <a href="https://www.patreon.com/mtgatracker">on Patreon</a> to get your name on the list!</p>
           </div>

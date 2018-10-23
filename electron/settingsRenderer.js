@@ -21,6 +21,10 @@ tt({
 
 var settingsData = {
   version: remote.getGlobal("version"),
+  commit: "",
+  build: "",
+  logPath: remote.getGlobal("logPath"),
+  version: remote.getGlobal("version"),
   mtgaOverlayOnly: remote.getGlobal("mtgaOverlayOnly"),
   settingsPaneIndex: "about",
   debug: remote.getGlobal('debug'),
@@ -43,6 +47,8 @@ var settingsData = {
   hideDelay: remote.getGlobal('hideDelay'),
   invertHideMode: remote.getGlobal('invertHideMode'),
   rollupMode: remote.getGlobal('rollupMode'),
+  recentCards: remote.getGlobal('recentCards'),
+  recentCardsQuantityToShow: remote.getGlobal('recentCardsQuantityToShow'),
   runFromSource: remote.getGlobal('runFromSource'),
   sortMethodSelected: remote.getGlobal('sortMethod'),
   useFlat: remote.getGlobal('useFlat'),
@@ -60,7 +66,23 @@ var settingsData = {
   ],
 }
 
-const { Menu, MenuItem } = remote
+let commitFile = "version_commit.txt"
+let buildFile = "version_build.txt"
+
+if (!settingsData.runFromSource) {
+  commitFile = path.join(remote.app.getAppPath(), commitFile)
+  buildFile = path.join(remote.app.getAppPath(), buildFile)
+}
+
+fs.readFile(commitFile, "utf8", (err, data) => {
+  settingsData.commit = data;
+})
+
+fs.readFile(buildFile, "utf8", (err, data) => {
+  settingsData.build = data;
+})
+
+const { Menu, MenuItem, dialog } = remote
 const menu = new Menu()
 const menuItem = new MenuItem({
   label: 'Inspect Element',
@@ -98,6 +120,27 @@ rivets.formatters.andnot = function(comparee, comparator) {
     return comparee && !comparator;
 };
 
+rivets.formatters.short = function(val) {
+  if (val) {
+    return val.substring(0, 6)
+  }
+}
+
+rivets.formatters.filterBySlideValueRecentCards = function(arr, recentCardsQuantityToShow) {
+  if(recentCardsQuantityToShow >= 100) {
+    return arr;
+  }
+  return arr.slice(0,recentCardsQuantityToShow);
+}
+
+rivets.binders.ghlink = (el, val) => {
+   el.href = `https://github.com/mtgatracker/mtgatracker/commit/${val}`
+}
+
+rivets.binders.appveyorlink = (el, val) => {
+   el.href = `https://ci.appveyor.com/project/shawkinsl/mtgatracker/builds/${val}`
+}
+
 rivets.binders.settingspaneactive = (el, val) => {
   console.log("active")
   el.classList.remove("active")
@@ -130,10 +173,41 @@ rivets.binders.authref = (el, val) => {
   el.href = "https://inspector.mtgatracker.com/trackerAuth?code=" + val
 }
 
+rivets.binders.recentcardsbinder = (el, cardsObtained) => {
+  var node;
+  var textNode;
+  var currentCard
+  for(var cardID in cardsObtained) {
+    currentCard = mtga.allCards.findCard(cardID)
+    if(currentCard) {
+      textNode = document.createTextNode(`${cardsObtained[cardID]}x ${currentCard.attributes.prettyName}`);
+    } else {
+      textNode = document.createTextNode(`${cardsObtained[cardID]}x card-name-not-found (${cardID})`);
+    }
+    node = document.createElement("li");
+    node.style.webkitUserSelect = "auto";
+    node.appendChild(textNode);
+    el.appendChild(node);
+  }
+  if(Object.keys(cardsObtained).length > 0) {
+    document.getElementById("no-recently-obtained-cards").style.display = "none";
+  }
+}
+
+function recentCardsSectionClickHandler(event) {
+  var revealed = $(event.target).siblings(".recent-cards-container").is(":hidden"); 
+  if(revealed) {
+    $(event.target).siblings(".recent-cards-container").slideDown("fast");
+  } else {
+    $(event.target).siblings(".recent-cards-container").slideUp("fast");
+  }
+}
+
+
 document.addEventListener("DOMContentLoaded", function(event) {
   rivets.bind(document.getElementById('container'), settingsData)
 
-  let themePath = settingsData.runFromSource ? "themes" : "../themes";
+  let themePath = settingsData.runFromSource ? "themes" : path.join("..", "themes");
   fs.readdir(themePath, (err, files) => {
     if(files) {
       files.forEach((val) => {
@@ -147,6 +221,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   $("#showTrackerID").on('click', function(event) {
     this.innerHTML = settingsData.trackerID;
+  })
+  $("#log-select").click(function() {
+    dialog.showOpenDialog({
+      properties: ["openFile"],
+      defaultPath: remote.getGlobal("logPath")
+    }, filePath => {
+      if (filePath) {
+        console.log(`next launch will read from ${filePath}`)
+        settingsData.logPath = filePath
+        ipcRenderer.send('settingsChanged', {key: "logPath", value: filePath[0]})
+        alert("You must restart MTGATracker after changing this setting!")
+      }
+    })
   })
   $("#sorting-method-select").val(settingsData.sortMethodSelected)
   $(document).on('click', 'a[href^="http"]', function(event) {
@@ -255,6 +342,26 @@ document.addEventListener("DOMContentLoaded", function(event) {
   document.getElementById("min-vault-progress").oninput = function() {
     let value = this.value
     $(".slidevalue-vault").html(value)
+  }
+
+  document.getElementById("recent-cards-quantity-slider").value = "" + settingsData.recentCardsQuantityToShow;
+  let initialValueRecentCardsQuantityToShow = settingsData.recentCardsQuantityToShow;
+  if(initialValueRecentCardsQuantityToShow == 100) {
+    initialValueRecentCardsQuantityToShow = "∞"
+  }
+  $(".slidevalue-recent-cards").html(initialValueRecentCardsQuantityToShow)
+  document.getElementById("recent-cards-quantity-slider").onchange = function() {
+    let value = parseInt(this.value)
+    settingsData.recentCardsQuantityToShow = value;
+    ipcRenderer.send('settingsChanged', {key: "recentCardsQuantityToShow", value: value})
+  }
+  document.getElementById("recent-cards-quantity-slider").oninput = function() {
+    let value = this.value
+    settingsData.recentCardsQuantityToShow = value;
+    if(value == 100) {
+      value = "∞"
+    }
+    $(".slidevalue-recent-cards").html(value);
   }
 })
 
