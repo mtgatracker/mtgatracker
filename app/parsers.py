@@ -547,6 +547,23 @@ def parse_game_results(_unused_locked, match_id, result_list):
                 "match_complete": True,
                 "game": mtga_app.mtga_watch_app.game.to_json()
             }
+
+            if "end" not in mtga_app.mtga_watch_app.game.recorded_targetspecs:
+                mtga_app.mtga_watch_app.game.recorded_targetspecs.append("end")
+                reason = None
+                if "reason" in result.keys():
+                    reason = result["reason"].split("_")[1]
+
+                won_text = "{} won!".format(mtga_app.mtga_watch_app.game.winner.player_name)
+                if reason:
+                    won_text += "({})".format(reason)
+
+                event_text = build_event_text(won_text, "game")
+
+                event_texts = [event_text]
+                queue_obj = {"game_history_event": event_texts}
+                general_output_queue.put(queue_obj)
+
             app.mtga_app.mtga_watch_app.match.add_result(result)
             game_state_change_queue.put(result)
             if match_id != mtga_app.mtga_watch_app.game.match_id:
@@ -631,5 +648,13 @@ def parse_match_playing(blob):
         if mtga_app.mtga_watch_app.match.opponent_name == opponent.player_name:
             opponent_rank = mtga_app.mtga_watch_app.match.opponent_rank
         match_id = game_room_info['gameRoomConfig']['matchId'] + "-game1-{}".format(hero.player_id)
+
+        hero_text = build_event_text(hero.player_name, "hero")
+        oppo_text = build_event_text(opponent.player_name, "opponent")
+
+        event_texts = [hero_text, " vs ", oppo_text]
+        queue_obj = {"game_history_event": event_texts}
+        general_output_queue.put(queue_obj)
+
         mtga_app.mtga_watch_app.game = Game(match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo,
                                             shared_stack, event_id, opponent_rank)

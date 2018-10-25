@@ -102,6 +102,13 @@ body {
   display: block;
 }
 
+.game {
+  color: orange;
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+}
+
 .event {
   margin-bottom: 3px;
 }

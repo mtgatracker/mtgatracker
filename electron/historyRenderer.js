@@ -55,6 +55,10 @@ rivets.binders.expandevent = function(el, value) {
      span.setAttribute("title", eventText.hover)
     }
     el.appendChild(span)
+    if (eventText.type == "game") {
+      let hr = document.createElement("hr")
+      el.appendChild(hr)
+    }
     $("#events-container").animate({ scrollTop: $('#events-container').prop("scrollHeight")}, 100);
   }
 }
