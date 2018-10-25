@@ -18,6 +18,7 @@ class Player(object):
         self.player_name = player_name
         self.player_id = player_id
         self.seat = seat
+        self.current_life_total = 20
 
         self.mulligan_count = 0
         self.starting_hand = 0
@@ -65,6 +66,9 @@ class Player(object):
             for card in zone.cards:
                 if card.game_id == instance_id or instance_id in card.previous_iids:
                     return card, zone
+            for ability in zone.abilities:
+                if ability.game_id == instance_id:
+                    return ability, zone
         return None, None
 
     def put_instance_id_in_zone(self, instance_id, owner_id, zone):
@@ -207,6 +211,10 @@ class Game(object):
         self.final = False
         self.winner = None
         self.on_the_play = None
+
+        # TargetSpec annotations fire more than once. The dirty hack is to just note which you've
+        # already recorded and ignore them.
+        self.recorded_targetspecs = []
 
         self.hero = hero
         assert isinstance(self.hero, Player)

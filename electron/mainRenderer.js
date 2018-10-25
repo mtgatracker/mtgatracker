@@ -7,6 +7,7 @@ const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const Timer = require('easytimer.js');
 const keytar = require('keytar')
+const hideWindowManager = require("./hide-manager")
 
 const { remote, ipcRenderer, shell } = require('electron')
 const { Menu, MenuItem } = remote
@@ -61,7 +62,6 @@ var lastCollection = remote.getGlobal('lastCollection');
 var lastVaultProgress = remote.getGlobal('lastVaultProgress');
 var minVaultProgress = remote.getGlobal('minVaultProgress');
 var sortMethod = remote.getGlobal('sortMethod');
-var zoom = remote.getGlobal('zoom');
 var showChessTimers = remote.getGlobal('showChessTimers');
 var hideDelay = remote.getGlobal('hideDelay');
 var invertHideMode = remote.getGlobal('invertHideMode');
@@ -73,6 +73,8 @@ var recentCards = remote.getGlobal('recentCards');
 var port = remote.getGlobal('port');
 var timerRunning = false;
 var uploadDelay = 0;
+
+var hideModeManager;
 
 setInterval(() => {
   uploadDelay -= 1
@@ -531,112 +533,22 @@ rivets.formatters.more_than_one = function(value) {
 
 rivets.bind(document.getElementById('container'), appData)
 
-let all_hidden = false;
-var hideTimeoutId;
-let isRolledup = false;
-
-var updateOpacity = function() {
-    if (all_hidden) {
-        document.getElementById("container").style.opacity = "0.1";
-    } else {
-        document.getElementById("container").style.opacity = "1";
-        resetTimeout();
-    }
-}
-
-var hideBackButton = function() {
-  if(isRolledup) {
+var hideBackButton = function(hidden) {
+  if(hidden) {
     $(".hide-on-rollup").addClass("rollup-modifier");
   } else {
     $(".hide-on-rollup").removeClass("rollup-modifier");
   }
 }
-
-var updateRollup = function() {
-    var trackerBody = document.getElementById("tracker-body");
-    var trackerHeaders = document.getElementById("tracker-header");
-    var container = document.getElementById("container");
-    if (all_hidden) {
-      if(!isRolledup) {
-        $('#tracker-body').animate({height: "0px"}, 
-          {duration: 200, queue: false, complete: 
-            function() {
-              trackerBody.style.visibility = "hidden";
-              isRolledup = true;
-              hideBackButton();
-              $('#tracker-body').css({display: "none"});
-              resizeWindow();
-            }
-          }
-        ); 
-        
-        $('#container').animate({height: trackerHeaders.scrollHeight + "px"}, 
-          {duration: 200, queue: false});
-      }
-    } else {
-      if(isRolledup) {
-        trackerBody.style.height = "0px";
-        trackerBody.style.visibility = "visible";
-        $('#tracker-body').css({display: "inherit"});
-        $('#tracker-body').animate({height: trackerBody.scrollHeight}, 
-          {duration: 200, queue: false, complete:
-            function() {
-              trackerBody.style.visibility = "visible";
-              isRolledup = false;
-              hideBackButton();
-              resizeWindow();
-            }
-          }
-        );
-        var currentHeight = container.height;
-        resizeWindow();
-        var targetHeight = container.style.height;
-        container.style.height = currentHeight;
-        $('#container').animate({height: targetHeight + "px"}, 
-          {duration: 200, queue: false});
-      }
-      resetTimeout();
-    }
-}
-
-
-
-var resetTimeout = function () {
-    if (hideTimeoutId) {
-      clearTimeout(hideTimeoutId)
-      hideTimeoutId = null;
-    }
-}
-
-var updateVisibility = function () {
-    if(appData.rollupMode) {
-      updateRollup();
-    } else {
-      updateOpacity();
-    }
-}
-
-var toggleOpacity = function(hide) {
-    if (hide === undefined) {
-      all_hidden = !all_hidden;
-    } else {
-      all_hidden = hide;
-    }
-    updateVisibility();
-    if (hideTimeoutId) {
-        clearTimeout(hideTimeoutId)
-        hideTimeoutId = null;
-    }
-    if (appData.hideDelay < 100) {
-      hideTimeoutId = setTimeout(function() {
-          all_hidden = appData.invertHideMode;
-          updateVisibility()
-      }, 1000 * appData.hideDelay)
-    }
+function hideCallback(hidden) {
+  console.log("hidden callback called")
+  hideBackButton(hidden)
+  resizeWindow()
 }
 
 document.getElementById("floating-eye").addEventListener("click", function() {
-  toggleOpacity()
+  hideModeManager.toggleHidden()
+  ipcRenderer.send('hideRequest')
 })
 
 ws.addEventListener('open', () => {
@@ -778,20 +690,23 @@ function passThrough(endpoint, passData, playerKey, errors) {
   })
 }
 
-function cleanError(error) {
+function cleanError(error, depth, maxDepth) {
+  if (depth === undefined) depth = 0;
+  if (maxDepth === undefined) maxDepth = 3;
+  if (depth >= maxDepth) return;
   if (error && typeof error === 'object') {
     for (let key in error) {
       if (key == "token") {
         delete error[key]
       } else {
-        cleanError(error[key])
+        cleanError(error[key], depth+1, maxDepth)
       }
     }
   }
 }
 
 function cleanErrors(errors) {
-  errors.forEach(cleanError)
+  errors.forEach(error => cleanError(error, 0))
 }
 
 function uploadGame(attempt, gameData, errors) {
@@ -955,6 +870,8 @@ let onMessage = (data) => {
               appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
             }
         }
+    } else if (data.game_history_event) {
+      ipcRenderer.send('gameHistoryEvent', data.game_history_event)
     } else if (data.data_type == "error") {
         if (data.count) {
             appData.error_count = data.count;
@@ -962,9 +879,11 @@ let onMessage = (data) => {
         appData.last_error = data.msg;
     } else if (data.data_type == "message") {
         if (data.right_click) {
-            toggleOpacity(!appData.invertHideMode)
+            hideModeManager.toggleHidden(!appData.invertHideMode)
+            ipcRenderer.send('hideRequest', !appData.invertHideMode)
         } else if (data.left_click && remote.getGlobal("leftMouseEvents")) {
-            toggleOpacity(appData.invertHideMode)
+            hideModeManager.toggleHidden(appData.invertHideMode)
+            ipcRenderer.send('hideRequest', appData.invertHideMode)
         } else if (data.draft_collection_count) {
           console.log("handle draft stuff")
           console.log(data.draft_collection_count)
@@ -1076,6 +995,17 @@ let onMessage = (data) => {
 
 document.addEventListener("DOMContentLoaded", function(event) {
 
+    hideModeManager = hideWindowManager({
+      useRollupMode: function() {return remote.getGlobal('rollupMode')},
+      getHideDelay: function() {return remote.getGlobal('hideDelay')},
+      getInverted: function() {return remote.getGlobal('invertHideMode')},
+      windowName: "mainRenderer",
+      bodyID: "#tracker-body",
+      headerID: "#tracker-header",
+      containerID: "#container",
+      hideCallback: hideCallback,
+    })
+
     setInterval(() => {
         $('#overall-timer').html(overallTimer.getTimeValues().toString());
         $('#hero-timer').html(opponentTimer.getTimeValues().toString());
@@ -1090,6 +1020,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
     $("#floating-settings").click(() => {
       ipcRenderer.send('openSettings', null)
+    })
+    $("#floating-history").click(() => {
+      ipcRenderer.send('openHistory', null)
     })
     $(".zoom-out").click(() => {
         zoom -= 0.1
