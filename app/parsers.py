@@ -1,13 +1,11 @@
 import pprint
-
 import datetime
-
 import util
 from app.models.game import Game, Match, Player
 from app.models.set import Zone
 import app.mtga_app
 from app.queues import game_state_change_queue, general_output_queue
-from models.card import GameCard, Ability
+from app.models.card import Ability
 from mtga import all_mtga_cards
 
 
