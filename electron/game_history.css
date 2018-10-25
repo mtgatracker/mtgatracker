@@ -1,0 +1,134 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+@font-face {
+    font-family: beleren;
+    src: url(fonts/JaceBeleren-Bold.woff);
+}
+
+@font-face {
+    font-family: beleren-caps;
+    src: url(fonts/Beleren-Small-Caps.woff);
+}
+
+body {
+    background-color: rgba(0,0,0,0)!important;
+    overflow: hidden;
+    height: 100vh;
+    width: 100%;
+}
+
+#events-container {
+  overflow-y: scroll;
+  height: 90%;
+}
+
+.history {
+  padding: 10px;
+  color: white;
+  text-shadow: #000 0 0 10px, /* this line is shadow, the rest are stroke */
+       #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px;
+}
+
+#history-header-sizefix {
+  height: 7%;
+  overflow: visible;
+}
+
+.history-header {
+  cursor: pointer;
+  -webkit-app-region: drag;
+  text-align: center;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  background-color: rgba(83, 83, 83, 0.8);
+  -webkit-border-radius: 4px;
+  font-family: beleren;
+  -moz-box-shadow: 0 4px 12px rgba(0,0,0,.5);
+  -webkit-box-shadow: 0 4px 12px rgba(0,0,0,.5);
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px 0px;
+  z-index: 2;
+  position: relative;
+}
+
+#resize {
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.05);
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+}
+
+.zoom-panel {
+    color: rgba(160, 160, 160, 0.8);
+    text-shadow: 0 0 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    right: 20px;
+    position: absolute;
+    top: 33px;
+    height: 0px;
+    font-size: 21px;
+    cursor: pointer;
+    z-index: 4;
+}
+
+.zoom {
+    cursor: pointer;
+    text-shadow: 0 0 0;
+    z-index: 5;
+	-webkit-app-region: no-drag;
+}
+
+.hero {
+  color: #74e1ff;
+}
+
+.opponent {
+  color: #e980ff;
+}
+
+.ability {
+  border-bottom: 1px dotted white;
+}
+
+.turn {
+  color: orange;
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+}
+
+.event {
+  margin-bottom: 3px;
+}
+
+#container {
+  /* background: url("https://thebookofshaders.com/09/warmerdam.jpg") */
+  background-color: rgba(0,0,0,0);
+  height: 100%;
+  margin: 15px;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: rgba(83, 83, 83, 0.3);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgba(83, 83, 83, 0.6);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(83, 83, 83, 0.5);
+}

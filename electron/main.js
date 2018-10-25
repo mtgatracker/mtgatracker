@@ -292,6 +292,16 @@ ipcMain.on('settingsChanged', (event, arg) => {
   mainWindow.webContents.send('settingsChanged')
 })
 
+ipcMain.on('gameHistoryEvent', (event, arg) => {
+  if (historyWindow) {
+    try {
+      historyWindow.webContents.send('gameHistoryEventSend', arg)
+    } catch (error) {
+      console.log("couldn't send stdout message to main window, likely already destroyed")
+    }
+  }
+})
+
 ipcMain.on('tosAgreed', (event, arg) => {
   let tosAcks = settings.get("tosAcks", [])
   let currentTOSChecksum = checksum(fs.readFileSync(tosPath))
@@ -336,6 +346,44 @@ let openSettingsWindow = () => {
     settingsWindow.show()
   })
 }
+
+let openHistoryWindow = () => {
+  if(historyWindow == null) {
+    let historyWidth = debug ? 1200 : 400;
+
+    const historyWindowStateMgr = windowStateKeeper('history')
+    historyWindow = new BrowserWindow({width: historyWidth,
+                                        height: 800,
+                                        toolbar: false,
+                                        titlebar: false,
+                                        title: false,
+                                        maximizable: false,
+                                        show: false,
+                                        transparent: !(debug || useFrame),
+                                        frame: (debug || useFrame),
+                                        alwaysOnTop: true,
+                                        icon: "img/icon_small.ico",
+                                        x: historyWindowStateMgr.x,
+                                        y: historyWindowStateMgr.y})
+    historyWindowStateMgr.track(historyWindow)
+    historyWindow.setMenu(null)
+    historyWindow.loadURL(require('url').format({
+      pathname: path.join(__dirname, 'game_history.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+    if (debug) {
+      historyWindow.webContents.openDevTools()
+    }
+    historyWindow.on('closed', function () {
+      historyWindow = null;
+    })
+  }
+  historyWindow.once('ready-to-show', () => {
+    historyWindow.show()
+  })
+}
+
 
 let openTOSWindow = () => {
   if(tosWindow == null) {
@@ -456,11 +504,19 @@ const createPyProc = () => {
 
   let args = generateArgs()
   if (guessPackaged()) {
-    mainWindow.webContents.send('stdout', {text: `calling: spawn(${script}, ${args}}`})
+    try {
+      mainWindow.webContents.send('stdout', {text: `calling: spawn(${script}, ${args}}`})
+    } catch (error) {
+      console.log("couldn't send stdout message to main window, likely already destroyed")
+    }
     pyProc = require('child_process').spawn(script, args)
   } else {
     let pbArgs = ['-u', script].concat(args)  // -u for unbuffered python
-    mainWindow.webContents.send('stdout', {text: `calling: spawn(${pbPath}, ${pbArgs})`})
+    try {
+      mainWindow.webContents.send('stdout', {text: `calling: spawn(${pbPath}, ${pbArgs})`})
+    } catch (error) {
+      console.log("couldn't send stdout message to main window, likely already destroyed")
+    }
     pyProc = require('child_process').spawn(pbPath, pbArgs)
   }
 
@@ -469,13 +525,21 @@ const createPyProc = () => {
     pyProc.stderr.on('data', function(data) {
       console.log("py stderr: " + data.toString());
       if (mainWindow) {
-        mainWindow.webContents.send('stdout', {text: "py stderr:" + data.toString()})
+        try {
+          mainWindow.webContents.send('stdout', {text: "py stderr:" + data.toString()})
+        } catch (error) {
+          console.log("couldn't send stdout message to main window, likely already destroyed")
+        }
       }
     });
     pyProc.stdout.on('data', function(data) {
       console.log("py stdout:" + data.toString());
       if (mainWindow) {
-        mainWindow.webContents.send('stdout', {text: "py stdout:" + data.toString()})
+        try {
+          mainWindow.webContents.send('stdout', {text: "py stdout:" + data.toString()})
+        } catch (error) {
+          console.log("couldn't send stdout message to main window, likely already destroyed")
+        }
       }
     });
     pyProc.on('exit', function(code) {
@@ -523,6 +587,7 @@ global.zoom = zoom
 global.recentCards = recentCards
 global.recentCardsQuantityToShow = recentCardsQuantityToShow
 global.logPath = logPath
+global.historyZoom = settings.get("history-zoom", 1.0)
 
 /*************************************************************
  * window management
@@ -530,6 +595,7 @@ global.logPath = logPath
 
 let mainWindow = null
 let settingsWindow = null
+let historyWindow = null
 let tosWindow = null
 
 let window_width = 354;
@@ -544,8 +610,8 @@ const createMainWindow = () => {
   mainWindow = new BrowserWindow({width: window_width,
                                   height: window_height,
                                   show: false,
-                                  transparent: !(debug || useFrame),
                                   resizable: (debug || useFrame),
+                                  transparent: !(debug || useFrame),
                                   frame: (debug || useFrame),
                                   alwaysOnTop: true,
                                   toolbar: false,
@@ -590,6 +656,7 @@ const createMainWindow = () => {
 const openFirstWindow = () => {
   if (tosAcked) {
     createMainWindow()
+    openHistoryWindow()
   } else {
     openTOSWindow()
   }

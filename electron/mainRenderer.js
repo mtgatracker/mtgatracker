@@ -61,7 +61,6 @@ var lastCollection = remote.getGlobal('lastCollection');
 var lastVaultProgress = remote.getGlobal('lastVaultProgress');
 var minVaultProgress = remote.getGlobal('minVaultProgress');
 var sortMethod = remote.getGlobal('sortMethod');
-var zoom = remote.getGlobal('zoom');
 var showChessTimers = remote.getGlobal('showChessTimers');
 var hideDelay = remote.getGlobal('hideDelay');
 var invertHideMode = remote.getGlobal('invertHideMode');
@@ -955,6 +954,8 @@ let onMessage = (data) => {
               appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
             }
         }
+    } else if (data.game_history_event) {
+      ipcRenderer.send('gameHistoryEvent', data.game_history_event)
     } else if (data.data_type == "error") {
         if (data.count) {
             appData.error_count = data.count;

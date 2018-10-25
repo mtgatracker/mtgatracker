@@ -122,6 +122,7 @@ class Zone(Pool):
     def __init__(self, pool_name, zone_id=-1):
         super().__init__(pool_name)
         self.zone_id = zone_id
+        self.abilities = []
 
     def match_game_id_to_card(self, instance_id, card_id):
         from app.mtga_app import mtga_logger
