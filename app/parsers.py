@@ -414,25 +414,25 @@ def parse_game_state_message(message, timestamp=None):
                     queue_obj = {"game_history_event": event_texts}
                     general_output_queue.put(queue_obj)
                 if "blockState" in object and object["blockState"] == "BlockState_Blocking":
-                    card = mtga_app.mtga_watch_app.game.find_card_by_iid(instance_id)
+                    blocker_card = mtga_app.mtga_watch_app.game.find_card_by_iid(instance_id)
                     block_info = object["blockInfo"]
-                    blocked_list = block_info["attackerIds"]
-                    for blocked in blocked_list:
-                        blocked_card = mtga_app.mtga_watch_app.game.find_card_by_iid(blocked)
+                    attacker_list = block_info["attackerIds"]
+                    for attacker in attacker_list:
+                        attacker_card = mtga_app.mtga_watch_app.game.find_card_by_iid(attacker)
 
-                        card_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(card.owner_seat_id)
-                        blocker_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(blocked_card.owner_seat_id)
+                        blocker_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(blocker_card.owner_seat_id)
+                        attacker_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(attacker_card.owner_seat_id)
 
-                        owner_is_hero = mtga_app.mtga_watch_app.game.hero == card_owner
                         blocker_owner_is_hero = mtga_app.mtga_watch_app.game.hero == blocker_owner
+                        attacker_owner_is_hero = mtga_app.mtga_watch_app.game.hero == attacker_owner
 
-                        text_type = "{}".format("hero" if owner_is_hero else "opponent")
                         blocker_text_type = "{}".format("hero" if blocker_owner_is_hero else "opponent")
+                        attacker_text_type = "{}".format("hero" if attacker_owner_is_hero else "opponent")
 
-                        card_text = build_event_text(card.pretty_name, text_type)
-                        blocker_card_text = build_event_text(blocked_card.pretty_name, blocker_text_type)
+                        blocker_card_text = build_event_text(blocker_card.pretty_name, blocker_text_type)
+                        attacker_card_text = build_event_text(attacker_card.pretty_name, attacker_text_type)
 
-                        event_texts = [blocker_card_text, " blocks ", card_text]
+                        event_texts = [blocker_card_text, " blocks ", attacker_card_text]
                         queue_obj = {"game_history_event": event_texts}
                         general_output_queue.put(queue_obj)
         if 'zones' in message.keys():
