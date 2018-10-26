@@ -112,7 +112,7 @@ class GameCard(Card):
 class Ability(object):
 
     def __init__(self, name, source_id, source_instance_id, mtga_id, owner_seat_id, game_id=-1):
-        self.name = name
+        self.pretty_name = name
         self.source_id = source_id
         self.source_instance_id = source_instance_id
         self.game_id = game_id
@@ -122,6 +122,6 @@ class Ability(object):
 
     def __repr__(self):
         if self.mtga_id != -1:
-            return "<Ability, {}: '{}...' {} iid={}>".format(all_mtga_cards.find_one(self.source_id).name, self.name[:20], self.mtga_id, self.game_id)
+            return "<Ability, {}: '{}...' {} iid={}>".format(all_mtga_cards.find_one(self.source_id).name, self.pretty_name[:20], self.mtga_id, self.game_id)
         else:
             return "<UnknownAbility: iid={}>".format(self.game_id)

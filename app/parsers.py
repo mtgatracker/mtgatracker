@@ -160,6 +160,34 @@ def build_event_text(text, event_type, hover_text=None):
         obj["hover"] = hover_text
     return obj
 
+
+def build_card_event_texts(card, game):
+    if isinstance(card, Ability):
+        owner_is_hero = game.hero == game.get_player_in_seat(card.owner_seat_id)
+        text_type = "{}".format("hero" if owner_is_hero else "opponent")
+        ability_source = all_mtga_cards.find_one(card.source_id)
+        ability_source_text = build_event_text(ability_source.pretty_name, text_type)
+        ability_text = build_event_text("ability", "ability", card.pretty_name)
+        card_texts = [ability_source_text, "'s ", ability_text]
+    elif isinstance(card, Player):
+        text_type = "{}".format("hero" if card else "opponent")
+        card_texts = [build_event_text(card.player_name, text_type)]
+    else:  # it's a GameCard
+        owner_is_hero = game.hero == game.get_player_in_seat(card.owner_seat_id)
+        text_type = "{}".format("hero" if owner_is_hero else "opponent")
+        card_texts = [build_event_text(card.pretty_name, text_type)]
+    return card_texts
+
+
+def build_event_texts_from_iid_or_grpid(iid, game, grpid=None):
+    if iid < 3:
+        return build_card_event_texts(game.get_player_in_seat(iid), game)
+    else:
+        card_or_ability = game.find_card_by_iid(iid)
+        if not card_or_ability:
+            card_or_ability = all_mtga_cards.find_one(iid)
+        return build_card_event_texts(card_or_ability, game)
+
 @util.debug_log_trace
 def parse_game_state_message(message, timestamp=None):
     # DOM: ok
@@ -303,32 +331,17 @@ def parse_game_state_message(message, timestamp=None):
                     targets = []
                     target_texts = []
                     for affected_id in affected_ids:
-                        if affected_id < 3:
-                            target = "player {}".format(affected_id)  # mtga_app.mtga_watch_app.game.get_player_in_seat(affected_id)
-                        else:
-                            target = mtga_app.mtga_watch_app.game.find_card_by_iid(affected_id)
-                            if target:
-                                target_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(target.owner_seat_id)
-                                target_owner_is_hero = mtga_app.mtga_watch_app.game.hero == target_owner
-
-                                target_owner_type = "{}".format("hero" if target_owner_is_hero else "opponent")
-                                target_card_text = build_event_text(target.pretty_name, target_owner_type)
-                                target_texts.append(target_card_text)
-                            else:
-                                target = all_mtga_cards.find_one(affected_id)
-                                target_card_text = build_event_text(target.name, "text")
-                                target_texts.append(target_card_text)
+                        affected_texts = build_event_texts_from_iid_or_grpid(affected_id, mtga_app.mtga_watch_app.game)
+                        target_texts.extend(affected_texts)
+                        game_obj = mtga_app.mtga_watch_app.game.find_card_by_iid(affected_id)
+                        target = game_obj if game_obj else affected_id
                         targets.append(target)
                     if (affector_card, targets) not in mtga_app.mtga_watch_app.game.recorded_targetspecs:
                         mtga_app.mtga_watch_app.game.recorded_targetspecs.append((affector_card, targets))
+                        affector_texts = build_card_event_texts(affector_card, mtga_app.mtga_watch_app.game)
 
-                        affector_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(affector_card.owner_seat_id)
-                        affector_owner_is_hero = mtga_app.mtga_watch_app.game.hero == affector_owner
-
-                        affector_text_type = "{}".format("hero" if affector_owner_is_hero else "opponent")
-                        affector_card_text = build_event_text(affector_card.pretty_name, affector_text_type)
-
-                        event_texts = [affector_card_text, " targeted "]
+                        event_texts = [*affector_texts, " targeted "]
+                        print(target_texts)
                         if len(target_texts) > 2:
                             for target in target_texts:
                                 event_texts.extend([target, ", "])
@@ -351,25 +364,10 @@ def parse_game_state_message(message, timestamp=None):
                         for detail in details:
                             if detail["key"] == "grpid":
                                 grpid = detail["valueInt32"][0]
-                        card_with_iid = mtga_app.mtga_watch_app.game.find_card_by_iid(affector_id)
-                        if isinstance(card_with_iid, Ability):
-                            ability_source = all_mtga_cards.find_one(card_with_iid.source_id)
-                            ability_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(card_with_iid.owner_seat_id)
-                            owner_is_hero = mtga_app.mtga_watch_app.game.hero == ability_owner
-                            text_type = "{}".format("hero" if owner_is_hero else "opponent")
-                            ability_source_text = build_event_text(ability_source.pretty_name, text_type)
-                            ability_text = build_event_text("ability", "ability", card_with_iid.name)
-                            event_texts = [ability_source_text, "'s ", ability_text, " resolved"]
-                            queue_obj = {"game_history_event": event_texts}
-                            general_output_queue.put(queue_obj)
-                        elif card_with_iid:
-                            card_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(card_with_iid.owner_seat_id)
-                            owner_is_hero = mtga_app.mtga_watch_app.game.hero == card_owner
-                            text_type = "{}".format("hero" if owner_is_hero else "opponent")
-                            card_text = build_event_text(card_with_iid.pretty_name, text_type)
-                            event_texts = [card_text, " resolved"]
-                            queue_obj = {"game_history_event": event_texts}
-                            general_output_queue.put(queue_obj)
+                        resolved_texts = build_event_texts_from_iid_or_grpid(affector_id, mtga_app.mtga_watch_app.game, grpid)
+                        event_texts = [*resolved_texts, " resolved"]
+                        queue_obj = {"game_history_event": event_texts}
+                        general_output_queue.put(queue_obj)
                         pass
                     except:
                         app.mtga_app.mtga_logger.error("{}Exception @ count {}".format(util.ld(True), app.mtga_app.mtga_watch_app.error_count))
@@ -406,35 +404,28 @@ def parse_game_state_message(message, timestamp=None):
                             zone.abilities.append(ability)
                 if "attackState" in object and object["attackState"] == "AttackState_Attacking":
                     card = mtga_app.mtga_watch_app.game.find_card_by_iid(instance_id)
-                    card_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(card.owner_seat_id)
-                    owner_is_hero = mtga_app.mtga_watch_app.game.hero == card_owner
-                    text_type = "{}".format("hero" if owner_is_hero else "opponent")
-                    card_text = build_event_text(card.pretty_name, text_type)
-                    event_texts = [card_text, " attacking"]
-                    queue_obj = {"game_history_event": event_texts}
-                    general_output_queue.put(queue_obj)
+                    limit_tuple = (mtga_app.mtga_watch_app.game.turn_number, "attacks", card)
+                    if limit_tuple not in mtga_app.mtga_watch_app.game.recorded_targetspecs:
+                        mtga_app.mtga_watch_app.game.recorded_targetspecs.append(limit_tuple)
+                        card_texts = build_event_texts_from_iid_or_grpid(instance_id, mtga_app.mtga_watch_app.game)
+                        event_texts = [*card_texts, " attacking"]
+                        queue_obj = {"game_history_event": event_texts}
+                        general_output_queue.put(queue_obj)
                 if "blockState" in object and object["blockState"] == "BlockState_Blocking":
-                    blocker_card = mtga_app.mtga_watch_app.game.find_card_by_iid(instance_id)
+                    card = mtga_app.mtga_watch_app.game.find_card_by_iid(instance_id)
                     block_info = object["blockInfo"]
                     attacker_list = block_info["attackerIds"]
                     for attacker in attacker_list:
                         attacker_card = mtga_app.mtga_watch_app.game.find_card_by_iid(attacker)
+                        limit_tuple = (mtga_app.mtga_watch_app.game.turn_number, "blocks", card, attacker_card)
+                        if limit_tuple not in mtga_app.mtga_watch_app.game.recorded_targetspecs:
+                            mtga_app.mtga_watch_app.game.recorded_targetspecs.append(limit_tuple)
+                            attacker_texts = build_event_texts_from_iid_or_grpid(attacker, mtga_app.mtga_watch_app.game)
+                            blocker_texts = build_event_texts_from_iid_or_grpid(instance_id, mtga_app.mtga_watch_app.game)
 
-                        blocker_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(blocker_card.owner_seat_id)
-                        attacker_owner = mtga_app.mtga_watch_app.game.get_player_in_seat(attacker_card.owner_seat_id)
-
-                        blocker_owner_is_hero = mtga_app.mtga_watch_app.game.hero == blocker_owner
-                        attacker_owner_is_hero = mtga_app.mtga_watch_app.game.hero == attacker_owner
-
-                        blocker_text_type = "{}".format("hero" if blocker_owner_is_hero else "opponent")
-                        attacker_text_type = "{}".format("hero" if attacker_owner_is_hero else "opponent")
-
-                        blocker_card_text = build_event_text(blocker_card.pretty_name, blocker_text_type)
-                        attacker_card_text = build_event_text(attacker_card.pretty_name, attacker_text_type)
-
-                        event_texts = [blocker_card_text, " blocks ", attacker_card_text]
-                        queue_obj = {"game_history_event": event_texts}
-                        general_output_queue.put(queue_obj)
+                            event_texts = [*blocker_texts, " blocks ", *attacker_texts]
+                            queue_obj = {"game_history_event": event_texts}
+                            general_output_queue.put(queue_obj)
         if 'zones' in message.keys():
             cards_to_remove_from_zones = {}
             for zone in message['zones']:

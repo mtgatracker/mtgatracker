@@ -9,6 +9,7 @@
         "start": "electron .",
         "debug": "electron . -d",
         "debug-full": "electron . -d -f",
+        "full": "electron . -f",
         "postinstall": "./node_modules/.bin/electron-rebuild -m . -w keytar,active-win -p -f"
     },
     "repository": "https://github.com/shawkinsl/mtga-tools",
