@@ -264,6 +264,8 @@ let recentCards = settings.get('recentCards', []);
 let recentCardsQuantityToShow = settings.get('recentCardsQuantityToShow', 10);
 logPath = settings.get("logPath", logPath)
 
+global.historyEvents = []
+
 let debugFile = false;
 if (debugFileCmdOpt) {
     debugFile = true;
@@ -302,7 +304,13 @@ ipcMain.on('hideRequest', (event, arg) => {
   }
 })
 
+ipcMain.on('clearGameHistory', event => {
+  global.historyEvents = []
+  historyWindow.webContents.send("clearGameHistory")
+})
+
 ipcMain.on('gameHistoryEvent', (event, arg) => {
+  global.historyEvents.push(arg)
   if (historyWindow) {
     try {
       historyWindow.webContents.send('gameHistoryEventSend', arg)

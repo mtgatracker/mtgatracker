@@ -74,16 +74,7 @@ var port = remote.getGlobal('port');
 var timerRunning = false;
 var uploadDelay = 0;
 
-var hideModeManager = hideWindowManager({
-  useRollupMode: function() {return remote.getGlobal('rollupMode')},
-  getHideDelay: function() {return remote.getGlobal('hideDelay')},
-  getInverted: function() {return remote.getGlobal('invertHideMode')},
-  windowName: "mainRenderer",
-  bodyID: "#tracker-body",
-  headerID: "#tracker-header",
-  containerID: "#container",
-  hideCallback: hideCallback,
-})
+var hideModeManager;
 
 setInterval(() => {
   uploadDelay -= 1
@@ -1003,6 +994,17 @@ let onMessage = (data) => {
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
+
+    hideModeManager = hideWindowManager({
+      useRollupMode: function() {return remote.getGlobal('rollupMode')},
+      getHideDelay: function() {return remote.getGlobal('hideDelay')},
+      getInverted: function() {return remote.getGlobal('invertHideMode')},
+      windowName: "mainRenderer",
+      bodyID: "#tracker-body",
+      headerID: "#tracker-header",
+      containerID: "#container",
+      hideCallback: hideCallback,
+    })
 
     setInterval(() => {
         $('#overall-timer').html(overallTimer.getTimeValues().toString());

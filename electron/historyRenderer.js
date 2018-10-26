@@ -2,6 +2,7 @@ const { remote, ipcRenderer, shell } = require('electron')
 const fs = require('fs')
 const mtga = require('mtga')
 const hideWindowManager = require('./hide-manager')
+const activeWin = require("active-win")
 
 let historyWindow = remote.getCurrentWindow()
 
@@ -20,22 +21,27 @@ var historyData = {
   debug: remote.getGlobal('debug'),
   invertHideMode: remote.getGlobal('invertHideMode'),
   rollupMode: remote.getGlobal('rollupMode'),
-  historyEvents: [],
+  historyEvents: remote.getGlobal("historyEvents", []),
   zoom: remote.getGlobal("historyZoom"),
 }
 
-var hideModeManager = hideWindowManager({
-  useRollupMode: function() {return remote.getGlobal('rollupMode')},
-  getHideDelay: function() {return remote.getGlobal('hideDelay')},
-  getInverted: function() {return remote.getGlobal('invertHideMode')},
-  windowName: "historyRenderer",
-  bodyID: "#events-container",
-  headerID: ".history-header",
-  containerID: "#container",
-  hideCallback: function() {},
-  bodyHeightTarget: "90%",
-  containerHeightTarget: "100%",
-})
+var hideModeManager;
+
+// poll for active window semi-regularly; if it's not MTGA or MTGATracker, minimize / unset alwaysontop
+setInterval(() => {
+  if (remote.getGlobal("mtgaOverlayOnly")) {
+    activeWin().then(win => {
+      if (win.owner.name == "MTGA.exe" || win.owner.name == "MTGATracker.exe" || win.title == "MTGA Tracker") {
+        if(!historyWindow.isAlwaysOnTop()) historyWindow.setAlwaysOnTop(true)
+      } else {
+        if(historyWindow.isAlwaysOnTop()) historyWindow.setAlwaysOnTop(false)
+      }
+    })
+  } else {
+    console.log("skipping overlay check and turning on always on top")
+    if(!browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(true)
+  }
+}, 200)
 
 const { Menu, MenuItem, dialog } = remote
 const menu = new Menu()
@@ -90,10 +96,33 @@ document.addEventListener("DOMContentLoaded", function(event) {
       historyWindow.webContents.setZoomFactor(historyData.zoom)
       ipcRenderer.send('settingsChanged', {key: "history-zoom", value: historyData.zoom})
   })
+  $("#floating-eraser").click(event => {
+      console.log("clicky")
+      historyData.historyEvents = []
+      ipcRenderer.send('clearGameHistory')
+  })
+
+  hideModeManager = hideWindowManager({
+    useRollupMode: function() {return remote.getGlobal('rollupMode')},
+    getHideDelay: function() {return remote.getGlobal('hideDelay')},
+    getInverted: function() {return remote.getGlobal('invertHideMode')},
+    windowName: "historyRenderer",
+    bodyID: "#events-container",
+    headerID: ".history-header",
+    containerID: "#container",
+    hideCallback: function() {},
+    bodyHeightTarget: "90%",
+    containerHeightTarget: "100%",
+  })
+
 })
 
 ipcRenderer.on('gameHistoryEventSend', (event, arg) => {
   historyData.historyEvents.push(arg)
+})
+
+ipcRenderer.on("clearGameHistory", (event, arg) => {
+  historyData.historyEvents = []
 })
 
 ipcRenderer.on('hideRequest', (event, arg) => {
