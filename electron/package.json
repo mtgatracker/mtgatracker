@@ -27,7 +27,6 @@
         "active-win": "^3.0.0",
         "cryptiles": "^4.1.2",
         "easytimer.js": "^2.2.3",
-        "electron": "^1.8.8",
         "electron-gh-releases": "^2.0.4",
         "electron-rebuild": "^1.8.2",
         "electron-settings": "^3.1.4",
@@ -45,6 +44,7 @@
         "ws": "4.1.0"
     },
     "devDependencies": {
+        "electron": "^1.8.8",
         "electron-packager": "^9.1.0",
         "grunt-electron-installer": "^2.1.0",
         "node-fs-extra": "^0.8.2"

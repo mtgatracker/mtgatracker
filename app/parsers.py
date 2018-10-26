@@ -183,7 +183,7 @@ def build_event_texts_from_iid_or_grpid(iid, game, grpid=None):
     if iid < 3:
         return build_card_event_texts(game.get_player_in_seat(iid), game)
     else:
-        card_or_ability = game.find_card_by_iid(iid)
+        card_or_ability = game.find_card_by_iid(iid) or game.find_card_by_iid(grpid)
         if not card_or_ability:
             card_or_ability = all_mtga_cards.find_one(iid)
         return build_card_event_texts(card_or_ability, game)
