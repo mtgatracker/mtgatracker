@@ -236,10 +236,12 @@ def parse_game_state_message(message, timestamp=None):
                 if turn_tuple not in mtga_app.mtga_watch_app.game.recorded_targetspecs:
                     mtga_app.mtga_watch_app.game.recorded_targetspecs.append(turn_tuple)
                     turn = turn_tuple[0]
+                    active_player_seat = message["turnInfo"]["activePlayer"]
+                    active_player = mtga_app.mtga_watch_app.game.get_player_in_seat(active_player_seat)
                     if turn % 2 == 1:
-                        text = "{} / Player 1 Turn {}".format(turn, int((turn + 1) / 2))
+                        text = "{} / {} Turn {}".format(turn, active_player.player_name, int((turn + 1) / 2))
                     else:
-                        text = "{} / Player 2 Turn {}".format(turn, int((turn / 2)))
+                        text = "{} / {} Turn {}".format(turn, active_player.player_name, int((turn / 2)))
                     text_obj = build_event_text(text, "turn")
                     queue_obj = {"game_history_event": [text_obj]}
                     general_output_queue.put(queue_obj)
@@ -341,7 +343,6 @@ def parse_game_state_message(message, timestamp=None):
                         affector_texts = build_card_event_texts(affector_card, mtga_app.mtga_watch_app.game)
 
                         event_texts = [*affector_texts, " targeted "]
-                        print(target_texts)
                         if len(target_texts) > 2:
                             for target in target_texts:
                                 event_texts.extend([target, ", "])
