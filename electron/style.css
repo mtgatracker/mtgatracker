@@ -46,7 +46,7 @@ h1 {
 }
 
 .header-title {
-  max-width: 180px;
+  max-width: 165px;
   display: inline-block;
 }
 
@@ -391,6 +391,17 @@ p {
     left: 295px;
     top: 25px;
     z-index: 100;
+}
+
+#floating-history {
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 262px;
+    top: 28px;
+    z-index: 100;
+    color: white;
+    cursor: pointer;
 }
 
 .deck-name {

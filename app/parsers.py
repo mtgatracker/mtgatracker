@@ -540,6 +540,7 @@ def parse_game_results(_unused_locked, match_id, result_list):
             # scope = result["scope"]
             # if scope == 'MatchScope_Match':  # TODO: with BO3, check games too. (might be in a different event type)
             winning_team = result["winningTeamId"]
+
             mtga_app.mtga_watch_app.game.final = True
             mtga_app.mtga_watch_app.game.winner = mtga_app.mtga_watch_app.game.get_player_in_seat(winning_team)
             # let electron handle the upload

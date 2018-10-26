@@ -37,13 +37,17 @@ h1 {
 }
 
 #floating-settings {
-  top: 25px;
-  left: 249px;
-  top: 27px;
+  left: 252px;
+  top: 26px;
+}
+
+#floating-history {
+    left: 232px;
+    top: 26px;
 }
 
 .zoom-panel {
-    left: 196px;
+    left: 184px;
     position: absolute;
     top: 25px;
     height: 0px;

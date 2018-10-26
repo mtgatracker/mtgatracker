@@ -7,6 +7,8 @@
         "copylegal": "node ./scripts/copy-legal.js",
         "prestart": "npm run copylegal",
         "start": "electron .",
+        "debug": "electron . -d",
+        "debug-full": "electron . -d -f",
         "postinstall": "./node_modules/.bin/electron-rebuild -m . -w keytar,active-win -p -f"
     },
     "repository": "https://github.com/shawkinsl/mtga-tools",

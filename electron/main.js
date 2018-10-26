@@ -292,6 +292,16 @@ ipcMain.on('settingsChanged', (event, arg) => {
   mainWindow.webContents.send('settingsChanged')
 })
 
+ipcMain.on('hideRequest', (event, arg) => {
+  if (historyWindow) {
+    try {
+      historyWindow.webContents.send('hideRequest', arg)
+    } catch (error) {
+      console.log("couldn't send stdout message to history window, likely already destroyed")
+    }
+  }
+})
+
 ipcMain.on('gameHistoryEvent', (event, arg) => {
   if (historyWindow) {
     try {
@@ -414,6 +424,7 @@ let openTOSWindow = () => {
 }
 
 ipcMain.on('openSettings', openSettingsWindow)
+ipcMain.on('openHistory', openHistoryWindow)
 
 app.disableHardwareAcceleration()
 
@@ -656,7 +667,6 @@ const createMainWindow = () => {
 const openFirstWindow = () => {
   if (tosAcked) {
     createMainWindow()
-    openHistoryWindow()
   } else {
     openTOSWindow()
   }

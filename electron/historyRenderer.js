@@ -1,7 +1,7 @@
 const { remote, ipcRenderer, shell } = require('electron')
 const fs = require('fs')
-
 const mtga = require('mtga')
+const hideWindowManager = require('./hide-manager')
 
 let historyWindow = remote.getCurrentWindow()
 
@@ -21,8 +21,21 @@ var historyData = {
   invertHideMode: remote.getGlobal('invertHideMode'),
   rollupMode: remote.getGlobal('rollupMode'),
   historyEvents: [],
-  zoom: remote.getGlobal("historyZoom")
+  zoom: remote.getGlobal("historyZoom"),
 }
+
+var hideModeManager = hideWindowManager({
+  useRollupMode: function() {return remote.getGlobal('rollupMode')},
+  getHideDelay: function() {return remote.getGlobal('hideDelay')},
+  getInverted: function() {return remote.getGlobal('invertHideMode')},
+  windowName: "historyRenderer",
+  bodyID: "#events-container",
+  headerID: ".history-header",
+  containerID: "#container",
+  hideCallback: function() {},
+  bodyHeightTarget: "90%",
+  containerHeightTarget: "100%",
+})
 
 const { Menu, MenuItem, dialog } = remote
 const menu = new Menu()
@@ -80,6 +93,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 })
 
 ipcRenderer.on('gameHistoryEventSend', (event, arg) => {
-  console.log(arg)
   historyData.historyEvents.push(arg)
+})
+
+ipcRenderer.on('hideRequest', (event, arg) => {
+  hideModeManager.toggleHidden(arg)
 })
