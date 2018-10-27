@@ -577,10 +577,19 @@ function resizeWindow() {
     bounds = browserWindow.getBounds()
     container.style.height = "" + parseInt(totalHeight) + "px"
     if (zoom > 0.85) {
+      // TODO: resize with math that is less "throwing shit at the wall"
       // tbh this is stupid but it works for now
       // (and is probably better than setting max width and height and hoping transparent window works)
-      totalHeight += parseInt(100 * (zoom ** 3))
+      let heightPower = 5;
+      if (remote.getGlobal("useFlat")) {
+        heightPower = 3;
+      }
+      totalHeight += parseInt(100 * (zoom ** heightPower))
       bounds.width = parseInt(354 * (zoom ** 2))
+      if (0.85 < zoom && zoom < 0.95) {
+        // dirty, dirty hack, but 0.9 is broken so.
+        bounds.width += 30;
+      }
     } else {
       bounds.width = parseInt(354 * zoom);
     }

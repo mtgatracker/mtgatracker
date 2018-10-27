@@ -305,6 +305,7 @@ p {
     white-space: nowrap;
     overflow: hidden;
     display: inline-block;
+    position: absolute;
 }
 
 .card-text-limit:before {
@@ -376,8 +377,7 @@ p {
     float: right;
     margin-right: 17px;
     margin-top: 2px;
-    position: absolute;
-    right: 0;
+    position: relative;
 }
 
 .mi-split-color {
@@ -480,6 +480,7 @@ p {
 .update-message,
 .settings-img,
 .back-link:after,
+.back-link,
 .deck-container {
 	-webkit-app-region: no-drag;
 }
