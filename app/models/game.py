@@ -216,6 +216,9 @@ class Game(object):
         # already recorded and ignore them.
         self.recorded_targetspecs = []
 
+        # so we can send the event log to inspector, as well
+        self.events = []
+
         self.hero = hero
         assert isinstance(self.hero, Player)
         self.opponent = opponent
@@ -358,6 +361,36 @@ class Game(object):
             "mulliganCount": self.opponent.mulligan_count,
             "timeSpent": str(oppo_chess_time_total),
         }
+
+        # haxx to condense game history logs (8kb record -> 4kb record!)
+        # assign each unique blob a numeric ID, then whenever a blob is repeated,
+        # drop in the ID instead of the full blob
+        #
+        # pseudocode for decoding:
+        # for event in gameHistory:
+        #     for blob in event:
+        #         print(historyKey[str(blob)])
+
+        minimized_events = []
+
+        blob_map = {}
+        blob_id = 0
+        for event_list in self.events:
+            minimized_event_list = []
+            for blob in event_list:
+                if isinstance(blob, dict) and "type" in blob.keys() and blob["type"] == "turn":
+                    blob = "turn++"
+                if blob not in blob_map.values():
+                    blob_map[blob_id] = blob
+                    minimized_event_list.append(blob_id)
+                    blob_id += 1
+                else:
+                    for key in blob_map.keys():
+                        if blob_map[key] == blob:
+                            minimized_event_list.append(key)
+                            break  # these in theory will be 1:1, but only add once to be sure
+            minimized_events.append(minimized_event_list)
+
         gameJSON = {
             "players": [hero_obj, opponent_obj],
             "winner": self.winner.player_name,
@@ -369,6 +402,8 @@ class Game(object):
             "onThePlay": self.on_the_play,
             "opponentStartingRank": self.opponent_rank,
             "eventID": self.event_id,
+            "gameHistory": minimized_events,
+            "historyKey": blob_map
         }
         gameJSON["game_hash"] = hash_json_object(gameJSON)
         return gameJSON

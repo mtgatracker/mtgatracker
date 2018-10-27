@@ -5,6 +5,7 @@ const hideWindowManager = require('./hide-manager')
 const activeWin = require("active-win")
 
 let historyWindow = remote.getCurrentWindow()
+let scrolling = false;
 
 const tt = require('electron-tooltip')
 tt({
@@ -78,7 +79,16 @@ rivets.binders.expandevent = function(el, value) {
       let hr = document.createElement("hr")
       el.appendChild(hr)
     }
-    $("#events-container").animate({ scrollTop: $('#events-container').prop("scrollHeight")}, 100);
+    if (!scrolling) {
+      let container = $("#events-container")
+      let shouldScroll = container.prop("scrollHeight") - (container.height() + container.scrollTop()) < 30;
+      if (shouldScroll) {
+        scrolling = true;
+        container.animate({ scrollTop: $('#events-container').prop("scrollHeight")}, 100, function() {
+          scrolling = false;
+        });
+      }
+    }
   }
 }
 
