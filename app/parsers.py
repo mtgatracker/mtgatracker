@@ -244,6 +244,7 @@ def parse_game_state_message(message, timestamp=None):
                         text = "{} / {} Turn {}".format(turn, active_player.player_name, int((turn / 2)))
                     text_obj = build_event_text(text, "turn")
                     queue_obj = {"game_history_event": [text_obj]}
+                    mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                     general_output_queue.put(queue_obj)
                 if "step" in message["turnInfo"].keys():
                     app.mtga_app.mtga_watch_app.game.current_phase += "-{}".format(message["turnInfo"]["step"])
@@ -355,6 +356,7 @@ def parse_game_state_message(message, timestamp=None):
                             event_texts.extend(target_texts)
 
                         queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                         general_output_queue.put(queue_obj)
                 if annotation_type == "AnnotationType_ResolutionComplete":
                     try:
@@ -368,6 +370,7 @@ def parse_game_state_message(message, timestamp=None):
                         resolved_texts = build_event_texts_from_iid_or_grpid(affector_id, mtga_app.mtga_watch_app.game, grpid)
                         event_texts = [*resolved_texts, " resolved"]
                         queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                         general_output_queue.put(queue_obj)
                         pass
                     except:
@@ -411,6 +414,7 @@ def parse_game_state_message(message, timestamp=None):
                         card_texts = build_event_texts_from_iid_or_grpid(instance_id, mtga_app.mtga_watch_app.game)
                         event_texts = [*card_texts, " attacking"]
                         queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                         general_output_queue.put(queue_obj)
                 if "blockState" in object and object["blockState"] == "BlockState_Blocking":
                     card = mtga_app.mtga_watch_app.game.find_card_by_iid(instance_id)
@@ -426,6 +430,7 @@ def parse_game_state_message(message, timestamp=None):
 
                             event_texts = [*blocker_texts, " blocks ", *attacker_texts]
                             queue_obj = {"game_history_event": event_texts}
+                            mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                             general_output_queue.put(queue_obj)
         if 'zones' in message.keys():
             cards_to_remove_from_zones = {}
@@ -458,8 +463,9 @@ def parse_game_state_message(message, timestamp=None):
                     player_is_hero = mtga_app.mtga_watch_app.game.hero == player_obj
                     player_life_text_type = "{}".format("hero" if player_is_hero else "opponent")
                     player_life_text = build_event_text(player_obj.player_name, player_life_text_type)
-                    event_texts = [player_life_text, "'s life total changed {} -> {}".format(player_obj.current_life_total, life_total)]
+                    event_texts = [player_life_text, "'s life total changed ", "{} -> {}".format(player_obj.current_life_total, life_total)]
                     queue_obj = {"game_history_event": event_texts}
+                    mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                     general_output_queue.put(queue_obj)
                     player_obj.current_life_total = life_total
 
@@ -555,6 +561,7 @@ def parse_game_results(_unused_locked, match_id, result_list):
 
                 event_texts = [event_text]
                 queue_obj = {"game_history_event": event_texts}
+                mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                 general_output_queue.put(queue_obj)
 
             app.mtga_app.mtga_watch_app.match.add_result(result)
@@ -648,6 +655,6 @@ def parse_match_playing(blob):
         event_texts = [hero_text, " vs ", oppo_text]
         queue_obj = {"game_history_event": event_texts}
         general_output_queue.put(queue_obj)
-
         mtga_app.mtga_watch_app.game = Game(match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo,
                                             shared_stack, event_id, opponent_rank)
+        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
