@@ -46,7 +46,7 @@ h1 {
 }
 
 .header-title {
-  max-width: 180px;
+  max-width: 165px;
   display: inline-block;
 }
 
@@ -153,7 +153,6 @@ p {
     width: 320px;
     color: white;
     padding: 0;
-    margin: 0;
     -webkit-transition: opacity 0.5s; /* Safari */
     transition: opacity 0.5s;
     -webkit-border-radius: 4px;
@@ -306,6 +305,7 @@ p {
     white-space: nowrap;
     overflow: hidden;
     display: inline-block;
+    position: absolute;
 }
 
 .card-text-limit:before {
@@ -377,8 +377,7 @@ p {
     float: right;
     margin-right: 17px;
     margin-top: 2px;
-    position: absolute;
-    right: 0;
+    position: relative;
 }
 
 .mi-split-color {
@@ -392,6 +391,17 @@ p {
     left: 295px;
     top: 25px;
     z-index: 100;
+}
+
+#floating-history {
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 262px;
+    top: 28px;
+    z-index: 100;
+    color: white;
+    cursor: pointer;
 }
 
 .deck-name {
@@ -470,6 +480,7 @@ p {
 .update-message,
 .settings-img,
 .back-link:after,
+.back-link,
 .deck-container {
 	-webkit-app-region: no-drag;
 }

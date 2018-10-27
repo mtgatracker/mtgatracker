@@ -285,6 +285,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
     console.log("resetting win/loss")
     ipcRenderer.send('settingsChanged', {key: "winLossCounter", value: {win: 0, loss: 0}})
   })
+  $("#resetGameHistory").click((e) => {
+    console.log("resetting gameHstory")
+    ipcRenderer.send('clearGameHistory')
+  })
   $("#exportCollectionMTGGButton").click((e) => {
     console.log("exporting mtgg to desktop")
     let allPromises = []
