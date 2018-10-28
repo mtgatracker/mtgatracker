@@ -154,7 +154,6 @@ class Player(object):
             "stats": list(reversed(odds_list)),
             "original_deck_stats": list(reversed(original_odds_list)),
             "deck_name": self.original_deck.pool_name,
-            #"deck_id": self.original_deck.deckID,
             "total_cards_in_deck": len(current_list),
             "original_decklist_total": len(self.original_deck.cards),
             "library_contents": [c.to_serializable() for c in current_list],
