@@ -232,6 +232,11 @@ if (frameCmdOpt) {
   settings.set('useFrame', true)
 }
 
+// Hack to update to new structure
+if (settings.has('winLossCounter.win') && settings.has('winLossCounter.loss')) {
+  settings.set('winLossCounter.total', settings.get('winLossCounter'))
+}
+
 let debug = settings.get('debug', false);
 let mtgaOverlayOnly = settings.get('mtgaOverlayOnly', true);
 let showErrors = settings.get('showErrors', false);
@@ -250,7 +255,7 @@ let showChessTimers = settings.get('showChessTimers', true);
 let hideDelay = settings.get('hideDelay', 10);
 let invertHideMode = settings.get('invertHideMode', false);
 let rollupMode = settings.get('rollupMode', true);
-let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
+let winLossCounter = settings.get('winLossCounter', {total: {win: 0, loss: 0}});
 let showWinLossCounter = settings.get('showWinLossCounter', true);
 let showVaultProgress = settings.get('showVaultProgress', true);
 let lastCollection = settings.get('lastCollection', {});
