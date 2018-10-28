@@ -234,7 +234,9 @@ if (frameCmdOpt) {
 
 // Hack to update to new structure
 if (settings.has('winLossCounter.win') && settings.has('winLossCounter.loss')) {
-  settings.set('winLossCounter.total', settings.get('winLossCounter'))
+  settings.set('winLossCounter.total', settings.get('winLossCounter'));
+  settings.delete('winLossCounter.win');
+  settings.delete('winLossCounter.loss');
 }
 
 let debug = settings.get('debug', false);
