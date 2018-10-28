@@ -162,8 +162,10 @@ var appData = {
     version: appVersionStr,
     showWinLossCounter: showWinLossCounter,
     showVaultProgress: showVaultProgress,
-    winCounter: winLossCounterInitial.win,
-    lossCounter: winLossCounterInitial.loss,
+    winLossObj: winLossCounterInitial,
+    activeDeck: 'total',
+    winCounter: winLossCounterInitial['total'].win,
+    lossCounter: winLossCounterInitial['total'].loss,
     showGameTimer: showGameTimer,
     showChessTimers: showChessTimers,
     hideDelay: hideDelay,
@@ -600,7 +602,14 @@ function resizeWindow() {
 }
 
 function populateDeck(elem) {
-    deckID = elem.getAttribute('data-deckid')
+    deckID = elem.getAttribute('data-deckid');
+    appData.activeDeck = deckID;
+    if (appData.winLossObj[appData.activeDeck] === undefined) {
+      appData.winLossObj[appData.activeDeck] = {win: 0, loss: 0}
+    }
+    appData.winCounter = appData.winLossObj[appData.activeDeck].win;
+    appData.lossCounter = appData.winLossObj[appData.activeDeck].loss;
+    
     $.each(appData.player_decks, (i, v) => {
         if (v.deck_id == deckID) {
             appData.selected_list = v.cards;
@@ -622,6 +631,9 @@ function exitDraft() {
 function unpopulateDecklist() {
     appData.list_selected = false;
     appData.no_list_selected = true;
+    appData.activeDeck = 'total';
+    appData.winCounter = appData.winLossObj[appData.activeDeck].win;
+    appData.lossCounter = appData.winLossObj[appData.activeDeck].loss;
 
     appData.game_in_progress = false;
     appData.show_available_decklists = true;
@@ -723,16 +735,37 @@ function uploadGame(attempt, gameData, errors) {
     errors = []
   }
   if (attempt == 0) { // only set local winloss counters on first upload attempt
-
-    if (gameData.players[0].name == gameData.winner) {
-      appData.winCounter++
+    const victory = gameData.players[0].name === gameData.winner;
+    if (victory) {
+      appData.winLossObj.total.win++
     } else {
-      appData.lossCounter++
+      appData.winLossObj.total.loss++
     }
     ipcRenderer.send('settingsChanged', {
-      key: "winLossCounter",
-      value: {win: appData.winCounter, loss: appData.lossCounter}
+      key: "winLossCounter.total",
+      value: {win: appData.winLossObj.total.win, loss: appData.winLossObj.total.loss}
     })
+    //only update per-deck win/loss for decks we know about
+    const deckID = gameData.players[0].deck.deckID;
+    if (appData.player_decks.map(deck=>deck.deck_id).includes(deckID)) {
+      if(appData.winLossObj[deckID]) {
+        if (victory) {
+          appData.winLossObj[deckID].win++
+        } else {
+          appData.winLossObj[deckID].loss++
+        }
+      } else {
+        if (victory) {
+          appData.winLossObj[deckID] = {win: 1, loss: 0}
+        } else {
+          appData.winLossObj[deckID] = {win: 0, loss: 1}
+        }
+      }
+      ipcRenderer.send('settingsChanged', {
+        key: `winLossCounter.${gameData.players[0].deck.deckID}`,
+        value: appData.winLossObj[deckID]
+      })
+    }
   }
 
   return new Promise((resolve, reject) => {
@@ -861,6 +894,21 @@ let onMessage = (data) => {
               // pause each player's timer. we'll unpause them soon, with a decisionPlayerChange event.
               opponentTimer.pause()
               heroTimer.pause()
+
+              //set the stats to report for this deck, if known
+              //otherwise, use total stats
+              if (appData.player_decks.map(deck=>deck.deck_id).includes(data.deck_id)){
+                appData.activeDeck = data.deck_id
+                if (!(data.deck_id in appData.winLossObj)){
+                  appData.winLossObj[appData.activeDeck] = {win: 0, loss: 0};
+                }
+                appData.winCounter = winLossCounterInitial[data.deck_id].win
+                appData.lossCounter = winLossCounterInitial[data.deck_id].loss
+              } else {
+                appData.activeDeck = 'total'
+                appData.winCounter = winLossCounterInitial.total.win
+                appData.lossCounter = winLossCounterInitial.total.loss
+              }
             }
             appData.game_in_progress = true;
             appData.show_available_decklists = false;
@@ -869,7 +917,7 @@ let onMessage = (data) => {
             $(".cardsleft").removeClass("gamecomplete")
 
             appData.deck_name = data.draw_odds.deck_name;
-            appData.opponent_hand = data.opponent_hand
+            appData.opponent_hand = data.opponent_hand;
 
             if (staticMode) {
               appData.draw_stats = data.draw_odds.original_deck_stats;
@@ -908,11 +956,11 @@ let onMessage = (data) => {
             console.log(e)
           })
         } else if (data.inventory_update) {
-//          passThrough("tracker-api/inventory-update", data.inventory_update, data.player_key).catch(e => {
-//          // TODO: check for wildcard redemptions? or should we do that in the API?
-//            console.log("error uploading inventory-update data: ")
-//            console.log(e)
-//          })
+         // passThrough("tracker-api/inventory-update", data.inventory_update, data.player_key).catch(e => {
+         // // TODO: check for wildcard redemptions? or should we do that in the API?
+         //   console.log("error uploading inventory-update data: ")
+         //   console.log(e)
+         // })
         } else if (data.inventory) {
           if (data.inventory.vaultProgress) {
             appData.lastVaultProgress = data.inventory.vaultProgress;
@@ -922,10 +970,10 @@ let onMessage = (data) => {
               value: appData.lastVaultProgress
             })
           }
-//          passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
-//            console.log("error uploading inventory data: ")
-//            console.log(e)
-//          })
+         // passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
+         //   console.log("error uploading inventory data: ")
+         //   console.log(e)
+         // })
         } else if (data.collection) {
           var cardQuantity;
           if (data.collection) {
@@ -961,10 +1009,10 @@ let onMessage = (data) => {
               value: appData.lastCollection
             })
 
-//            passThrough("tracker-api/collection", data.collection, data.player_key).catch(e => {
-//              console.log("error uploading collections data: ")
-//              console.log(e)
-//            })
+           // passThrough("tracker-api/collection", data.collection, data.player_key).catch(e => {
+           //   console.log("error uploading collections data: ")
+           //   console.log(e)
+           // })
           }
         } else if (data.draftPick) {
           passThrough("tracker-api/draft-pick", data.draftPick, data.player_key).catch(e => {
@@ -1126,8 +1174,10 @@ ipcRenderer.on('settingsChanged', () => {
   appData.recentCards = recentCards
 
   winLossCounter = remote.getGlobal('winLossCounter');
-  appData.winCounter = winLossCounter.win
-  appData.lossCounter = winLossCounter.loss
+  appData.winCounter = winLossCounter[appData.activeDeck].win
+  appData.lossCounter = winLossCounter[appData.activeDeck].loss
+
+  appData.winLossObj = winLossCounter
 
   let useTheme = remote.getGlobal("useTheme")
   let themeFile = remote.getGlobal("themeFile")
