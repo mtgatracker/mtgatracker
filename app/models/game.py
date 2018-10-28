@@ -154,6 +154,7 @@ class Player(object):
             "stats": list(reversed(odds_list)),
             "original_deck_stats": list(reversed(original_odds_list)),
             "deck_name": self.original_deck.pool_name,
+            #"deck_id": self.original_deck.deckID,
             "total_cards_in_deck": len(current_list),
             "original_decklist_total": len(self.original_deck.cards),
             "library_contents": [c.to_serializable() for c in current_list],
@@ -252,6 +253,7 @@ class Game(object):
         hero_chess_time_total, oppo_chess_time_total = self.calculate_chess_timer_total()
         game_state = {
             "game_id": self.match_id,
+            "deck_id": self.hero.original_deck.deck_id,
             "draw_odds": self.hero.calculate_draw_odds(self.ignored_iids),
             "opponent_hand": [c.to_serializable() for c in self.opponent.hand.cards],
             "elapsed_time": str(datetime.datetime.now() - self.start_time),
