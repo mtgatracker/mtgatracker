@@ -306,7 +306,13 @@ ipcMain.on('hideRequest', (event, arg) => {
 
 ipcMain.on('clearGameHistory', event => {
   global.historyEvents = []
-  historyWindow.webContents.send("clearGameHistory")
+  if (historyWindow) {
+    try {
+      historyWindow.webContents.send("clearGameHistory")
+    } catch (error) {
+      console.log("couldn't send stdout message to history window, likely already destroyed")
+    }
+  }
 })
 
 ipcMain.on('gameHistoryEvent', (event, arg) => {
