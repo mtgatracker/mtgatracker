@@ -412,7 +412,7 @@ p {
 #floating-settings {
     position: absolute;
     height: 25px;
-    width: 25px;
+    width: 18px;
     left: 298px;
     top: 67px;
     z-index: 100;
@@ -420,7 +420,7 @@ p {
     cursor: pointer;
 }
 
-#floating-eye:hover {
+.glow-on-hover:hover {
     background-color: rgba(50, 180, 210, 0.4);
 }
 
