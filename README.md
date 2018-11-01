@@ -82,8 +82,8 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
     ```
     And the decktracker UI should launch!
     
-    Note: check out debug flags, which can be set directly in
-    [main.js](https://github.com/shawkinsl/mtga-tracker/blob/master/electron/main.js#L22)
+    Note: check out debug flags, which can be set via command line
+    [main.js](https://github.com/shawkinsl/mtga-tracker/blob/master/electron/main.js#L222)
     
 ### FAQ
 
