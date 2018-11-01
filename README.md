@@ -73,11 +73,36 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
     source venv/Scripts/activate
     # read more about virtualenv here: http://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv
     pip install -r requirements.txt
-    cd electron
+    ```
+
+1. Close Git Bash
+
+1. npm requires that you use Python < 3, so we need to temporarily update our PATH environment variables to point to Python 2.x.
+    Win 10
+    1. Open Settings -> System -> About -> System Info on right in See also -> Advanced System Settings.
+    1. Select Environment Variables
+    1. In System variables in the bottom, select Path and hit Edit.
+    1. Look for Python 2.x install. If there move to top.
+    1. If not, click Add, add path to Python 2.x, then move to top.
+
+1. Open Git Bash
+
+1. Run these commands
+    ```bash
+    cd /c/path/where/you/put/the/code/mtgatracker/electron
+    npm install https://github.com/node-ffi/node-ffi.git
     npm install .
     ```
+
+1. MTGATracker uses Python 3.6+, so we need to reset our PATH environment variable again. Follow above steps, but delete or move the Python 2.x PATH.
+
+1. Close Git Bash
+
+1. Open Git Bash
+
 1. If all went well, you should now be able to:
     ```bash
+    cd /c/path/where/you/put/the/code/mtgatracker/electron
     npm start
     ```
     And the decktracker UI should launch!
