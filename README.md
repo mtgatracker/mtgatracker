@@ -78,6 +78,7 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
 1. Close Git Bash
 
 1. npm requires that you use Python < 3, so we need to temporarily update our PATH environment variables to point to Python 2.x.
+
     Win 10
     1. Open Settings -> System -> About -> System Info on right in See also -> Advanced System Settings.
     1. Select Environment Variables
