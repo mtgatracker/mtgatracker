@@ -56,7 +56,8 @@ var showIIDs = remote.getGlobal('showIIDs');
 var showErrors = remote.getGlobal('showErrors');
 var appVersionStr = remote.getGlobal('version');
 var runFromSource = remote.getGlobal('runFromSource');
-var showWinLossCounter = remote.getGlobal('showWinLossCounter');
+var showTotalWinLossCounter = remote.getGlobal('showTotalWinLossCounter');
+var showDeckWinLossCounter = remote.getGlobal('showDeckWinLossCounter');
 var showVaultProgress = remote.getGlobal('showVaultProgress');
 var lastCollection = remote.getGlobal('lastCollection');
 var lastVaultProgress = remote.getGlobal('lastVaultProgress');
@@ -160,12 +161,15 @@ var appData = {
     opponent_hand: [],
     messages: [],
     version: appVersionStr,
-    showWinLossCounter: showWinLossCounter,
+    showTotalWinLossCounter: showTotalWinLossCounter,
+    showDeckWinLossCounter: showDeckWinLossCounter,
     showVaultProgress: showVaultProgress,
     winLossObj: winLossCounterInitial,
     activeDeck: 'total',
-    winCounter: winLossCounterInitial['total'].win,
-    lossCounter: winLossCounterInitial['total'].loss,
+    totalWinCounter: winLossCounterInitial['total'].win,
+    totalLossCounter: winLossCounterInitial['total'].loss,
+    deckWinCounter: 0,
+    deckLossCounter: 0,
     showGameTimer: showGameTimer,
     showChessTimers: showChessTimers,
     hideDelay: hideDelay,
@@ -607,8 +611,8 @@ function populateDeck(elem) {
     if (appData.winLossObj[appData.activeDeck] === undefined) {
       appData.winLossObj[appData.activeDeck] = {win: 0, loss: 0}
     }
-    appData.winCounter = appData.winLossObj[appData.activeDeck].win;
-    appData.lossCounter = appData.winLossObj[appData.activeDeck].loss;
+    appData.deckWinCounter = appData.winLossObj[appData.activeDeck].win;
+    appData.deckLossCounter = appData.winLossObj[appData.activeDeck].loss;
     
     $.each(appData.player_decks, (i, v) => {
         if (v.deck_id == deckID) {
@@ -632,8 +636,8 @@ function unpopulateDecklist() {
     appData.list_selected = false;
     appData.no_list_selected = true;
     appData.activeDeck = 'total';
-    appData.winCounter = appData.winLossObj[appData.activeDeck].win;
-    appData.lossCounter = appData.winLossObj[appData.activeDeck].loss;
+    appData.deckWinCounter = 0;
+    appData.deckLossCounter = 0;
 
     appData.game_in_progress = false;
     appData.show_available_decklists = true;
@@ -902,12 +906,12 @@ let onMessage = (data) => {
                 if (!(data.deck_id in appData.winLossObj)){
                   appData.winLossObj[appData.activeDeck] = {win: 0, loss: 0};
                 }
-                appData.winCounter = winLossCounterInitial[data.deck_id].win
-                appData.lossCounter = winLossCounterInitial[data.deck_id].loss
+                appData.deckWinCounter = winLossCounterInitial[data.deck_id].win
+                appData.deckLossCounter = winLossCounterInitial[data.deck_id].loss
               } else {
                 appData.activeDeck = 'total'
-                appData.winCounter = winLossCounterInitial.total.win
-                appData.lossCounter = winLossCounterInitial.total.loss
+                appData.deckWinCounter = 0
+                appData.deckLossCounter = 0
               }
             }
             appData.game_in_progress = true;
@@ -1149,8 +1153,11 @@ ipcRenderer.on('settingsChanged', () => {
   appVersionStr = remote.getGlobal('version');
   appData.appVersionStr = appVersionStr
 
-  showWinLossCounter = remote.getGlobal('showWinLossCounter');
-  appData.showWinLossCounter = showWinLossCounter
+  showTotalWinLossCounter = remote.getGlobal('showTotalWinLossCounter');
+  appData.showTotalWinLossCounter = showTotalWinLossCounter
+
+  showDeckWinLossCounter = remote.getGlobal('showDeckWinLossCounter');
+  appData.showDeckWinLossCounter = showDeckWinLossCounter
 
   showVaultProgress = remote.getGlobal('showVaultProgress');
   appData.showVaultProgress = showVaultProgress
@@ -1174,8 +1181,15 @@ ipcRenderer.on('settingsChanged', () => {
   appData.recentCards = recentCards
 
   winLossCounter = remote.getGlobal('winLossCounter');
-  appData.winCounter = winLossCounter[appData.activeDeck].win
-  appData.lossCounter = winLossCounter[appData.activeDeck].loss
+  appData.totalWinCounter = winLossCounter['total'].win;
+  appData.totalLossCounter = winLossCounter['total'].loss;
+  if (appData.activeDeck == 'total'){
+    appData.deckWinCounter = 0
+    appData.deckLossCounter = 0
+  } else {
+    appData.deckWinCounter = winLossCounter[appData.activeDeck].win;
+    appData.deckLossCounter = winLossCounter[appData.activeDeck].loss;
+  }
 
   appData.winLossObj = winLossCounter
 

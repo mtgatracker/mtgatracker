@@ -29,7 +29,8 @@
       <div id="tracker-body">
         <!-- START Game View -->
         <div id="game-deck-list" rv-show="game_in_progress">
-          <h3 class="win-loss" rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
+          <h3 class="win-loss" rv-show="showTotalWinLossCounter">Total - Wins: { totalWinCounter } &nbsp;&mdash;&nbsp; Losses: { totalLossCounter }</h3>
+          <h3 class="win-loss" rv-show="showDeckWinLossCounter">Deck - Wins: { deckWinCounter } &nbsp;&mdash;&nbsp; Losses: { deckLossCounter }</h3>
           <h3 class="beleren" rv-showvault="lastVaultProgress">Vault Progress: { lastVaultProgress }%</h3>
           <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
           <div class="messages">
@@ -85,7 +86,8 @@
 
         <!-- START Decklist View -->
         <div id="available-deck-list" rv-show="show_available_decklists">
-          <h3 class="win-loss" rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
+          <h3 class="win-loss" rv-show="showTotalWinLossCounter">Total - Wins: { totalWinCounter } &nbsp;&mdash;&nbsp; Losses: { totalLossCounter }</h3>
+          <h3 class="win-loss" rv-show="showDeckWinLossCounter">Deck - Wins: { deckWinCounter } &nbsp;&mdash;&nbsp; Losses: { deckLossCounter }</h3>
           <h3 class="beleren" rv-showvault="lastVaultProgress">Vault Progress: { lastVaultProgress }%</h3>
           <div id="decklists-container" rv-show="no_list_selected">
             <h3 class="reminder">Pick a deck, or start a game!</h3>
