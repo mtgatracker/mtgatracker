@@ -74,7 +74,6 @@ var recentCards = remote.getGlobal('recentCards');
 var port = remote.getGlobal('port');
 var timerRunning = false;
 var uploadDelay = 0;
-
 var hideModeManager;
 
 setInterval(() => {
@@ -607,13 +606,7 @@ function resizeWindow() {
 
 function populateDeck(elem) {
     deckID = elem.getAttribute('data-deckid');
-    appData.activeDeck = deckID;
-    if (appData.winLossObj[appData.activeDeck] === undefined) {
-      appData.winLossObj[appData.activeDeck] = {win: 0, loss: 0}
-    }
-    appData.deckWinCounter = appData.winLossObj[appData.activeDeck].win;
-    appData.deckLossCounter = appData.winLossObj[appData.activeDeck].loss;
-    
+
     $.each(appData.player_decks, (i, v) => {
         if (v.deck_id == deckID) {
             appData.selected_list = v.cards;
@@ -622,6 +615,14 @@ function populateDeck(elem) {
             appData.no_list_selected = false;
         }
     })
+
+    appData.activeDeck = deckID;
+    if (appData.winLossObj[appData.activeDeck] === undefined) {
+      appData.winLossObj[appData.activeDeck] = {win: 0, loss: 0, name: appData.selected_list_name}
+    }
+    appData.deckWinCounter = appData.winLossObj[appData.activeDeck].win;
+    appData.deckLossCounter = appData.winLossObj[appData.activeDeck].loss;
+    
     resizeWindow()
 }
 
@@ -734,6 +735,17 @@ function cleanErrors(errors) {
   errors.forEach(error => cleanError(error, 0))
 }
 
+function getDeckById(deckID){
+  var deck;
+  $.each(appData.player_decks, (i, v) => {
+      if (v.deck_id == deckID) {
+         deck = v;
+         return false;
+      }
+  })
+  return deck;
+}
+
 function uploadGame(attempt, gameData, errors) {
   if (!errors) {
     errors = []
@@ -760,9 +772,9 @@ function uploadGame(attempt, gameData, errors) {
         }
       } else {
         if (victory) {
-          appData.winLossObj[deckID] = {win: 1, loss: 0}
+          appData.winLossObj[deckID] = {win: 1, loss: 0, name: gameData.players[0].deck.pool_name}
         } else {
-          appData.winLossObj[deckID] = {win: 0, loss: 1}
+          appData.winLossObj[deckID] = {win: 0, loss: 1, name: gameData.players[0].deck.pool_name}
         }
       }
       ipcRenderer.send('settingsChanged', {
@@ -902,9 +914,10 @@ let onMessage = (data) => {
               //set the stats to report for this deck, if known
               //otherwise, use total stats
               if (appData.player_decks.map(deck=>deck.deck_id).includes(data.deck_id)){
+                let deck = getDeckById(data.deck_id);
                 appData.activeDeck = data.deck_id
                 if (!(data.deck_id in appData.winLossObj)){
-                  appData.winLossObj[appData.activeDeck] = {win: 0, loss: 0};
+                  appData.winLossObj[appData.activeDeck] = {win: 0, loss: 0, name: deck.pool_name};
                 }
                 appData.deckWinCounter = winLossCounterInitial[data.deck_id].win
                 appData.deckLossCounter = winLossCounterInitial[data.deck_id].loss
