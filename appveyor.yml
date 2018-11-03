@@ -1,6 +1,10 @@
 platform:
   - x64
 
+environment:
+  GITHUB_RELEASE_TOKEN:
+    secure: ocphQJ30EXXDjy8MbCfAGZuh/gysahytkv/vuEDhEIl7s33qZemz5fmDNSJAbvUm
+
 cache:
   - node_modules
   - '%APPDATA%\npm-cache'
@@ -35,6 +39,3 @@ artifacts:
   - path: 'MTGATracker-win32-x64_*-SQUIRREL/*.nupkg'
   - path: 'MTGATracker-win32-x64_*-SQUIRREL/*.exe'
 
-#environment:
-#  GH_TOKEN:
-#     secure: <use appveyor to secure this, tbh not sure how though>
