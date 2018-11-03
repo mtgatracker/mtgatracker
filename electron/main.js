@@ -10,7 +10,7 @@ if (handleStartupEvent()) {
   return;
 }
 
-const { app, ipcMain, BrowserWindow, Tray, Menu } = require('electron')
+const { app, ipcMain, BrowserWindow, Tray, Menu, nativeImage } = require('electron')
 const fs = require('fs');
 const path = require('path')
 const keytar = require('keytar')
@@ -652,7 +652,11 @@ let tray = null;
 
 const createTray = () => {
   if(minToTray && tray==null) {
-    tray = new Tray('img/icon_small.ico')
+    let iconFile = 'icon_tray.png'
+    let iconPath = path.join(__dirname,'img', iconFile);
+    console.log(fs.existsSync(iconPath))
+    let nativeIcon = nativeImage.createFromPath(iconPath)
+    tray = new Tray(nativeIcon)
     const contextMenu = Menu.buildFromTemplate([
       {label: "DeckTracker", type: "normal", click: openDeckTrackerHandler},
       {label: "Settings", type: "normal", click: openSettingsHandler},
