@@ -40,6 +40,7 @@ var settingsData = {
   showTotalWinLossCounter: remote.getGlobal('showTotalWinLossCounter'),
   showDeckWinLossCounter: remote.getGlobal('showDeckWinLossCounter'),
   winLossObj: remote.getGlobal('winLossCounter'),
+  counterDeckList: [],
   lastCollection: remote.getGlobal('lastCollection'),
   lastVaultProgress: remote.getGlobal('lastVaultProgress'),
   showVaultProgress: remote.getGlobal('showVaultProgress'),
@@ -67,6 +68,7 @@ var settingsData = {
     help: "This method sorts cards by card type, then by cost, then by name."}
   ],
 }
+settingsData.counterDeckList = counterDecks();
 
 let commitFile = "version_commit.txt"
 let buildFile = "version_build.txt"
@@ -104,7 +106,31 @@ if (settingsData.debug) {
 
 ipcRenderer.on('counterChanged', (e,new_wlc) => {
   settingsData.winLossObj = new_wlc;
+  settingsData.counterDeckList = counterDecks();
 });
+
+/*
+ * Format decks in winLossCounter to array for display in rivets.
+ */
+function counterDecks(){
+  let decks = [];
+  let ids = Object.keys(settingsData.winLossObj);
+  for (let x=0;x<ids.length;x++){
+    if (ids[x] == 'total' || ids[x] == 'win' || ids[x] == 'loss') {
+      continue;
+    }
+    decks.push({'id':ids[x],'name': settingsData.winLossObj[ids[x]]['name'], 'win':settingsData.winLossObj[ids[x]]['win'],'loss':settingsData.winLossObj[ids[x]]['loss']});
+  }
+  return decks.sort((a,b) => {
+    if ( a.name < b.name ){
+      return -1;
+    } else if ( a.name == b.name ) {
+      return 0;
+    } else {
+      return 1;
+    }
+  } );
+}
 
 rivets.formatters.countcollection = function(collection) {
     let total = 0;
