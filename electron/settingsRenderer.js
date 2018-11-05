@@ -41,6 +41,7 @@ var settingsData = {
   showDeckWinLossCounter: remote.getGlobal('showDeckWinLossCounter'),
   winLossObj: remote.getGlobal('winLossCounter'),
   counterDeckList: [],
+  totalWinLossCounter: null,
   lastCollection: remote.getGlobal('lastCollection'),
   lastVaultProgress: remote.getGlobal('lastVaultProgress'),
   showVaultProgress: remote.getGlobal('showVaultProgress'),
@@ -69,7 +70,7 @@ var settingsData = {
   ],
 }
 settingsData.counterDeckList = counterDecks();
-
+settingsData.totalWinLossCounter = settingsData.winLossObj.total;
 let commitFile = "version_commit.txt"
 let buildFile = "version_build.txt"
 
@@ -107,6 +108,7 @@ if (settingsData.debug) {
 ipcRenderer.on('counterChanged', (e,new_wlc) => {
   settingsData.winLossObj = new_wlc;
   settingsData.counterDeckList = counterDecks();
+  settingsData.totalWinLossCounter = settingsData.winLossObj.total;
 });
 
 /*
@@ -224,6 +226,11 @@ rivets.binders.recentcardsbinder = (el, cardsObtained) => {
   if(Object.keys(cardsObtained).length > 0) {
     document.getElementById("no-recently-obtained-cards").style.display = "none";
   }
+}
+
+rivets.binders.deckid = function(el, value) {
+  el.id = value + '-reset-button';
+  el.setAttribute('data-deckid', value);
 }
 
 function recentCardsSectionClickHandler(event) {

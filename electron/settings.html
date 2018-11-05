@@ -24,6 +24,10 @@
           <span class="icon icon-home"></span>
           General
         </a>
+        <a value="wlc" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="wlc-nav">
+          <span class="icon icon-trophy"></span>
+          Win/Loss Counters
+        </a>
         <a value="theme" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="theme-nav">
           <span class="icon icon-brush"></span>
           Themes
@@ -406,14 +410,6 @@
           </div>
 
           <div class="settings-row">
-            <input rv-checked="showTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showTotalWinLossCounter" data-toggle="toggle"> Show total win/loss counter
-          </div>
-
-          <div class="settings-row">
-            <input rv-checked="showDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDeckWinLossCounter" data-toggle="toggle"> Show per-deck win/loss counter
-          </div>
-
-          <div class="settings-row">
             <input rv-checked="showVaultProgress" class="tf-toggle" type="checkbox" key="showVaultProgress" data-toggle="toggle"> Show vault progress in main UI
           </div>
 
@@ -425,9 +421,6 @@
             <div class="slidevalue-vault">
               0
             </div>
-          </div>
-          <div class="settings-row">
-            <button id="resetWinLoss" class="btn btnbtn btn-negative">Reset Win / Loss counter</button>
           </div>
           <div class="settings-row">
             <button id="resetGameHistory" class="btn btnbtn btn-negative">Clear Game History Events</button>
@@ -475,6 +468,44 @@
             <p class="about-p" rv-each-sortingmethod="sortingMethods"><b>{ sortingmethod.text }</b>: { sortingmethod.help }</p>
           </div>
 
+        </div>
+      </div>
+      <div id="wlc-pane" value="wlc" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <p></p>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showTotalWinLossCounter" data-toggle="toggle"> Show total win/loss counter
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDeckWinLossCounter" data-toggle="toggle"> Show per-deck win/loss counter
+          </div>
+
+          <hr/>
+
+          <div class="settings-row">
+            <h3>Counter resets</h3>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="all-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all">Reset All Stored Counters</button>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="all-decks-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all-decks">Reset All Deck Stored Counters</button>
+          </div>
+
+          <div class="settings-row counter-reset-row">
+            <button id="total-reset-button" class="btn btn-danger reset-button" data-deckid="total">Reset</button>
+            <span>Total &ndash; {totalWinLossCounter.win} : {totalWinLossCounter.loss}</span>
+          </div>
+          <div class="settings-row counter-reset-row" rv-each-deck="counterDeckList">
+            <button rv-deckid="deck.id" class="btn btn-danger reset-button">Reset</button>
+            <span>{deck.name} &ndash; {deck.win} : {deck.loss}</span>
+          </div>
         </div>
       </div>
       <div id="theme-pane" value="theme" rv-showsettingspane="settingsPaneIndex">

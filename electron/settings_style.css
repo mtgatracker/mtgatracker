@@ -203,3 +203,9 @@ a {
 .fa-google-plus:hover {
     background-color: #e25714;
 }
+.counter-reset-row span {
+    vertical-align: middle;
+}
+.reset-all-btn {
+    width: 20em;
+}
