@@ -1,4 +1,5 @@
 const { remote, ipcRenderer, shell } = require('electron')
+const {dialog, Menu, MenuItem,} = remote
 const fs = require('fs')
 
 const API_URL = remote.getGlobal("API_URL")
@@ -87,7 +88,6 @@ fs.readFile(buildFile, "utf8", (err, data) => {
   settingsData.build = data;
 })
 
-const { Menu, MenuItem, dialog } = remote
 const menu = new Menu()
 const menuItem = new MenuItem({
   label: 'Inspect Element',
@@ -106,6 +106,7 @@ if (settingsData.debug) {
 }
 
 ipcRenderer.on('counterChanged', (e,new_wlc) => {
+console.log(new_wlc)  ;
   settingsData.winLossObj = new_wlc;
   settingsData.counterDeckList = counterDecks();
   settingsData.totalWinLossCounter = settingsData.winLossObj.total;
@@ -320,9 +321,39 @@ document.addEventListener("DOMContentLoaded", function(event) {
     let sortMethodSelected = $("#sorting-method-select").val()
     ipcRenderer.send('settingsChanged', {key: "sortMethod", value: sortMethodSelected})
   })
-  $("#resetWinLoss").click((e) => {
-    console.log("resetting win/loss")
-    ipcRenderer.send('settingsChanged', {key: "winLossCounter", value: {win: 0, loss: 0}})
+  $(".reset-button").click((e) => {
+    let deck_id = e.target.getAttribute('data-deckid');
+
+    let message = "Are you sure you want to reset (delete) ";
+    if (deck_id == 'all'){
+      message += 'all win/loss counters?';
+    } else if (deck_id == 'all-decks' ){
+      message += 'all deck win/loss counters?'
+    } else if (deck_id == 'total'){
+      message += 'the total win/loss counter?'
+    } else {
+      message += 'the ' + settingsData.winLossObj[deck_id].name + ' win/loss counter?';
+    }
+    if (!dialog.showMessageBox(remote.getCurrentWindow(), {'buttons': ['Cancel','Ok'],'message':message,})){
+      return;
+    }
+
+    console.log("resetting win/loss");
+    let new_wlc = {};
+
+    if (deck_id == 'all') {
+      new_wlc = {'total':{'win':0,'loss':0}};
+    } else if (deck_id == 'all-decks') {
+      new_wlc.total = settingsData.winLossObj.total;
+    } else if (deck_id == 'total'){
+      new_wlc = settingsData.winLossObj;
+      new_wlc.total = {'win':0,'loss':0};
+    } else {
+      new_wlc = settingsData.winLossObj;
+      new_wlc[deck_id] = undefined;
+      new_wlc = JSON.parse(JSON.stringify(new_wlc));
+    }
+    ipcRenderer.send('updateWinLossCounter', {key: 'all', value: new_wlc})
   })
   $("#resetGameHistory").click((e) => {
     console.log("resetting gameHstory")

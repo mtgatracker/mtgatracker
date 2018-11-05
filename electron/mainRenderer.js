@@ -1191,19 +1191,6 @@ ipcRenderer.on('settingsChanged', () => {
   recentCards = remote.getGlobal('recentCards');
   appData.recentCards = recentCards
 
-  winLossCounter = remote.getGlobal('winLossCounter');
-  appData.totalWinCounter = winLossCounter['total'].win;
-  appData.totalLossCounter = winLossCounter['total'].loss;
-  if (appData.activeDeck == 'total'){
-    appData.deckWinCounter = 0
-    appData.deckLossCounter = 0
-  } else {
-    appData.deckWinCounter = winLossCounter[appData.activeDeck].win;
-    appData.deckLossCounter = winLossCounter[appData.activeDeck].loss;
-  }
-
-  appData.winLossObj = winLossCounter
-
   let useTheme = remote.getGlobal("useTheme")
   let themeFile = remote.getGlobal("themeFile")
   let useFlat = remote.getGlobal("useFlat")
@@ -1262,5 +1249,18 @@ ipcRenderer.on('settingsChanged', () => {
   }
   resizeWindow()
 })
+
+ipcRenderer.on('counterChanged', (e,new_wlc) => {
+  appData.winLossObj = new_wlc;
+  if (appData.activeDeck === 'total') {
+      appData.deckWinCounter = 0;
+      appData.deckLossCounter = 0;
+  } else {
+    appData.deckWinCounter = appData.winLossObj[appData.activeDeck].win;
+    appData.deckLossCounter = appData.winLossObj[appData.activeDeck].loss;
+  }
+  appData.totalWinCounter = appData.winLossObj.total.win;
+  appData.totalLossCounter = appData.winLossObj.total.loss;
+});
 
 console.timeEnd('init')

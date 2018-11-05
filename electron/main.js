@@ -290,8 +290,15 @@ if (fullFileCmdOpt) {
 var postCounterChanged = false;
 
 ipcMain.on('updateWinLossCounter', (e,arg) => {
-  global['winLossCounter'][arg.key] = arg.value;
-  settings.set('winLossCounter.' + arg.key, arg.value)
+  if (arg.key == 'all'){
+    global['winLossCounter'] = arg.value
+    settings.set('winLossCounter', arg.value)
+  } else {
+    global['winLossCounter'][arg.key] = arg.value;
+    settings.set('winLossCounter.' + arg.key, arg.value)
+  }
+
+  mainWindow.webContents.send('counterChanged',global['winLossCounter']);
   if (settingsWindow != null){
     settingsWindow.webContents.send('counterChanged',global['winLossCounter']);
   } else {
