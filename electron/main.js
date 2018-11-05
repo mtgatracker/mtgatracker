@@ -224,10 +224,9 @@ let debugCmdOpt = getBooleanArg('-d', '--debug')
 let frameCmdOpt = getBooleanArg('-uf', '--use_framed')
 let fullFileCmdOpt = getBooleanArg('-f', '--full_file')
 
-//if (debugCmdOpt) {
-//  settings.set('debug', true)
-//}
-settings.set('debug', false)
+if (debugCmdOpt) {
+  settings.set('debug', true)
+}
 
 if (frameCmdOpt) {
   settings.set('useFrame', true)
@@ -287,6 +286,18 @@ let readFullFile = false;
 if (fullFileCmdOpt) {
   readFullFile = true;
 }
+
+var postCounterChanged = false;
+
+ipcMain.on('updateWinLossCounter', (e,arg) => {
+  global['winLossCounter'][arg.key] = arg.value;
+  settings.set('winLossCounter.' + arg.key, arg.value)
+  if (settingsWindow != null){
+    settingsWindow.webContents.send('counterChanged',global['winLossCounter']);
+  } else {
+    postCounterChanged = true;
+  }
+})
 
 ipcMain.on('messageAcknowledged', (event, arg) => {
   let acked = settings.get("messagesAcknowledged", [])
@@ -374,6 +385,10 @@ let openSettingsWindow = () => {
     })
   }
   settingsWindow.once('ready-to-show', () => {
+    if (postCounterChanged) {
+      settingsWindow.webContents.send('countereChanged',global.winLossCounter);
+      postCounterChanged = false;
+    }
     settingsWindow.show()
   })
 }

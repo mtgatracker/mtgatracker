@@ -39,6 +39,7 @@ var settingsData = {
   leftMouseEvents: remote.getGlobal('leftMouseEvents'),
   showTotalWinLossCounter: remote.getGlobal('showTotalWinLossCounter'),
   showDeckWinLossCounter: remote.getGlobal('showDeckWinLossCounter'),
+  winLossObj: remote.getGlobal('winLossCounter'),
   lastCollection: remote.getGlobal('lastCollection'),
   lastVaultProgress: remote.getGlobal('lastVaultProgress'),
   showVaultProgress: remote.getGlobal('showVaultProgress'),
@@ -100,6 +101,10 @@ if (settingsData.debug) {
     menu.popup(remote.getCurrentWindow())
   }, false)
 }
+
+ipcRenderer.on('counterChanged', (e,new_wlc) => {
+  settingsData.winLossObj = new_wlc;
+});
 
 rivets.formatters.countcollection = function(collection) {
     let total = 0;
@@ -196,7 +201,7 @@ rivets.binders.recentcardsbinder = (el, cardsObtained) => {
 }
 
 function recentCardsSectionClickHandler(event) {
-  var revealed = $(event.target).siblings(".recent-cards-container").is(":hidden"); 
+  var revealed = $(event.target).siblings(".recent-cards-container").is(":hidden");
   if(revealed) {
     $(event.target).siblings(".recent-cards-container").slideDown("fast");
   } else {

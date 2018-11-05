@@ -606,23 +606,21 @@ function resizeWindow() {
 
 function populateDeck(elem) {
     deckID = elem.getAttribute('data-deckid');
-
-    $.each(appData.player_decks, (i, v) => {
-        if (v.deck_id == deckID) {
-            appData.selected_list = v.cards;
-            appData.selected_list_name = v.pool_name;
-            appData.list_selected = true;
-            appData.no_list_selected = false;
-        }
-    })
+    deck = getDeckById(deckID);
+    if (deck != null){
+      appData.selected_list = deck.cards;
+        appData.selected_list_name = deck.pool_name;
+        appData.list_selected = true;
+        appData.no_list_selected = false;
+    }
 
     appData.activeDeck = deckID;
     if (appData.winLossObj[appData.activeDeck] === undefined) {
-      appData.winLossObj[appData.activeDeck] = {win: 0, loss: 0, name: appData.selected_list_name}
+      appData.winLossObj[appData.activeDeck] = {win: 0, loss: 0, name: deck.pool_name}
     }
     appData.deckWinCounter = appData.winLossObj[appData.activeDeck].win;
     appData.deckLossCounter = appData.winLossObj[appData.activeDeck].loss;
-    
+
     resizeWindow()
 }
 
@@ -757,8 +755,8 @@ function uploadGame(attempt, gameData, errors) {
     } else {
       appData.winLossObj.total.loss++
     }
-    ipcRenderer.send('settingsChanged', {
-      key: "winLossCounter.total",
+    ipcRenderer.send('updateWinLossCounter', {
+      key: "total",
       value: {win: appData.winLossObj.total.win, loss: appData.winLossObj.total.loss}
     })
     //only update per-deck win/loss for decks we know about
@@ -777,8 +775,8 @@ function uploadGame(attempt, gameData, errors) {
           appData.winLossObj[deckID] = {win: 0, loss: 1, name: gameData.players[0].deck.pool_name}
         }
       }
-      ipcRenderer.send('settingsChanged', {
-        key: `winLossCounter.${gameData.players[0].deck.deckID}`,
+      ipcRenderer.send('updateWinLossCounter', {
+        key: deckID,
         value: appData.winLossObj[deckID]
       })
     }
@@ -1003,7 +1001,7 @@ let onMessage = (data) => {
                         if(isNaN(cardQuantity)) {
                           cardQuantity = data.collection[cardID];
                         }
-                        if(cardQuantity > 0) { 
+                        if(cardQuantity > 0) {
                           objectToPush.cardsObtained[cardID] = cardQuantity;
                         }
                       }
