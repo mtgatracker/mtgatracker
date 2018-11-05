@@ -548,6 +548,17 @@ def parse_game_state_message(message, timestamp=None):
                         queue_obj = {"game_history_event": event_texts}
                         mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                         general_output_queue.put(queue_obj)
+                    elif category == "Exile":
+                        event_texts = [*player_texts, " exiles ", *annotation_texts]
+                        queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                        general_output_queue.put(queue_obj)
+                    # TODO: category == "Put" ?
+                    elif zone_dest == 37 or zone_dest == 33:  # TODO: get rid of this hardcoded bs
+                        event_texts = [*annotation_texts, " sent to graveyard ", "(" + category + ")"]
+                        queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                        general_output_queue.put(queue_obj)
 
 @util.debug_log_trace
 def parse_zone(zone_blob):
