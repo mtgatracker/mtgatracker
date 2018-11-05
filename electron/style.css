@@ -484,3 +484,12 @@ p {
 .deck-container {
 	-webkit-app-region: no-drag;
 }
+
+.win-loss-div {
+    padding: 8px;
+}
+.win-loss-counter {
+    display: inline-block;
+    float: right;
+    margin-right: 8px;
+}

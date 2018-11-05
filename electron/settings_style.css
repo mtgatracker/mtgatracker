@@ -203,10 +203,17 @@ a {
 .fa-google-plus:hover {
     background-color: #e25714;
 }
-.counter-reset-row span {
+
+.counter-toggle-span {
     vertical-align: middle;
-    margin-left: 5px;
+    margin-left: 10px;
 }
+
+.counter-reset-span {
+    vertical-align: middle;
+    margin-left: 7px;
+}
+
 .reset-all-btn {
     width: 20em;
 }
