@@ -8,6 +8,7 @@
     border: none;
     -webkit-user-select: none;
     text-shadow: 2px 2px rgba(17, 17, 17, 0.5);
+    pointer-events: none;
 }
 
 .mi {
@@ -32,16 +33,15 @@ html {
     -webkit-user-select: none;
 }
 
-body {
-    -webkit-app-region: drag;
-}
-
 .inline-block {
     display: inline-block;
 }
 
 h1 {
     padding: 8px;
+}
+
+.drag {
     -webkit-app-region: drag;
 }
 
@@ -483,4 +483,17 @@ p {
 .back-link,
 .deck-container {
 	-webkit-app-region: no-drag;
+	pointer-events: auto;
 }
+
+/* electron transparency click fix */
+#tracker-header {
+    min-height: 40px;
+    background-color: red;
+}
+#tracker-header:hover {
+   background-color: purple;
+}
+
+.click-on      {pointer-events: auto}
+.click-through {pointer-events: none}

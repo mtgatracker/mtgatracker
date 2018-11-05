@@ -95,6 +95,12 @@ if (debug) {
     rightClickPosition = {x: e.x, y: e.y}
     menu.popup(remote.getCurrentWindow())
   }, false)
+} else {
+    const TransparencyMouseFix = require('electron-transparency-mouse-fix');
+    const tfix = new TransparencyMouseFix({
+      log: true,
+      fixPointerEvents: 'auto',
+    })
 }
 
 var ws = new ReconnectingWebSocket(`ws://127.0.0.1:${port}/`, null, {constructor: WebSocket})

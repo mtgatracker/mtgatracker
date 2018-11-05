@@ -31,6 +31,7 @@
         "electron-rebuild": "^1.8.2",
         "electron-settings": "^3.1.4",
         "electron-tooltip": "^1.1.5",
+        "electron-transparency-mouse-fix": "^1.0.0-beta",
         "electron-winstaller": "^2.6.4",
         "find-process": "^1.1.0",
         "jsonwebtoken": "^8.3.0",
