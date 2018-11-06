@@ -40,9 +40,13 @@ var settingsData = {
   leftMouseEvents: remote.getGlobal('leftMouseEvents'),
   showTotalWinLossCounter: remote.getGlobal('showTotalWinLossCounter'),
   showDeckWinLossCounter: remote.getGlobal('showDeckWinLossCounter'),
+  showDailyTotalWinLossCounter: remote.getGlobal('showDailyTotalWinLossCounter'),
+  showDailyDeckWinLossCounter: remote.getGlobal('showDailyDeckWinLossCounter'),
   winLossObj: remote.getGlobal('winLossCounter'),
   counterDeckList: [],
+  dailyCounterDeckList: [],
   totalWinLossCounter: null,
+  dailyTotalWinLossCounter: null,
   lastCollection: remote.getGlobal('lastCollection'),
   lastVaultProgress: remote.getGlobal('lastVaultProgress'),
   showVaultProgress: remote.getGlobal('showVaultProgress'),
@@ -70,8 +74,12 @@ var settingsData = {
     help: "This method sorts cards by card type, then by cost, then by name."}
   ],
 }
-settingsData.counterDeckList = counterDecks();
-settingsData.totalWinLossCounter = settingsData.winLossObj.total;
+
+settingsData.counterDeckList = counterDecks(settingsData.winLossObj.alltime);
+settingsData.dailyCounterDeckList = counterDecks(settingsData.winLossObj.daily);
+settingsData.totalWinLossCounter = settingsData.winLossObj.alltime.total;
+settingsData.dailyTotalWinLossCounter = settingsData.winLossObj.daily.total;
+
 let commitFile = "version_commit.txt"
 let buildFile = "version_build.txt"
 
@@ -106,23 +114,23 @@ if (settingsData.debug) {
 }
 
 ipcRenderer.on('counterChanged', (e,new_wlc) => {
-console.log(new_wlc)  ;
   settingsData.winLossObj = new_wlc;
-  settingsData.counterDeckList = counterDecks();
-  settingsData.totalWinLossCounter = settingsData.winLossObj.total;
+  settingsData.counterDeckList = counterDecks(settingsData.winLossObj.alltime);
+  settingsData.dailyCounterDeckList = counterDecks(settingsData.winLossObj.daily);
+  settingsData.totalWinLossCounter = settingsData.winLossObj.alltime.total;
+  settingsData.dailyTotalWinLossCounter = settingsData.winLossObj.daily.total;
 });
 
 /*
  * Format decks in winLossCounter to array for display in rivets.
  */
-function counterDecks(){
+function counterDecks(winLossObj){
   let decks = [];
-  let ids = Object.keys(settingsData.winLossObj);
-  for (let x=0;x<ids.length;x++){
-    if (ids[x] == 'total' || ids[x] == 'win' || ids[x] == 'loss') {
+  for (let key in winLossObj){
+    if (key == 'total') {
       continue;
     }
-    decks.push({'id':ids[x],'name': settingsData.winLossObj[ids[x]]['name'], 'win':settingsData.winLossObj[ids[x]]['win'],'loss':settingsData.winLossObj[ids[x]]['loss']});
+    decks.push({'id':key,'name': winLossObj[key]['name'], 'win':winLossObj[key]['win'],'loss':winLossObj[key]['loss']});
   }
   return decks.sort((a,b) => {
     if ( a.name < b.name ){
@@ -322,38 +330,50 @@ document.addEventListener("DOMContentLoaded", function(event) {
     ipcRenderer.send('settingsChanged', {key: "sortMethod", value: sortMethodSelected})
   })
   $(".reset-button").click((e) => {
-    let deck_id = e.target.getAttribute('data-deckid');
+    const deck_id = e.target.getAttribute('data-deckid');
+    const is_daily = e.target.getAttribute('data-daily') === 'true';
+    const type = is_daily ? 'daily' : 'alltime';
 
     let message = "Are you sure you want to reset (delete) ";
     if (deck_id == 'all'){
-      message += 'all win/loss counters?';
+      message += 'all ' + ( is_daily ? 'daily ' : '' ) + 'win/loss counters?';
     } else if (deck_id == 'all-decks' ){
-      message += 'all deck win/loss counters?'
+      message += 'all ' + ( is_daily ? 'daily ' : '' ) + 'deck win/loss counters?'
     } else if (deck_id == 'total'){
-      message += 'the total win/loss counter?'
+      message += 'the ' + ( is_daily ? 'daily ' : '' ) + 'total win/loss counter?'
     } else {
-      message += 'the ' + settingsData.winLossObj[deck_id].name + ' win/loss counter?';
+      message += 'the ' + ( is_daily ? 'daily ' : '' ) + settingsData.winLossObj[type][deck_id].name + ' win/loss counter?';
     }
     if (!dialog.showMessageBox(remote.getCurrentWindow(), {'buttons': ['Cancel','Ok'],'message':message,})){
       return;
     }
 
     console.log("resetting win/loss");
-    let new_wlc = {};
+    let new_wlc = settingsData.winLossObj;
 
     if (deck_id == 'all') {
-      new_wlc = {'total':{'win':0,'loss':0}};
+      new_wlc[type] = {'total':{'win':0,'loss':0}};
     } else if (deck_id == 'all-decks') {
-      new_wlc.total = settingsData.winLossObj.total;
+      new_wlc[type] = {'total':settingsData.winLossObj[type].total};
     } else if (deck_id == 'total'){
-      new_wlc = settingsData.winLossObj;
-      new_wlc.total = {'win':0,'loss':0};
+      new_wlc[type].total = {'win':0,'loss':0};
     } else {
-      new_wlc = settingsData.winLossObj;
-      new_wlc[deck_id] = undefined;
-      new_wlc = JSON.parse(JSON.stringify(new_wlc));
+      /*
+        delete prop isn't working. Returns false and doesn't remove prop.
+        Old technique of setting to undefined then toString back to JSON isn't working anymore either
+        Until I can figure out why, here's a hack.
+      */
+
+      let decks_wlc = {};
+      for ( key in settingsData.winLossObj[type] ){
+        if ( key === deck_id ){
+          continue;
+        }
+        decks_wlc[key] = settingsData.winLossObj[type][key];
+      }
+      new_wlc[type] = decks_wlc;
     }
-    ipcRenderer.send('updateWinLossCounter', {key: 'all', value: new_wlc})
+    ipcRenderer.send('updateWinLossCounters', {key: 'all', value: new_wlc})
   })
   $("#resetGameHistory").click((e) => {
     console.log("resetting gameHstory")

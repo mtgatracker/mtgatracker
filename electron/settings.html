@@ -476,7 +476,8 @@
             <h3>All-time Win/Loss Counters</h3>
             <p>
               All-time counters keep a running tally of all your wins and losses and will be stored on exit.<br/>
-              The total counter is a count of all your wins and losses across all decks.</p>
+              The total counter is a count of all your wins and losses across all decks.
+            </p>
           </div>
 
           <div class="settings-row">
@@ -501,6 +502,40 @@
           </div>
           <div class="settings-row counter-reset-row" rv-each-deck="counterDeckList">
             <button rv-deckid="deck.id" class="btn btn-danger reset-button">Reset</button>
+            <span class="counter-reset-span">{deck.name} &ndash; {deck.win} : {deck.loss}</span>
+          </div>
+
+          <hr/>
+
+          <div class="settings-row">
+            <h3>Daily Win/Loss Counters</h3>
+            <p>
+              Daily counters keep a running tally of your wins and losses that will be reset on the next launch.
+            </p>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showDailyTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyTotalWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show daily total win/loss counter</span>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showDailyDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyDeckWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show daily per-deck win/loss counter</span>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="daily-all-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all" data-daily="true">Reset Every Daily Counter</button>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="all-daily-decks-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all-decks" data-daily="true">Reset Every Daily Deck Counter</button>
+          </div>
+
+          <div class="settings-row counter-reset-row">
+            <button id="daily-total-reset-button" class="btn btn-danger reset-button" data-deckid="total" data-daily="true">Reset</button>
+            <span class="counter-reset-span">Total &ndash; {dailyTotalWinLossCounter.win} : {dailyTotalWinLossCounter.loss}</span>
+          </div>
+          <div class="settings-row counter-reset-row" rv-each-deck="dailyCounterDeckList">
+            <button rv-deckid="deck.id" class="btn btn-danger reset-button" data-daily="true">Reset</button>
             <span class="counter-reset-span">{deck.name} &ndash; {deck.win} : {deck.loss}</span>
           </div>
         </div>
@@ -647,5 +682,4 @@
 <script src="vendor/toggle/bootstrap-toggle.min.js"></script>
 <link href="vendor/bootstrap-pin-input/bootstrap-pincode-input.css" rel="stylesheet">
 <script src="vendor/bootstrap-pin-input/bootstrap-pincode-input.js"></script>
-<script type="text/javascript" src="misc_helpers.js"></script>
 </html>

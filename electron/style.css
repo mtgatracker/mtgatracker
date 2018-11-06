@@ -486,10 +486,13 @@ p {
 }
 
 .win-loss-div {
-    padding: 8px;
+    padding: 0px 8px;
 }
 .win-loss-counter {
     display: inline-block;
     float: right;
     margin-right: 8px;
+}
+.win-loss-group {
+    padding-bottom: 8px;
 }

@@ -233,8 +233,8 @@ if (frameCmdOpt) {
 }
 
 // Hack to update to new structure
-if (!settings.has('winLossCounter.total') && settings.has('winLossCounter.win') && settings.has('winLossCounter.loss')) {
-  settings.set('winLossCounter.total', settings.get('winLossCounter'));
+if (!settings.has('winLossCounter.alltime.total') && settings.has('winLossCounter.win') && settings.has('winLossCounter.loss')) {
+  settings.set('winLossCounter.alltime.total', settings.get('winLossCounter'));
 }
 
 let debug = settings.get('debug', false);
@@ -255,9 +255,12 @@ let showChessTimers = settings.get('showChessTimers', true);
 let hideDelay = settings.get('hideDelay', 10);
 let invertHideMode = settings.get('invertHideMode', false);
 let rollupMode = settings.get('rollupMode', true);
-let winLossCounter = settings.get('winLossCounter', {total: {win: 0, loss: 0}});
+let winLossCounter = settings.get('winLossCounter', {alltime:{total: {win: 0, loss: 0}}});
+winLossCounter.daily = {total: {win: 0, loss: 0}};
 let showTotalWinLossCounter = settings.get('showTotalWinLossCounter', true);
 let showDeckWinLossCounter = settings.get('showDeckWinLossCounter', true);
+let showDailyTotalWinLossCounter = settings.get('showDailyTotalWinLossCounter', true);
+let showDailyDeckWinLossCounter = settings.get('showDailyDeckWinLossCounter', true);
 let showVaultProgress = settings.get('showVaultProgress', true);
 let lastCollection = settings.get('lastCollection', {});
 let lastVaultProgress = settings.get('lastVaultProgress', 0);
@@ -287,22 +290,24 @@ if (fullFileCmdOpt) {
   readFullFile = true;
 }
 
-var postCounterChanged = false;
-
-ipcMain.on('updateWinLossCounter', (e,arg) => {
+ipcMain.on('updateWinLossCounters', (e,arg) => {
   if (arg.key == 'all'){
-    global['winLossCounter'] = arg.value
-    settings.set('winLossCounter', arg.value)
+    global['winLossCounter'] = arg.value;
+    settings.set('winLossCounter', arg.value);
   } else {
-    global['winLossCounter'][arg.key] = arg.value;
-    settings.set('winLossCounter.' + arg.key, arg.value)
+    global['winLossCounter']['alltime'][arg.key] = arg.value.alltime;
+    global['winLossCounter']['daily'][arg.key] = arg.value.daily;
+    settings.set('winLossCounter.alltime.' + arg.key, arg.value.alltime);
   }
 
-  mainWindow.webContents.send('counterChanged',global['winLossCounter']);
-  if (settingsWindow != null){
-    settingsWindow.webContents.send('counterChanged',global['winLossCounter']);
-  } else {
-    postCounterChanged = true;
+  try {
+    mainWindow.webContents.send('counterChanged',global['winLossCounter'],arg);
+    if ( settingsWindow != null){
+      settingsWindow.webContents.send('counterChanged',global['winLossCounter']);
+    }
+  } catch (e) {
+    console.log("could not send counterChanged message");
+    console.log(e);
   }
 })
 
@@ -392,10 +397,6 @@ let openSettingsWindow = () => {
     })
   }
   settingsWindow.once('ready-to-show', () => {
-    if (postCounterChanged) {
-      settingsWindow.webContents.send('countereChanged',global.winLossCounter);
-      postCounterChanged = false;
-    }
     settingsWindow.show()
   })
 }
@@ -628,6 +629,8 @@ global.mouseEvents = mouseEvents;
 global.winLossCounter = winLossCounter;
 global.showTotalWinLossCounter = showTotalWinLossCounter;
 global.showDeckWinLossCounter = showDeckWinLossCounter;
+global.showDailyTotalWinLossCounter = showDailyTotalWinLossCounter;
+global.showDailyDeckWinLossCounter = showDailyDeckWinLossCounter;
 global.showVaultProgress = showVaultProgress;
 global.lastVaultProgress = lastVaultProgress;
 global.lastCollection = lastCollection;
