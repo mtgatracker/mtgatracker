@@ -938,7 +938,7 @@ let onMessage = (data) => {
                         if(isNaN(cardQuantity)) {
                           cardQuantity = data.collection[cardID];
                         }
-                        if(cardQuantity > 0) { 
+                        if(cardQuantity > 0) {
                           objectToPush.cardsObtained[cardID] = cardQuantity;
                         }
                       }
@@ -995,7 +995,15 @@ let onMessage = (data) => {
             $.each(data.decks, (key, value) => {
                 new_decks.push(value)
             })
-            appData.player_decks = new_decks;
+            appData.player_decks = new_decks.sort((a,b) => {
+              if (a.pool_name < b.pool_name ){
+                return -1;
+              } else if ( a.pool_name === b.pool_name ){
+                return 0;
+              } else {
+                return 1;
+              }
+            });
             appData.no_decks = false;
         }
     }
