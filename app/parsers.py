@@ -141,16 +141,31 @@ def parse_sideboard_submit(blob):
 
 
 def parse_mulligan_req_message(message, timestamp=None):
+    import app.mtga_app as mtga_app
     number_cards = message["prompt"]["parameters"][0]["numberValue"]
     player_seat_id = message["systemSeatIds"][0]
-
-    if number_cards < 6:
-        number_mulligans = 6 - number_cards
-        starting_hand_size = 7 - number_mulligans
-        import app.mtga_app as mtga_app
-        with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
-            player = app.mtga_app.mtga_watch_app.game.get_player_in_seat(player_seat_id)
+    player = mtga_app.mtga_watch_app.game.get_player_in_seat(player_seat_id)
+    mtga_app.mtga_logger.info("MULL: {}".format(player.hand.cards))
+    with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
+        if number_cards < 6:
+            number_mulligans = 6 - number_cards
+            starting_hand_size = 7 - number_mulligans
             player.mulligan_count = number_mulligans
+            mulligan_text = [" mulligans to ", str(starting_hand_size), ": "]
+        else:  # starting hand
+            mulligan_text = ["'s starting hand: "]
+        player_texts = build_event_texts_from_iid_or_grpid(player_seat_id, mtga_app.mtga_watch_app.game)
+        card_texts = []
+        for card in player.hand.cards:
+            card_texts.append(*build_event_texts_from_iid_or_grpid(card.game_id, mtga_app.mtga_watch_app.game))
+        event_texts = [*player_texts, *mulligan_text]
+        for card_text in card_texts:
+            event_texts.extend([card_text, ", "])
+        if event_texts[-1] == ", ":
+            event_texts.pop()
+        queue_obj = {"game_history_event": event_texts}
+        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+        general_output_queue.put(queue_obj)
 
 
 # TODO: move somewhere else
@@ -170,7 +185,7 @@ def build_card_event_texts(card, game):
         ability_text = build_event_text("ability", "ability", card.pretty_name)
         card_texts = [ability_source_text, "'s ", ability_text]
     elif isinstance(card, Player):
-        text_type = "{}".format("hero" if card else "opponent")
+        text_type = "{}".format("hero" if card == game.hero else "opponent")
         card_texts = [build_event_text(card.player_name, text_type)]
     else:  # it's a GameCard
         owner_is_hero = game.hero == game.get_player_in_seat(card.owner_seat_id)
@@ -361,23 +376,26 @@ def parse_game_state_message(message, timestamp=None):
                 if annotation_type == "AnnotationType_ResolutionComplete":
                     try:
                         affector_id = annotation["affectorId"]
-                        __unused_affected_ids = annotation["affectedIds"]
-                        grpid = None
-                        details = annotation["details"]
-                        for detail in details:
-                            if detail["key"] == "grpid":
-                                grpid = detail["valueInt32"][0]
-                        resolved_texts = build_event_texts_from_iid_or_grpid(affector_id, mtga_app.mtga_watch_app.game, grpid)
-                        event_texts = [*resolved_texts, " resolved"]
-                        queue_obj = {"game_history_event": event_texts}
-                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
-                        general_output_queue.put(queue_obj)
-                        pass
+                        card = mtga_app.mtga_watch_app.game.find_card_by_iid(affector_id)
+                        if isinstance(card, Ability):
+                            # card resolutions are handled in annotations below
+                            __unused_affected_ids = annotation["affectedIds"]
+                            grpid = None
+                            details = annotation["details"]
+                            for detail in details:
+                                if detail["key"] == "grpid":
+                                    grpid = detail["valueInt32"][0]
+                            resolved_texts = build_event_texts_from_iid_or_grpid(affector_id, mtga_app.mtga_watch_app.game, grpid)
+                            event_texts = [*resolved_texts, " resolved"]
+                            queue_obj = {"game_history_event": event_texts}
+                            mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                            general_output_queue.put(queue_obj)
                     except:
                         app.mtga_app.mtga_logger.error("{}Exception @ count {}".format(util.ld(True), app.mtga_app.mtga_watch_app.error_count))
                         app.mtga_app.mtga_logger.error("{}parsers:parse_game_state_message - error parsing annotation:".format(util.ld(True)))
                         app.mtga_app.mtga_logger.error(pprint.pformat(annotation))
                         app.mtga_app.mtga_watch_app.send_error("Exception during parse AnnotationType_ResolutionComplete. Check log for more details")
+
         if 'gameObjects' in message.keys():
             game_objects = message['gameObjects']
             for object in game_objects:
@@ -468,6 +486,79 @@ def parse_game_state_message(message, timestamp=None):
                     mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                     general_output_queue.put(queue_obj)
                     player_obj.current_life_total = life_total
+        # AFTER we've processed gameObjects, look for actions that should go in the log
+        # If this code is in the block above gameObjects, then we will end up with lots of
+        # "unknown" cards for opponent cards and actions
+        if 'annotations' in message.keys():
+            for annotation in message['annotations']:
+                annotation_type = annotation['type'][0]
+                if annotation_type == "AnnotationType_ZoneTransfer":
+                    if "affectorId" not in annotation.keys():
+                        affector_id = 0
+                    else:
+                        affector_id = annotation["affectorId"]
+                    affected_ids = annotation["affectedIds"]
+                    details = annotation["details"]
+                    zone_src, zone_dest, category = None, None, None
+                    for detail in details:
+                        if detail["key"] == "zone_src":
+                            zone_src = detail["valueInt32"][0]
+                        if detail["key"] == "zone_dest":
+                            zone_dest = detail["valueInt32"][0]
+                        if detail["key"] == "category":
+                            category = detail["valueString"][0]
+
+                    card = mtga_app.mtga_watch_app.game.find_card_by_iid(affected_ids[0])
+                    if affector_id == 0:
+                        affector_id = card.owner_seat_id
+                    player_texts = build_event_texts_from_iid_or_grpid(affector_id, mtga_app.mtga_watch_app.game)
+                    annotation_texts = build_event_texts_from_iid_or_grpid(affected_ids[0], mtga_app.mtga_watch_app.game)
+
+                    if category == "PlayLand":
+                        event_texts = [*player_texts, " plays ", *annotation_texts]
+                        queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                        general_output_queue.put(queue_obj)
+                    elif category == "Draw":
+                        if affector_id > 2:
+                            owner = card.owner_seat_id
+                            player_texts.extend([": ", *build_event_texts_from_iid_or_grpid(owner, mtga_app.mtga_watch_app.game)])
+                        if card.pretty_name == "unknown":
+                            event_texts = [*player_texts, " draws"]
+                        else:
+                            event_texts = [*player_texts, " draws ", *annotation_texts]
+                        queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                        general_output_queue.put(queue_obj)
+                        # build draw log event
+                    elif category == "CastSpell":
+                        event_texts = [*player_texts, " casts ", *annotation_texts]
+                        queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                        general_output_queue.put(queue_obj)
+                        # build draw log event
+                        # TODO: see if this is redundant
+                    elif category == "Countered":
+                        event_texts = [*player_texts, " counters ", *annotation_texts]
+                        queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                        general_output_queue.put(queue_obj)
+                    elif category == "Resolve":
+                        event_texts = [*annotation_texts, " resolved"]
+                        queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                        general_output_queue.put(queue_obj)
+                    elif category == "Exile":
+                        event_texts = [*player_texts, " exiles ", *annotation_texts]
+                        queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                        general_output_queue.put(queue_obj)
+                    # TODO: category == "Put" ?
+                    elif zone_dest == 37 or zone_dest == 33:  # TODO: get rid of this hardcoded bs
+                        event_texts = [*annotation_texts, " sent to graveyard ", "(" + category + ")"]
+                        queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                        general_output_queue.put(queue_obj)
 
 @util.debug_log_trace
 def parse_zone(zone_blob):

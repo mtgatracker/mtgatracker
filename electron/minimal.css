@@ -47,9 +47,10 @@ h1 {
 }
 
 .zoom-panel {
-    left: 184px;
+    left: 186px;
     position: absolute;
-    top: 25px;
+    top: 26px;
+    font-size: 16.5px;
     height: 0px;
 }
 
