@@ -69,6 +69,7 @@ var showChessTimers = remote.getGlobal('showChessTimers');
 var hideDelay = remote.getGlobal('hideDelay');
 var invertHideMode = remote.getGlobal('invertHideMode');
 var rollupMode = remote.getGlobal('rollupMode');
+var minToTray = remote.getGlobal('minToTray');
 var recentCardsQuantityToShow = remote.getGlobal('recentCardsQuantityToShow');
 var showGameTimer = remote.getGlobal('showGameTimer');
 var zoom = remote.getGlobal('zoom');
@@ -185,6 +186,7 @@ var appData = {
     rollupMode: rollupMode,
     recentCardsQuantityToShow: recentCardsQuantityToShow,
     recentCards: recentCards,
+    minToTray: minToTray,
 }
 
 var parseVersionString = (versionStr) => {
@@ -1232,6 +1234,13 @@ ipcRenderer.on('settingsChanged', () => {
 
   recentCards = remote.getGlobal('recentCards');
   appData.recentCards = recentCards
+
+  minToTray = remote.getGlobal('minToTray');
+  appData.minToTray = minToTray
+
+  winLossCounter = remote.getGlobal('winLossCounter');
+  appData.winCounter = winLossCounter.win
+  appData.lossCounter = winLossCounter.loss
 
   let useTheme = remote.getGlobal("useTheme")
   let themeFile = remote.getGlobal("themeFile")

@@ -10,7 +10,7 @@ if (handleStartupEvent()) {
   return;
 }
 
-const { app, ipcMain, BrowserWindow } = require('electron')
+const { app, ipcMain, BrowserWindow, Tray, Menu, nativeImage } = require('electron')
 const fs = require('fs');
 const path = require('path')
 const keytar = require('keytar')
@@ -271,6 +271,7 @@ let useMinimal = settings.get('useMinimal', true);
 let zoom = settings.get('zoom', 0.8);
 let recentCards = settings.get('recentCards', []);
 let recentCardsQuantityToShow = settings.get('recentCardsQuantityToShow', 10);
+let minToTray = settings.get('minToTray', false);
 logPath = settings.get("logPath", logPath)
 
 global.historyEvents = []
@@ -645,6 +646,7 @@ global.zoom = zoom
 global.recentCards = recentCards
 global.recentCardsQuantityToShow = recentCardsQuantityToShow
 global.logPath = logPath
+global.minToTray = minToTray
 global.historyZoom = settings.get("history-zoom", 1.0)
 
 /*************************************************************
@@ -663,6 +665,42 @@ if (debug) {
     window_height = 700;
 }
 
+const openDeckTrackerHandler = (menuItem, browserWindow, event) => {
+    focusMTGATracker(); 
+}
+
+const openSettingsHandler = (menuItem, browserWindow, event) => {
+  focusMTGATrackerSettings();
+}
+
+const openHistoryHandler = (menuItem, browserWindow, event) => {
+  focusMTGAHistory();
+}
+
+const closeTrackerHandler = (menuItem, browserWindow, event) => {
+  mainWindow.close();
+}
+
+let tray = null;
+
+const createTray = () => {
+  if(minToTray && tray==null) {
+    let iconFile = 'icon_tray.png'
+    let iconPath = path.join(__dirname,'img', iconFile);
+    console.log(fs.existsSync(iconPath))
+    let nativeIcon = nativeImage.createFromPath(iconPath)
+    tray = new Tray(nativeIcon)
+    const contextMenu = Menu.buildFromTemplate([
+      {label: "DeckTracker", type: "normal", click: openDeckTrackerHandler},
+      {label: "Settings", type: "normal", click: openSettingsHandler},
+      {label: "History", type: "normal", click: openHistoryHandler},
+      {label: "Quit", type: "normal", click: closeTrackerHandler }
+    ])
+    tray.setToolTip('MTGA Tracker')
+    tray.setContextMenu(contextMenu)
+  }
+}
+
 const createMainWindow = () => {
   const mainWindowStateMgr = windowStateKeeper('main')
   mainWindow = new BrowserWindow({width: window_width,
@@ -679,6 +717,7 @@ const createMainWindow = () => {
                                   icon: "img/icon_small.ico",
                                   x: mainWindowStateMgr.x,
                                   y: mainWindowStateMgr.y})
+  createTray();
   mainWindowStateMgr.track(mainWindow)
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
@@ -688,6 +727,11 @@ const createMainWindow = () => {
   mainWindow.on('closed', () => {
     console.log("main window closed")
     killServer()
+  })
+  mainWindow.on('minimize', () => {
+    minToTray = settings.get('minToTray', false);
+    createTray();
+    mainWindow.setSkipTaskbar(minToTray)
   })
 
   if (debug) {
@@ -721,10 +765,38 @@ const openFirstWindow = () => {
 
 function focusMTGATracker() {
   if(mainWindow) {
+    mainWindow.setSkipTaskbar(false);
+    mainWindow.show();
     if(mainWindow.isMinimized()) {
       mainWindow.restore();
     }
     mainWindow.focus();
+  } else {
+    openFirstWindow();
+  }
+}
+
+function focusMTGATrackerSettings() {
+  if(settingsWindow) {
+    settingsWindow.show();
+    if(settingsWindow.isMinimized()) {
+      settingsWindow.restore();
+    }
+    settingsWindow.focus();
+  } else {
+    openSettingsWindow();
+  }
+}
+
+function focusMTGAHistory() {
+  if(historyWindow) {
+    historyWindow.show();
+    if(historyWindow.isMinimized()) {
+      historyWindow.restore();
+    }
+    historyWindow.focus();
+  } else {
+    openHistoryWindow();
   }
 }
 

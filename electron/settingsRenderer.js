@@ -58,6 +58,7 @@ var settingsData = {
   rollupMode: remote.getGlobal('rollupMode'),
   recentCards: remote.getGlobal('recentCards'),
   recentCardsQuantityToShow: remote.getGlobal('recentCardsQuantityToShow'),
+  minToTray: remote.getGlobal('minToTray'),
   runFromSource: remote.getGlobal('runFromSource'),
   sortMethodSelected: remote.getGlobal('sortMethod'),
   useFlat: remote.getGlobal('useFlat'),
