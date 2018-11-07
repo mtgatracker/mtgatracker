@@ -238,7 +238,6 @@ rivets.binders.recentcardsbinder = (el, cardsObtained) => {
 }
 
 rivets.binders.deckid = function(el, value) {
-  el.id = value + '-reset-button';
   el.setAttribute('data-deckid', value);
 }
 
@@ -251,7 +250,7 @@ function recentCardsSectionClickHandler(event) {
   }
 }
 
-
+var firstCounterAdjButtonClicked = true;
 document.addEventListener("DOMContentLoaded", function(event) {
   rivets.bind(document.getElementById('container'), settingsData)
 
@@ -374,7 +373,35 @@ document.addEventListener("DOMContentLoaded", function(event) {
       new_wlc[type] = decks_wlc;
     }
     ipcRenderer.send('updateWinLossCounters', {key: 'all', value: new_wlc})
-  })
+  });
+
+  $(".counter-adj-button").click((e) => {
+    /**
+      * Ugly Hack Incoming!!!
+      *
+      * For some strange reason the first firing of this event updates the winLossObj just fine
+      * as well as updating mainWindow display, however it would not update settingsWindow.
+      * Any subsequent button presses (event firings, really) make the display update fine.
+      * So, as a workaround, on the first click, send a change event, but post no actual changes.
+      * This pushes us through the bug and lets the display update perfectly.
+      */
+    if (firstCounterAdjButtonClicked){
+      firstCounterAdjButtonClicked = false;
+      ipcRenderer.send('updateWinLossCounters', {key: 'all', value: settingsData.winLossObj})
+    }
+
+    const deck_id = e.target.getAttribute('data-deckid');
+    const winloss = e.target.getAttribute('data-winloss');
+    const up = e.target.getAttribute('data-direction') === 'up';
+    const is_daily = e.target.getAttribute('data-daily') === 'true';
+    const type = is_daily ? 'daily' : 'alltime';
+    let new_wlc = {daily:settingsData.winLossObj.daily[deck_id],alltime:settingsData.winLossObj.alltime[deck_id]};
+    new_wlc[type][winloss] += up ? 1 : -1;
+
+    ipcRenderer.send('updateWinLossCounters', {key: deck_id, value: new_wlc})
+  });
+
+
   $("#resetGameHistory").click((e) => {
     console.log("resetting gameHstory")
     ipcRenderer.send('clearGameHistory')

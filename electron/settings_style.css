@@ -217,3 +217,7 @@ a {
 .reset-all-btn {
     width: 20em;
 }
+
+.counter-adj-span {
+    float: right;
+}
