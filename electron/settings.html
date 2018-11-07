@@ -24,6 +24,10 @@
           <span class="icon icon-home"></span>
           General
         </a>
+        <a value="wlc" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="wlc-nav">
+          <span class="icon icon-trophy"></span>
+          Win/Loss Counters
+        </a>
         <a value="theme" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="theme-nav">
           <span class="icon icon-brush"></span>
           Themes
@@ -409,10 +413,6 @@
           </div>
 
           <div class="settings-row">
-            <input rv-checked="showWinLossCounter" class="tf-toggle" type="checkbox" key="showWinLossCounter" data-toggle="toggle"> Show win/loss counter
-          </div>
-
-          <div class="settings-row">
             <input rv-checked="showVaultProgress" class="tf-toggle" type="checkbox" key="showVaultProgress" data-toggle="toggle"> Show vault progress in main UI
           </div>
 
@@ -424,9 +424,6 @@
             <div class="slidevalue-vault">
               0
             </div>
-          </div>
-          <div class="settings-row">
-            <button id="resetWinLoss" class="btn btnbtn btn-negative">Reset Win / Loss counter</button>
           </div>
           <div class="settings-row">
             <button id="resetGameHistory" class="btn btnbtn btn-negative">Clear Game History Events</button>
@@ -474,6 +471,102 @@
             <p class="about-p" rv-each-sortingmethod="sortingMethods"><b>{ sortingmethod.text }</b>: { sortingmethod.help }</p>
           </div>
 
+        </div>
+      </div>
+      <div id="wlc-pane" value="wlc" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <h3>All-time Win/Loss Counters</h3>
+            <p>
+              All-time counters keep a running tally of all your wins and losses across all play sessions.<br/>
+              These counters will be stored on exit and restored on launch.<br/>
+              The total counter is a count of all your wins and losses.
+            </p>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showTotalWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show all-time total win/loss counter</span>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDeckWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show all-time per-deck win/loss counter</span>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="all-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all">Reset Every All-time Counter</button>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="all-decks-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all-decks">Reset Every All-time Deck Counter</button>
+          </div>
+
+          <div class="settings-row counter-reset-row">
+            <span class="counter-reset-span">Total &ndash; {totalWinLossCounter.win} : {totalWinLossCounter.loss}</span>
+            <span class="counter-adj-span">
+              <button id="total-win-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="up">+ Win</button>
+              <button id="total-win-minus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="down">- Win</button>
+              <button id="total-loss-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="up">+ Loss</button>
+              <button id="total-loss-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="down">- Loss</button>
+              <button id="total-reset-button" class="btn btn-danger reset-button" data-deckid="total">Reset</button>
+            </span>
+          </div>
+          <div class="settings-row counter-reset-row" rv-each-deck="counterDeckList">
+            <span class="counter-reset-span">{deck.name} &ndash; {deck.win} : {deck.loss}</span>
+            <span class="counter-adj-span">
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="up">+ Win</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="down">- Win</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="up">+ Loss</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="down">- Loss</button>
+              <button rv-deckid="deck.id" class="btn btn-danger reset-button">Reset</button>
+            </span>
+          </div>
+
+          <hr/>
+
+          <div class="settings-row">
+            <h3>Session Win/Loss Counters</h3>
+            <p>
+              Session counters keep a running tally of your wins and losses in the current play session.<br/>
+              These counters will be reset automatically on the next launch.
+            </p>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showDailyTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyTotalWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show session total win/loss counter</span>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showDailyDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyDeckWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show session per-deck win/loss counter</span>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="daily-all-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all" data-daily="true">Reset Every Session Counter</button>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="all-daily-decks-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all-decks" data-daily="true">Reset Every Session Deck Counter</button>
+          </div>
+
+          <div class="settings-row counter-reset-row">
+            <span class="counter-reset-span">Total &ndash; {dailyTotalWinLossCounter.win} : {dailyTotalWinLossCounter.loss}</span>
+            <span class="counter-adj-span">
+              <button id="total-win-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="up" data-daily="true">+ Win</button>
+              <button id="total-win-minus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="down" data-daily="true">- Win</button>
+              <button id="total-loss-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="up" data-daily="true">+ Loss</button>
+              <button id="total-loss-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="down" data-daily="true">- Loss</button>
+              <button id="daily-total-reset-button" class="btn btn-danger reset-button" data-deckid="total" data-daily="true">Reset</button>
+            </span>
+          </div>
+          <div class="settings-row counter-reset-row" rv-each-deck="dailyCounterDeckList">
+            <span class="counter-reset-span">{deck.name} &ndash; {deck.win} : {deck.loss}</span>
+            <span class="counter-adj-span">
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="up" data-daily="true">+ Win</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="down" data-daily="true">- Win</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="up" data-daily="true">+ Loss</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="down" data-daily="true">- Loss</button>
+              <button rv-deckid="deck.id" class="btn btn-danger reset-button" data-daily="true">Reset</button>
+            </span>
+          </div>
         </div>
       </div>
       <div id="theme-pane" value="theme" rv-showsettingspane="settingsPaneIndex">

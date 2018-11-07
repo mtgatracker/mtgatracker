@@ -114,6 +114,8 @@ PRECON_MAP = {
     "?=?Loc/Decks/Precon/Precon_NPE_GRN_UG": "Jungle Secrets",
     "?=?Loc/Decks/Precon/Precon_NPE_GRN_RW": "Strength in Numbers",
     "?=?Loc/Decks/Precon/Precon_NPE_GRN_WU": "Artifacts Attack",
+    # twitch precon
+    "?=?Loc/Decks/Precon/Precon_TwitchCon2018": "Selesnya Conclave",
 }
 
 
