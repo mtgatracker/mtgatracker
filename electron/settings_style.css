@@ -210,8 +210,8 @@ a {
 }
 
 .counter-reset-span {
-    vertical-align: middle;
-    margin-left: 7px;
+    margin-top: 8px;
+    display: inline-block;
 }
 
 .reset-all-btn {
@@ -220,4 +220,8 @@ a {
 
 .counter-adj-span {
     float: right;
+}
+
+.counter-reset-row {
+  height: 32px;
 }
