@@ -369,7 +369,7 @@ ipcMain.on('tosAgreed', (event, arg) => {
 
 let openSettingsWindow = () => {
   if(settingsWindow == null) {
-    let settingsWidth = debug ? 1400 : 800;
+    let settingsWidth = debug ? 1400 : 1000;
 
     const settingsWindowStateMgr = windowStateKeeper('settings')
     settingsWindow = new BrowserWindow({width: settingsWidth,
