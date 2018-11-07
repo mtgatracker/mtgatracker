@@ -1238,10 +1238,6 @@ ipcRenderer.on('settingsChanged', () => {
   minToTray = remote.getGlobal('minToTray');
   appData.minToTray = minToTray
 
-  winLossCounter = remote.getGlobal('winLossCounter');
-  appData.winCounter = winLossCounter.win
-  appData.lossCounter = winLossCounter.loss
-
   let useTheme = remote.getGlobal("useTheme")
   let themeFile = remote.getGlobal("themeFile")
   let useFlat = remote.getGlobal("useFlat")
