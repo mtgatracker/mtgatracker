@@ -475,8 +475,9 @@
           <div class="settings-row">
             <h3>All-time Win/Loss Counters</h3>
             <p>
-              All-time counters keep a running tally of all your wins and losses and will be stored on exit.<br/>
-              The total counter is a count of all your wins and losses across all decks.
+              All-time counters keep a running tally of all your wins and losses across all play sessions.<br/>
+              These counters will be stored on exit and restored on launch.<br/>
+              The total counter is a count of all your wins and losses.
             </p>
           </div>
 
@@ -520,26 +521,27 @@
           <hr/>
 
           <div class="settings-row">
-            <h3>Daily Win/Loss Counters</h3>
+            <h3>Session Win/Loss Counters</h3>
             <p>
-              Daily counters keep a running tally of your wins and losses that will be reset on the next launch.
+              Session counters keep a running tally of your wins and losses in the current play session.<br/>
+              These counters will be reset automatically on the next launch.
             </p>
           </div>
 
           <div class="settings-row">
-            <input rv-checked="showDailyTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyTotalWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show daily total win/loss counter</span>
+            <input rv-checked="showDailyTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyTotalWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show session total win/loss counter</span>
           </div>
 
           <div class="settings-row">
-            <input rv-checked="showDailyDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyDeckWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show daily per-deck win/loss counter</span>
+            <input rv-checked="showDailyDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyDeckWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show session per-deck win/loss counter</span>
           </div>
 
           <div class="settings-row reset-all">
-            <button id="daily-all-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all" data-daily="true">Reset Every Daily Counter</button>
+            <button id="daily-all-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all" data-daily="true">Reset Every Session Counter</button>
           </div>
 
           <div class="settings-row reset-all">
-            <button id="all-daily-decks-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all-decks" data-daily="true">Reset Every Daily Deck Counter</button>
+            <button id="all-daily-decks-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all-decks" data-daily="true">Reset Every Session Deck Counter</button>
           </div>
 
           <div class="settings-row counter-reset-row">
