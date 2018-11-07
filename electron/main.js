@@ -232,6 +232,11 @@ if (frameCmdOpt) {
   settings.set('useFrame', true)
 }
 
+// Hack to update to new structure
+if (!settings.has('winLossCounter.alltime.total') && settings.has('winLossCounter.win') && settings.has('winLossCounter.loss')) {
+  settings.set('winLossCounter.alltime.total', settings.get('winLossCounter'));
+}
+
 let debug = settings.get('debug', false);
 let mtgaOverlayOnly = settings.get('mtgaOverlayOnly', true);
 let showErrors = settings.get('showErrors', false);
@@ -250,8 +255,12 @@ let showChessTimers = settings.get('showChessTimers', true);
 let hideDelay = settings.get('hideDelay', 10);
 let invertHideMode = settings.get('invertHideMode', false);
 let rollupMode = settings.get('rollupMode', true);
-let winLossCounter = settings.get('winLossCounter', {win: 0, loss: 0});
-let showWinLossCounter = settings.get('showWinLossCounter', true);
+let winLossCounter = settings.get('winLossCounter', {alltime:{total: {win: 0, loss: 0}}});
+winLossCounter.daily = {total: {win: 0, loss: 0}};
+let showTotalWinLossCounter = settings.get('showTotalWinLossCounter', true);
+let showDeckWinLossCounter = settings.get('showDeckWinLossCounter', true);
+let showDailyTotalWinLossCounter = settings.get('showDailyTotalWinLossCounter', true);
+let showDailyDeckWinLossCounter = settings.get('showDailyDeckWinLossCounter', true);
 let showVaultProgress = settings.get('showVaultProgress', true);
 let lastCollection = settings.get('lastCollection', {});
 let lastVaultProgress = settings.get('lastVaultProgress', 0);
@@ -280,6 +289,27 @@ let readFullFile = false;
 if (fullFileCmdOpt) {
   readFullFile = true;
 }
+
+ipcMain.on('updateWinLossCounters', (e,arg) => {
+  if (arg.key == 'all'){
+    global['winLossCounter'] = arg.value;
+    settings.set('winLossCounter', arg.value);
+  } else {
+    global['winLossCounter']['alltime'][arg.key] = arg.value.alltime;
+    global['winLossCounter']['daily'][arg.key] = arg.value.daily;
+    settings.set('winLossCounter.alltime.' + arg.key, arg.value.alltime);
+  }
+
+  try {
+    mainWindow.webContents.send('counterChanged',global['winLossCounter'],arg);
+    if ( settingsWindow != null){
+      settingsWindow.webContents.send('counterChanged',global['winLossCounter']);
+    }
+  } catch (e) {
+    console.log("could not send counterChanged message");
+    console.log(e);
+  }
+})
 
 ipcMain.on('messageAcknowledged', (event, arg) => {
   let acked = settings.get("messagesAcknowledged", [])
@@ -339,7 +369,7 @@ ipcMain.on('tosAgreed', (event, arg) => {
 
 let openSettingsWindow = () => {
   if(settingsWindow == null) {
-    let settingsWidth = debug ? 1400 : 800;
+    let settingsWidth = debug ? 1400 : 1000;
 
     const settingsWindowStateMgr = windowStateKeeper('settings')
     settingsWindow = new BrowserWindow({width: settingsWidth,
@@ -597,7 +627,10 @@ global.rollupMode = rollupMode;
 global.hideDelay = hideDelay;
 global.mouseEvents = mouseEvents;
 global.winLossCounter = winLossCounter;
-global.showWinLossCounter = showWinLossCounter;
+global.showTotalWinLossCounter = showTotalWinLossCounter;
+global.showDeckWinLossCounter = showDeckWinLossCounter;
+global.showDailyTotalWinLossCounter = showDailyTotalWinLossCounter;
+global.showDailyDeckWinLossCounter = showDailyDeckWinLossCounter;
 global.showVaultProgress = showVaultProgress;
 global.lastVaultProgress = lastVaultProgress;
 global.lastCollection = lastCollection;

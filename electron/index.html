@@ -29,7 +29,26 @@
       <div id="tracker-body">
         <!-- START Game View -->
         <div id="game-deck-list" rv-show="game_in_progress">
-          <h3 class="win-loss" rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
+          <div class="win-loss-group">
+            <div class="win-loss-div" rv-show="showTotalWinLossCounter">
+              <span class="win-loss-label">Total</span>
+              <span class="win-loss-counter">W : { totalWinCounter } &nbsp;&mdash;&nbsp; L : { totalLossCounter }</span>
+            </div>
+            <div class="win-loss-div" rv-show="showDailyTotalWinLossCounter">
+              <span class="win-loss-label">Session Total</span>
+              <span class="win-loss-counter">W : { dailyTotalWinCounter } &nbsp;&mdash;&nbsp; L : { dailyTotalLossCounter }</span>
+            </div>
+          </div>
+          <div class="win-loss-group" rv-show="showDeckCounters">
+            <div class="win-loss-div" rv-show="showDeckWinLossCounter">
+              <span class="win-loss-label">Deck</span>
+              <span class="win-loss-counter">W : { deckWinCounter } &nbsp;&mdash;&nbsp; L : { deckLossCounter }</span>
+            </div>
+            <div class="win-loss-div" rv-show="showDailyDeckWinLossCounter">
+              <span class="win-loss-label">Session Deck</span>
+              <span class="win-loss-counter">W : { dailyDeckWinCounter } &nbsp;&mdash;&nbsp; L : { dailyDeckLossCounter }</span>
+            </div>
+          </div>
           <h3 class="beleren" rv-showvault="lastVaultProgress">Vault Progress: { lastVaultProgress }%</h3>
           <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
           <div class="messages">
@@ -85,7 +104,26 @@
 
         <!-- START Decklist View -->
         <div id="available-deck-list" rv-show="show_available_decklists">
-          <h3 class="win-loss" rv-show="showWinLossCounter">Wins: { winCounter } &nbsp;&mdash;&nbsp; Losses: { lossCounter }</h3>
+          <div class="win-loss-group">
+            <div class="win-loss-div" rv-show="showTotalWinLossCounter">
+              <span class="win-loss-label">Total</span>
+              <span class="win-loss-counter">W : { totalWinCounter } &nbsp;&mdash;&nbsp; L : { totalLossCounter }</span>
+            </div>
+            <div class="win-loss-div" rv-show="showDailyTotalWinLossCounter">
+              <span class="win-loss-label">Total: Session</span>
+              <span class="win-loss-counter">W : { dailyTotalWinCounter } &nbsp;&mdash;&nbsp; L : { dailyTotalLossCounter }</span>
+            </div>
+          </div>
+          <div class="win-loss-group" rv-show="showDeckCounters">
+            <div class="win-loss-div" rv-show="showDeckWinLossCounter">
+              <span class="win-loss-label">Deck</span>
+              <span class="win-loss-counter">W : { deckWinCounter } &nbsp;&mdash;&nbsp; L : { deckLossCounter }</span>
+            </div>
+            <div class="win-loss-div" rv-show="showDailyDeckWinLossCounter">
+              <span class="win-loss-label">Deck: Session</span>
+              <span class="win-loss-counter">W : { dailyDeckWinCounter } &nbsp;&mdash;&nbsp; L : { dailyDeckLossCounter }</span>
+            </div>
+          </div>
           <h3 class="beleren" rv-showvault="lastVaultProgress">Vault Progress: { lastVaultProgress }%</h3>
           <div id="decklists-container" rv-show="no_list_selected">
             <h3 class="reminder">Pick a deck, or start a game!</h3>
