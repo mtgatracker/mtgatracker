@@ -17,7 +17,7 @@
 
 @font-face {
     font-family: beleren;
-    src: url(fonts/JaceBeleren-Bold.woff);
+    src: url(fonts/Beleren-Bold.woff);
 }
 
 @font-face {
@@ -411,12 +411,11 @@ p {
 
 #floating-settings {
     position: absolute;
-    height: 25px;
+    height: 18px;
     width: 18px;
     left: 298px;
     top: 67px;
     z-index: 100;
-    opacity: 0.8;
     cursor: pointer;
 }
 
