@@ -256,6 +256,53 @@ request.get({
   }
 })
 
+let emeraldSort = function (decklist) {
+   return decklist.sort(
+            function (a, b) {
+                // Sort by cardtype first
+                return cardtypeCompare(a.card_type, b.card_type)
+                        // Then sort by mana cost
+                        || manaCostCompare(a.cost, b.cost)
+                        // Then sort by name
+                        || nameCompare(a.pretty_name, b.pretty_name);
+            }
+    );
+};
+
+let deckSubLists = function (decklist) {
+  let card_count = -1;
+  let sublists = [];
+  let current_sublist = null;
+  for ( card of decklist ) {
+    if (card.count_in_deck != card_count){
+      if ( current_sublist != null ){
+        sublists.push(current_sublist);
+        current_sublist = [];
+      } else {
+        current_sublist = [];
+      }
+      card_count = card.count_in_deck;
+    }
+    current_sublist.push(card);
+  }
+  sublists.push(current_sublist);
+  return sublists;
+};
+
+let drawSort = function (decklist,by_name) {
+  let sublists = deckSubLists(decklist);
+  let sorted = [];
+  for (sublist of sublists){
+    if (by_name) {
+      sorted.push(sublist.sort( function (a,b) { return nameCompare(a.pretty_name,b.pretty_name); } ));
+    } else {
+      sorted.push(emeraldSort(sublist));
+    }
+  }
+  //flatten
+  return [].concat.apply([], sorted);
+}
+
 let cardtypeCompare = function (a, b) {
     // Creatures -> Planeswalkers -> Enchantments -> Artifacts -> Sorceries -> Instants -> Non-Basic Lands -> Basic Lands
     if (a.includes("Creature")) {
@@ -369,18 +416,10 @@ rivets.formatters.drawStatsSort = function(decklist) {
     if (decklist.length === 0) {
         return decklist;
     }
-    if (sortMethod == "draw") {
-        return decklist;
+    if (sortMethod.startsWith("draw")) {
+        return drawSort(decklist,sortMethod === 'draw');
     } else if (sortMethod == "emerald") {
-        return decklist.sort(
-                function (a, b) {
-                    // Sort by cardtype first
-                    return cardtypeCompare(a.card_type, b.card_type)
-                        // Then sort by mana cost
-                        || manaCostCompare(a.cost, b.cost)
-                        // Then sort by name
-                        || nameCompare(a.card, b.card);
-                });
+        return emeraldSort(decklist);
     }
 };
 
@@ -401,18 +440,10 @@ rivets.formatters.decklistSort = function(decklist) {
     if (decklist.length === 0) {
         return decklist;
     }
-    if (sortMethod == "draw") {
-        return decklist;
+    if (sortMethod.startsWith("draw")) {
+        return drawSort(decklist,sortMethod === 'draw');
     } else if (sortMethod == "emerald") {
-        return decklist.sort(
-            function (a, b) {
-                // Sort by cardtype first
-                return cardtypeCompare(a.card_type, b.card_type)
-                        // Then sort by mana cost
-                        || manaCostCompare(a.cost, b.cost)
-                        // Then sort by name
-                        || nameCompare(a.pretty_name, b.pretty_name);
-        });
+        return emeraldSort(decklist);
     }
 };
 
