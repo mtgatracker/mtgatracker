@@ -292,7 +292,7 @@ let drawSort = function (decklist,by_name) {
   let sorted = [];
   for (sublist of sublists){
     if (by_name) {
-      sorted.push(sublist.sort( function (a,b) { return nameCompare(a.pretty_name,b.pretty_name); } ));
+      sorted.push(sublist.sort( (a,b) => { return nameCompare(a.pretty_name,b.pretty_name); } ));
     } else {
       sorted.push(emeraldSort(sublist));
     }
