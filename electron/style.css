@@ -384,24 +384,34 @@ p {
   color: black; /* idk there's a bug in magic-font */
 }
 
-#floating-eye {
-    position: absolute;
-    height: 30px;
-    width: 30px;
-    left: 295px;
-    top: 25px;
-    z-index: 100;
+.controls {
+    width: 110px;
+    float: right;
+    padding: 3px;
 }
 
-#floating-history {
-    position: absolute;
-    height: 18px;
-    width: 18px;
-    left: 262px;
-    top: 28px;
-    z-index: 100;
-    color: white;
-    cursor: pointer;
+.controls div {
+    float: right;
+    margin: 0 2px;
+}
+
+#close-icon, #minimize-icon {
+    padding: 5px 3px;
+}
+
+#zoom-panel {
+    float: left;
+    margin-left: 10px;
+    margin-top: 2px;
+}
+
+.game-deck-title, .back-draft {
+    width: 185px;
+    float: left;
+}
+
+#tracker-body {
+    clear: both;
 }
 
 .deck-name {
@@ -409,25 +419,16 @@ p {
     overflow: hidden;
 }
 
-#floating-settings {
-    position: absolute;
-    height: 18px;
-    width: 18px;
-    left: 298px;
-    top: 67px;
-    z-index: 100;
-    cursor: pointer;
-}
-
 .glow-on-hover:hover {
     background-color: rgba(50, 180, 210, 0.4);
 }
 
 .zoom-panel {
-    color: rgba(160, 160, 160, 0.8);
+    color: white;
     text-shadow: 0 0 0;
     padding-top: 0;
     padding-bottom: 0;
+    font-size: 1.2em;
 }
 
 .zoom {
