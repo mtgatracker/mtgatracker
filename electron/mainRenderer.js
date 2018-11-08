@@ -625,9 +625,9 @@ function populateDeck(elem) {
       if (appData.winLossObj[type][deckID] === undefined) {
         appData.winLossObj[type][deckID] = {win: 0, loss: 0, name: deck.pool_name}
       }
-      const counter_prefix = type === 'daily' ? 'dailyD' : 'd';
-      appData[counter_prefix + 'eckWinCounter'] = appData.winLossObj[type][deckID].win;
-      appData[counter_prefix + 'eckLossCounter'] = appData.winLossObj[type][deckID].loss;
+      const counter_prefix = type === 'daily' ? 'dailyDeck' : 'deck';
+      appData[counter_prefix + 'WinCounter'] = appData.winLossObj[type][deckID].win;
+      appData[counter_prefix + 'LossCounter'] = appData.winLossObj[type][deckID].loss;
     });
 
     if (deck != null){
