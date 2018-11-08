@@ -358,7 +358,7 @@ def parse_game_state_message(message, timestamp=None):
                         mtga_app.mtga_watch_app.game.recorded_targetspecs.append((affector_card, targets))
                         affector_texts = build_card_event_texts(affector_card, mtga_app.mtga_watch_app.game)
 
-                        event_texts = [*affector_texts, " targeted "]
+                        event_texts = [*affector_texts, " targets "]
                         if len(target_texts) > 2:
                             for target in target_texts:
                                 event_texts.extend([target, ", "])
@@ -386,7 +386,7 @@ def parse_game_state_message(message, timestamp=None):
                                 if detail["key"] == "grpid":
                                     grpid = detail["valueInt32"][0]
                             resolved_texts = build_event_texts_from_iid_or_grpid(affector_id, mtga_app.mtga_watch_app.game, grpid)
-                            event_texts = [*resolved_texts, " resolved"]
+                            event_texts = [*resolved_texts, " resolves"]
                             queue_obj = {"game_history_event": event_texts}
                             mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                             general_output_queue.put(queue_obj)
@@ -544,7 +544,7 @@ def parse_game_state_message(message, timestamp=None):
                         mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                         general_output_queue.put(queue_obj)
                     elif category == "Resolve":
-                        event_texts = [*annotation_texts, " resolved"]
+                        event_texts = [*annotation_texts, " resolves"]
                         queue_obj = {"game_history_event": event_texts}
                         mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                         general_output_queue.put(queue_obj)
