@@ -277,10 +277,8 @@ let deckSubLists = function (decklist) {
     if (card.count_in_deck != card_count){
       if ( current_sublist != null ){
         sublists.push(current_sublist);
-        current_sublist = [];
-      } else {
-        current_sublist = [];
       }
+      current_sublist = [];
       card_count = card.count_in_deck;
     }
     current_sublist.push(card);
