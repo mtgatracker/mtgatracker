@@ -1128,6 +1128,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
     } else {
         $("#container").addClass("container-normal")
     }
+
+    $('#close-icon').click(() => {
+      browserWindow.close()
+    })
+    $('#minimize-icon').click(() => {
+      browserWindow.minimize()
+    })
     $("#floating-settings").click(() => {
       ipcRenderer.send('openSettings', null)
     })
@@ -1270,7 +1277,9 @@ ipcRenderer.on('settingsChanged', () => {
       link.rel  = 'stylesheet';
       link.type = 'text/css';
       link.href = 'minimal.css';
-      head.appendChild(link)
+      head.appendChild(link);
+      $('#close-icon').attr('src','img/cancel-min.png')
+      $('#minimize-icon').attr('src','img/remove-min.png')
     }
   } else if (currentMinimalLink) {
     currentMinimalLink.remove()
