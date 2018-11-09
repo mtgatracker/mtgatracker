@@ -406,13 +406,12 @@ p {
 }
 
 #tracker-header{
-    min-height: 63px;
- /*   float: left;*/
+    min-height: 65px;
 }
 
-..game-deck-title, .back-draft {
-    width: 185px;
- /*   float: left;*/
+.game-deck-title, .back-draft {
+    width: 188px;
+    float: left;
 }
 
 #tracker-body {

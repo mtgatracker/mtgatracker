@@ -47,9 +47,12 @@ h1 {
 }
 #tracker-header{
     min-height: 42px;
- /*   float: left;*/
 }
 
+.game-deck-title, .back-draft {
+    width: 185px;
+    float: none;
+}
 /**
 #floating-eye {
   height: 20px;
