@@ -582,14 +582,13 @@ function resizeWindow() {
 
     let totalHeight = 10;
 
-    $("#tracker-header").children().each(function(c, e) {
-        if(e.style.display != "none" && !e.classList.contains("no-height-contribution"))
-            totalHeight += $(e).outerHeight(true);
-    });
+    totalHeight += $('#tracker-header').outerHeight(true);
+
     $("#tracker-body").children().each(function(c, e) {
         if(e.style.display != "none" && !e.classList.contains("no-height-contribution"))
             totalHeight += $(e).outerHeight(true);
     });
+
     bounds = browserWindow.getBounds()
     container.style.height = "" + parseInt(totalHeight) + "px"
     if (zoom > 0.85) {
