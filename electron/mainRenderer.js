@@ -256,20 +256,7 @@ request.get({
   }
 })
 
-let emeraldSort = function (decklist) {
-   return decklist.sort(
-            function (a, b) {
-                // Sort by cardtype first
-                return cardtypeCompare(a.card_type, b.card_type)
-                        // Then sort by mana cost
-                        || manaCostCompare(a.cost, b.cost)
-                        // Then sort by name
-                        || nameCompare(a.pretty_name, b.pretty_name);
-            }
-    );
-};
-
-let deckSubLists = function (decklist) {
+let deckFrequencySubLists = function (decklist) {
   let card_count = -1;
   let sublists = [];
   let current_sublist = null;
@@ -287,18 +274,63 @@ let deckSubLists = function (decklist) {
   return sublists;
 };
 
-let drawSort = function (decklist,by_name) {
-  let sublists = deckSubLists(decklist);
+let sortDecklist = function (decklist) {
+    if (decklist.length === 0) {
+        return decklist;
+    }
+    if (sortMethod.startsWith("draw")) {
+        let subsort = sortMethod.split('-')[1];
+        if ( subsort === undefined ){
+          subsort = 'name';
+        }
+        return drawSort(decklist,subsort);
+    } else if (sortMethod == "emerald") {
+        return emeraldSort(decklist);
+    } else if (sortMethod == "color") {
+        return colorSort(decklist);
+    }
+}
+
+let emeraldSort = function (decklist) {
+   return decklist.sort(
+            function (a, b) {
+                // Sort by cardtype first
+                return cardtypeCompare(a.card_type, b.card_type)
+                        // Then sort by mana cost
+                        || manaCostCompare(a, b)
+                        // Then sort by name
+                        || nameCompare(a.pretty_name, b.pretty_name);
+            }
+    );
+};
+
+let drawSort = function (decklist,subsort) {
+  let sublists = deckFrequencySubLists(decklist);
   let sorted = [];
   for (sublist of sublists){
-    if (by_name) {
+    if (subsort === 'name') {
       sorted.push(sublist.sort( (a,b) => { return nameCompare(a.pretty_name,b.pretty_name); } ));
-    } else {
+    } else if ( subsort === 'emerald' ) {
       sorted.push(emeraldSort(sublist));
+    } else if ( subsort === 'color' ) {
+      sorted.push(colorSort(sublist));
     }
   }
   //flatten
   return [].concat.apply([], sorted);
+}
+
+let colorSort = function (decklist) {
+    return decklist.sort(
+            function (a, b) {
+                // Sort by cmc first
+                return manaCostCompare(a, b)
+                        // then sort by color
+                        || colorCompare(a,b)
+                        // Then sort by name
+                        || nameCompare(a.pretty_name, b.pretty_name);
+            }
+    );
 }
 
 let cardtypeCompare = function (a, b) {
@@ -369,28 +401,37 @@ let cardtypeCompare = function (a, b) {
     return 0;
 };
 
-let manaCostCompare = function (a, b) {
-    let cmcA = 0;
-    let cmcB = 0;
-    let cmcCompute = function (manaSymbol) {
-        // Put X spells at the end
-        if (manaSymbol === "X") {
-            return 100;
-        }
-        // Generic mana amount
-        let intValue = parseInt(manaSymbol);
-        if (!isNaN(intValue)) {
-            return intValue;
-        }
+let cmcCompute = function (card) {
+  //put lands at bottom
+  if ( card.card_type === 'Land'){
+    return 1000;
+  }
+
+  let total = 0;
+  for (let manaSymbol of card.cost) {
+    // Put X spells at the end
+    if (manaSymbol === "X") {
+        total += 100;
+    } else {
+      // Generic mana amount
+      let intValue = parseInt(manaSymbol);
+      if (!isNaN(intValue)) {
+        total += intValue;
+
+      } else {
         // Colored mana
-        return 1;
-    };
-    for (let manaSymbol of a) {
-        cmcA += cmcCompute(manaSymbol);
+        total += 1;
+      }
     }
-    for (let manaSymbol of b) {
-        cmcB += cmcCompute(manaSymbol);
-    }
+  }
+
+  return total;
+};
+
+let manaCostCompare = function (a, b) {
+    let cmcA = cmcCompute(a);
+    let cmcB = cmcCompute(b);
+
     if (cmcA < cmcB) {
         return -1;
     }
@@ -410,15 +451,80 @@ let nameCompare = function (a, b) {
     return 0;
 };
 
+/**
+ * Rank color combos.
+ *
+ * Each color is assigned value
+ * W=1 U=2 B=4 R=8 G=16 C=32 L=+32
+ *
+ * Array holds total color values in sorted order.
+ * To find sort position of particular card,
+ * get index of color combo value
+ */
+
+let color_ranks = [
+  1,2,4,8,16,     // W U B G R
+  3,5,9,17,       // WU WB WR WG
+  6,10,18,        // UB UR UG
+  12,20,          // BR BG
+  24,             // RG
+  7,11,19,        // WUB WUR WUG
+  13,21,          // WBR WBG
+  25,             // WRG
+  14,22,26,       // UBR UBG URG
+  28,             // BRG
+  15,23,27,29,30, // WUBR WUBG WURG WBRG UBRG
+  31,             // WUBRG
+  32,             // C
+  33,34,36,40,48, // L W U B G R
+  35,37,41,49,    // L WU WB WR WG
+  38,42,50,       // L UB UR UG
+  44,52,          // L BR BG
+  56,             // L RG
+  39,43,51,       // L WUB WUR WUG
+  45,53,          // L WBR WBG
+  57,             // L WRG
+  46,54,58,       // L UBR UBG URG
+  60,             // L BRG
+  47,55,59,61,62, // L WUBR WUBG WURG WBRG UBRG
+  63,             // L WUBRG
+  64              // L C
+]
+
+let colorCompare = function (a,b) {
+  let a_index = color_ranks.indexOf(getColorValue(a));
+  let b_index = color_ranks.indexOf(getColorValue(b));
+  if ( a_index < b_index ) {
+    return -1;
+  } else if ( a_index === b_index ) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
+let getColorValue = function(card) {
+  let value = card.cardtype === 'Land' ? 32 : 0
+  for ( color of card.colors) {
+    if ( color === 'White' ){
+      value += 1
+    } else if ( color === 'Blue' ) {
+      value += 2
+    } else if ( color === 'Black' ) {
+      value += 4
+    } else if ( color === 'Red') {
+      value += 8
+    } else if ( color === 'Green' ){
+      value += 16
+    } else if ( color === 'Colorless' ){
+      value += 32
+    }
+  }
+  return value;
+}
+
 rivets.formatters.drawStatsSort = function(decklist) {
-    if (decklist.length === 0) {
-        return decklist;
-    }
-    if (sortMethod.startsWith("draw")) {
-        return drawSort(decklist,sortMethod === 'draw');
-    } else if (sortMethod == "emerald") {
-        return emeraldSort(decklist);
-    }
+    return sortDecklist(decklist);
 };
 
 rivets.formatters.drawStatsMergeDuplicates = function(decklist) {
@@ -435,14 +541,7 @@ rivets.formatters.drawStatsMergeDuplicates = function(decklist) {
 };
 
 rivets.formatters.decklistSort = function(decklist) {
-    if (decklist.length === 0) {
-        return decklist;
-    }
-    if (sortMethod.startsWith("draw")) {
-        return drawSort(decklist,sortMethod === 'draw');
-    } else if (sortMethod == "emerald") {
-        return emeraldSort(decklist);
-    }
+    return sortDecklist(decklist);
 };
 
 rivets.formatters.decklistMergeDuplicates = function(decklist) {
