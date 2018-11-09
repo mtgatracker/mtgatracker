@@ -393,6 +393,7 @@ p {
 .controls div {
     float: right;
     margin: 0 2px;
+    cursor: pointer;
 }
 
 #close-icon, #minimize-icon {
