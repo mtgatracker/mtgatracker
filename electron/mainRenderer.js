@@ -1277,9 +1277,7 @@ ipcRenderer.on('settingsChanged', () => {
       link.rel  = 'stylesheet';
       link.type = 'text/css';
       link.href = 'minimal.css';
-      head.appendChild(link);
-      $('#close-icon').attr('src','img/cancel-min.png')
-      $('#minimize-icon').attr('src','img/remove-min.png')
+      head.appendChild(link)
     }
   } else if (currentMinimalLink) {
     currentMinimalLink.remove()
