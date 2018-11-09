@@ -74,6 +74,8 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
     # read more about virtualenv here: http://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv
     pip install -r requirements.txt
     cd electron
+    # tell npm to use python2.7 for node-gyp
+    npm config set python python2.7
     npm install .
     ```
 1. If all went well, you should now be able to:
