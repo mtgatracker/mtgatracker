@@ -74,6 +74,8 @@ Note that if you choose to skip Git Bash, you're on your own w.r.t. formatting s
     # read more about virtualenv here: http://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv
     pip install -r requirements.txt
     cd electron
+    # tell npm to use python2.7 for node-gyp
+    npm config set python python2.7
     npm install .
     ```
 1. If all went well, you should now be able to:
@@ -172,8 +174,7 @@ The front end of MTGA Tracker is an electron app that uses node / websocket to c
 
 Currently MTGATracker ~~is self-signed.~~ (Edit: since this doesn't do anything, we won't bother until
 we get a real cert. Did you know that code-signing certs cost over $100 a year?! We didn't.)
-So MTGATracker will likely go unsigned unless / until it gets at least a few hundred
-[in donations](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/fundraising.md) ;)
+So MTGATracker will likely go unsigned for now.
  
 Regardless, under the guidance of this [stackoverflow question](https://stackoverflow.com/questions/84847/how-do-i-create-a-self-signed-certificate-for-code-signing-on-windows),
 use the following commands to self-sign binaries (not really that useful, but good practice in case MTGATracker ever
@@ -238,18 +239,3 @@ Special shoutout to [fyears/electron-python-example](https://github.com/fyears/e
 a truly excellent tutotial to launchpad off of!
 
 MTGA Tracker is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-#### Core contributors
-
-If this list gets too heavy, please refer to [contributors/core.yml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yml)
-
-- [shawkinsl](https://github.com/shawkinsl)
-- MatteyRitch
-
-#### Collaborators
-
-If this list gets too heavy, please refer to [contributors/collab.yml](https://github.com/shawkinsl/mtga-tracker/blob/master/contributors/core.yml)
-
-- emerald000
-- isharacomix
-- windbagy

@@ -69,10 +69,16 @@ var settingsData = {
   trackerID: remote.getGlobal('trackerID'),
   customStyleFiles: [],
   sortingMethods: [
-    {id: "draw", text: "By likelihood of next draw (default)",
-    help: "This method shows cards in order from most likely to draw on top of the list to least likely to draw on the bottom, with no other considerations."},
+    {id: "draw", text: "By likelihood of next draw, then by name (default)",
+    help: "This method shows cards in order from most likely to draw on top of the list to least likely to draw on the bottom, followed by name within a given likelihood."},
     {id: "emerald", text: '"Emerald" method',
-    help: "This method sorts cards by card type, then by cost, then by name."}
+    help: "This method sorts cards by card type, then by cost, then by name."},
+    {id: "color", text: 'Sorts first by cost, then color, then name.',
+    help: "This method sorts cards first by cost, then color, then by name."},
+    {id: "draw-emerald", text: 'By likelihood of next draw, then by the "Emerald" method',
+    help: "This method sorts cards by likelihood of next draw, then, within a likelihood, by card type, then by cost, then by name."},
+    {id: "draw-color", text: 'By likelihood of next draw, then by cost, color, and name',
+    help: "This method sorts cards by likelihood of next draw, then, by cost, then color, then by name."},
   ],
 }
 

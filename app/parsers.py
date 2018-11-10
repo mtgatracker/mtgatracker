@@ -358,7 +358,7 @@ def parse_game_state_message(message, timestamp=None):
                         mtga_app.mtga_watch_app.game.recorded_targetspecs.append((affector_card, targets))
                         affector_texts = build_card_event_texts(affector_card, mtga_app.mtga_watch_app.game)
 
-                        event_texts = [*affector_texts, " targeted "]
+                        event_texts = [*affector_texts, " targets "]
                         if len(target_texts) > 2:
                             for target in target_texts:
                                 event_texts.extend([target, ", "])
@@ -386,7 +386,7 @@ def parse_game_state_message(message, timestamp=None):
                                 if detail["key"] == "grpid":
                                     grpid = detail["valueInt32"][0]
                             resolved_texts = build_event_texts_from_iid_or_grpid(affector_id, mtga_app.mtga_watch_app.game, grpid)
-                            event_texts = [*resolved_texts, " resolved"]
+                            event_texts = [*resolved_texts, " resolves"]
                             queue_obj = {"game_history_event": event_texts}
                             mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                             general_output_queue.put(queue_obj)
@@ -406,7 +406,7 @@ def parse_game_state_message(message, timestamp=None):
                 owner = object['controllerSeatId']
                 type = object["type"]
                 zone = object['zoneId']
-                if type not in ["GameObjectType_Card", "GameObjectType_Ability"]:
+                if type not in ["GameObjectType_Card", "GameObjectType_Ability", "GameObjectType_SplitCard"]:
                     mtga_app.mtga_watch_app.game.ignored_iids.add(instance_id)
                 else:
                     player, zone = mtga_app.mtga_watch_app.game.get_owner_zone_tup(zone)
@@ -415,7 +415,7 @@ def parse_game_state_message(message, timestamp=None):
                             player = mtga_app.mtga_watch_app.game.hero
                             # if zone is shared, don't care what player we use to put this card into it
                         assert isinstance(player, Player)
-                        if type == "GameObjectType_Card":
+                        if type in ["GameObjectType_Card", "GameObjectType_SplitCard"]:
                             player.put_instance_id_in_zone(instance_id, owner, zone)
                             zone.match_game_id_to_card(instance_id, card_id)
                         elif type == "GameObjectType_Ability":
@@ -544,7 +544,7 @@ def parse_game_state_message(message, timestamp=None):
                         mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                         general_output_queue.put(queue_obj)
                     elif category == "Resolve":
-                        event_texts = [*annotation_texts, " resolved"]
+                        event_texts = [*annotation_texts, " resolves"]
                         queue_obj = {"game_history_event": event_texts}
                         mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                         general_output_queue.put(queue_obj)
