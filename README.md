@@ -12,7 +12,7 @@
 <!-- [![Coveralls github](https://img.shields.io/coveralls/github/shawkinsl/mtga-tracker.svg)](https://coveralls.io) <!-- TODO: this -->
 MTGA Tracker is an electron-based app that helps you track your MTGA decks!
 
-![Tracker Features](https://i.imgur.com/drjM4D7.png)
+![Tracker Features](https://raw.githubusercontent.com/mtgatracker/mtgatracker/master/.readme_data/new_tracker_guide_graphic.png)
 
 <!-- [![Travis](https://img.shields.io/travis/shawkinsl/mtga-tracker.svg)](https://travis-ci.org/shawkinsl/mtga-tracker) --><!-- TODO: this -->
 <!-- [![Code Climate](https://img.shields.io/codeclimate/shawkinsl/mtga-tracker.svg)](https://codeclimate.com/github/shawkinsl/mtga-tracker) --><!-- TODO: this -->
