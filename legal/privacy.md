@@ -146,6 +146,17 @@ Here are some examples of information **we do** reserve the right to share publi
 - No one has ever used Sphinx's Decree in any game tracked by MTGATracker, ever!
 
 
+### How long do we keep data
+
+MTGATracker data in general does not expire; we will keep data until / unless you ask us to delete it. However, unless
+request otherwise (via "keep this data forever" buttons), certain aspects of your game data may be moved to "cold
+storage" after some amount of time. Storing data in cold storage keeps database queries fast, and helps
+keep MTGATracker affordable to run. Some examples of data that may be moved to cold storage:
+
+- Five to seven days after creation:
+    - Action log history will be moved to cold storage
+    - Deck contents (per game) will be moved to cold storage
+
 ## Specifically, what data does MTGATracker collect, and how often?
 
 _Last updated with version 4.1.3_
