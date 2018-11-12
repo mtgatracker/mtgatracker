@@ -411,8 +411,13 @@ p {
 }
 
 .game-deck-title, .back-draft {
-    width: 188px;
+    width: 163px;
     float: left;
+}
+
+.menu-div {
+    float: left;
+    width: 25px;
 }
 
 #tracker-body {
