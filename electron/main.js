@@ -605,10 +605,6 @@ const createPyProc = () => {
   }
 }
 
-if (!no_server) {
-    cleanupPyProc(createPyProc)
-}
-
 global.API_URL = API_URL;
 global.debug = debug;
 global.mtgaOverlayOnly = mtgaOverlayOnly;
@@ -739,6 +735,9 @@ const createMainWindow = () => {
   }
 
   mainWindow.once('ready-to-show', () => {
+    if (!no_server) {
+      cleanupPyProc(createPyProc)
+    }
     mainWindow.webContents.send('settingsChanged')
     mainWindow.show()
     console.timeEnd('init')
