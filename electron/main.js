@@ -273,6 +273,7 @@ let recentCards = settings.get('recentCards', []);
 let recentCardsQuantityToShow = settings.get('recentCardsQuantityToShow', 10);
 let minToTray = settings.get('minToTray', false);
 logPath = settings.get("logPath", logPath)
+let hideUIButtons = settings.get('hideUIButtons',false)
 
 global.historyEvents = []
 
@@ -648,6 +649,7 @@ global.recentCardsQuantityToShow = recentCardsQuantityToShow
 global.logPath = logPath
 global.minToTray = minToTray
 global.historyZoom = settings.get("history-zoom", 1.0)
+global.hideUIButtons = hideUIButtons
 
 /*************************************************************
  * window management
@@ -666,7 +668,7 @@ if (debug) {
 }
 
 const openDeckTrackerHandler = (menuItem, browserWindow, event) => {
-    focusMTGATracker(); 
+    focusMTGATracker();
 }
 
 const openSettingsHandler = (menuItem, browserWindow, event) => {

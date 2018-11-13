@@ -78,6 +78,8 @@ var port = remote.getGlobal('port');
 var timerRunning = false;
 var uploadDelay = 0;
 var hideModeManager;
+var hideUIButtons = remote.getGlobal('hideUIButtons')
+var useMinimal = remote.getGlobal('useMinimal')
 
 setInterval(() => {
   uploadDelay -= 1
@@ -1341,7 +1343,26 @@ let buildMenuItem = (menu_item) => {
   return li
 }
 
-let toggleMenu = () => {$('#main-menu').toggleClass('hide-menu')}
+let toggleMenu = () => {$('#main-menu').toggleClass('hide-me')}
+
+let toggleUIButtons = () => {
+  let hiding = $('.menu-div').hasClass('hide-me')
+  let width = 0
+  let padding = 0
+  if (hiding){
+    width = useMinimal ? 178 : 215
+    padding = 6
+  } else {
+    width = useMinimal ? 280 : 320
+    padding = 8
+  }
+  let els = ['.menu-div','.controls']
+  for (el of els){
+    $(el).toggleClass('hide-me')
+    $('#tracker-header h1').css('max-width',width)
+    $('#tracker-header h1').css('padding-left',padding)
+  }
+}
 
 document.addEventListener("DOMContentLoaded", function(event) {
 
@@ -1379,6 +1400,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
     $('#menu-icon').click(toggleMenu)
     $('#minimize-icon').click(() => {browserWindow.minimize()})
     $('#close-icon').click(close)
+
+    if (hideUIButtons){
+      toggleUIButtons()
+    }
 
     //open links externally by default
     $(document).on('click', 'a[href^="http"]', function(event) {
@@ -1494,7 +1519,7 @@ ipcRenderer.on('settingsChanged', () => {
     currentFlatLink.remove()
   }
 
-  let useMinimal = remote.getGlobal("useMinimal")
+  useMinimal = remote.getGlobal("useMinimal")
 
   let currentMinimalLink = $("#minimal")
   if (useMinimal) {
@@ -1529,6 +1554,13 @@ ipcRenderer.on('settingsChanged', () => {
       head.appendChild(link)
     }
   }
+
+  let newHideUIButtons = remote.getGlobal('hideUIButtons')
+  if (newHideUIButtons != hideUIButtons){
+    hideUIButtons = newHideUIButtons
+    toggleUIButtons()
+  }
+
   resizeWindow()
 })
 
