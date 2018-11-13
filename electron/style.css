@@ -45,11 +45,6 @@ h1 {
     -webkit-app-region: drag;
 }
 
-.header-title {
-  max-width: 165px;
-  display: inline-block;
-}
-
 h2 {
     padding: 8px;
 }
@@ -384,20 +379,36 @@ p {
   color: black; /* idk there's a bug in magic-font */
 }
 
+#tracker-header h1 {
+    font-size: 1.3em;
+    padding: 6px 0 0 4px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 215px;
+}
+
 .controls {
-    width: 110px;
     float: right;
-    padding: 3px;
+    padding: 8px 8px 0 0;
 }
 
 .controls div {
     float: right;
     margin: 0 2px;
-    cursor: pointer;
 }
 
-#close-icon, #minimize-icon {
-    padding: 5px 3px;
+.controls div img {
+    width: 15px;
+    height: 15px;
+    padding-top: 3px;
+}
+
+#floating-eye img {
+    width: 18px;
+    height: 18px;
+    padding-top: 1px;
 }
 
 #zoom-panel {
@@ -406,18 +417,16 @@ p {
     margin-top: 2px;
 }
 
-#tracker-header{
-    min-height: 65px;
-}
-
-.game-deck-title, .back-draft {
-    width: 163px;
-    float: left;
-}
 
 .menu-div {
     float: left;
-    width: 25px;
+    width: 20px;
+    padding: 8px 0 0 8px;
+}
+
+.menu-div div img {
+    height: 18px;
+    width: 18px;
 }
 
 #tracker-body {
@@ -479,10 +488,11 @@ p {
     float: right;
 }
 
+/**
 .back-draft {
   max-width: 230px;
   z-index: 50;
-}
+} **/
 
 /* The following classes should be set to no-drag or they won't be clickable */
 .zoom,
@@ -501,7 +511,6 @@ p {
 .win-loss-counter {
     display: inline-block;
     float: right;
-    margin-right: 8px;
 }
 .win-loss-group {
     padding-bottom: 8px;
