@@ -82,8 +82,8 @@ h1 {
   visibility: visible;
   display: block;
   position: relative;
-  left: 10px;
-  top: -20px;
+  left: 8px;
+  top: -34px;
 }
 
 .back-link.rollup-modifier:after {

@@ -1392,7 +1392,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     buildMenu();
     $(document).click( (e) => {
-      if ( !$.contains($('.menu-div').get(0),e.target) && !$('#main-menu').hasClass('hide-menu')){
+      if ( ! $.contains($('.menu-div').get(0),e.target) && ! $('#main-menu').hasClass('hide-me')){
         toggleMenu()
         e.preventDefault()
       }
