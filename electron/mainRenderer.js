@@ -36,14 +36,14 @@ window.addEventListener('beforeunload', function() {
 
 let rightClickPosition = null
 
-const menu = new Menu()
-const menuItem = new MenuItem({
+const contextMenu = new Menu()
+const contextMenuItem = new MenuItem({
   label: 'Inspect Element',
   click: () => {
     remote.getCurrentWindow().inspectElement(rightClickPosition.x, rightClickPosition.y)
   }
 })
-menu.append(menuItem)
+contextMenu.append(contextMenuItem)
 
 const API_URL = remote.getGlobal('API_URL');
 
@@ -96,7 +96,7 @@ if (debug) {
   window.addEventListener('contextmenu', (e) => {
     e.preventDefault()
     rightClickPosition = {x: e.x, y: e.y}
-    menu.popup(remote.getCurrentWindow())
+    contextMenu.popup(remote.getCurrentWindow())
   }, false)
 }
 
@@ -1230,6 +1230,119 @@ let onMessage = (data) => {
     resizeWindow()
 }
 
+let stepZoom = (zoomIn=true) => {
+  zoom += zoomIn ? 0.1 : -0.1;
+  if ( zoom < 0.2 ) {
+    zoom = 0.2;
+  }
+  applyZoom()
+}
+
+let resetZoom = () => {
+  zoom = 1
+  applyZoom()
+}
+
+let applyZoom = () => {
+  browserWindow.webContents.setZoomFactor(zoom)
+  ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
+}
+
+let zoomIn = () => {
+  stepZoom()
+}
+
+let zoomOut = () => {
+  stepZoom(false)
+}
+
+//function to close because of coming feature: close to tray
+let close = () => {
+  browserWindow.close()
+}
+
+let menu_items = [
+  {
+    label: 'History',
+    action: () => { ipcRenderer.send('openHistory', null); }
+  },
+  {
+    label: 'Settings',
+    action: () => { ipcRenderer.send('openSettings', null); }
+  },
+  {
+    label: 'Zoom',
+    submenu: [
+      {
+        label: 'Zoom in',
+        action: zoomIn,
+        keep_open: true
+      },
+      {
+        label: 'Zoom out',
+        action: zoomOut,
+        keep_open: true
+      },
+      {
+        label: 'Reset zoom',
+        action: resetZoom,
+        keep_open: true
+      },
+    ],
+    separator: 'both'
+  },
+  {
+    label: 'Exit',
+    action: close
+  },
+];
+
+let buildMenu = () => {
+  let menu = $('<ul></ul>')
+  for (let menu_item of menu_items) {
+    menu.append(buildMenuItem(menu_item))
+  }
+  $('#main-menu').append(menu)
+};
+
+let buildMenuItem = (menu_item) => {
+  let li = $('<li></li>')
+  let item = $('<a></a>')
+  item.text(menu_item.label)
+
+  if (menu_item.action != undefined) {
+    let action = null
+    if ( menu_item.keep_open ) {
+      action = menu_item.action
+    } else {
+      action = () => { menu_item.action.call(); toggleMenu()}
+    }
+    item.click(action)
+  }
+
+  li.append(item)
+
+  if (menu_item.separator != undefined) {
+    if (menu_item.separator == 'both' || menu_item.separator == 'top'){
+      li.addClass('separator-top')
+    }
+    if (menu_item.separator == 'both' || menu_item.separator == 'bottom'){
+      li.addClass('separator-bottom')
+    }
+  }
+
+  if (menu_item.submenu != undefined) {
+    let submenu = $('<ul></ul>')
+    for (let submenu_item of menu_item.submenu){
+      submenu.append(buildMenuItem(submenu_item))
+    }
+    li.append(submenu)
+  }
+  return li
+}
+
+let toggleMenu = () => {$('#main-menu').toggleClass('hide-menu')}
+
 document.addEventListener("DOMContentLoaded", function(event) {
 
     hideModeManager = hideWindowManager({
@@ -1255,23 +1368,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
     } else {
         $("#container").addClass("container-normal")
     }
-    $("#floating-settings").click(() => {
-      ipcRenderer.send('openSettings', null)
+
+    buildMenu();
+    $(document).click( (e) => {
+      if ( !$.contains($('.menu-div').get(0),e.target) && !$('#main-menu').hasClass('hide-menu')){
+        toggleMenu()
+        e.preventDefault()
+      }
     })
-    $("#floating-history").click(() => {
-      ipcRenderer.send('openHistory', null)
-    })
-    $(".zoom-out").click(() => {
-        zoom -= 0.1
-        zoom = Math.max(zoom, 0.2)
-        browserWindow.webContents.setZoomFactor(zoom)
-        ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
-    })
-    $(".zoom-in").click(() => {
-        zoom += 0.1
-        browserWindow.webContents.setZoomFactor(zoom)
-        ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
-    })
+    $('#menu-icon').click(toggleMenu)
+    $('#minimize-icon').click(() => {browserWindow.minimize()})
+    $('#close-icon').click(close)
+
     //open links externally by default
     $(document).on('click', 'a[href^="http"]', function(event) {
         event.preventDefault();

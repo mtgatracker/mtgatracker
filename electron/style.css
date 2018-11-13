@@ -103,6 +103,18 @@ p {
     width: 18px;
 }
 
+#main-menu {
+    height: 0;
+}
+
+.hide-menu {
+    display: none;
+}
+
+.nestedsidemenu ul li > a {
+    text-shadow: none;
+}
+
 #tracker-body {
     clear: both;
 }
@@ -497,3 +509,153 @@ p {
 .win-loss-group {
     padding-bottom: 8px;
 }
+
+
+/* Nested Side Bar Menu
+    Project URL: http://www.dynamicdrive.com/style/csslibrary/item/nested_side_bar_menu/
+    Some minor modifcations from source, namely sizes and colors, fonts, removal of responsive
+*/
+
+.nestedsidemenu {
+    font: bold 14px sans-serif;
+    position: relative;
+    width: 140px;
+}
+
+
+/* Top Level Menu */
+.nestedsidemenu ul {
+    z-index: 100;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    list-style: none;
+}
+
+/* Top level list items */
+.nestedsidemenu ul li {
+    position: relative;
+}
+
+/* Top level menu items link style */
+.nestedsidemenu ul li a, .nestedsidemenu ul li span {
+    display: block;
+    position: relative;
+    /* background of menu items (default state) */
+    background: rgba(83, 83, 83, 1);
+    color: white;
+    padding: 5px;
+    color: white;
+    text-decoration: none;
+}
+
+
+.nestedsidemenu ul li a:link, .nestedsidemenu ul li a:visited {
+    color: white;
+}
+
+/* Top level menu items link style on hover and when active */
+.nestedsidemenu ul li:hover > a {
+    background: #8a8a8a;
+}
+
+/* Sub ULs style */
+.nestedsidemenu ul li ul {
+    position: absolute;
+    left: -5000px;
+        top: 0;
+    opacity: 0;
+    width: 140px;
+    visibility: hidden;
+    box-shadow: 2px 2px 5px gray;
+    -webkit-transition: opacity .3s, visibility 0s .3s, left 0s .3s;
+    transition: opacity .3s, visibility 0s .3s, left 0s .3s;
+}
+
+/* First Sub Levels UL style on hover */
+.nestedsidemenu ul li:hover > ul {
+    visibility: visible;
+    left: 100%;
+    opacity: 1;
+    -webkit-transition: opacity .5s;
+    transition: opacity .5s;
+}
+
+/* Sub level Menu list items (alters style from Top level List Items) */
+.nestedsidemenu ul li ul li {
+    display: list-item;
+    float: none;
+}
+
+/* 2nd and beyond Sub Levels vertical offset after 1st level sub menu */
+.nestedsidemenu ul li ul li ul {
+    top: 0;
+    left: 100%;
+}
+
+/* Sub Levels link style on hover and when active */
+.nestedsidemenu ul ul li:hover > a {
+    background: #8a8a8a;
+}
+
+/* Sub Levels UL style on hover */
+.nestedsidemenu ul ul li:hover > ul {
+    left: 100%;
+}
+
+/* Sub level menu links style */
+.nestedsidemenu ul li ul li a {
+    font: normal 14px 'Bitter', sans-serif;
+    padding: 5px;
+    margin: 0;
+    background: rgba(83, 83, 83, 1);
+    border-right: none;
+    border-top-width: 0;
+}
+
+/* LIs with a sub UL style */
+.nestedsidemenu ul li > a {
+    /* add padding to accomodate arrow inside LIs */
+    padding-right: 25px;
+}
+
+/* LIs with NO sub UL style */
+.nestedsidemenu ul li > a:only-child {
+    /* undo padding for non submenu LIs */
+    padding-right: 10px;
+}
+
+/* LIs with a sub UL pseudo class */
+.nestedsidemenu ul li > a:after {
+    /* add arrow inside LIs */
+    content: "";
+    position: absolute;
+    height: 0;
+    width: 0;
+    border: 5px solid transparent;
+    border-left-color: #FFFFFF;
+    top: 40%;
+    right: 8px;
+}
+
+/* LIs with NO sub UL pseudo class */
+.nestedsidemenu ul li > a:only-child:after {
+    /* undo arrow for non submenu LIs */
+    display: none;
+}
+
+.separator-top:before, .separator-bottom:after {
+  content : "";
+  position: absolute;
+  left    : 5px;
+  height  : 1px;
+  width   : 130px;  /* or 100px */
+  border-top: 1px solid #aaa;
+  z-index: 1;
+}
+
+#main-menu ul {
+    border: 1px solid white;
+}
+
+
