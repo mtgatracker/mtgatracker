@@ -45,11 +45,6 @@ h1 {
     -webkit-app-region: drag;
 }
 
-.header-title {
-  max-width: 165px;
-  display: inline-block;
-}
-
 h2 {
     padding: 8px;
 }
@@ -65,6 +60,51 @@ h3 {
 p {
     font-family: beleren;
     padding-left: 8px;
+}
+
+#tracker-header h1 {
+    font-size: 1.3em;
+    padding: 6px 0 0 4px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 215px;
+}
+
+.controls {
+    float: right;
+    padding: 8px 8px 0 0;
+}
+ .controls div {
+    float: right;
+    margin: 0 2px;
+}
+ .controls div img {
+    width: 15px;
+    height: 15px;
+    padding-top: 3px;
+}
+
+#floating-eye img {
+    width: 18px;
+    height: 18px;
+    padding-top: 1px;
+}
+
+.menu-div {
+    float: left;
+    width: 20px;
+    padding: 8px 0 0 8px;
+}
+
+.menu-div div img {
+    height: 18px;
+    width: 18px;
+}
+
+#tracker-body {
+    clear: both;
 }
 
 .header-warning {
@@ -384,15 +424,6 @@ p {
   color: black; /* idk there's a bug in magic-font */
 }
 
-#floating-eye {
-    position: absolute;
-    height: 30px;
-    width: 30px;
-    left: 295px;
-    top: 25px;
-    z-index: 100;
-}
-
 #floating-history {
     position: absolute;
     height: 18px;
@@ -409,31 +440,8 @@ p {
     overflow: hidden;
 }
 
-#floating-settings {
-    position: absolute;
-    height: 18px;
-    width: 18px;
-    left: 298px;
-    top: 67px;
-    z-index: 100;
-    cursor: pointer;
-}
-
 .glow-on-hover:hover {
     background-color: rgba(50, 180, 210, 0.4);
-}
-
-.zoom-panel {
-    color: rgba(160, 160, 160, 0.8);
-    text-shadow: 0 0 0;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-.zoom {
-    cursor: pointer;
-    text-shadow: 0 0 0;
-    z-index: 5;
 }
 
 #overall-timer {
@@ -468,11 +476,6 @@ p {
     float: right;
 }
 
-.back-draft {
-  max-width: 230px;
-  z-index: 50;
-}
-
 /* The following classes should be set to no-drag or they won't be clickable */
 .zoom,
 .dismiss-message,
@@ -490,7 +493,6 @@ p {
 .win-loss-counter {
     display: inline-block;
     float: right;
-    margin-right: 8px;
 }
 .win-loss-group {
     padding-bottom: 8px;

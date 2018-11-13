@@ -24,34 +24,13 @@ h1 {
     margin: 15px;
 }
 
-.settings-img {
-  height: 18px;
-  width: 18px;
-}
-
-#floating-eye {
-  height: 20px;
-  width: 20px;
-  left: 271px;
-  top: 26px;
-}
-
-#floating-settings {
-  left: 252px;
-  top: 26px;
+#tracker-header h1 {
+  max-width: 178px;
 }
 
 #floating-history {
     left: 232px;
     top: 26px;
-}
-
-.zoom-panel {
-    left: 186px;
-    position: absolute;
-    top: 26px;
-    font-size: 16.5px;
-    height: 0px;
 }
 
 .deck-container {
@@ -97,10 +76,6 @@ h1 {
   padding: 0;
 }
 
-.back-draft {
-  top: -32px;
-  position: relative;
-}
 
 .back-link:after {
   content: "<";
@@ -114,24 +89,6 @@ h1 {
 .back-link.rollup-modifier:after {
   content: "";
   visibility: hidden;
-}
-
-.deck-title {
-  left: 20px;
-  position: relative;
-  padding-top: 0px;
-  max-width: 15ch;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.game-deck-title {
-  max-width: 175px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  display: inline-block;
 }
 
 .cardsleft {
