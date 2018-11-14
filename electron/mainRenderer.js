@@ -243,8 +243,12 @@ var addMessage = (message, link, mustfollow, messageID) => {
 }
 
 var dismissMessage = (element) => {
-  if (!$(element).hasClass('message-container')){
-    element = $(element).parent().get(0)
+  let $element = $(element)
+  if ($element.hasClass('no-dismiss')){
+    return
+  }
+  if (!$element.hasClass('message-container')){
+    element = $(element).parents('.message-container').get(0)
   }
 
   let elementIdx = element.attributes.index.value

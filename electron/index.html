@@ -31,7 +31,7 @@
             <img src="hide-512.png">
           </div>
         </div>
-        <h3 class="beleren link back-link back-draft" rv-show="showDraftStats">Exit collection view</h3>
+        <h3 class="beleren link back-draft" rv-show="showDraftStats">Exit collection view</h3>
       </div>
       <div id="tracker-body">
         <!-- START Game View -->
@@ -59,13 +59,13 @@
           <h3 class="beleren" rv-showvault="lastVaultProgress">Vault Progress: { lastVaultProgress }%</h3>
           <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
           <div class="messages">
-            <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID" rv-index="index">
+            <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID" rv-index="index"  rv-messageID="message.messageID">
               <span class="message-count" rv-show="message.count | more_than_one">{ message.count }</span>
-              <span rv-show="message.mayfollow" class="dismiss-message mayfollow message" rv-index="index" rv-messageID="message.messageID">X</span>
-              <span class="update-message message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
+              <span rv-show="message.mayfollow" class="dismiss-message mayfollow message">X</span>
+              <span class="update-message message" rv-show="message.mayfollow"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
 
-              <span rv-hide="message.mayfollow" class="dismiss-message">!!</span>
-              <span class="update-message message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
+              <span rv-hide="message.mayfollow" class="dismiss-message no-dismiss">!!</span>
+              <span class="update-message message" rv-hide="message.mayfollow"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
             </p>
           </div>
           <h3 class="beleren link back-link hide-on-rollup back-to-decklist" rv-show="game_complete">Back to decklists</h3>
@@ -93,13 +93,13 @@
         <div id="draft-collection-list" rv-show="showDraftStats">
           <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
           <div class="messages">
-            <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID" rv-index="index">
+            <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID" rv-index="index" rv-messageID="message.messageID">
               <span class="message-count" rv-show="message.count | more_than_one">{ message.count }</span>
-              <span rv-show="message.mayfollow" class="dismiss-message message mayfollow" rv-index="index" rv-messageID="message.messageID">X</span>
-              <span class="update-message message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
+              <span rv-show="message.mayfollow" class="dismiss-message message mayfollow">X</span>
+              <span class="update-message message" rv-show="message.mayfollow"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
 
-              <span rv-hide="message.mayfollow" class="dismiss-message">!!</span>
-              <span class="update-message message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
+              <span rv-hide="message.mayfollow" class="dismiss-message no-dismiss">!!</span>
+              <span class="update-message message" rv-hide="message.mayfollow"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
              </p>
           </div>
           <div class="card" rv-each-stat="draftStats" rv-card_color="stat.colors">
@@ -135,13 +135,13 @@
           <div id="decklists-container" rv-show="no_list_selected">
             <h3 class="reminder">Pick a deck, or start a game!</h3>
             <div class="messages">
-              <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID" rv-index="index">
+              <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID" rv-index="index" rv-messageID="message.messageID">
                 <span class="message-count" rv-show="message.count | more_than_one">{ message.count }</span>
-                <span rv-show="message.mayfollow" class="dismiss-message message mayfollow" rv-index="index" rv-messageID="message.messageID">X</span>
-                <span class="update-message message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
+                <span rv-show="message.mayfollow" class="dismiss-message message mayfollow">X</span>
+                <span class="update-message message" rv-show="message.mayfollow"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
 
-                <span rv-hide="message.mayfollow" class="dismiss-message">!!</span>
-                <span class="update-message message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
+                <span rv-hide="message.mayfollow" class="dismiss-message no-dismiss">!!</span>
+                <span class="update-message message" rv-hide="message.mayfollow"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
               </p>
             </div>
             <p class="header-warning" rv-show="no_decks">
