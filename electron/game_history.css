@@ -93,6 +93,18 @@ body {
 	-webkit-app-region: no-drag;
 }
 
+#close-icon {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  -webkit-app-region: no-drag;
+}
+
+#close-icon img {
+    height: 15px;
+    width: 15px;
+}
+
 .hero {
   color: #74e1ff;
 }
