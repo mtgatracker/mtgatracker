@@ -73,7 +73,7 @@ body {
 }
 
 .zoom-panel {
-    color: rgba(160, 160, 160, 0.8);
+    color: #dddddd;/*rgba(160, 160, 160, 0.8);*/
     text-shadow: 0 0 0;
     padding-top: 0;
     padding-bottom: 0;
