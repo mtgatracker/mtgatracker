@@ -14,6 +14,23 @@ const { Menu, MenuItem } = remote
 let browserWindow = remote.getCurrentWindow()
 const activeWin = require("active-win")
 
+let addClickHandler = (selector,handler) => {
+  let new_handler = (e) => {
+    if (!$.contains($('.menu-div').get(0),event.target) && !$('#main-menu').hasClass('hide-me')){
+      e.preventDefault()
+      e.stopPropagation()
+      toggleMenu()
+    } else {
+      if ( handler != null){
+        handler(e)
+      }
+    }
+  }
+  $(selector).each( (i,elem) => {
+    $(elem).off().on('click',new_handler)
+  })
+}
+
 // poll for active window semi-regularly; if it's not MTGA or MTGATracker, minimize / unset alwaysontop
 setInterval(() => {
   if (appData.mtgaOverlayOnly) {
@@ -226,16 +243,20 @@ var addMessage = (message, link, mustfollow, messageID) => {
 }
 
 var dismissMessage = (element) => {
-   let elementIdx = element.attributes.index.value
-   let messageID = false
-   if (element.attributes.messageID) {
-     messageID = element.attributes.messageID.value
-   }
-   if (messageID) {
-     ipcRenderer.send('messageAcknowledged', messageID)
-   }
-   appData.messages[elementIdx]["show"] = false;
-   resizeWindow()
+  if (!$(element).hasClass('message-container')){
+    element = $(element).parent().get(0)
+  }
+
+  let elementIdx = element.attributes.index.value
+  let messageID = false
+  if (element.attributes.messageID) {
+    messageID = element.attributes.messageID.value
+  }
+  if (messageID) {
+    ipcRenderer.send('messageAcknowledged', messageID)
+  }
+  appData.messages[elementIdx]["show"] = false;
+  resizeWindow()
 }
 
 request.get({
@@ -692,11 +713,6 @@ function hideCallback(hidden) {
   resizeWindow()
 }
 
-document.getElementById("floating-eye").addEventListener("click", function() {
-  hideModeManager.toggleHidden()
-  ipcRenderer.send('hideRequest')
-})
-
 ws.addEventListener('open', () => {
     ws.send('hello!');
     console.log("sent hello")
@@ -742,6 +758,7 @@ function resizeWindow() {
     if (!(debug || useFrame)) {
         browserWindow.setBounds(bounds)
     }
+    setClickHandlers();
 }
 
 function populateDeck(elem) {
@@ -1109,12 +1126,10 @@ let onMessage = (data) => {
         }
         appData.last_error = data.msg;
     } else if (data.data_type == "message") {
-        if (data.right_click) {
-            hideModeManager.toggleHidden(!appData.invertHideMode)
-            ipcRenderer.send('hideRequest', !appData.invertHideMode)
+        if (data.right_click && !debug) {
+            hideWindow(!appData.invertHideMode)
         } else if (data.left_click && remote.getGlobal("leftMouseEvents")) {
-            hideModeManager.toggleHidden(appData.invertHideMode)
-            ipcRenderer.send('hideRequest', appData.invertHideMode)
+            hideWindow(appData.invertHideMode)
         } else if (data.draft_collection_count) {
           console.log("handle draft stuff")
           console.log(data.draft_collection_count)
@@ -1343,7 +1358,10 @@ let buildMenuItem = (menu_item) => {
   return li
 }
 
-let toggleMenu = () => {$('#main-menu').toggleClass('hide-me')}
+let toggleMenu = () => {
+  $('#main-menu').toggleClass('hide-me');
+  $('body').toggleClass('no-drag');
+}
 
 let toggleUIButtons = () => {
   let hiding = $('.menu-div').hasClass('hide-me')
@@ -1364,8 +1382,19 @@ let toggleUIButtons = () => {
   }
 }
 
-document.addEventListener("DOMContentLoaded", function(event) {
+let setClickHandlers = () => {
+  addClickHandler('.message-container',(e) => {dismissMessage(e.target)})
+  addClickHandler('.back-draft',(e) => {exitDraft()})
+  addClickHandler('.back-to-decklist',(e) => {unpopulateDecklist()})
+  addClickHandler('.deck-container',(e) => {populateDeck($(e.target).parent().get(0))})
+}
 
+let hideWindow = (invertHideMode) => {
+    hideModeManager.toggleHidden(invertHideMode)
+    ipcRenderer.send('hideRequest', invertHideMode)
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
     hideModeManager = hideWindowManager({
       useRollupMode: function() {return remote.getGlobal('rollupMode')},
       getHideDelay: function() {return remote.getGlobal('hideDelay')},
@@ -1391,15 +1420,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
 
     buildMenu();
-    $(document).click( (e) => {
-      if ( ! $.contains($('.menu-div').get(0),e.target) && ! $('#main-menu').hasClass('hide-me')){
-        toggleMenu()
-        e.preventDefault()
-      }
-    })
-    $('#menu-icon').click(toggleMenu)
-    $('#minimize-icon').click(() => {browserWindow.minimize()})
-    $('#close-icon').click(close)
+    addClickHandler('#menu-icon',toggleMenu)
+    addClickHandler('#floating-eye',() => {hideWindow(!appData.invertHideMode)})
+    addClickHandler('#minimize-icon',() => {browserWindow.minimize()})
+    addClickHandler('#close-icon',close)
+    addClickHandler('body',null)
 
     if (hideUIButtons){
       toggleUIButtons()

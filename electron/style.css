@@ -495,7 +495,15 @@ p {
 .settings-img,
 .back-link:after,
 .back-link,
-.deck-container {
+.deck-container,
+#menu-icon,
+#floating-eye,
+#minimize-icon,
+#close-icon,
+.nestedsidemenu,
+.nestedsidemenu ul,
+.no-drag
+{
 	-webkit-app-region: no-drag;
 }
 
@@ -510,7 +518,6 @@ p {
     padding-bottom: 8px;
 }
 
-
 /* Nested Side Bar Menu
     Project URL: http://www.dynamicdrive.com/style/csslibrary/item/nested_side_bar_menu/
     Some minor modifcations from source, namely sizes and colors, fonts, removal of responsive
@@ -519,7 +526,8 @@ p {
 .nestedsidemenu {
     font: bold 14px sans-serif;
     position: relative;
-    width: 140px;
+    width: 120px;
+    cursor: default;
 }
 
 
@@ -565,7 +573,7 @@ p {
     left: -5000px;
         top: 0;
     opacity: 0;
-    width: 140px;
+    width: 120px;
     visibility: hidden;
     box-shadow: 2px 2px 5px gray;
     -webkit-transition: opacity .3s, visibility 0s .3s, left 0s .3s;
@@ -649,13 +657,13 @@ p {
   position: absolute;
   left    : 5px;
   height  : 1px;
-  width   : 130px;  /* or 100px */
+  width   : 110px;
   border-top: 1px solid #aaa;
   z-index: 1;
 }
 
 #main-menu ul {
-    border: 1px solid white;
+    border: 1px solid #8a8a8a;
 }
 
 
