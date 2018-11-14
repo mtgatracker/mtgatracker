@@ -686,7 +686,7 @@ const closeTrackerHandler = (menuItem, browserWindow, event) => {
 let tray = null;
 
 const createTray = () => {
-  if(minToTray && tray==null) {
+  if(tray==null) {
     let iconFile = 'icon_tray.png'
     let iconPath = path.join(__dirname,'img', iconFile);
     console.log(fs.existsSync(iconPath))
