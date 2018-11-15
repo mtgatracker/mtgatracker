@@ -86,9 +86,9 @@ h1 {
   top: -23px;
 }
 
-#deck-list .back-link:after {
+/**#deck-list .back-link:after {
     top: -32px;
-}
+}**/
 
 .back-link.rollup-modifier:after {
   content: "";
@@ -102,3 +102,10 @@ h1 {
 .gamecomplete {
   padding-left: 25px;
 }
+
+.deck-title {
+  padding: 0 8px 5px 25px;
+}
+ #browse-back:after {
+    top: -22px;
+ }
