@@ -299,7 +299,7 @@ let emeraldSort = function (decklist) {
                         // Then sort by mana cost
                         || manaCostCompare(a, b)
                         // Then sort by name
-                        || nameCompare(a.pretty_name, b.pretty_name);
+                        || nameCompare(a, b);
             }
     );
 };
@@ -309,7 +309,7 @@ let drawSort = function (decklist,subsort) {
   let sorted = [];
   for (sublist of sublists){
     if (subsort === 'name') {
-      sorted.push(sublist.sort( (a,b) => { return nameCompare(a.pretty_name,b.pretty_name); } ));
+      sorted.push(sublist.sort( (a,b) => { return nameCompare(a,b); } ));
     } else if ( subsort === 'emerald' ) {
       sorted.push(emeraldSort(sublist));
     } else if ( subsort === 'color' ) {
@@ -328,7 +328,7 @@ let colorSort = function (decklist) {
                         // then sort by color
                         || colorCompare(a,b)
                         // Then sort by name
-                        || nameCompare(a.pretty_name, b.pretty_name);
+                        || nameCompare(a, b);
             }
     );
 }
@@ -442,10 +442,16 @@ let manaCostCompare = function (a, b) {
 };
 
 let nameCompare = function (a, b) {
-    if (a < b) {
+    let field = null
+    if (a.pretty_name != undefined){
+      field = 'pretty_name'
+    } else if (a.card != undefined){
+      field = 'card'
+    }
+    if (a[field] < b[field]) {
         return -1;
     }
-    if (b < a) {
+    if (b[field] < a[field]) {
         return 1;
     }
     return 0;
