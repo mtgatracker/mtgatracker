@@ -86,6 +86,10 @@ h1 {
   top: -23px;
 }
 
+#deck-list .back-link:after {
+    top: -32px;
+}
+
 .back-link.rollup-modifier:after {
   content: "";
   visibility: hidden;
