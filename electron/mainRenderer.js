@@ -1137,9 +1137,11 @@ let onMessage = (data) => {
         appData.last_error = data.msg;
     } else if (data.data_type == "message") {
         if (data.right_click && !debug) {
-            hideWindow(!appData.invertHideMode)
+            hideModeManager.toggleHidden(!appData.invertHideMode)
+            ipcRenderer.send('hideRequest', !appData.invertHideMode)
         } else if (data.left_click && remote.getGlobal("leftMouseEvents")) {
-            hideWindow(appData.invertHideMode)
+            hideModeManager.toggleHidden(appData.invertHideMode)
+            ipcRenderer.send('hideRequest', appData.invertHideMode)
         } else if (data.draft_collection_count) {
           console.log("handle draft stuff")
           console.log(data.draft_collection_count)
@@ -1431,7 +1433,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     buildMenu();
     addClickHandler('#menu-icon',toggleMenu)
-    addClickHandler('#floating-eye',() => {hideWindow(!appData.invertHideMode)})
+    addClickHandler('#floating-eye',() => {hideModeManager.toggleHidden();ipcRenderer.send('hideRequest')})
     addClickHandler('#minimize-icon',() => {browserWindow.minimize()})
     addClickHandler('#close-icon',close)
     addClickHandler('body',null)
