@@ -101,6 +101,10 @@ def block_watch_task(in_queue, out_queue):
         if json_str:
             try:
                 blob = json.loads(json_str)
+                # useful: next time you're trying to figure out why a blob isn't getting through the queue:
+                # if "DirectGame" in json_str and "method" in blob:
+                #     import pprint
+                #     pprint.pprint(blob)
                 if log_line:
                     blob["log_line"] = log_line
                 if timestamp:

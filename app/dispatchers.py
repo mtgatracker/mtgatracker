@@ -59,7 +59,9 @@ def dispatch_jsonrpc_method(blob):
     # from app.mtga_app import mtga_watch_app
     # dont_care_rpc_methods = ['Event.DeckSelect', "Log.Info", "Deck.GetDeckLists", "Quest.CompletePlayerQuest"]
     # NOTE: pretty sure these are all useless. Just metadata about RPC methods being called, maybe?
-    pass
+    # ANOTHER NOTE: turns out this might be the only way to get the deck used in a DC. Not useless!
+    if "method" in blob and blob["method"] == "DirectGame.Challenge":
+        parsers.parse_direct_challenge_queued(blob)
 
 
 @util.debug_log_trace

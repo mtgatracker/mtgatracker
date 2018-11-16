@@ -127,10 +127,29 @@ def process_deck(deck_dict, save_deck=True):
     deck = set.Deck(deck_dict["name"], deck_id)
     for card_obj in deck_dict["mainDeck"]:
         try:
-            card = all_mtga_cards.search(card_obj["id"])[0]
-            for i in range(card_obj["quantity"]):
+            id_key = "id" if "id" in card_obj else "Id"
+            qt_key = "quantity" if "quantity" in card_obj else "Quantity"
+            # why? jsonrpc methods use capitalized instead of lowercase. idk, see for yourself:
+            # == > DirectGame.Challenge(42):
+            # {
+            #     "jsonrpc": "2.0",
+            #     "method": "DirectGame.Challenge",
+            #     "params": {
+            #         "opponentDisplayName": "MTGATracker#78028",
+            #         "avatar": "Sarkhan_M19_01",
+            #         "deck": "{\"id\":\"c4d5e085-65c4-4873-9aaf-d9d081bde8e4\",\"name\":\"MTGA DOWN, PANIC
+            #                     mk 02\",\"format\":\"Standard\",\"description\":\"\",
+            #                     \"localDescription\":\"Temp string\",
+            #                     \"deckTileId\":0,\"isValid\":true,\"lastUpdated\":\"2018-09-28T08:35:17.0184205\",
+            #                     \"mainDeck\":[{\"Id\":67015,\"Quantity\":60},{\"Id\":67017,\"Quantity\":190}],\
+            #                     \"sideboard\":[]}"
+            #     },
+            #     "id": "42"
+            # }
+            card = all_mtga_cards.search(card_obj[id_key])[0]
+            for i in range(card_obj[qt_key]):
                 deck.cards.append(card)
-        except:
+        except Exception as e:
             mtga_app.mtga_logger.error("{}Unknown mtga_id: {}".format(ld(), card_obj))
             mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck_dict["name"], card_obj))
     if save_deck:
