@@ -1,3 +1,4 @@
+import json
 import pprint
 import datetime
 import util
@@ -100,6 +101,16 @@ def parse_draft_status(blob):
 def parse_event_decksubmit(blob):
     import app.mtga_app as mtga_app
     course_deck = blob["CourseDeck"]
+    app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
+    if course_deck:
+        deck = util.process_deck(course_deck, save_deck=False)
+        mtga_app.mtga_watch_app.intend_to_join_game_with = deck
+
+
+@util.debug_log_trace
+def parse_direct_challenge_queued(blob):
+    import app.mtga_app as mtga_app
+    course_deck = json.loads(blob["params"]["deck"])
     app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     if course_deck:
         deck = util.process_deck(course_deck, save_deck=False)
