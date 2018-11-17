@@ -706,6 +706,9 @@ ws.addEventListener('open', () => {
     console.log("sent hello")
 });
 
+var boundsRoundingErrorX = false;
+var boundsRoundingErrorY = false;
+
 function resizeWindow() {
     let total = 0;
     $.each($(".card"), function(i, c) {
@@ -724,6 +727,9 @@ function resizeWindow() {
     });
 
     bounds = browserWindow.getBounds()
+    var preboundsx = browserWindow.getBounds().x;
+    var preboundsy = browserWindow.getBounds().y;
+
     container.style.height = "" + parseInt(totalHeight) + "px"
     if (zoom > 0.85) {
       // TODO: resize with math that is less "throwing shit at the wall"
@@ -744,7 +750,19 @@ function resizeWindow() {
     }
     bounds.height = Math.min(parseInt(totalHeight), calcMainMaxHeight());
     if (!(debug || useFrame)) {
-        browserWindow.setBounds(bounds)
+      if(boundsRoundingErrorX) {
+        bounds.x = preboundsx + 1;
+      }
+      if(boundsRoundingErrorY) {
+        bounds.y = preboundsy + 1;
+      }
+      browserWindow.setBounds(bounds)
+      if(preboundsx!=browserWindow.getBounds().x) {
+        boundsRoundingErrorX = true;
+      }
+      if(preboundsy!=browserWindow.getBounds().y) {
+        boundsRoundingErrorY = true;
+      }
     }
 }
 
