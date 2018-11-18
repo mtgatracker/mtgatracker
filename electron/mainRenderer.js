@@ -260,7 +260,10 @@ let deckFrequencySubLists = function (decklist) {
   let card_count = -1;
   let sublists = [];
   let current_sublist = null;
-  for ( card of decklist ) {
+  let reverse_sort = function(a, b){return b.count_in_deck - a.count_in_deck}
+  // Don't mutate input list
+  sorted_deck = [...decklist].sort(reverse_sort)
+  for ( card of sorted_deck ) {
     if (card.count_in_deck != card_count){
       if ( current_sublist != null ){
         sublists.push(current_sublist);
@@ -540,7 +543,7 @@ rivets.formatters.drawStatsMergeDuplicates = function(decklist) {
             mergedDecklist.get(card.card).count_in_deck += card.count_in_deck;
         }
         else {
-            mergedDecklist.set(card.card, card);
+            mergedDecklist.set(card.card, Object.assign({}, card));
         }
     });
     return Array.from(mergedDecklist.values());
@@ -557,7 +560,7 @@ rivets.formatters.decklistMergeDuplicates = function(decklist) {
             mergedDecklist.get(card.pretty_name).count_in_deck += card.count_in_deck;
         }
         else {
-            mergedDecklist.set(card.pretty_name, card);
+          mergedDecklist.set(card.pretty_name, Object.assign({}, card));
         }
     });
     return Array.from(mergedDecklist.values());
