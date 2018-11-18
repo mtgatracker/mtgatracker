@@ -1137,11 +1137,7 @@ let onMessage = (data) => {
         appData.last_error = data.msg;
     } else if (data.data_type == "message") {
         if (data.right_click && !debug) {
-            hideModeManager.toggleHidden(!appData.invertHideMode)
-            ipcRenderer.send('hideRequest', !appData.invertHideMode)
-        } else if (data.left_click && remote.getGlobal("leftMouseEvents")) {
-            hideModeManager.toggleHidden(appData.invertHideMode)
-            ipcRenderer.send('hideRequest', appData.invertHideMode)
+            hideWindow()
         } else if (data.draft_collection_count) {
           console.log("handle draft stuff")
           console.log(data.draft_collection_count)
@@ -1401,9 +1397,9 @@ let setClickHandlers = () => {
   addClickHandler('.deck-container',(e) => {populateDeck($(e.target).parent().get(0))})
 }
 
-let hideWindow = (invertHideMode) => {
-    hideModeManager.toggleHidden(invertHideMode)
-    ipcRenderer.send('hideRequest', invertHideMode)
+let hideWindow = () => {
+    hideModeManager.toggleHidden()
+    ipcRenderer.send('hideRequest')
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -1417,6 +1413,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
       containerID: "#container",
       hideCallback: hideCallback,
     })
+
+    if (invertHideMode){
+      hideWindow()
+    }
 
     setInterval(() => {
         $('#overall-timer').html(overallTimer.getTimeValues().toString());
@@ -1433,7 +1433,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     buildMenu();
     addClickHandler('#menu-icon',toggleMenu)
-    addClickHandler('#floating-eye',() => {hideModeManager.toggleHidden();ipcRenderer.send('hideRequest')})
+    addClickHandler('#floating-eye',hideWindow)
     addClickHandler('#minimize-icon',() => {browserWindow.minimize()})
     addClickHandler('#close-icon',close)
     addClickHandler('body',null)
