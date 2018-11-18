@@ -66,6 +66,7 @@ var lastVaultProgress = remote.getGlobal('lastVaultProgress');
 var minVaultProgress = remote.getGlobal('minVaultProgress');
 var sortMethod = remote.getGlobal('sortMethod');
 var showChessTimers = remote.getGlobal('showChessTimers');
+var showDrawProbability = remote.getGlobal('showDrawProbability');
 var hideDelay = remote.getGlobal('hideDelay');
 var invertHideMode = remote.getGlobal('invertHideMode');
 var rollupMode = remote.getGlobal('rollupMode');
@@ -181,6 +182,7 @@ var appData = {
     showVaultProgress: showVaultProgress,
     showGameTimer: showGameTimer,
     showChessTimers: showChessTimers,
+    showDrawProbability: showDrawProbability,
     hideDelay: hideDelay,
     invertHideMode: invertHideMode,
     rollupMode: rollupMode,
@@ -1355,6 +1357,9 @@ ipcRenderer.on('settingsChanged', () => {
 
   showChessTimers = remote.getGlobal('showChessTimers');
   appData.showChessTimers = showChessTimers
+
+  showDrawProbability = remote.getGlobal('showDrawProbability');
+  appData.showDrawProbability = showDrawProbability
 
   hideDelay = remote.getGlobal('hideDelay');
   appData.hideDelay = hideDelay

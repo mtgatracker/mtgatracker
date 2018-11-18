@@ -163,6 +163,9 @@ class Deck(Pool):
             for card in self.cards:
                 card_dict[card.mtga_id] = card_dict.get(card.mtga_id, card.to_serializable())
                 card_dict[card.mtga_id]["count_in_deck"] = card_dict[card.mtga_id].get("count_in_deck", 0) + 1
+            for card in card_dict.values():
+                card["odds_unf"] = 100.0 * float(card["count_in_deck"]) / float(len(self.cards))
+                card["odds_of_draw"] = "{:.2g}".format(card["odds_unf"])
             obj["cards"] = [v for v in card_dict.values()]
             obj["cards"].sort(key=lambda x: x["count_in_deck"])
             obj["cards"].reverse()

@@ -125,7 +125,7 @@ class Player(object):
 
             original_deck_odds[card.mtga_id]["count_in_deck"] += 1
             original_deck_odds[card.mtga_id]["odds_unf"] = 100 * original_deck_odds[card.mtga_id]["count_in_deck"] / len(self.original_deck.cards)
-            original_deck_odds[card.mtga_id]["odds_of_draw"] = "{:.2f}".format(original_deck_odds[card.mtga_id]["odds_unf"])
+            original_deck_odds[card.mtga_id]["odds_of_draw"] = "{:.2g}".format(original_deck_odds[card.mtga_id]["odds_unf"])
         odds = {}
         for card in current_list:
             if card.mtga_id not in odds.keys():
@@ -145,7 +145,7 @@ class Player(object):
 
             odds[card.mtga_id]["count_in_deck"] += 1
             odds[card.mtga_id]["odds_unf"] = 100 * odds[card.mtga_id]["count_in_deck"] / len(current_list)
-            odds[card.mtga_id]["odds_of_draw"] = "{:.2f}".format(odds[card.mtga_id]["odds_unf"])
+            odds[card.mtga_id]["odds_of_draw"] = "{:.2g}".format(odds[card.mtga_id]["odds_unf"])
         odds_list = [odds[k] for k in odds.keys()]
         odds_list.sort(key=lambda x: x["odds_unf"])
         original_odds_list = [original_deck_odds[k] for k in original_deck_odds.keys()]

@@ -53,6 +53,7 @@ var settingsData = {
   minVaultProgress: remote.getGlobal('minVaultProgress'),
   showGameTimer: remote.getGlobal('showGameTimer'),
   showChessTimers: remote.getGlobal('showChessTimers'),
+  showDrawProbability: remote.getGlobal('showDrawProbability'),
   hideDelay: remote.getGlobal('hideDelay'),
   invertHideMode: remote.getGlobal('invertHideMode'),
   rollupMode: remote.getGlobal('rollupMode'),

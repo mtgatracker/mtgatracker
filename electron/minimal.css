@@ -91,6 +91,16 @@ h1 {
   width: 25px;
 }
 
+.cardprob {
+  display: inline-block;
+  padding-top: 3px;
+  background-color: #0f4e61;
+  height: 23px;
+  padding-left: 3px;
+  margin-left: -4px;
+  width: 35px;
+}
+
 .back-link {
   visibility: hidden;
   height: 0;

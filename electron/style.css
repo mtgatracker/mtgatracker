@@ -361,7 +361,7 @@ p {
     text-shadow: 0 0 0;
 }
 
-.cardname, .cardcount {
+.cardname, .cardcount, .cardprob {
   display: inline-block;
 }
 

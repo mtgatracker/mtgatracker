@@ -65,7 +65,11 @@
           <h3 class="cardsleft">{ total_cards_in_deck } cards in deck</h3>
           <div class="card" rv-each-stat="draw_stats | drawStatsMergeDuplicates | drawStatsSort" rv-card_color="stat.colors">
             <div class="card-text">
-              <div class="card-text-limit"><div class="cardcount">{ stat.count_in_deck }x</div> <div class="cardname">{ stat.card }</div></div>
+              <div class="card-text-limit">
+                  <div class="cardcount">{ stat.count_in_deck }x</div>
+                  <div rv-show="showDrawProbability" class="cardprob">{ stat.odds_of_draw }%</div>
+                  <div class="cardname">{ stat.card }</div>
+                </div>
                 <span class="cost">
                   <span rv-each-mana="stat.cost" style="display: inline-block">
                     <i rv-wholemana="mana" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
@@ -147,9 +151,13 @@
           <div id="deck-list" rv-show="list_selected">
             <h3 class="beleren link back-link" onclick="unpopulateDecklist()">Back to decklists</h3>
             <h1 class="deck-title"> <i class="fas fa-chevron-left"></i> { selected_list_name }</h1>
-            <div class="card" rv-each-stat="selected_list | decklistMergeDuplicates | decklistSort" rv-card_color="stat.colors">
+            <div class="card" rv-each-stat="selected_list | draw_stats | decklistMergeDuplicates | decklistSort" rv-card_color="stat.colors">
               <div class="card-text">
-                <div class="card-text-limit"><div class="cardcount">{ stat.count_in_deck }x</div> <div class="cardname">{ stat.pretty_name }</div></div>
+                <div class="card-text-limit">
+                  <div class="cardcount">{ stat.count_in_deck }x</div>
+                  <div rv-show="showDrawProbability" class="cardprob">{ stat.odds_of_draw }%</div>
+                  <div class="cardname">{ stat.pretty_name }</div>
+                </div>
                 <span class="cost">
                   <span rv-each-mana="stat.cost" style="display: inline-block">
                     <i rv-wholemana="mana" rv-mana="mana" class="mi mi-mana mi-shadow"></i>
