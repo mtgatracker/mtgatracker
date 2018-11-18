@@ -14,22 +14,22 @@
         <h1 class="game-deck-title gamecomplete" rv-show="showDraftStats">Draft Picks</h1>
         <h1 class="beleren header-title" rv-show="show_available_decklists">MTGATracker</h1>
         <h1 class="game-deck-title" rv-show="game_in_progress">{ deck_name }</h1>
-        <div class="menu-div">
+        <div class="menu-div ui-button-panel" rv-show="showMenu">
           <div id="menu-icon" class="no-height-contribution glow-on-hover">
             <img src="img/menu.png">
           </div>
           <div id="main-menu" class="nestedsidemenu hide-me"></div>
         </div>
-        <div class="controls">
+        <div class="controls ui-button-panel" rv-show="showUIButtons">
           <div id="close-icon" class="no-height-contribution glow-on-hover">
             <img src="img/cancel.png">
           </div>
           <div id="minimize-icon" class="no-height-contribution glow-on-hover">
             <img src="img/remove.png">
           </div>
-          <div id="floating-eye" class="no-height-contribution glow-on-hover">
-            <img src="hide-512.png">
-          </div>
+        </div>
+        <div id="floating-eye" class="no-height-contribution glow-on-hover ui-button-panel" rv-show="showHideButton">
+          <img src="hide-512.png">
         </div>
         <h3 class="beleren link back-draft" rv-show="showDraftStats">Exit collection view</h3>
       </div>

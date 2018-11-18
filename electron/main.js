@@ -273,7 +273,9 @@ let recentCards = settings.get('recentCards', []);
 let recentCardsQuantityToShow = settings.get('recentCardsQuantityToShow', 10);
 let minToTray = settings.get('minToTray', false);
 logPath = settings.get("logPath", logPath)
-let hideUIButtons = settings.get('hideUIButtons',false)
+let showUIButtons = settings.get('showUIButtons',true)
+let showHideButton = settings.get('showHideButton',true)
+let showMenu = settings.get('showMenu',true)
 
 global.historyEvents = []
 
@@ -649,7 +651,9 @@ global.recentCardsQuantityToShow = recentCardsQuantityToShow
 global.logPath = logPath
 global.minToTray = minToTray
 global.historyZoom = settings.get("history-zoom", 1.0)
-global.hideUIButtons = hideUIButtons
+global.showUIButtons = showUIButtons
+global.showHideButton = showHideButton
+global.showMenu = showMenu
 
 /*************************************************************
  * window management

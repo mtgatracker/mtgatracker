@@ -64,17 +64,17 @@ p {
 
 #tracker-header h1 {
     font-size: 1.3em;
-    padding: 6px 0 0 4px;
+    padding: 6px 0 0 8px;
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 215px;
 }
 
 .controls {
     float: right;
     padding: 8px 8px 0 0;
+    margin-left: -4px;
 }
  .controls div {
     float: right;
@@ -86,6 +86,11 @@ p {
     padding-top: 3px;
 }
 
+#floating-eye {
+    float: right;
+    margin: 8px 8px 0 0;
+}
+
 #floating-eye img {
     width: 18px;
     height: 18px;
@@ -95,7 +100,8 @@ p {
 .menu-div {
     float: left;
     width: 20px;
-    padding: 8px 0 0 8px;
+    padding: 9px 0 0 8px;
+    margin-right: -4px;
 }
 
 .menu-div div img {

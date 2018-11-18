@@ -95,7 +95,9 @@ var port = remote.getGlobal('port');
 var timerRunning = false;
 var uploadDelay = 0;
 var hideModeManager;
-var hideUIButtons = remote.getGlobal('hideUIButtons')
+var showUIButtons = remote.getGlobal('showUIButtons')
+var showHideButton = remote.getGlobal('showHideButton')
+var showMenu = remote.getGlobal('showMenu')
 var useMinimal = remote.getGlobal('useMinimal')
 
 setInterval(() => {
@@ -206,6 +208,9 @@ var appData = {
     recentCardsQuantityToShow: recentCardsQuantityToShow,
     recentCards: recentCards,
     minToTray: minToTray,
+    showUIButtons: showUIButtons,
+    showHideButton: showHideButton,
+    showMenu: showMenu
 }
 
 var parseVersionString = (versionStr) => {
@@ -1371,23 +1376,21 @@ let toggleMenu = () => {
   $('body').toggleClass('no-drag');
 }
 
-let toggleUIButtons = () => {
-  let hiding = $('.menu-div').hasClass('hide-me')
-  let width = 0
-  let padding = 0
-  if (hiding){
-    width = useMinimal ? 178 : 215
-    padding = 6
-  } else {
-    width = useMinimal ? 280 : 320
-    padding = 8
+let updateTitleWidth = () => {
+  let width = useMinimal ? 278 : 320
+  if (appData.showHideButton) {
+    width -= 26
   }
-  let els = ['.menu-div','.controls']
-  for (el of els){
-    $(el).toggleClass('hide-me')
-    $('#tracker-header h1').css('max-width',width)
-    $('#tracker-header h1').css('padding-left',padding)
+  if (appData.showUIButtons){
+    width -= 50
   }
+  if (appData.showMenu) {
+    width -= 24
+  }
+  if (!(appData.showHideButton && appData.showMenu && appData.showUIButtons)){
+    width -= 8
+  }
+  $('#tracker-header h1').css('width',width)
 }
 
 let setClickHandlers = () => {
@@ -1431,16 +1434,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
         $("#container").addClass("container-normal")
     }
 
-    buildMenu();
+    buildMenu()
+    updateTitleWidth()
     addClickHandler('#menu-icon',toggleMenu)
     addClickHandler('#floating-eye',hideWindow)
     addClickHandler('#minimize-icon',() => {browserWindow.minimize()})
     addClickHandler('#close-icon',close)
     addClickHandler('body',null)
-
-    if (hideUIButtons){
-      toggleUIButtons()
-    }
 
     //open links externally by default
     $(document).on('click', 'a[href^="http"]', function(event) {
@@ -1568,9 +1568,11 @@ ipcRenderer.on('settingsChanged', () => {
       link.type = 'text/css';
       link.href = 'minimal.css';
       head.appendChild(link)
+      updateTitleWidth()
     }
   } else if (currentMinimalLink) {
     currentMinimalLink.remove()
+    updateTitleWidth()
   }
 
   if ((themeFile && (themeFile != lastThemeFile)) || useTheme != lastUseTheme) {
@@ -1592,10 +1594,17 @@ ipcRenderer.on('settingsChanged', () => {
     }
   }
 
-  let newHideUIButtons = remote.getGlobal('hideUIButtons')
-  if (newHideUIButtons != hideUIButtons){
-    hideUIButtons = newHideUIButtons
-    toggleUIButtons()
+  let buttonsChanged = false
+  let fields = ['showUIButtons','showMenu','showHideButton']
+  for (let field of fields) {
+    let newVal = remote.getGlobal(field)
+    if (newVal != appData[field]){
+      appData[field] = newVal
+      buttonsChanged = true
+    }
+  }
+  if (buttonsChanged) {
+    updateTitleWidth()
   }
 
   resizeWindow()

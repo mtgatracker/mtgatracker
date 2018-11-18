@@ -80,7 +80,9 @@ var settingsData = {
     {id: "draw-color", text: 'By likelihood of next draw, then by cost, color, and name',
     help: "This method sorts cards by likelihood of next draw, then, by cost, then color, then by name."},
   ],
-  hideUIButtons: remote.getGlobal('hideUIButtons')
+  showUIButtons: remote.getGlobal('showUIButtons'),
+  showHideButton: remote.getGlobal('showHideButton'),
+  showMenu: remote.getGlobal('showMenu')
 }
 
 settingsData.counterDeckList = counterDecks(settingsData.winLossObj.alltime);
@@ -330,11 +332,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     let themeSelected = $("#custom-theme-select").val()
     ipcRenderer.send('settingsChanged', {key: "useTheme", value: settingsData.useTheme})
     ipcRenderer.send('settingsChanged', {key: "themeFile", value: themeSelected})
-  })
-  $('#hide-ui-buttons-toggle').change(function() {
-    console.log("hide ui buttons was just toggled")
-    settingsData.hideUIButtons = $(this).prop('checked')
-    ipcRenderer.send('settingsChanged', {key: "hideUIButtons", value: settingsData.hideUIButtons})
   })
   $("#sorting-method-select").change(function() {
     console.log("sorting method was just chosen")
