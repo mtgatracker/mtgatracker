@@ -31,7 +31,6 @@
         <div id="floating-eye" class="no-height-contribution glow-on-hover ui-button-panel" rv-show="showHideButton">
           <img src="hide-512.png">
         </div>
-        <h3 class="beleren link back-draft" rv-show="showDraftStats">Exit collection view</h3>
       </div>
       <div id="tracker-body">
         <!-- START Game View -->
@@ -102,6 +101,7 @@
               <span class="update-message message" rv-hide="message.mayfollow"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
              </p>
           </div>
+          <h3 class="beleren link back-draft" rv-show="showDraftStats">Exit collection view</h3>
           <div class="card" rv-each-stat="draftStats" rv-card_color="stat.colors">
             <div class="card-text">
               <div class="card-text-limit"><div class="cardcount">{ stat.count }x</div> <div class="cardname">{ stat.pretty_name } owned</div></div>

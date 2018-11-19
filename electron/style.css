@@ -509,11 +509,14 @@ p {
 .settings-img,
 .back-link:after,
 .back-link,
+.back-draft,
 .deck-container,
 #menu-icon,
 #floating-eye,
 #minimize-icon,
 #close-icon,
+#browse-back,
+.deck-title,
 .nestedsidemenu,
 .nestedsidemenu ul,
 .no-drag
@@ -564,7 +567,7 @@ p {
     display: block;
     position: relative;
     /* background of menu items (default state) */
-    background: rgba(83, 83, 83, 1);
+    background: #444444;
     color: white;
     padding: 5px;
     color: white;
@@ -578,7 +581,7 @@ p {
 
 /* Top level menu items link style on hover and when active */
 .nestedsidemenu ul li:hover > a {
-    background: #8a8a8a;
+    background: #656565;
 }
 
 /* Sub ULs style */
@@ -589,7 +592,7 @@ p {
     opacity: 0;
     width: 120px;
     visibility: hidden;
-    box-shadow: 2px 2px 5px gray;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3)
     -webkit-transition: opacity .3s, visibility 0s .3s, left 0s .3s;
     transition: opacity .3s, visibility 0s .3s, left 0s .3s;
 }
@@ -617,7 +620,7 @@ p {
 
 /* Sub Levels link style on hover and when active */
 .nestedsidemenu ul ul li:hover > a {
-    background: #8a8a8a;
+    background: #656565;
 }
 
 /* Sub Levels UL style on hover */
@@ -630,7 +633,7 @@ p {
     font: normal 14px 'Bitter', sans-serif;
     padding: 5px;
     margin: 0;
-    background: rgba(83, 83, 83, 1);
+    background: #444444;
     border-right: none;
     border-top-width: 0;
 }
@@ -672,12 +675,13 @@ p {
   left    : 5px;
   height  : 1px;
   width   : 110px;
-  border-top: 1px solid #aaa;
+  border-top: 1px solid #8a8a8a;
   z-index: 1;
 }
 
 #main-menu ul {
     border: 1px solid #8a8a8a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3)
 }
 
 
