@@ -234,7 +234,7 @@ p {
     background-color: rgba(83, 83, 83, 1);
 }
 
-#deck-list {
+#deck-list,#draft-collection-list {
     padding-bottom: 5px;
 }
 
