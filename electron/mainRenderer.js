@@ -531,6 +531,14 @@ let getColorValue = function(card) {
   return value;
 }
 
+function round_odds(x){
+  let decimals = 1;
+  if (x >= 10 ) {
+    decimals = 0;
+  }
+  return x.toFixed(decimals).replace(/\.?0*$/,'');
+}
+
 rivets.formatters.drawStatsSort = function(decklist) {
     return sortDecklist(decklist);
 };
@@ -540,6 +548,9 @@ rivets.formatters.drawStatsMergeDuplicates = function(decklist) {
     decklist.forEach((card) => {
         if (mergedDecklist.get(card.card)) {
             mergedDecklist.get(card.card).count_in_deck += card.count_in_deck;
+            let odds_unf = mergedDecklist.get(card.card).odds_unf + card.odds_unf
+            mergedDecklist.get(card.card).odds_unf = odds_unf;
+            mergedDecklist.get(card.card).odds_of_draw = round_odds(odds_unf);
         }
         else {
             mergedDecklist.set(card.card, card);
@@ -557,6 +568,9 @@ rivets.formatters.decklistMergeDuplicates = function(decklist) {
     decklist.forEach((card) => {
         if (mergedDecklist.get(card.pretty_name)) {
             mergedDecklist.get(card.pretty_name).count_in_deck += card.count_in_deck;
+            let odds_unf = mergedDecklist.get(card.pretty_name).odds_unf + card.odds_unf
+            mergedDecklist.get(card.pretty_name).odds_unf = odds_unf;
+            mergedDecklist.get(card.pretty_name).odds_of_draw = round_odds(odds_unf);
         }
         else {
             mergedDecklist.set(card.pretty_name, card);
