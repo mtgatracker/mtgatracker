@@ -741,10 +741,8 @@ function resizeWindow() {
 
     container = document.getElementById("container")
 
-    let totalHeight = 10;
-
+    let totalHeight = 0;
     totalHeight += $('#tracker-header').outerHeight(true);
-
     $("#tracker-body").children().each(function(c, e) {
         if(e.style.display != "none" && !e.classList.contains("no-height-contribution"))
             totalHeight += $(e).outerHeight(true);

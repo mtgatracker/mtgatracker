@@ -234,6 +234,10 @@ p {
     background-color: rgba(83, 83, 83, 1);
 }
 
+#deck-list {
+    padding-bottom: 5px;
+}
+
 .card {
     font-family: beleren;
     width: 297px;
