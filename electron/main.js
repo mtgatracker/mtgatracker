@@ -400,7 +400,10 @@ let openSettingsWindow = () => {
   settingsWindow.once('ready-to-show', () => {
     settingsWindow.show()
   })
+  settingsWindow.on('close', () => {global.settingsPaneIndex = 'general'})
 }
+
+
 
 let openHistoryWindow = () => {
   if(historyWindow == null) {
@@ -648,6 +651,7 @@ global.recentCardsQuantityToShow = recentCardsQuantityToShow
 global.logPath = logPath
 global.minToTray = minToTray
 global.historyZoom = settings.get("history-zoom", 1.0)
+global.settingsPaneIndex = "general"
 
 /*************************************************************
  * window management
@@ -666,7 +670,7 @@ if (debug) {
 }
 
 const openDeckTrackerHandler = (menuItem, browserWindow, event) => {
-    focusMTGATracker(); 
+    focusMTGATracker();
 }
 
 const openSettingsHandler = (menuItem, browserWindow, event) => {
@@ -751,6 +755,7 @@ const createMainWindow = () => {
   if (!versionsAcknowledged.includes(app.getVersion())) {
     versionsAcknowledged.push(app.getVersion())
     settings.set("versionsAcknowledged", versionsAcknowledged)
+    global.settingsPaneIndex = 'about'
     openSettingsWindow()
   }
 }

@@ -29,6 +29,26 @@ a {
   margin-top: 12px;
 }
 
+.helper-text, .helper-block {
+  font-style: italic;
+}
+
+.helper-text {
+}
+
+.helper-block {
+  margin: 5px 0 0 0;
+  display: block;
+}
+
+span.helper-text::before {
+    content: "- ";
+}
+
+#sorting-method-select {
+    margin: 5px 0 8px 0;
+}
+
 .disclaimer {
   font-size: 14px;
   font-style: italic;
