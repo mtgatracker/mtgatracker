@@ -277,23 +277,6 @@ let deckFrequencySubLists = function (decklist) {
   return sublists;
 };
 
-let sortDecklist = function (decklist) {
-    if (decklist.length === 0) {
-        return decklist;
-    }
-    if (sortMethod.startsWith("draw")) {
-        let subsort = sortMethod.split('-')[1];
-        if ( subsort === undefined ){
-          subsort = 'name';
-        }
-        return drawSort(decklist,subsort);
-    } else if (sortMethod == "emerald") {
-        return emeraldSort(decklist);
-    } else if (sortMethod == "color") {
-        return colorSort(decklist);
-    }
-}
-
 let emeraldSort = function (decklist) {
    return decklist.sort(
             function (a, b) {
@@ -532,38 +515,38 @@ let getColorValue = function(card) {
   return value;
 }
 
-rivets.formatters.drawStatsSort = function(decklist) {
-    return sortDecklist(decklist);
-};
-
-rivets.formatters.drawStatsMergeDuplicates = function(decklist) {
+let mergeDuplicates = function(decklist) {
+    let field = 'pretty_name'
+    if (decklist[0].card != undefined){ field = 'card'}
     let mergedDecklist = new Map();
     decklist.forEach((card) => {
-        if (mergedDecklist.get(card.card)) {
-            mergedDecklist.get(card.card).count_in_deck += card.count_in_deck;
+        if (mergedDecklist.get(card[field])) {
+            mergedDecklist.get(card[field]).count_in_deck += card.count_in_deck;
         }
         else {
-            mergedDecklist.set(card.card, Object.assign({}, card));
+            mergedDecklist.set(card[field], Object.assign({}, card));
         }
     });
     return Array.from(mergedDecklist.values());
 };
 
 rivets.formatters.decklistSort = function(decklist) {
-    return sortDecklist(decklist);
-};
+    if (decklist.length === 0) {
+        return decklist;
+    }
 
-rivets.formatters.decklistMergeDuplicates = function(decklist) {
-    let mergedDecklist = new Map();
-    decklist.forEach((card) => {
-        if (mergedDecklist.get(card.pretty_name)) {
-            mergedDecklist.get(card.pretty_name).count_in_deck += card.count_in_deck;
+    let sorted_decklist = mergeDuplicates(decklist)
+    if (sortMethod.startsWith("draw")) {
+        let subsort = sortMethod.split('-')[1];
+        if ( subsort === undefined ){
+          subsort = 'name';
         }
-        else {
-          mergedDecklist.set(card.pretty_name, Object.assign({}, card));
-        }
-    });
-    return Array.from(mergedDecklist.values());
+        return drawSort(sorted_decklist,subsort);
+    } else if (sortMethod == "emerald") {
+        return emeraldSort(sorted_decklist);
+    } else if (sortMethod == "color") {
+        return colorSort(sorted_decklist);
+    }
 };
 
 rivets.binders.showmessage = function(el, value) {
