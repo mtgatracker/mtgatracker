@@ -1,3 +1,7 @@
+#deck-list,#draft-collection-list {
+    padding-bottom: 0px;
+}
+
 .cost {
   margin-right: 7px;
   margin-top: 10px;

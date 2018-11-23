@@ -80,6 +80,9 @@ var settingsData = {
     {id: "draw-color", text: 'By likelihood of next draw, then by cost, color, and name',
     help: "This method sorts cards by likelihood of next draw, then, by cost, then color, then by name."},
   ],
+  showUIButtons: remote.getGlobal('showUIButtons'),
+  showHideButton: remote.getGlobal('showHideButton'),
+  showMenu: remote.getGlobal('showMenu')
 }
 
 settingsData.counterDeckList = counterDecks(settingsData.winLossObj.alltime);

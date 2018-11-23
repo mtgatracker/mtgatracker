@@ -273,6 +273,9 @@ let recentCards = settings.get('recentCards', []);
 let recentCardsQuantityToShow = settings.get('recentCardsQuantityToShow', 10);
 let minToTray = settings.get('minToTray', false);
 logPath = settings.get("logPath", logPath)
+let showUIButtons = settings.get('showUIButtons',true)
+let showHideButton = settings.get('showHideButton',true)
+let showMenu = settings.get('showMenu',true)
 
 global.historyEvents = []
 
@@ -648,6 +651,9 @@ global.recentCardsQuantityToShow = recentCardsQuantityToShow
 global.logPath = logPath
 global.minToTray = minToTray
 global.historyZoom = settings.get("history-zoom", 1.0)
+global.showUIButtons = showUIButtons
+global.showHideButton = showHideButton
+global.showMenu = showMenu
 
 /*************************************************************
  * window management
@@ -666,7 +672,7 @@ if (debug) {
 }
 
 const openDeckTrackerHandler = (menuItem, browserWindow, event) => {
-    focusMTGATracker(); 
+    focusMTGATracker();
 }
 
 const openSettingsHandler = (menuItem, browserWindow, event) => {
@@ -684,7 +690,7 @@ const closeTrackerHandler = (menuItem, browserWindow, event) => {
 let tray = null;
 
 const createTray = () => {
-  if(minToTray && tray==null) {
+  if(tray==null) {
     let iconFile = 'icon_tray.png'
     let iconPath = path.join(__dirname,'img', iconFile);
     console.log(fs.existsSync(iconPath))

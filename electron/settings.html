@@ -417,6 +417,11 @@
               <li class="about-p">Tracker will now open settings to about page on first launch after an update (so you can see this changelog!)</li>
               <li class="about-p">Tracker will now attempt to upload at end of game slightly more aggressively, to help prevent lost inspector data</li>
             </ul>
+            <hr/>
+            <h3>Attributions</h3>
+            <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/cole-bemis" title="Cole Bemis">Cole Bemis</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/becris" title="Becris">Becris</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
           </div>
         </div>
       </div>
@@ -483,10 +488,7 @@
           <hr />
 
           <div class="settings-row">
-            <input rv-checked="mouseEvents" class="tf-toggle" type="checkbox" key="mouseEvents" data-toggle="toggle"> Hide tracker on all right clicks
-          </div>
-          <div class="settings-row">
-            <input rv-checked="leftMouseEvents" class="tf-toggle" type="checkbox" key="leftMouseEvents" data-toggle="toggle"> Un-hide tracker on all left clicks
+            <input rv-checked="mouseEvents" class="tf-toggle" type="checkbox" key="mouseEvents" data-toggle="toggle"> Hide or show tracker on all right clicks
           </div>
 
           <div class="settings-row">
@@ -500,7 +502,7 @@
           </div>
 
           <div class="settings-row">
-            <input rv-checked="invertHideMode" class="tf-toggle" type="checkbox" key="invertHideMode" data-toggle="toggle"> Invert Hide Mode (<i>always</i> hide the tracker, only show it on right clicks)
+            <input rv-checked="invertHideMode" class="tf-toggle" type="checkbox" key="invertHideMode" data-toggle="toggle"> Invert Hide Mode (<i>always</i> hide the tracker, only show it on right clicks and the hide button)
           </div>
 
           <div class="settings-row">
@@ -646,6 +648,27 @@
             <div class="checkbox">
               <label>
                 <input rv-checked="useMinimal" id="enable-minimal-theme-toggle" type="checkbox" data-toggle="toggle"> Enable minimal theme
+              </label>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="checkbox">
+              <label>
+                <input rv-checked="showUIButtons" key="showUIButtons" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the close and minimize buttons
+              </label>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="checkbox">
+              <label>
+                <input rv-checked="showHideButton" key="showHideButton" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the hide tracker button
+              </label>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="checkbox">
+              <label>
+                <input rv-checked="showMenu" key="showMenu" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the menu button
               </label>
             </div>
           </div>
