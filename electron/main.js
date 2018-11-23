@@ -373,7 +373,7 @@ ipcMain.on('tosAgreed', (event, arg) => {
 
 let openSettingsWindow = () => {
   if(settingsWindow == null) {
-    let settingsWidth = debug ? 1400 : 1000;
+    let settingsWidth = debug ? 1400 : 1025;
 
     const settingsWindowStateMgr = windowStateKeeper('settings')
     settingsWindow = new BrowserWindow({width: settingsWidth,
@@ -403,7 +403,10 @@ let openSettingsWindow = () => {
   settingsWindow.once('ready-to-show', () => {
     settingsWindow.show()
   })
+  settingsWindow.on('close', () => {global.settingsPaneIndex = 'general'})
 }
+
+
 
 let openHistoryWindow = () => {
   if(historyWindow == null) {
@@ -651,6 +654,7 @@ global.recentCardsQuantityToShow = recentCardsQuantityToShow
 global.logPath = logPath
 global.minToTray = minToTray
 global.historyZoom = settings.get("history-zoom", 1.0)
+global.settingsPaneIndex = "general"
 global.showUIButtons = showUIButtons
 global.showHideButton = showHideButton
 global.showMenu = showMenu
@@ -757,6 +761,7 @@ const createMainWindow = () => {
   if (!versionsAcknowledged.includes(app.getVersion())) {
     versionsAcknowledged.push(app.getVersion())
     settings.set("versionsAcknowledged", versionsAcknowledged)
+    global.settingsPaneIndex = 'about'
     openSettingsWindow()
   }
 }

@@ -3,23 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Settings</title>
-    <link rel="stylesheet" type="text/css" href="settings_style.css">
     <link rel="stylesheet" type="text/css" href="vendor/photon/photon.css">
     <link rel="stylesheet" type="text/css" href="vendor/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
     <link href="vendor/toggle/bootstrap-toggle.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="settings_style.css">
 </head>
 <body>
 
 <div id="container">
   <div class="pane-group">
-    <div class="pane pane-sm sidebar">
+    <div class="pane pane-sm sidebar" id="sidebar">
       <nav class="nav-group">
         <h5 class="nav-group-title">Tracker Settings</h5>
-        <a value="about" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="about-nav">
-          <span class="icon icon-info"></span>
-          About
-        </a>
         <a value="general" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="general-nav">
           <span class="icon icon-home"></span>
           General
@@ -51,6 +47,10 @@
 
       <nav class="nav-group">
         <h5 class="nav-group-title">Other Stuff</h5>
+        <a value="about" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="about-nav">
+          <span class="icon icon-info"></span>
+          About
+        </a>
         <a value="supporters" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="supporters-nav">
           <span class="icon icon-heart"></span>
           Supporters
@@ -58,6 +58,317 @@
       </nav>
     </div>
     <div class="pane">
+      <div id="general-pane" value="general" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <p><i>Note: after changing these settings, you should restart MTGATracker to see effects</i></p>
+          </div>
+
+          <hr />
+
+          <h4>Miscellaneous</h4>
+          <div class="settings-row">
+            <input rv-checked="staticMode" class="tf-toggle" type="checkbox" key="staticMode" data-toggle="toggle"> Static decklist mode <span class="helper-text">Decklist does not change during gameplay, i.e. cards not removed when drawn</span>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="mtgaOverlayOnly" class="tf-toggle" type="checkbox" key="mtgaOverlayOnly" data-toggle="toggle"> Overlay on MTGA only <span class="helper-text">"Off" means overlay <i>always</i></span>
+          </div>
+          <div class="settings-row">
+            <input rv-checked="minToTray" class="tf-toggle" type="checkbox" key="minToTray" data-toggle="toggle"> Minimize to system tray instead of taskbar
+          </div>
+           <div class="settings-row">
+            <input rv-checked="useFrame" class="tf-toggle" type="checkbox" key="useFrame" data-toggle="toggle"> Streamer mode <span class="helper-text">Tune the tracker for streaming</span>
+          </div>
+
+          <hr />
+
+          <h4>Game timers</h4>
+          <div class="settings-row">
+            <input rv-checked="showGameTimer" class="tf-toggle" type="checkbox" key="showGameTimer" data-toggle="toggle"> Show game timer
+          </div>
+          <div class="settings-row">
+            <input rv-checked="showChessTimers" class="tf-toggle" type="checkbox" key="showChessTimers" data-toggle="toggle"> Show individual "chess" timers
+          </div>
+
+          <hr/>
+
+          <h4>Game history</h4>
+          <div class="settings-row">
+            <button id="resetGameHistory" class="btn btnbtn btn-negative">Clear Game History Events</button>
+          </div>
+
+          <hr />
+
+          <h4>Vault</h4>
+          <h5>Current Progress: { lastVaultProgress }%</h5>
+          <div class="settings-row">
+            <input rv-checked="showVaultProgress" class="tf-toggle" type="checkbox" key="showVaultProgress" data-toggle="toggle"> Show vault progress in main window
+          </div>
+
+          <div class="settings-row">
+            <p class="slider-label">Minimum progress required to show vault progress in main window</p>
+            <div class="slidecontainer">
+              <input type="range" min="1" max="100" value="0" class="slider" id="min-vault-progress">
+            </div>
+            <div class="slidervalue slidevalue-vault">
+              0
+            </div>
+          </div>
+
+          <hr/>
+
+          <h4>Hide Tracker</h4>
+          <div class="settings-row">
+            <input rv-checked="mouseEvents" class="tf-toggle" type="checkbox" key="mouseEvents" data-toggle="toggle"> Hide or show the tracker on all right clicks
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="invertHideMode" class="tf-toggle" type="checkbox" key="invertHideMode" data-toggle="toggle"> Invert hide mode <span class="helper-text"><i>Always</i> hide the tracker, only show it on right clicks or clicking the hide button</span>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="rollupMode" class="tf-toggle" type="checkbox" key="rollupMode" data-toggle="toggle"> Roll-up mode <span class="helper-text">Shrink the tracker to just the header instead of making it transparent</span>
+          </div>
+
+          <div class="settings-row">
+            <h5 class="slider-label">
+              Hide delay
+            </h5>
+            <div class="slidecontainer">
+              <input type="range" min="1" max="100" value="50" class="slider" id="hide-delay">
+            </div>
+            <div class="slidevalue slidervalue">
+              40
+            </div>
+            <span class="helper-block">How many seconds should the tracker stay hidden on right clicks or hide button presses?<br/>
+            If you want to make it only hide and show on right clicks or the hide button, set the slider to far right (&#x221e;).</span>
+          </div>
+
+          <hr />
+
+          <h4>Decklist sorting method</h4>
+          <div class="settings-row">
+            Use the following sorting method on decklists
+            <select id="sorting-method-select" class="form-control">
+              <option rv-each-sortingmethod="sortingMethods" rv-value="sortingmethod.id">{ sortingmethod.text }</option>
+            </select>
+          </div>
+
+          <h5>Method descriptions</h5>
+          <div class="sorting-methods">
+            <div class="sort-method" rv-each-sortingmethod="sortingMethods">
+              {sortingmethod.text} <span class="helper-text">{sortingmethod.help}</span>
+            </div>
+          </div>
+
+          <hr/>
+
+          <h4>Messages</h4>
+          <div class="settings-row">
+            <input rv-checked="showErrors" class="tf-toggle" type="checkbox" key="showErrors" data-toggle="toggle"> Show error count in game
+          </div>
+          <div class="settings-row">
+            <input rv-checked="showInspector" class="tf-toggle" type="checkbox" key="showInspector" data-toggle="toggle"> Show Inspector reminders
+            <span class="helper-text">E.g. "Game sent to Inspector!"</span>
+          </div>
+
+           <hr />
+
+          <h4>Arena log location</h4>
+          <h5>Currently selected: <span class="disclaimer">{ logPath }</span></h5>
+          <div class="settings-row">
+            <button id="log-select" class="btn btnbtn btn-secondary">Locate output_log.txt file</button>
+            <span class="helper-block">This is the Arena log file location. If your information is not being read by the tracker, check this setting.</span>
+          </div>
+
+          <hr/>
+
+          <h4>Debug mode</h4>
+          <div class="settings-row">
+            <input rv-checked="debug" class="tf-toggle" type="checkbox" key="debug" data-toggle="toggle"> Debug mode <span class="helper-text">Only for developers or troubleshooting</span>
+          </div>
+
+        </div>
+      </div>
+      <div id="wlc-pane" value="wlc" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <h3>All-time Win/Loss Counters</h3>
+            <p>
+              All-time counters keep a running tally of all your wins and losses across all play sessions.<br/>
+              These counters will be stored on exit and restored on launch.<br/>
+              The total counter is a count of all your wins and losses.
+            </p>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showTotalWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show all-time total win/loss counter</span>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDeckWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show all-time per-deck win/loss counter</span>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="all-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all">Reset Every All-time Counter</button>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="all-decks-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all-decks">Reset Every All-time Deck Counter</button>
+          </div>
+
+          <div class="settings-row counter-reset-row">
+            <span class="counter-reset-span">Total &ndash; {totalWinLossCounter.win} : {totalWinLossCounter.loss}</span>
+            <span class="counter-adj-span">
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="up">+ Win</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="down">- Win</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="up">+ Loss</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="down">- Loss</button>
+              <button class="btn btn-danger reset-button" data-deckid="total">Reset</button>
+            </span>
+          </div>
+          <div class="settings-row counter-reset-row" rv-each-deck="counterDeckList">
+            <span class="counter-reset-span">{deck.name} &ndash; {deck.win} : {deck.loss}</span>
+            <span class="counter-adj-span">
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="up">+ Win</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="down">- Win</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="up">+ Loss</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="down">- Loss</button>
+              <button rv-deckid="deck.id" class="btn btn-danger reset-button">Reset</button>
+            </span>
+          </div>
+
+          <hr/>
+
+          <div class="settings-row">
+            <h3>Session Win/Loss Counters</h3>
+            <p>
+              Session counters keep a running tally of your wins and losses in the current play session.<br/>
+              These counters will be reset automatically on the next launch.
+            </p>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showDailyTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyTotalWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show session total win/loss counter</span>
+          </div>
+
+          <div class="settings-row">
+            <input rv-checked="showDailyDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyDeckWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show session per-deck win/loss counter</span>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="daily-all-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all" data-daily="true">Reset Every Session Counter</button>
+          </div>
+
+          <div class="settings-row reset-all">
+            <button id="all-daily-decks-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all-decks" data-daily="true">Reset Every Session Deck Counter</button>
+          </div>
+
+          <div class="settings-row counter-reset-row">
+            <span class="counter-reset-span">Total &ndash; {dailyTotalWinLossCounter.win} : {dailyTotalWinLossCounter.loss}</span>
+            <span class="counter-adj-span">
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="up" data-daily="true">+ Win</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="down" data-daily="true">- Win</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="up" data-daily="true">+ Loss</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="down" data-daily="true">- Loss</button>
+              <button class="btn btn-danger reset-button" data-deckid="total" data-daily="true">Reset</button>
+            </span>
+          </div>
+          <div class="settings-row counter-reset-row" rv-each-deck="dailyCounterDeckList">
+            <span class="counter-reset-span">{deck.name} &ndash; {deck.win} : {deck.loss}</span>
+            <span class="counter-adj-span">
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="up" data-daily="true">+ Win</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="down" data-daily="true">- Win</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="up" data-daily="true">+ Loss</button>
+              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="down" data-daily="true">- Loss</button>
+              <button rv-deckid="deck.id" class="btn btn-danger reset-button" data-daily="true">Reset</button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div id="theme-pane" value="theme" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <input rv-checked="useFlat" id="enable-flat-theme-toggle" type="checkbox" data-toggle="toggle"> Enable flat theme <span class="helper-text">Changes card display to a simpler "flat" display
+          </div>
+          <div class="settings-row" rv-show="useFlat">
+            <input rv-checked="useMinimal" id="enable-minimal-theme-toggle" type="checkbox" data-toggle="toggle"> Enable minimal theme <span class="helper-text">Streamlines and shrinks the tracker</span>
+          </div>
+          <div class="settings-row">
+            <input rv-checked="showUIButtons" key="showUIButtons" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the close and minimize buttons
+          </div>
+          <div class="settings-row">
+                <input rv-checked="showHideButton" key="showHideButton" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the hide tracker button
+          </div>
+          <div class="settings-row">
+                <input rv-checked="showMenu" key="showMenu" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the menu button
+            </div>
+
+          <hr/>
+
+          <div class="settings-row">
+                <input rv-checked="useTheme" id="apply-custom-theme-toggle" type="checkbox" data-toggle="toggle"> Apply the following custom theme:
+          </div>
+          <div class="settings-row">
+            <select id="custom-theme-select" class="form-control">
+              <option rv-each-theme="customStyleFiles">{ theme }</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+      <div id="privacy-pane" value="privacy" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <input rv-checked="incognito" class="tf-toggle" type="checkbox" key="incognito" data-toggle="toggle"> Incognito mode
+            <br />
+            <br />
+            <p class="about-p disclaimer"><b>Warning:</b> with incognito mode enabled, MTGATracker will not send any game data to MTGATracker services, including Inspector. This means that Inspector will no longer work!</p>
+          </div>
+        </div>
+      </div>
+      <div id="account-pane" value="account" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <h3>Inspector Account</h3>
+            <p>On first launch, MTGATracker generates a key that is private and unique to your machine.
+              Treat it like a password!</p>
+            <p>To authorize your Inspector account to view records from your tracker / machine, make sure you're signed
+              in to Inspector in your default browser, then click the link below.</p>
+            <p><b><a rv-authref="trackerID">Authorize Inspector</a></b></p>
+            <p><b>View Tracker key</b>: <span id="showTrackerID">(click to reveal)</span></p>
+          </div>
+        </div>
+      </div>
+      <div id="collection-pane" value="collection" rv-showsettingspane="settingsPaneIndex">
+        <div class="settings-container">
+          <div class="settings-row">
+            <h3>Collection</h3>
+            <p><b>Basic info</b>: { lastCollection | countcollection }</p>
+            <button id="exportCollectionMTGGButton" class="btn btnbtn btn-secondary">Export collection (MTGGoldfish .csv format)</button>
+            <br>
+            <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
+          </div>
+          <div class="settings-row">
+            <h3>Recently collected cards</h3>
+            <p>How many new card events to display</p>
+            <div class="slidecontainer">
+              <input type="range" min="1" max="100" value="0" class="slider" id="recent-cards-quantity-slider">
+            </div>
+            <div class="slidevalue-recent-cards">
+              0
+            </div>
+            <div class="recent-cards-group-container" rv-each-recentcardgroup="recentCards | filterBySlideValueRecentCards recentCardsQuantityToShow">
+              <h5 class="recent-cards-header" onclick="recentCardsSectionClickHandler(event)">Cards updated: {recentcardgroup.time}</h5>
+              <ul class="recent-cards-container" rv-recentcardsbinder="recentcardgroup.cardsObtained">
+                <!-- cards appended here from settingsRenderer -->
+              </ul>
+            </div>
+            <div id="no-recently-obtained-cards">The tracker hasn't tracked any recently obtained cards (obtain cards to update this).</div>
+          </div>
+        </div>
+      </div>
       <div id="about-pane" value="about" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
@@ -70,10 +381,6 @@
             <p class="about-p"><b>Privacy:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md">privacy.md</a></p>
             <p class="about-p"><b>Documentation:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/README.md">README.md</a></p>
             <p class="about-p"><b>Inspector:</b> <a href="https://inspector.mtgatracker.com/">inspector.mtgatracker.com</a></p>
-            <br />
-
-            <h4>Current Vault Progress: { lastVaultProgress }%</h4>
-
 
             <br />
             <h3>Release notes for 4.5.4 (Direct Challenge hotfix)</h3>
@@ -422,306 +729,6 @@
             <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
             <div>Icons made by <a href="https://www.flaticon.com/authors/cole-bemis" title="Cole Bemis">Cole Bemis</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
             <div>Icons made by <a href="https://www.flaticon.com/authors/becris" title="Becris">Becris</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
-          </div>
-        </div>
-      </div>
-      <div id="general-pane" value="general" rv-showsettingspane="settingsPaneIndex">
-        <div class="settings-container">
-          <div class="settings-row">
-            <p><i>Note: after changing these settings, you should restart MTGATracker to see effects</i></p>
-          </div>
-
-          <hr />
-
-          <div class="settings-row">
-            <input rv-checked="debug" class="tf-toggle" type="checkbox" key="debug" data-toggle="toggle"> Debug Mode
-          </div>
-          <div class="settings-row">
-            <input rv-checked="staticMode" class="tf-toggle" type="checkbox" key="staticMode" data-toggle="toggle"> Static Mode
-          </div>
-          <div class="settings-row">
-            <input rv-checked="useFrame" class="tf-toggle" type="checkbox" key="useFrame" data-toggle="toggle"> Streamer Mode
-          </div>
-          <div class="settings-row">
-            <input rv-checked="mtgaOverlayOnly" class="tf-toggle" type="checkbox" key="mtgaOverlayOnly" data-toggle="toggle"> Overlay on MTGA <i>only</i> ("Off" means overlay <i>always</i>)
-          </div>
-          <div class="settings-row">
-            <input rv-checked="minToTray" class="tf-toggle" type="checkbox" key="minToTray" data-toggle="toggle"> Minimize to tray
-          </div>
-
-          <hr />
-          <div class="settings-row">
-            <button id="log-select" class="btn btnbtn btn-secondary">Locate output_log.txt file</button>
-          </div>
-          Currently selected: <span class="disclaimer">{ logPath }</span>
-          <hr />
-
-          <div class="settings-row">
-            <input rv-checked="showErrors" class="tf-toggle" type="checkbox" key="showErrors" data-toggle="toggle"> Show error count in game
-          </div>
-          <div class="settings-row">
-            <input rv-checked="showInspector" class="tf-toggle" type="checkbox" key="showInspector" data-toggle="toggle"> Show inspector reminders
-          </div>
-          <div class="settings-row">
-            <input rv-checked="showGameTimer" class="tf-toggle" type="checkbox" key="showGameTimer" data-toggle="toggle"> Show Game Timer
-          </div>
-          <div class="settings-row">
-            <input rv-checked="showChessTimers" class="tf-toggle" type="checkbox" key="showChessTimers" data-toggle="toggle"> Show "Chess" Timers
-          </div>
-
-          <div class="settings-row">
-            <input rv-checked="showVaultProgress" class="tf-toggle" type="checkbox" key="showVaultProgress" data-toggle="toggle"> Show vault progress in main UI
-          </div>
-
-          <div class="settings-row">
-            <p>Minimum progress required to show vault progress in main UI</p>
-            <div class="slidecontainer">
-              <input type="range" min="1" max="100" value="0" class="slider" id="min-vault-progress">
-            </div>
-            <div class="slidevalue-vault">
-              0
-            </div>
-          </div>
-          <div class="settings-row">
-            <button id="resetGameHistory" class="btn btnbtn btn-negative">Clear Game History Events</button>
-          </div>
-          <hr />
-
-          <div class="settings-row">
-            <input rv-checked="mouseEvents" class="tf-toggle" type="checkbox" key="mouseEvents" data-toggle="toggle"> Hide or show tracker on all right clicks
-          </div>
-
-          <div class="settings-row">
-            <p>"Hide" delay (how many seconds should the tracker stay hidden on right clicks or hide button presses?)</p>
-            <div class="slidecontainer">
-              <input type="range" min="1" max="100" value="50" class="slider" id="hide-delay">
-            </div>
-            <div class="slidevalue">
-              40
-            </div>
-          </div>
-
-          <div class="settings-row">
-            <input rv-checked="invertHideMode" class="tf-toggle" type="checkbox" key="invertHideMode" data-toggle="toggle"> Invert Hide Mode (<i>always</i> hide the tracker, only show it on right clicks and the hide button)
-          </div>
-
-          <div class="settings-row">
-            <input rv-checked="rollupMode" class="tf-toggle" type="checkbox" key="rollupMode" data-toggle="toggle"> Roll Up Mode (Minimize the tracker instead of hiding it)
-          </div>
-
-          <hr />
-
-          <div class="settings-row">
-            Use the following sorting method on deck lists <a class="link" onclick='$("#sorting-help").slideToggle()'><span class="icon icon-help-circled link"></span></a>
-          </div>
-          <div class="settings-row">
-            <select id="sorting-method-select" class="form-control">
-              <option rv-each-sortingmethod="sortingMethods" rv-value="sortingmethod.id">{ sortingmethod.text }</option>
-            </select>
-          </div>
-
-          <div class="settings-row well" id="sorting-help" style="display: none;">
-            <h5>What do these sorting methods mean?</h5>
-            <p class="about-p" rv-each-sortingmethod="sortingMethods"><b>{ sortingmethod.text }</b>: { sortingmethod.help }</p>
-          </div>
-
-        </div>
-      </div>
-      <div id="wlc-pane" value="wlc" rv-showsettingspane="settingsPaneIndex">
-        <div class="settings-container">
-          <div class="settings-row">
-            <h3>All-time Win/Loss Counters</h3>
-            <p>
-              All-time counters keep a running tally of all your wins and losses across all play sessions.<br/>
-              These counters will be stored on exit and restored on launch.<br/>
-              The total counter is a count of all your wins and losses.
-            </p>
-          </div>
-
-          <div class="settings-row">
-            <input rv-checked="showTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showTotalWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show all-time total win/loss counter</span>
-          </div>
-
-          <div class="settings-row">
-            <input rv-checked="showDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDeckWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show all-time per-deck win/loss counter</span>
-          </div>
-
-          <div class="settings-row reset-all">
-            <button id="all-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all">Reset Every All-time Counter</button>
-          </div>
-
-          <div class="settings-row reset-all">
-            <button id="all-decks-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all-decks">Reset Every All-time Deck Counter</button>
-          </div>
-
-          <div class="settings-row counter-reset-row">
-            <span class="counter-reset-span">Total &ndash; {totalWinLossCounter.win} : {totalWinLossCounter.loss}</span>
-            <span class="counter-adj-span">
-              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="up">+ Win</button>
-              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="down">- Win</button>
-              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="up">+ Loss</button>
-              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="down">- Loss</button>
-              <button class="btn btn-danger reset-button" data-deckid="total">Reset</button>
-            </span>
-          </div>
-          <div class="settings-row counter-reset-row" rv-each-deck="counterDeckList">
-            <span class="counter-reset-span">{deck.name} &ndash; {deck.win} : {deck.loss}</span>
-            <span class="counter-adj-span">
-              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="up">+ Win</button>
-              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="down">- Win</button>
-              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="up">+ Loss</button>
-              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="down">- Loss</button>
-              <button rv-deckid="deck.id" class="btn btn-danger reset-button">Reset</button>
-            </span>
-          </div>
-
-          <hr/>
-
-          <div class="settings-row">
-            <h3>Session Win/Loss Counters</h3>
-            <p>
-              Session counters keep a running tally of your wins and losses in the current play session.<br/>
-              These counters will be reset automatically on the next launch.
-            </p>
-          </div>
-
-          <div class="settings-row">
-            <input rv-checked="showDailyTotalWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyTotalWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show session total win/loss counter</span>
-          </div>
-
-          <div class="settings-row">
-            <input rv-checked="showDailyDeckWinLossCounter" class="tf-toggle" type="checkbox" key="showDailyDeckWinLossCounter" data-toggle="toggle"><span class="counter-toggle-span">Show session per-deck win/loss counter</span>
-          </div>
-
-          <div class="settings-row reset-all">
-            <button id="daily-all-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all" data-daily="true">Reset Every Session Counter</button>
-          </div>
-
-          <div class="settings-row reset-all">
-            <button id="all-daily-decks-reset-button" class="btn btn-danger reset-button reset-all-btn" data-deckid="all-decks" data-daily="true">Reset Every Session Deck Counter</button>
-          </div>
-
-          <div class="settings-row counter-reset-row">
-            <span class="counter-reset-span">Total &ndash; {dailyTotalWinLossCounter.win} : {dailyTotalWinLossCounter.loss}</span>
-            <span class="counter-adj-span">
-              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="up" data-daily="true">+ Win</button>
-              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="down" data-daily="true">- Win</button>
-              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="up" data-daily="true">+ Loss</button>
-              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="down" data-daily="true">- Loss</button>
-              <button class="btn btn-danger reset-button" data-deckid="total" data-daily="true">Reset</button>
-            </span>
-          </div>
-          <div class="settings-row counter-reset-row" rv-each-deck="dailyCounterDeckList">
-            <span class="counter-reset-span">{deck.name} &ndash; {deck.win} : {deck.loss}</span>
-            <span class="counter-adj-span">
-              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="up" data-daily="true">+ Win</button>
-              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="win" data-direction="down" data-daily="true">- Win</button>
-              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="up" data-daily="true">+ Loss</button>
-              <button class="btn btn-primary counter-adj-button" rv-deckid="deck.id" data-winloss="loss" data-direction="down" data-daily="true">- Loss</button>
-              <button rv-deckid="deck.id" class="btn btn-danger reset-button" data-daily="true">Reset</button>
-            </span>
-          </div>
-        </div>
-      </div>
-      <div id="theme-pane" value="theme" rv-showsettingspane="settingsPaneIndex">
-        <div class="settings-container">
-          <div class="settings-row">
-            <div class="checkbox">
-              <label>
-                <input rv-checked="useTheme" id="apply-custom-theme-toggle" type="checkbox" data-toggle="toggle"> Apply the following custom theme:
-              </label>
-            </div>
-          </div>
-          <div class="settings-row">
-            <select id="custom-theme-select" class="form-control">
-              <option rv-each-theme="customStyleFiles">{ theme }</option>
-            </select>
-          </div>
-          <div class="settings-row">
-            <div class="checkbox">
-              <label>
-                <input rv-checked="useFlat" id="enable-flat-theme-toggle" type="checkbox" data-toggle="toggle"> Enable flat theme
-              </label>
-            </div>
-          </div>
-          <div class="settings-row" rv-show="useFlat">
-            <div class="checkbox">
-              <label>
-                <input rv-checked="useMinimal" id="enable-minimal-theme-toggle" type="checkbox" data-toggle="toggle"> Enable minimal theme
-              </label>
-            </div>
-          </div>
-          <div class="settings-row">
-            <div class="checkbox">
-              <label>
-                <input rv-checked="showUIButtons" key="showUIButtons" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the close and minimize buttons
-              </label>
-            </div>
-          </div>
-          <div class="settings-row">
-            <div class="checkbox">
-              <label>
-                <input rv-checked="showHideButton" key="showHideButton" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the hide tracker button
-              </label>
-            </div>
-          </div>
-          <div class="settings-row">
-            <div class="checkbox">
-              <label>
-                <input rv-checked="showMenu" key="showMenu" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the menu button
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="privacy-pane" value="privacy" rv-showsettingspane="settingsPaneIndex">
-        <div class="settings-container">
-          <div class="settings-row">
-            <input rv-checked="incognito" class="tf-toggle" type="checkbox" key="incognito" data-toggle="toggle"> Incognito Mode
-            <br />
-            <br />
-            <p class="about-p disclaimer"><b>Warning:</b> with incognito mode enabled, MTGATracker will not send any game data to MTGATracker services, including inspector. This means that inspector will no longer work!</p>
-          </div>
-        </div>
-      </div>
-      <div id="account-pane" value="account" rv-showsettingspane="settingsPaneIndex">
-        <div class="settings-container">
-          <div class="settings-row">
-            <h3>Inspector Account</h3>
-            <p>On first launch, MTGATracker generates a key that is private and unique to your machine.
-              Treat it like a password!</p>
-            <p>To authorize your Inspector account to view records from your tracker / machine, make sure you're signed
-              in to inspector in your default browser, then click the link below.</p>
-            <p><b><a rv-authref="trackerID">Authorize Inspector</a></b></p>
-            <p><b>View Tracker key</b>: <span id="showTrackerID">(click to reveal)</span></p>
-          </div>
-        </div>
-      </div>
-      <div id="collection-pane" value="collection" rv-showsettingspane="settingsPaneIndex">
-        <div class="settings-container">
-          <div class="settings-row">
-            <h3>Collection</h3>
-            <p><b>Basic info</b>: { lastCollection | countcollection }</p>
-            <button id="exportCollectionMTGGButton" class="btn btnbtn btn-secondary">Export collection (MTGGoldfish .csv format)</button>
-            <br>
-            <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
-          </div>
-          <div class="settings-row">
-            <h3>Recently collected cards</h3>
-            <p>How many new card events to display</p>
-            <div class="slidecontainer">
-              <input type="range" min="1" max="100" value="0" class="slider" id="recent-cards-quantity-slider">
-            </div>
-            <div class="slidevalue-recent-cards">
-              0
-            </div>
-            <div class="recent-cards-group-container" rv-each-recentcardgroup="recentCards | filterBySlideValueRecentCards recentCardsQuantityToShow">
-              <h5 class="recent-cards-header" onclick="recentCardsSectionClickHandler(event)">Cards updated: {recentcardgroup.time}</h5>
-              <ul class="recent-cards-container" rv-recentcardsbinder="recentcardgroup.cardsObtained">
-                <!-- cards appended here from settingsRenderer -->
-              </ul>
-            </div>
-            <div id="no-recently-obtained-cards">The tracker hasn't tracked any recently obtained cards (obtain cards to update this).</div>
           </div>
         </div>
       </div>
