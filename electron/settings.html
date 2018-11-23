@@ -301,6 +301,9 @@
           <div class="settings-row">
                 <input rv-checked="showHideButton" key="showHideButton" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the hide tracker button
           </div>
+          <div class="settings-row">
+              <input rv-checked="showMenu" key="showMenu" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the menu button <span class="helper-text"><b>NOTE:</b> If disabled, settings will only be accessible from the system tray!</span>
+          </div>
 
           <hr/>
 
@@ -342,10 +345,42 @@
         <div class="settings-container">
           <div class="settings-row">
             <h3>Collection</h3>
-            <p><b>Basic info</b>: { lastCollection | countcollection }</p>
+            <p><b>Basic info</b>: { lastCollectionCount }</p>
             <button id="exportCollectionMTGGButton" class="btn btnbtn btn-secondary">Export collection (MTGGoldfish .csv format)</button>
             <br>
             <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
+          </div>
+          <div class="settings-row">
+            <h3>Set Progress</h3>
+            <div rv-each-set="lastCollectionSetProgress">
+              <div class="well">
+
+                { set.name }
+                <div class="progress set-bar">
+                  <div rv-mythicprogress="set" class="progress-bar set-bar mythic" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                    <span>{set.mythicOwned} / {set.mythicTotal} Mythics</span>
+                  </div>
+                </div>
+
+                <div class="progress set-bar">
+                  <div rv-rareprogress="set" class="progress-bar set-bar rare" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                    <span>{set.rareOwned} / {set.rareTotal} Rares</span>
+                  </div>
+                </div>
+
+                <div class="progress set-bar">
+                  <div rv-uncommonprogress="set" class="progress-bar set-bar uncommon" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                    <span>{set.uncommonOwned} / {set.uncommonTotal} Uncommons</span>
+                  </div>
+                </div>
+
+                <div class="progress set-bar">
+                  <div rv-commonprogress="set" class="progress-bar set-bar common" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+                    <span>{set.commonOwned} / {set.commonTotal} Commons</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="settings-row">
             <h3>Recently collected cards</h3>
