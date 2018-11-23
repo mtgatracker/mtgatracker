@@ -111,6 +111,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       historyData.historyEvents = []
       ipcRenderer.send('clearGameHistory')
   })
+  $('#close-icon').click((e) => {historyWindow.close()})
 
   hideModeManager = hideWindowManager({
     useRollupMode: function() {return remote.getGlobal('rollupMode')},

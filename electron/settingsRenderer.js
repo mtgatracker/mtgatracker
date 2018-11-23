@@ -79,6 +79,9 @@ var settingsData = {
     {id: "draw-color", text: "Draw, Color",
     help: "By likelihood of next draw, then, by cost, then by color, then by name."},
   ],
+  showUIButtons: remote.getGlobal('showUIButtons'),
+  showHideButton: remote.getGlobal('showHideButton'),
+  showMenu: remote.getGlobal('showMenu')
 }
 
 settingsData.counterDeckList = counterDecks(settingsData.winLossObj.alltime);

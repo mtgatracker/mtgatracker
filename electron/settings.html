@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Settings</title>
-    <link rel="stylesheet" type="text/css" href="settings_style.css">
     <link rel="stylesheet" type="text/css" href="vendor/photon/photon.css">
     <link rel="stylesheet" type="text/css" href="vendor/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
     <link href="vendor/toggle/bootstrap-toggle.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="settings_style.css">
 </head>
 <body>
 
 <div id="container">
   <div class="pane-group">
-    <div class="pane pane-sm sidebar">
+    <div class="pane pane-sm sidebar" id="sidebar">
       <nav class="nav-group">
         <h5 class="nav-group-title">Tracker Settings</h5>
         <a value="general" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="general-nav">
@@ -68,28 +68,27 @@
 
           <h4>Miscellaneous</h4>
           <div class="settings-row">
-            <input rv-checked="staticMode" class="tf-toggle" type="checkbox" key="staticMode" data-toggle="toggle"> Static Decklist Mode <span class="helper-text">Decklist does not change during gameplay, i.e. cards not removed when drawn</span>
+            <input rv-checked="staticMode" class="tf-toggle" type="checkbox" key="staticMode" data-toggle="toggle"> Static decklist mode <span class="helper-text">Decklist does not change during gameplay, i.e. cards not removed when drawn</span>
           </div>
 
           <div class="settings-row">
-            <input rv-checked="mtgaOverlayOnly" class="tf-toggle" type="checkbox" key="mtgaOverlayOnly" data-toggle="toggle"> Overlay on MTGA <i>only</i> <span class="helper-text">"Off" means overlay <i>always</i></span>
+            <input rv-checked="mtgaOverlayOnly" class="tf-toggle" type="checkbox" key="mtgaOverlayOnly" data-toggle="toggle"> Overlay on MTGA only <span class="helper-text">"Off" means overlay <i>always</i></span>
           </div>
           <div class="settings-row">
-            <input rv-checked="minToTray" class="tf-toggle" type="checkbox" key="minToTray" data-toggle="toggle"> Minimize to tray
-            <span class="helper-text">Minimize to system tray instead of taskbar</span>
+            <input rv-checked="minToTray" class="tf-toggle" type="checkbox" key="minToTray" data-toggle="toggle"> Minimize to system tray instead of taskbar
           </div>
            <div class="settings-row">
-            <input rv-checked="useFrame" class="tf-toggle" type="checkbox" key="useFrame" data-toggle="toggle"> Streamer Mode <span class="helper-text">Tune the tracker for streaming</span>
+            <input rv-checked="useFrame" class="tf-toggle" type="checkbox" key="useFrame" data-toggle="toggle"> Streamer mode <span class="helper-text">Tune the tracker for streaming</span>
           </div>
 
           <hr />
 
           <h4>Game timers</h4>
           <div class="settings-row">
-            <input rv-checked="showGameTimer" class="tf-toggle" type="checkbox" key="showGameTimer" data-toggle="toggle"> Show Game Timer
+            <input rv-checked="showGameTimer" class="tf-toggle" type="checkbox" key="showGameTimer" data-toggle="toggle"> Show game timer
           </div>
           <div class="settings-row">
-            <input rv-checked="showChessTimers" class="tf-toggle" type="checkbox" key="showChessTimers" data-toggle="toggle"> Show Individual "Chess" Timers
+            <input rv-checked="showChessTimers" class="tf-toggle" type="checkbox" key="showChessTimers" data-toggle="toggle"> Show individual "chess" timers
           </div>
 
           <hr/>
@@ -104,57 +103,53 @@
           <h4>Vault</h4>
           <h5>Current Progress: { lastVaultProgress }%</h5>
           <div class="settings-row">
-            <input rv-checked="showVaultProgress" class="tf-toggle" type="checkbox" key="showVaultProgress" data-toggle="toggle"> Show vault progress in main UI
-            <span class="helper-text">
+            <input rv-checked="showVaultProgress" class="tf-toggle" type="checkbox" key="showVaultProgress" data-toggle="toggle"> Show vault progress in main window
           </div>
 
           <div class="settings-row">
-            <p>Minimum progress required to show vault progress in main UI</p>
+            <p class="slider-label">Minimum progress required to show vault progress in main window</p>
             <div class="slidecontainer">
               <input type="range" min="1" max="100" value="0" class="slider" id="min-vault-progress">
             </div>
-            <div class="slidevalue-vault">
+            <div class="slidervalue slidevalue-vault">
               0
             </div>
           </div>
 
           <hr/>
 
-          <h4>Hide tracker</h4>
+          <h4>Hide Tracker</h4>
           <div class="settings-row">
-            <input rv-checked="mouseEvents" class="tf-toggle" type="checkbox" key="mouseEvents" data-toggle="toggle"> Hide tracker on all right clicks
+            <input rv-checked="mouseEvents" class="tf-toggle" type="checkbox" key="mouseEvents" data-toggle="toggle"> Hide or show the tracker on all right clicks
           </div>
 
           <div class="settings-row">
-            <input rv-checked="leftMouseEvents" class="tf-toggle" type="checkbox" key="leftMouseEvents" data-toggle="toggle"> Un-hide tracker on all left clicks
+            <input rv-checked="invertHideMode" class="tf-toggle" type="checkbox" key="invertHideMode" data-toggle="toggle"> Invert hide mode <span class="helper-text"><i>Always</i> hide the tracker, only show it on right clicks or clicking the hide button</span>
           </div>
 
           <div class="settings-row">
-            <p>
-              "Hide" delay
-            </p>
+            <input rv-checked="rollupMode" class="tf-toggle" type="checkbox" key="rollupMode" data-toggle="toggle"> Roll-up mode <span class="helper-text">Shrink the tracker to just the header instead of making it transparent</span>
+          </div>
+
+          <div class="settings-row">
+            <h5 class="slider-label">
+              Hide delay
+            </h5>
             <div class="slidecontainer">
               <input type="range" min="1" max="100" value="50" class="slider" id="hide-delay">
             </div>
-            <div class="slidevalue">
+            <div class="slidevalue slidervalue">
               40
             </div>
-            <span class="helper-block">How many seconds should the tracker stay hidden on right clicks or hide button presses? If you want to make it only hide and show on clicks or the hide button, set slider to far right (&#x221e;).</span>
-          </div>
-
-          <div class="settings-row">
-            <input rv-checked="invertHideMode" class="tf-toggle" type="checkbox" key="invertHideMode" data-toggle="toggle"> Invert Hide Mode <span class="helper-text"><i>Always</i> hide the tracker, only show it on right clicks</span>
-          </div>
-
-          <div class="settings-row">
-            <input rv-checked="rollupMode" class="tf-toggle" type="checkbox" key="rollupMode" data-toggle="toggle"> Roll Up Mode <span class="helper-text">Shrink the tracker to just the header instead of hiding it</span>
+            <span class="helper-block">How many seconds should the tracker stay hidden on right clicks or hide button presses?<br/>
+            If you want to make it only hide and show on right clicks or the hide button, set the slider to far right (&#x221e;).</span>
           </div>
 
           <hr />
 
-          <h4>Sort methods</h4>
+          <h4>Decklist sorting method</h4>
           <div class="settings-row">
-            Use the following sorting method on deck lists
+            Use the following sorting method on decklists
             <select id="sorting-method-select" class="form-control">
               <option rv-each-sortingmethod="sortingMethods" rv-value="sortingmethod.id">{ sortingmethod.text }</option>
             </select>
@@ -174,7 +169,7 @@
             <input rv-checked="showErrors" class="tf-toggle" type="checkbox" key="showErrors" data-toggle="toggle"> Show error count in game
           </div>
           <div class="settings-row">
-            <input rv-checked="showInspector" class="tf-toggle" type="checkbox" key="showInspector" data-toggle="toggle"> Show inspector reminders
+            <input rv-checked="showInspector" class="tf-toggle" type="checkbox" key="showInspector" data-toggle="toggle"> Show Inspector reminders
             <span class="helper-text">E.g. "Game sent to Inspector!"</span>
           </div>
 
@@ -191,7 +186,7 @@
 
           <h4>Debug mode</h4>
           <div class="settings-row">
-            <input rv-checked="debug" class="tf-toggle" type="checkbox" key="debug" data-toggle="toggle"> Debug Mode <span class="helper-text">Only for developers or troubleshooting</span>
+            <input rv-checked="debug" class="tf-toggle" type="checkbox" key="debug" data-toggle="toggle"> Debug mode <span class="helper-text">Only for developers or troubleshooting</span>
           </div>
 
         </div>
@@ -295,28 +290,25 @@
       <div id="theme-pane" value="theme" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
-            <div class="checkbox">
-              <label>
-                <input rv-checked="useFlat" id="enable-flat-theme-toggle" type="checkbox" data-toggle="toggle"> Enable flat theme <span class="helper-text">Changes card display to a simpler "flat" display
-              </label>
-            </div>
+            <input rv-checked="useFlat" id="enable-flat-theme-toggle" type="checkbox" data-toggle="toggle"> Enable flat theme <span class="helper-text">Changes card display to a simpler "flat" display
           </div>
           <div class="settings-row" rv-show="useFlat">
-            <div class="checkbox">
-              <label>
-                <input rv-checked="useMinimal" id="enable-minimal-theme-toggle" type="checkbox" data-toggle="toggle"> Enable minimal theme <span class="helper-text">Hides or moves some UI elements and shrinks tracker size</span>
-              </label>
-            </div>
+            <input rv-checked="useMinimal" id="enable-minimal-theme-toggle" type="checkbox" data-toggle="toggle"> Enable minimal theme <span class="helper-text">Streamlines and shrinks the tracker</span>
           </div>
+          <div class="settings-row">
+            <input rv-checked="showUIButtons" key="showUIButtons" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the close and minimize buttons
+          </div>
+          <div class="settings-row">
+                <input rv-checked="showHideButton" key="showHideButton" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the hide tracker button
+          </div>
+          <div class="settings-row">
+                <input rv-checked="showMenu" key="showMenu" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the menu button
+            </div>
 
           <hr/>
 
           <div class="settings-row">
-            <div class="checkbox">
-              <label>
                 <input rv-checked="useTheme" id="apply-custom-theme-toggle" type="checkbox" data-toggle="toggle"> Apply the following custom theme:
-              </label>
-            </div>
           </div>
           <div class="settings-row">
             <select id="custom-theme-select" class="form-control">
@@ -329,7 +321,7 @@
       <div id="privacy-pane" value="privacy" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
-            <input rv-checked="incognito" class="tf-toggle" type="checkbox" key="incognito" data-toggle="toggle"> Incognito Mode
+            <input rv-checked="incognito" class="tf-toggle" type="checkbox" key="incognito" data-toggle="toggle"> Incognito mode
             <br />
             <br />
             <p class="about-p disclaimer"><b>Warning:</b> with incognito mode enabled, MTGATracker will not send any game data to MTGATracker services, including Inspector. This means that Inspector will no longer work!</p>
@@ -732,6 +724,11 @@
               <li class="about-p">Tracker will now open settings to about page on first launch after an update (so you can see this changelog!)</li>
               <li class="about-p">Tracker will now attempt to upload at end of game slightly more aggressively, to help prevent lost inspector data</li>
             </ul>
+            <hr/>
+            <h3>Attributions</h3>
+            <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/cole-bemis" title="Cole Bemis">Cole Bemis</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/becris" title="Becris">Becris</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
           </div>
         </div>
       </div>

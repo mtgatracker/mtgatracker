@@ -273,6 +273,9 @@ let recentCards = settings.get('recentCards', []);
 let recentCardsQuantityToShow = settings.get('recentCardsQuantityToShow', 10);
 let minToTray = settings.get('minToTray', false);
 logPath = settings.get("logPath", logPath)
+let showUIButtons = settings.get('showUIButtons',true)
+let showHideButton = settings.get('showHideButton',true)
+let showMenu = settings.get('showMenu',true)
 
 global.historyEvents = []
 
@@ -370,7 +373,7 @@ ipcMain.on('tosAgreed', (event, arg) => {
 
 let openSettingsWindow = () => {
   if(settingsWindow == null) {
-    let settingsWidth = debug ? 1400 : 1000;
+    let settingsWidth = debug ? 1400 : 1025;
 
     const settingsWindowStateMgr = windowStateKeeper('settings')
     settingsWindow = new BrowserWindow({width: settingsWidth,
@@ -652,6 +655,9 @@ global.logPath = logPath
 global.minToTray = minToTray
 global.historyZoom = settings.get("history-zoom", 1.0)
 global.settingsPaneIndex = "general"
+global.showUIButtons = showUIButtons
+global.showHideButton = showHideButton
+global.showMenu = showMenu
 
 /*************************************************************
  * window management
@@ -688,7 +694,7 @@ const closeTrackerHandler = (menuItem, browserWindow, event) => {
 let tray = null;
 
 const createTray = () => {
-  if(minToTray && tray==null) {
+  if(tray==null) {
     let iconFile = 'icon_tray.png'
     let iconPath = path.join(__dirname,'img', iconFile);
     console.log(fs.existsSync(iconPath))
