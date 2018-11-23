@@ -51,9 +51,9 @@
           <span class="icon icon-info"></span>
           About
         </a>
-        <a value="supporters" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="supporters-nav">
+        <a value="feedback" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="feedback-nav">
           <span class="icon icon-heart"></span>
-          Supporters
+          Feedback
         </a>
       </nav>
     </div>
@@ -290,7 +290,7 @@
       <div id="theme-pane" value="theme" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
-            <input rv-checked="useFlat" id="enable-flat-theme-toggle" type="checkbox" data-toggle="toggle"> Enable flat theme <span class="helper-text">Changes card display to a simpler "flat" display
+            <input rv-checked="useFlat" id="enable-flat-theme-toggle" type="checkbox" data-toggle="toggle"> Enable flat theme <span class="helper-text">Changes card display to a simpler "flat" display</span>
           </div>
           <div class="settings-row" rv-show="useFlat">
             <input rv-checked="useMinimal" id="enable-minimal-theme-toggle" type="checkbox" data-toggle="toggle"> Enable minimal theme <span class="helper-text">Streamlines and shrinks the tracker</span>
@@ -301,9 +301,6 @@
           <div class="settings-row">
                 <input rv-checked="showHideButton" key="showHideButton" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the hide tracker button
           </div>
-          <div class="settings-row">
-                <input rv-checked="showMenu" key="showMenu" type="checkbox" data-toggle="toggle" class="tf-toggle"> Show the menu button
-            </div>
 
           <hr/>
 
@@ -732,47 +729,56 @@
           </div>
         </div>
       </div>
-      <div id="supporters-pane" value="supporters" rv-showsettingspane="settingsPaneIndex">
+      <div id="feedback-pane" value="feedback" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
-            <h3>Thank you for your support!</h3>
-            <p>MTGATracker is an open-source project, built as a labor of love, with code contributions from developers
-              all over the world. MTGATracker and Inspector are presented ad-free for your enjoyment.</p>
-            <p>The bills associated with MTGATracker are paid for out-of-pocket by
-              MTGATracker's lead dev, but our supporters on Patreon help lighten the load (and keep us motivated to keep
-              working on MTGATracker).</p>
-            <p><b>We can't thank you enough!</b></p>
-            <h2>Our Scout-Major Level Supporters</h2>
-            <div class="maj-container well">
-              <center>
-                <img class="maj-img" src="img/minionod.png" />
-                <hr class="small-hr" />
-                <div>MinionOd</div>
-                <a href="https://twitch.tv/minionod"> <i class="fa fa-twitch social-icon"></i></a>
-                <a href="https://twitter.com/minionod"> <i class="fa fa-twitter social-icon"></i></a>
-              </center>
+
+            <h3>Feedback</h3>
+
+            <div class="settings-row">
+              <div class="checkbox">
+                <label>
+                  <input rv-checked="sendAnonymousUsageInfo" id="enable-anonymous-usage-toggle" type="checkbox" data-toggle="toggle"> Send MTGATracker Developers Anonymous Usage Information
+                </label>
+              </div>
+              <p>This shows us what features & settings y'all use the most to help us decide what to make next, and which features to continue supporting.</p>
             </div>
 
-            <div class="maj-container well">
-              <center>
-                <img class="maj-img" src="img/spencatro.jpg" />
-                <hr class="small-hr" />
-                <div>Spencatro</div>
-                <a href="https://twitch.tv/spencatro"> <i class="fa fa-twitch social-icon"></i></a>
-                <a href="https://twitter.com/spencatro"> <i class="fa fa-twitter social-icon"></i></a>
-                <a href="https://github.com/shawkinsl"> <i class="fa fa-github social-icon"></i></a>
-              </center>
+            <h5>Give MTGATracker Devs Your Onions</h5>
+            Don't like something about MTGATracker? Have a great idea for a new feature? Let us know about it!
+
+            <div class="settings-row">
+              <b>Feedback Type</b>
             </div>
-            <h2>Our Scout-Captain Level Supporters</h2>
-            <ul>
-              <li>emerald000</li>
-              <li>MTGMAD <a href="https://twitter.com/mtgmad"><i class="fa fa-twitter social-icon"></i></a></li>
-              <li>isharacomix <a href="http://isharacomix.org"><i class="fa fa-link social-icon"></i></a></li>
-              <li>CommiePuddin <a href="https://www.twitch.tv/commiepuddin"><i class="fa fa-twitch social-icon"></i></a></li>
-              <li>Xanatos</li>
-              <li>Chriss</li>
-            </ul>
-            <p>Support us <a href="https://www.patreon.com/mtgatracker">on Patreon</a> to get your name on the list!</p>
+            <div class="settings-row">
+              <select id="feedback-type-select" class="form-control">
+                <option>Bug Report</option>
+                <option>Feature Request</option>
+                <option>A Love Letter w/ Chocolates</option>
+                <option>Something Else</option>
+              </select>
+            </div>
+
+            <div class="settings-row">
+              <b>Tell us your thoughts!</b>
+            </div>
+            <div class="settings-row">
+              <textarea class="form-control"></textarea>
+            </div>
+
+            <div class="settings-row">
+              <b>May we contact you about this feedback? If so, how?</b>
+              <br>
+              (You can enter something like: "myemail@gmail.com" or "Discord: MyUsername#1234")
+            </div>
+            <div class="settings-row">
+              <input id="contactInfo" placeholder="No thanks!" class="form-control">
+            </div>
+
+            <div class="settings-row">
+              <button id="send-feedback" class="btn btnbtn btn-primary">Send it!</button>
+            </div>
+            <!-- TODO -->
           </div>
         </div>
       </div>
