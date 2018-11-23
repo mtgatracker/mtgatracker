@@ -1,3 +1,7 @@
+h4 {
+    line-height: 1.4;
+}
+
 .settings-container {
   padding: 10px;
   margin: 10px;
@@ -19,6 +23,10 @@
 
 a {
   cursor: pointer;
+}
+
+#sidebar {
+  max-width: 180px;
 }
 
 .link {
@@ -47,6 +55,10 @@ span.helper-text::before {
 
 #sorting-method-select {
     margin: 5px 0 8px 0;
+}
+
+.toggle {
+  margin-right: 5px;
 }
 
 .disclaimer {
@@ -82,17 +94,21 @@ span.helper-text::before {
   margin-bottom: 0.2rem;
 }
 
+.slider-label {
+    margin: 20px 0 4px 0;
+}
+
 /* https://www.w3schools.com/howto/howto_js_rangeslider.asp */
 
-.slidevalue {
-    width: 10%;
+.slidervalue {
+    width: 5%;
     display: inline-block;
     text-align: right;
+    padding-left: 15px;
 }
 
 .slidecontainer {
-    width: 80%; /* Width of the outside container */
-    margin-top: 10px;
+    width: 92%; /* Width of the outside container */
     display: inline-block;
 }
 
