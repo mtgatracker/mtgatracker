@@ -1391,6 +1391,10 @@ let updateTitleWidth = () => {
   $('#tracker-header h1').css('width',width)
 }
 
+/**
+ * These click handlers need to be reset on all resizeWindow calls because of DOM changes
+ */
+
 let setClickHandlers = () => {
   addClickHandler('.message-container',(e) => {dismissMessage(e.target)})
   addClickHandler('.back-draft',(e) => {exitDraft()})
@@ -1431,6 +1435,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
     } else {
         $("#container").addClass("container-normal")
     }
+
+    /**
+     * These click handlers only need to be set once, so called here.
+     */
 
     buildMenu()
     updateTitleWidth()
