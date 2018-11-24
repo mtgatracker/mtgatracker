@@ -240,6 +240,7 @@ if (!settings.has('winLossCounter.alltime.total') && settings.has('winLossCounte
 let debug = settings.get('debug', false);
 let mtgaOverlayOnly = settings.get('mtgaOverlayOnly', true);
 let showErrors = settings.get('showErrors', false);
+let sendAnonymousUsageInfo = settings.get('sendAnonymousUsageInfo', false);
 let incognito = settings.get('incognito', false);
 let showInspector = settings.get('showInspector', true);
 let useFrame = settings.get('useFrame', false);
@@ -619,6 +620,7 @@ global.API_URL = API_URL;
 global.debug = debug;
 global.mtgaOverlayOnly = mtgaOverlayOnly;
 global.showErrors = showErrors;
+global.sendAnonymousUsageInfo = sendAnonymousUsageInfo;
 global.incognito = incognito;
 global.showInspector = showInspector;
 global.useFrame = useFrame;

@@ -41,6 +41,7 @@ var settingsData = {
   mtgaOverlayOnly: remote.getGlobal("mtgaOverlayOnly"),
   settingsPaneIndex: remote.getGlobal("settingsPaneIndex"),
   debug: remote.getGlobal('debug'),
+  sendAnonymousUsageInfo: remote.getGlobal('sendAnonymousUsageInfo'),
   showErrors: remote.getGlobal('showErrors'),
   showInspector: remote.getGlobal('showInspector'),
   incognito: remote.getGlobal('incognito'),
