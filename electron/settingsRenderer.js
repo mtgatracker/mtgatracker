@@ -252,19 +252,45 @@ rivets.binders.deckid = function(el, value) {
 }
 
 rivets.binders.mythicprogress = function(el, value) {
-  el.style.width = Math.max(10, (100 * value.mythicOwned / value.mythicTotal)) + "%"
+  el.style.width = Math.max(0, (100 * value.mythicOwned / value.mythicTotal)) + "%"
 }
 
 rivets.binders.rareprogress = function(el, value) {
-  el.style.width = Math.max(10, (100 * value.rareOwned / value.rareTotal)) + "%"
+  el.style.width = Math.max(0, (100 * value.rareOwned / value.rareTotal)) + "%"
 }
 
 rivets.binders.uncommonprogress = function(el, value) {
-  el.style.width = Math.max(10, (100 * value.uncommonOwned / value.uncommonTotal)) + "%"
+  el.style.width = Math.max(0, (100 * value.uncommonOwned / value.uncommonTotal)) + "%"
 }
 
 rivets.binders.commonprogress = function(el, value) {
-  el.style.width = Math.max(10, (100 * value.commonOwned / value.commonTotal)) + "%"
+  el.style.width = Math.max(0, (100 * value.commonOwned / value.commonTotal)) + "%"
+}
+
+const setPromoMap = {
+  RIX: "img/card_set_promos/rix.png",
+  M19: "img/card_set_promos/m19.png",
+  GRN: "img/card_set_promos/grn.png",
+  XLN: "img/card_set_promos/xln.png",
+  DAR: "img/card_set_promos/dar.png",
+  ANA: "img/card_set_promos/ana.png",
+}
+
+rivets.binders.setpromo = function(el, value) {
+  if (Object.keys(setPromoMap).includes(value)) {
+    el.style.display = "block"
+    el.src = setPromoMap[value]
+  } else {
+    el.style.display = "none"
+  }
+}
+
+rivets.binders.hidesetname = function(el, value) {
+  if (Object.keys(setPromoMap).includes(value)) {
+    el.style.display = "none"
+  } else {
+    el.style.display = "block"
+  }
 }
 
 function recentCardsSectionClickHandler(event) {

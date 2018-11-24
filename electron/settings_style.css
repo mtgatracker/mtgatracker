@@ -196,9 +196,15 @@ span.helper-text::before {
   padding-bottom: 3px;
 }
 
+.progress-text {
+  color: white;
+  font-size: 16px;
+}
+
 .progress {
   margin-bottom: 5px;
-  background-color: #b1b1b1;
+  background-color: #8e8e8e;
+  width: 100%;
 }
 
 .set-bar {
@@ -214,7 +220,7 @@ span.helper-text::before {
 }
 
 .uncommon {
-  background-color: #707883;
+  background-color: #5d7eab;
 }
 
 .common {
