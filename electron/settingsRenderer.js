@@ -6,6 +6,7 @@ const API_URL = remote.getGlobal("API_URL")
 const keytar = require('keytar')
 const mtga = require('mtga')
 const path = require('path')
+const request = require('request')
 const os = require('os')
 
 let desktopPath = path.join(os.homedir(), 'Desktop')
@@ -583,6 +584,31 @@ document.addEventListener("DOMContentLoaded", function(event) {
     })
   })
 
+  $("#send-feedback").click((e) => {
+    console.log("sending feedback")
+    let data = {
+      feedbackType: $("#feedback-type-select").val(),
+      feedbackText: $("#feedback-text").val(),
+      contactInfo: $("#contact-info").val(),
+    }
+    if (!data.feedbackText) {
+      alert("Whoops, you forgot to fill out... er, the most important part of the form!")
+    } else {
+      $("#send-feedback").prop("disabled", true)
+      $("#send-feedback").html("Working on it...")
+      passThrough("public-api/feedback", data).then(r => {
+        console.log("success")
+        $("#send-feedback").html("Sent! Thanks!")
+      }).catch(e => {
+        console.log("error sending feedback :(")
+        console.log(e)
+        alert("Something went wrong! Try again?")
+        $("#send-feedback").prop("disabled", false)
+        $("#send-feedback").html("Try again?")
+      })
+    }
+  })
+
   document.getElementById("hide-delay").value = "" + settingsData.hideDelay;
   let initialValue = settingsData.hideDelay
   if (initialValue == 100) initialValue = "∞"
@@ -632,5 +658,35 @@ document.addEventListener("DOMContentLoaded", function(event) {
     $(".slidevalue-recent-cards").html(value);
   }
 })
+
+// TODO: DRY @ mainRenderer.js
+var uploadDelay = 0;
+function passThrough(endpoint, passData, errors) {
+  if (!errors) {
+    errors = []
+  }
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log(`posting ${endpoint} request...`)
+      request.post({
+        url: `${API_URL}/${endpoint}`,
+        json: true,
+        body: passData,
+        headers: {'User-Agent': 'MTGATracker-App'}
+      }, (err, res, data) => {
+        console.log(`finished posting ${endpoint} request...`)
+        if (err || res.statusCode != 200) {
+          errors.push({on: `post_${endpoint}`, error: err || res})
+          reject({errors: errors})
+        } else {
+          console.log(`${endpoint} uploaded! huzzah!`)
+          resolve({
+            success: true
+          })
+        }
+      })
+    }, 100 * uploadDelay)
+  })
+}
 
 // ipcRenderer.send('settingsChanged', {cool: true})
