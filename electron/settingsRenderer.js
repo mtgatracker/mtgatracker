@@ -20,6 +20,17 @@ tt({
   }
 })
 
+var buildWorker = function(func) {
+  // https://stackoverflow.com/questions/5408406/web-workers-without-a-separate-javascript-file
+  var blobURL = URL.createObjectURL(new Blob([ '(', func.toString(), ')()' ], { type: 'application/javascript' })),
+
+  worker = new Worker(blobURL);
+
+  // Won't be needing this anymore
+  URL.revokeObjectURL(blobURL);
+  return worker
+}
+
 var settingsData = {
   version: remote.getGlobal("version"),
   commit: "",
@@ -48,6 +59,8 @@ var settingsData = {
   totalWinLossCounter: null,
   dailyTotalWinLossCounter: null,
   lastCollection: remote.getGlobal('lastCollection'),
+  lastCollectionCount: "loading...",
+  lastCollectionSetProgress: [{name: "loading..."}],
   lastVaultProgress: remote.getGlobal('lastVaultProgress'),
   showVaultProgress: remote.getGlobal('showVaultProgress'),
   minVaultProgress: remote.getGlobal('minVaultProgress'),
@@ -152,18 +165,6 @@ function counterDecks(winLossObj){
   } );
 }
 
-rivets.formatters.countcollection = function(collection) {
-    let total = 0;
-    let unique = 0;
-    for (let key in collection) {
-      if (collection[key] && Number.isInteger(collection[key])) {
-        total += collection[key]
-        unique += 1
-      }
-    }
-    return `${unique} unique cards, ${total} total cards`
-};
-
 rivets.formatters.and = function(comparee, comparator) {
     return comparee && comparator;
 };
@@ -250,6 +251,48 @@ rivets.binders.deckid = function(el, value) {
   el.setAttribute('data-deckid', value);
 }
 
+rivets.binders.mythicprogress = function(el, value) {
+  el.style.width = Math.max(0, (100 * value.mythicOwned / value.mythicTotal)) + "%"
+}
+
+rivets.binders.rareprogress = function(el, value) {
+  el.style.width = Math.max(0, (100 * value.rareOwned / value.rareTotal)) + "%"
+}
+
+rivets.binders.uncommonprogress = function(el, value) {
+  el.style.width = Math.max(0, (100 * value.uncommonOwned / value.uncommonTotal)) + "%"
+}
+
+rivets.binders.commonprogress = function(el, value) {
+  el.style.width = Math.max(0, (100 * value.commonOwned / value.commonTotal)) + "%"
+}
+
+const setPromoMap = {
+  RIX: "img/card_set_promos/rix.png",
+  M19: "img/card_set_promos/m19.png",
+  GRN: "img/card_set_promos/grn.png",
+  XLN: "img/card_set_promos/xln.png",
+  DAR: "img/card_set_promos/dar.png",
+  ANA: "img/card_set_promos/ana.png",
+}
+
+rivets.binders.setpromo = function(el, value) {
+  if (Object.keys(setPromoMap).includes(value)) {
+    el.style.display = "block"
+    el.src = setPromoMap[value]
+  } else {
+    el.style.display = "none"
+  }
+}
+
+rivets.binders.hidesetname = function(el, value) {
+  if (Object.keys(setPromoMap).includes(value)) {
+    el.style.display = "none"
+  } else {
+    el.style.display = "block"
+  }
+}
+
 function recentCardsSectionClickHandler(event) {
   var revealed = $(event.target).siblings(".recent-cards-container").is(":hidden");
   if(revealed) {
@@ -262,6 +305,101 @@ function recentCardsSectionClickHandler(event) {
 var firstCounterAdjButtonClicked = true;
 document.addEventListener("DOMContentLoaded", function(event) {
   rivets.bind(document.getElementById('container'), settingsData)
+
+  let collectionWorker = buildWorker(e => {
+    var allCards;
+    var cardSets = {}
+    var playerCardCounts = {}
+    onmessage = event => {
+      if (event.data.allCards) {
+        allCards = event.data.allCards.attributes.cards;
+        // Note: this block of code looks really stupid, but trust me, it's necessary.
+        // TL:DR; you can't `require(...)` inside webworkers, so we lose all of the cool mtga functionality.
+        // As if that wasn't bad enough: since mtga uses backbone BS, we have to do silly things to
+        // get to the actual objects within the allCards object.
+        // Anyways, this block of code basically redoes all the organization that mtga originally offered in the
+        // first place. :tiny_violin:
+        for (let cardID in allCards) {
+          let thisCard = allCards[cardID].attributes
+          if (!cardSets[thisCard.set]) {
+            cardSets[thisCard.set] = {
+              cards: [],
+              counts: {
+                mythicTotal: 0,
+                rareTotal: 0,
+                uncommonTotal: 0,
+                commonTotal: 0
+              }
+            }
+          }
+          let thisCardsSet = cardSets[thisCard.set]
+          thisCardsSet.cards.push(thisCard)
+          // add 4 for each unique card; you can collect 4 of each
+          if (thisCard.rarity == "Mythic Rare") {
+            thisCardsSet.counts.mythicTotal += 4;
+          } else if (thisCard.rarity == "Rare") {
+            thisCardsSet.counts.rareTotal += 4;
+          } else if (thisCard.rarity == "Uncommon") {
+            thisCardsSet.counts.uncommonTotal += 4;
+          } else if (thisCard.rarity == "Common") {
+            thisCardsSet.counts.commonTotal += 4;
+          }
+        }
+        console.log(cardSets)
+        postMessage({ready: true})
+      } else if (event.data.lastCollection) {
+        let total = 0;
+        let unique = 0;
+        let collection = event.data.lastCollection;
+        console.log(Object.keys(allCards))
+        for (let key in collection) {
+          if (collection[key] && Number.isInteger(collection[key])) {
+            if (Object.keys(allCards).includes(key)) {
+              let thisCard = allCards[key].attributes
+              let thisCardsSet = cardSets[thisCard.set]
+              if (!Object.keys(playerCardCounts).includes(thisCard.set)) {
+                playerCardCounts[thisCard.set] = thisCardsSet.counts
+                playerCardCounts[thisCard.set].name = thisCard.set
+                playerCardCounts[thisCard.set].mythicOwned = 0
+                playerCardCounts[thisCard.set].rareOwned = 0
+                playerCardCounts[thisCard.set].uncommonOwned = 0
+                playerCardCounts[thisCard.set].commonOwned = 0
+              }
+
+              if (thisCard.rarity == "Mythic Rare") {
+                playerCardCounts[thisCard.set].mythicOwned += collection[key];
+              } else if (thisCard.rarity == "Rare") {
+                playerCardCounts[thisCard.set].rareOwned += collection[key];
+              } else if (thisCard.rarity == "Uncommon") {
+                playerCardCounts[thisCard.set].uncommonOwned += collection[key];
+              } else if (thisCard.rarity == "Common") {
+                playerCardCounts[thisCard.set].commonOwned += collection[key];
+              }
+              playerCardCounts[thisCard.set]
+            }
+            total += collection[key]
+            unique += 1
+          }
+        }
+
+        postMessage({
+          lastCollectionCount: `${unique} unique cards, ${total} total cards`,
+          playerCardCounts: Object.values(playerCardCounts),
+        })
+      }
+    }
+    // for(;;) {}; // use this to loop forever, and test that hung worker doesn't make window hang
+  })
+
+  collectionWorker.onmessage = event => {
+    if (event.data.lastCollectionCount) {
+      settingsData.lastCollectionCount = event.data.lastCollectionCount
+      settingsData.lastCollectionSetProgress = event.data.playerCardCounts
+    } else if (event.data.ready) {
+      collectionWorker.postMessage({lastCollection: settingsData.lastCollection})
+    }
+  }
+  collectionWorker.postMessage({allCards: mtga.allCards})
 
   let themePath = settingsData.runFromSource ? "themes" : path.join("..", "themes");
   fs.readdir(themePath, (err, files) => {
