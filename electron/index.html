@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <title>MTGA Tracker</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
     <!-- <link id="theme" rel="stylesheet" type="text/css" href="../../themes/blue.css"> <!-- example theme file -->
     <link rel="stylesheet" type="text/css" href="mtg-font-master/css/magic-font.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
   <!-- TODO: https://github.com/magarena/magarena/tree/master/resources/cardbuilder/fonts -->
   </head>
   <body>
@@ -13,17 +13,23 @@
       <div id="tracker-header">
         <h1 class="game-deck-title gamecomplete" rv-show="showDraftStats">Draft Picks</h1>
         <h1 class="beleren header-title" rv-show="show_available_decklists">MTGATracker</h1>
-          <h1 class="game-deck-title" rv-show="game_in_progress">{ deck_name }</h1>
-          <h3 class="beleren link back-link back-draft" onclick="exitDraft()" rv-show="showDraftStats">Exit collection view</h3>
-        <h3 class="zoom-panel"><span class="zoom-out zoom glow-on-hover">-</span> / <span class="zoom-in zoom glow-on-hover">+</span></h3>
-        <div id="floating-eye" class="no-height-contribution glow-on-hover">
-          <img class="settings-img" src="hide-512.png" width="30px" height="30px">
+        <h1 class="game-deck-title" rv-show="game_in_progress">{ deck_name }</h1>
+        <div class="menu-div ui-button-panel" rv-show="showMenu">
+          <div id="menu-icon" class="no-height-contribution glow-on-hover">
+            <img src="img/menu.png">
+          </div>
+          <div id="main-menu" class="nestedsidemenu hide-me"></div>
         </div>
-        <div id="floating-history" class="no-height-contribution glow-on-hover">
-          <img class="settings-img" src="img/history.png" width="25px" height="25px">
+        <div class="controls ui-button-panel" rv-show="showUIButtons">
+          <div id="close-icon" class="no-height-contribution glow-on-hover">
+            <img src="img/cancel.png">
+          </div>
+          <div id="minimize-icon" class="no-height-contribution glow-on-hover">
+            <img src="img/remove.png">
+          </div>
         </div>
-        <div id="floating-settings" class="no-height-contribution glow-on-hover">
-          <img class="settings-img" src="gear-white.png" width="25px" height="25px">
+        <div id="floating-eye" class="no-height-contribution glow-on-hover ui-button-panel" rv-show="showHideButton">
+          <img src="hide-512.png">
         </div>
       </div>
       <div id="tracker-body">
@@ -52,16 +58,16 @@
           <h3 class="beleren" rv-showvault="lastVaultProgress">Vault Progress: { lastVaultProgress }%</h3>
           <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
           <div class="messages">
-            <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
+            <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID" rv-index="index"  rv-messageID="message.messageID">
               <span class="message-count" rv-show="message.count | more_than_one">{ message.count }</span>
-              <span rv-show="message.mayfollow" class="dismiss-message mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)">X</span>
-              <span class="update-message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
+              <span rv-show="message.mayfollow" class="dismiss-message mayfollow message">X</span>
+              <span class="update-message message" rv-show="message.mayfollow"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
 
-              <span rv-hide="message.mayfollow" class="dismiss-message">!!</span>
-              <span class="update-message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
+              <span rv-hide="message.mayfollow" class="dismiss-message no-dismiss">!!</span>
+              <span class="update-message message" rv-hide="message.mayfollow"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
             </p>
           </div>
-          <h3 class="beleren link back-link hide-on-rollup" onclick="unpopulateDecklist()" rv-show="game_complete">Back to decklists</h3>
+          <h3 class="beleren link back-link hide-on-rollup back-to-decklist" rv-show="game_complete">Back to decklists</h3>
           <h3 class="cardsleft">{ total_cards_in_deck } cards in deck</h3>
           <div class="card" rv-each-stat="draw_stats | decklistSort" rv-card_color="stat.colors">
             <div class="card-text">
@@ -86,15 +92,16 @@
         <div id="draft-collection-list" rv-show="showDraftStats">
           <p class="header-warning" rv-show="showErrors">Errors: {error_count}</p>
           <div class="messages">
-            <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
+            <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID" rv-index="index" rv-messageID="message.messageID">
               <span class="message-count" rv-show="message.count | more_than_one">{ message.count }</span>
-              <span rv-show="message.mayfollow" class="dismiss-message mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)">X</span>
-              <span class="update-message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
+              <span rv-show="message.mayfollow" class="dismiss-message message mayfollow">X</span>
+              <span class="update-message message" rv-show="message.mayfollow"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
 
-              <span rv-hide="message.mayfollow" class="dismiss-message">!!</span>
-              <span class="update-message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
+              <span rv-hide="message.mayfollow" class="dismiss-message no-dismiss">!!</span>
+              <span class="update-message message" rv-hide="message.mayfollow"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
              </p>
           </div>
+          <h3 class="beleren link back-draft" rv-show="showDraftStats">Exit collection view</h3>
           <div class="card" rv-each-stat="draftStats" rv-card_color="stat.colors">
             <div class="card-text">
               <div class="card-text-limit"><div class="cardcount">{ stat.count }x</div> <div class="cardname">{ stat.pretty_name } owned</div></div>
@@ -128,24 +135,24 @@
           <div id="decklists-container" rv-show="no_list_selected">
             <h3 class="reminder">Pick a deck, or start a game!</h3>
             <div class="messages">
-              <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID">
+              <p class="message-container" rv-each-message="messages" rv-show="message.show" rv-showmessage="message.messageID" rv-index="index" rv-messageID="message.messageID">
                 <span class="message-count" rv-show="message.count | more_than_one">{ message.count }</span>
-                <span rv-show="message.mayfollow" class="dismiss-message mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)">X</span>
-                <span class="update-message" rv-show="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
+                <span rv-show="message.mayfollow" class="dismiss-message message mayfollow">X</span>
+                <span class="update-message message" rv-show="message.mayfollow"><a class="link" rv-href="message.mayfollow">{ message.text }</a></span>
 
-                <span rv-hide="message.mayfollow" class="dismiss-message">!!</span>
-                <span class="update-message" rv-hide="message.mayfollow" rv-index="index" rv-messageID="message.messageID" onclick="dismissMessage(this)"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
+                <span rv-hide="message.mayfollow" class="dismiss-message no-dismiss">!!</span>
+                <span class="update-message message" rv-hide="message.mayfollow"><a class="link" rv-href="message.mustfollow">{ message.text }</a></span>
               </p>
             </div>
             <p class="header-warning" rv-show="no_decks">
               MTGATracker couldn't find any decks. If this is the first time launching MTGATracker, please edit, then save any deck in MTGA now!
             </p>
-            <div rv-each-deck="player_decks" class="deck-container link" rv-data-deckid="deck.deck_id" onclick="populateDeck(this)">
+            <div rv-each-deck="player_decks" class="deck-container link" rv-data-deckid="deck.deck_id">
               <h3 class="beleren link deck-name">{deck.pool_name}</h3>
             </div>
           </div>
           <div id="deck-list" rv-show="list_selected">
-            <h3 class="beleren link back-link" onclick="unpopulateDecklist()">Back to decklists</h3>
+            <h3 class="beleren link back-link back-to-decklist" id="browse-back">Back to decklists</h3>
             <h1 class="deck-title"> <i class="fas fa-chevron-left"></i> { selected_list_name }</h1>
             <div class="card" rv-each-stat="selected_list | decklistSort" rv-card_color="stat.colors">
               <div class="card-text">
