@@ -73,11 +73,11 @@ body {
 }
 
 .zoom-panel {
-    color: rgba(160, 160, 160, 0.8);
+    color: #dddddd;/*rgba(160, 160, 160, 0.8);*/
     text-shadow: 0 0 0;
     padding-top: 0;
     padding-bottom: 0;
-    right: 20px;
+    right: 12px;
     position: absolute;
     top: 33px;
     height: 0px;
@@ -91,6 +91,18 @@ body {
     text-shadow: 0 0 0;
     z-index: 5;
 	-webkit-app-region: no-drag;
+}
+
+#close-icon {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  -webkit-app-region: no-drag;
+}
+
+#close-icon img {
+    height: 15px;
+    width: 15px;
 }
 
 .hero {

@@ -45,17 +45,12 @@ h1 {
     -webkit-app-region: drag;
 }
 
-.header-title {
-  max-width: 165px;
-  display: inline-block;
-}
-
 h2 {
     padding: 8px;
 }
 
 h3 {
-    padding: 8px;
+    padding: 4px 8px;
 }
 
 .beleren {
@@ -67,6 +62,69 @@ p {
     padding-left: 8px;
 }
 
+#tracker-header h1 {
+    font-size: 1.3em;
+    padding: 6px 0 0 8px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.controls {
+    float: right;
+    padding: 8px 8px 0 0;
+    margin-left: -4px;
+}
+ .controls div {
+    float: right;
+    margin: 0 2px;
+}
+ .controls div img {
+    width: 15px;
+    height: 15px;
+    padding-top: 3px;
+}
+
+#floating-eye {
+    float: right;
+    margin: 8px 8px 0 0;
+}
+
+#floating-eye img {
+    width: 18px;
+    height: 18px;
+    padding-top: 1px;
+}
+
+.menu-div {
+    float: left;
+    width: 20px;
+    padding: 9px 0 0 8px;
+    margin-right: -4px;
+}
+
+.menu-div div img {
+    height: 18px;
+    width: 18px;
+}
+
+#main-menu {
+    height: 0;
+}
+
+.hide-me {
+    display: none;
+}
+
+.nestedsidemenu ul li > a {
+    text-shadow: none;
+}
+
+#tracker-body {
+    clear: both;
+}
+
 .header-warning {
     color: rgb(250, 146, 146);
     text-shadow: 2px 2px rgba(28, 28, 28, 0.5);
@@ -75,7 +133,7 @@ p {
 .message-container {
     color: white;
     background-color: #6fb6d2;
-    margin: 10px;
+    margin: 8px;
     border-radius: 5px;
     padding: 3px;
     padding-left: 10px;
@@ -91,7 +149,11 @@ p {
 }
 
 .message-container:last-child {
-  margin-bottom: 17px;
+    margin-bottom: 12px;
+}
+
+.message-container:last-child {
+  margin-bottom: 8px;
 }
 
 .update-message a {
@@ -170,6 +232,10 @@ p {
 
 .container-framed {
     background-color: rgba(83, 83, 83, 1);
+}
+
+#deck-list,#draft-collection-list {
+    padding-bottom: 5px;
 }
 
 .card {
@@ -361,6 +427,10 @@ p {
     text-shadow: 0 0 0;
 }
 
+#draft-collection-list .card-text-limit {
+    width: 100%;
+}
+
 .cardname, .cardcount {
   display: inline-block;
 }
@@ -384,15 +454,6 @@ p {
   color: black; /* idk there's a bug in magic-font */
 }
 
-#floating-eye {
-    position: absolute;
-    height: 30px;
-    width: 30px;
-    left: 295px;
-    top: 25px;
-    z-index: 100;
-}
-
 #floating-history {
     position: absolute;
     height: 18px;
@@ -409,31 +470,8 @@ p {
     overflow: hidden;
 }
 
-#floating-settings {
-    position: absolute;
-    height: 18px;
-    width: 18px;
-    left: 298px;
-    top: 67px;
-    z-index: 100;
-    cursor: pointer;
-}
-
 .glow-on-hover:hover {
     background-color: rgba(50, 180, 210, 0.4);
-}
-
-.zoom-panel {
-    color: rgba(160, 160, 160, 0.8);
-    text-shadow: 0 0 0;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-.zoom {
-    cursor: pointer;
-    text-shadow: 0 0 0;
-    z-index: 5;
 }
 
 #overall-timer {
@@ -468,11 +506,6 @@ p {
     float: right;
 }
 
-.back-draft {
-  max-width: 230px;
-  z-index: 50;
-}
-
 /* The following classes should be set to no-drag or they won't be clickable */
 .zoom,
 .dismiss-message,
@@ -480,7 +513,18 @@ p {
 .settings-img,
 .back-link:after,
 .back-link,
-.deck-container {
+.back-draft,
+.deck-container,
+#menu-icon,
+#floating-eye,
+#minimize-icon,
+#close-icon,
+#browse-back,
+.deck-title,
+.nestedsidemenu,
+.nestedsidemenu ul,
+.no-drag
+{
 	-webkit-app-region: no-drag;
 }
 
@@ -490,8 +534,158 @@ p {
 .win-loss-counter {
     display: inline-block;
     float: right;
-    margin-right: 8px;
 }
 .win-loss-group {
     padding-bottom: 8px;
 }
+
+/* Nested Side Bar Menu
+    Project URL: http://www.dynamicdrive.com/style/csslibrary/item/nested_side_bar_menu/
+    Some minor modifcations from source, namely sizes and colors, fonts, removal of responsive
+*/
+
+.nestedsidemenu {
+    font: bold 14px sans-serif;
+    position: relative;
+    width: 120px;
+    cursor: default;
+}
+
+
+/* Top Level Menu */
+.nestedsidemenu ul {
+    z-index: 100;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    list-style: none;
+}
+
+/* Top level list items */
+.nestedsidemenu ul li {
+    position: relative;
+}
+
+/* Top level menu items link style */
+.nestedsidemenu ul li a, .nestedsidemenu ul li span {
+    display: block;
+    position: relative;
+    /* background of menu items (default state) */
+    background: #444444;
+    color: white;
+    padding: 5px;
+    color: white;
+    text-decoration: none;
+}
+
+
+.nestedsidemenu ul li a:link, .nestedsidemenu ul li a:visited {
+    color: white;
+}
+
+/* Top level menu items link style on hover and when active */
+.nestedsidemenu ul li:hover > a {
+    background: #656565;
+}
+
+/* Sub ULs style */
+.nestedsidemenu ul li ul {
+    position: absolute;
+    left: -5000px;
+        top: 0;
+    opacity: 0;
+    width: 120px;
+    visibility: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3)
+    -webkit-transition: opacity .3s, visibility 0s .3s, left 0s .3s;
+    transition: opacity .3s, visibility 0s .3s, left 0s .3s;
+}
+
+/* First Sub Levels UL style on hover */
+.nestedsidemenu ul li:hover > ul {
+    visibility: visible;
+    left: 100%;
+    opacity: 1;
+    -webkit-transition: opacity .5s;
+    transition: opacity .5s;
+}
+
+/* Sub level Menu list items (alters style from Top level List Items) */
+.nestedsidemenu ul li ul li {
+    display: list-item;
+    float: none;
+}
+
+/* 2nd and beyond Sub Levels vertical offset after 1st level sub menu */
+.nestedsidemenu ul li ul li ul {
+    top: 0;
+    left: 100%;
+}
+
+/* Sub Levels link style on hover and when active */
+.nestedsidemenu ul ul li:hover > a {
+    background: #656565;
+}
+
+/* Sub Levels UL style on hover */
+.nestedsidemenu ul ul li:hover > ul {
+    left: 100%;
+}
+
+/* Sub level menu links style */
+.nestedsidemenu ul li ul li a {
+    font: normal 14px 'Bitter', sans-serif;
+    padding: 5px;
+    margin: 0;
+    background: #444444;
+    border-right: none;
+    border-top-width: 0;
+}
+
+/* LIs with a sub UL style */
+.nestedsidemenu ul li > a {
+    /* add padding to accomodate arrow inside LIs */
+    padding-right: 25px;
+}
+
+/* LIs with NO sub UL style */
+.nestedsidemenu ul li > a:only-child {
+    /* undo padding for non submenu LIs */
+    padding-right: 10px;
+}
+
+/* LIs with a sub UL pseudo class */
+.nestedsidemenu ul li > a:after {
+    /* add arrow inside LIs */
+    content: "";
+    position: absolute;
+    height: 0;
+    width: 0;
+    border: 5px solid transparent;
+    border-left-color: #FFFFFF;
+    top: 40%;
+    right: 8px;
+}
+
+/* LIs with NO sub UL pseudo class */
+.nestedsidemenu ul li > a:only-child:after {
+    /* undo arrow for non submenu LIs */
+    display: none;
+}
+
+.separator-top:before, .separator-bottom:after {
+  content : "";
+  position: absolute;
+  left    : 5px;
+  height  : 1px;
+  width   : 110px;
+  border-top: 1px solid #8a8a8a;
+  z-index: 1;
+}
+
+#main-menu ul {
+    border: 1px solid #8a8a8a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3)
+}
+
+

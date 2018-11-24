@@ -14,6 +14,23 @@ const { Menu, MenuItem } = remote
 let browserWindow = remote.getCurrentWindow()
 const activeWin = require("active-win")
 
+let addClickHandler = (selector,handler) => {
+  let new_handler = (e) => {
+    if (!$.contains($('.menu-div').get(0),event.target) && !$('#main-menu').hasClass('hide-me')){
+      e.preventDefault()
+      e.stopPropagation()
+      toggleMenu()
+    } else {
+      if ( handler != null){
+        handler(e)
+      }
+    }
+  }
+  $(selector).each( (i,elem) => {
+    $(elem).off().on('click',new_handler)
+  })
+}
+
 // poll for active window semi-regularly; if it's not MTGA or MTGATracker, minimize / unset alwaysontop
 setInterval(() => {
   if (appData.mtgaOverlayOnly) {
@@ -36,14 +53,14 @@ window.addEventListener('beforeunload', function() {
 
 let rightClickPosition = null
 
-const menu = new Menu()
-const menuItem = new MenuItem({
+const contextMenu = new Menu()
+const contextMenuItem = new MenuItem({
   label: 'Inspect Element',
   click: () => {
     remote.getCurrentWindow().inspectElement(rightClickPosition.x, rightClickPosition.y)
   }
 })
-menu.append(menuItem)
+contextMenu.append(contextMenuItem)
 
 const API_URL = remote.getGlobal('API_URL');
 
@@ -78,6 +95,10 @@ var port = remote.getGlobal('port');
 var timerRunning = false;
 var uploadDelay = 0;
 var hideModeManager;
+var showUIButtons = remote.getGlobal('showUIButtons')
+var showHideButton = remote.getGlobal('showHideButton')
+var showMenu = remote.getGlobal('showMenu')
+var useMinimal = remote.getGlobal('useMinimal')
 
 setInterval(() => {
   uploadDelay -= 1
@@ -96,7 +117,7 @@ if (debug) {
   window.addEventListener('contextmenu', (e) => {
     e.preventDefault()
     rightClickPosition = {x: e.x, y: e.y}
-    menu.popup(remote.getCurrentWindow())
+    contextMenu.popup(remote.getCurrentWindow())
   }, false)
 }
 
@@ -187,6 +208,9 @@ var appData = {
     recentCardsQuantityToShow: recentCardsQuantityToShow,
     recentCards: recentCards,
     minToTray: minToTray,
+    showUIButtons: showUIButtons,
+    showHideButton: showHideButton,
+    showMenu: showMenu
 }
 
 var parseVersionString = (versionStr) => {
@@ -224,16 +248,24 @@ var addMessage = (message, link, mustfollow, messageID) => {
 }
 
 var dismissMessage = (element) => {
-   let elementIdx = element.attributes.index.value
-   let messageID = false
-   if (element.attributes.messageID) {
-     messageID = element.attributes.messageID.value
-   }
-   if (messageID) {
-     ipcRenderer.send('messageAcknowledged', messageID)
-   }
-   appData.messages[elementIdx]["show"] = false;
-   resizeWindow()
+  let $element = $(element)
+  if ($element.hasClass('no-dismiss')){
+    return
+  }
+  if (!$element.hasClass('message-container')){
+    element = $(element).parents('.message-container').get(0)
+  }
+
+  let elementIdx = element.attributes.index.value
+  let messageID = false
+  if (element.attributes.messageID) {
+    messageID = element.attributes.messageID.value
+  }
+  if (messageID) {
+    ipcRenderer.send('messageAcknowledged', messageID)
+  }
+  appData.messages[elementIdx]["show"] = false;
+  resizeWindow()
 }
 
 request.get({
@@ -699,11 +731,6 @@ function hideCallback(hidden) {
   resizeWindow()
 }
 
-document.getElementById("floating-eye").addEventListener("click", function() {
-  hideModeManager.toggleHidden()
-  ipcRenderer.send('hideRequest')
-})
-
 ws.addEventListener('open', () => {
     ws.send('hello!');
     console.log("sent hello")
@@ -717,10 +744,8 @@ function resizeWindow() {
 
     container = document.getElementById("container")
 
-    let totalHeight = 10;
-
+    let totalHeight = 0;
     totalHeight += $('#tracker-header').outerHeight(true);
-
     $("#tracker-body").children().each(function(c, e) {
         if(e.style.display != "none" && !e.classList.contains("no-height-contribution"))
             totalHeight += $(e).outerHeight(true);
@@ -749,6 +774,7 @@ function resizeWindow() {
     if (!(debug || useFrame)) {
         browserWindow.setBounds(bounds)
     }
+    setClickHandlers();
 }
 
 function populateDeck(elem) {
@@ -1116,12 +1142,8 @@ let onMessage = (data) => {
         }
         appData.last_error = data.msg;
     } else if (data.data_type == "message") {
-        if (data.right_click) {
-            hideModeManager.toggleHidden(!appData.invertHideMode)
-            ipcRenderer.send('hideRequest', !appData.invertHideMode)
-        } else if (data.left_click && remote.getGlobal("leftMouseEvents")) {
-            hideModeManager.toggleHidden(appData.invertHideMode)
-            ipcRenderer.send('hideRequest', appData.invertHideMode)
+        if (data.right_click && !debug) {
+            hideWindow()
         } else if (data.draft_collection_count) {
           console.log("handle draft stuff")
           console.log(data.draft_collection_count)
@@ -1239,8 +1261,156 @@ let onMessage = (data) => {
     resizeWindow()
 }
 
-document.addEventListener("DOMContentLoaded", function(event) {
+let stepZoom = (zoomIn=true) => {
+  zoom += zoomIn ? 0.1 : -0.1;
+  if ( zoom < 0.2 ) {
+    zoom = 0.2;
+  }
+  applyZoom()
+}
 
+let resetZoom = () => {
+  zoom = 1
+  applyZoom()
+}
+
+let applyZoom = () => {
+  browserWindow.webContents.setZoomFactor(zoom)
+  ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
+}
+
+let zoomIn = () => {
+  stepZoom()
+}
+
+let zoomOut = () => {
+  stepZoom(false)
+}
+
+//function to close because of coming feature: close to tray
+let close = () => {
+  browserWindow.close()
+}
+
+let menu_items = [
+  {
+    label: 'History',
+    action: () => { ipcRenderer.send('openHistory', null); }
+  },
+  {
+    label: 'Settings',
+    action: () => { ipcRenderer.send('openSettings', null); }
+  },
+  {
+    label: 'Zoom',
+    submenu: [
+      {
+        label: 'Zoom in',
+        action: zoomIn,
+        keep_open: true
+      },
+      {
+        label: 'Zoom out',
+        action: zoomOut,
+        keep_open: true
+      },
+      {
+        label: 'Reset zoom',
+        action: resetZoom,
+        keep_open: true
+      },
+    ],
+    separator: 'both'
+  },
+  {
+    label: 'Exit',
+    action: close
+  },
+];
+
+let buildMenu = () => {
+  let menu = $('<ul></ul>')
+  for (let menu_item of menu_items) {
+    menu.append(buildMenuItem(menu_item))
+  }
+  $('#main-menu').append(menu)
+};
+
+let buildMenuItem = (menu_item) => {
+  let li = $('<li></li>')
+  let item = $('<a></a>')
+  item.text(menu_item.label)
+
+  if (menu_item.action != undefined) {
+    let action = null
+    if ( menu_item.keep_open ) {
+      action = menu_item.action
+    } else {
+      action = () => { menu_item.action.call(); toggleMenu()}
+    }
+    item.click(action)
+  }
+
+  li.append(item)
+
+  if (menu_item.separator != undefined) {
+    if (menu_item.separator == 'both' || menu_item.separator == 'top'){
+      li.addClass('separator-top')
+    }
+    if (menu_item.separator == 'both' || menu_item.separator == 'bottom'){
+      li.addClass('separator-bottom')
+    }
+  }
+
+  if (menu_item.submenu != undefined) {
+    let submenu = $('<ul></ul>')
+    for (let submenu_item of menu_item.submenu){
+      submenu.append(buildMenuItem(submenu_item))
+    }
+    li.append(submenu)
+  }
+  return li
+}
+
+let toggleMenu = () => {
+  $('#main-menu').toggleClass('hide-me');
+  $('body').toggleClass('no-drag');
+}
+
+let updateTitleWidth = () => {
+  let width = useMinimal ? 278 : 320
+  if (appData.showHideButton) {
+    width -= 26
+  }
+  if (appData.showUIButtons){
+    width -= 50
+  }
+  if (appData.showMenu) {
+    width -= 24
+  }
+  if (!(appData.showHideButton && appData.showMenu && appData.showUIButtons)){
+    width -= 8
+  }
+  $('#tracker-header h1').css('width',width)
+}
+
+/**
+ * These click handlers need to be reset on all resizeWindow calls because of DOM changes
+ */
+
+let setClickHandlers = () => {
+  addClickHandler('.message-container',(e) => {dismissMessage(e.target)})
+  addClickHandler('.back-draft',(e) => {exitDraft()})
+  addClickHandler('.back-to-decklist',(e) => {unpopulateDecklist()})
+  addClickHandler('.deck-container',(e) => {populateDeck($(e.target).parent().get(0))})
+}
+
+let hideWindow = () => {
+    hideModeManager.toggleHidden()
+    ipcRenderer.send('hideRequest')
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
     hideModeManager = hideWindowManager({
       useRollupMode: function() {return remote.getGlobal('rollupMode')},
       getHideDelay: function() {return remote.getGlobal('hideDelay')},
@@ -1251,6 +1421,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
       containerID: "#container",
       hideCallback: hideCallback,
     })
+
+    if (invertHideMode){
+      hideWindow()
+    }
 
     setInterval(() => {
         $('#overall-timer').html(overallTimer.getTimeValues().toString());
@@ -1264,23 +1438,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
     } else {
         $("#container").addClass("container-normal")
     }
-    $("#floating-settings").click(() => {
-      ipcRenderer.send('openSettings', null)
-    })
-    $("#floating-history").click(() => {
-      ipcRenderer.send('openHistory', null)
-    })
-    $(".zoom-out").click(() => {
-        zoom -= 0.1
-        zoom = Math.max(zoom, 0.2)
-        browserWindow.webContents.setZoomFactor(zoom)
-        ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
-    })
-    $(".zoom-in").click(() => {
-        zoom += 0.1
-        browserWindow.webContents.setZoomFactor(zoom)
-        ipcRenderer.send('settingsChanged', {key: "zoom", value: zoom})
-    })
+
+    /**
+     * These click handlers only need to be set once, so called here.
+     */
+
+    buildMenu()
+    updateTitleWidth()
+    addClickHandler('#menu-icon',toggleMenu)
+    addClickHandler('#floating-eye',hideWindow)
+    addClickHandler('#minimize-icon',() => {browserWindow.minimize()})
+    addClickHandler('#close-icon',close)
+    addClickHandler('body',null)
+
     //open links externally by default
     $(document).on('click', 'a[href^="http"]', function(event) {
         event.preventDefault();
@@ -1395,7 +1565,7 @@ ipcRenderer.on('settingsChanged', () => {
     currentFlatLink.remove()
   }
 
-  let useMinimal = remote.getGlobal("useMinimal")
+  useMinimal = remote.getGlobal("useMinimal")
 
   let currentMinimalLink = $("#minimal")
   if (useMinimal) {
@@ -1407,9 +1577,11 @@ ipcRenderer.on('settingsChanged', () => {
       link.type = 'text/css';
       link.href = 'minimal.css';
       head.appendChild(link)
+      updateTitleWidth()
     }
   } else if (currentMinimalLink) {
     currentMinimalLink.remove()
+    updateTitleWidth()
   }
 
   if ((themeFile && (themeFile != lastThemeFile)) || useTheme != lastUseTheme) {
@@ -1430,6 +1602,20 @@ ipcRenderer.on('settingsChanged', () => {
       head.appendChild(link)
     }
   }
+
+  let buttonsChanged = false
+  let fields = ['showUIButtons','showMenu','showHideButton']
+  for (let field of fields) {
+    let newVal = remote.getGlobal(field)
+    if (newVal != appData[field]){
+      appData[field] = newVal
+      buttonsChanged = true
+    }
+  }
+  if (buttonsChanged) {
+    updateTitleWidth()
+  }
+
   resizeWindow()
 })
 
