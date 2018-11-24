@@ -196,6 +196,38 @@ span.helper-text::before {
   padding-bottom: 3px;
 }
 
+.progress-text {
+  padding-top: 2px;
+  color: white;
+  font-size: 16px;
+}
+
+.progress {
+  margin-bottom: 5px;
+  background-color: #8e8e8e;
+  width: 100%;
+}
+
+.set-bar {
+  height: 28px;
+}
+
+.mythic {
+  background-color: #bf4427;
+}
+
+.rare {
+  background-color: #a58e4a;
+}
+
+.uncommon {
+  background-color: #5d7eab;
+}
+
+.common {
+  background-color: black;
+}
+
 /* https://codepen.io/Deadlymuffin/pen/hGiqo/ */
 
 .social-icon {
