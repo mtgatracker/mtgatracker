@@ -1,3 +1,7 @@
+h4 {
+    line-height: 1.4;
+}
+
 .settings-container {
   padding: 10px;
   margin: 10px;
@@ -21,12 +25,40 @@ a {
   cursor: pointer;
 }
 
+#sidebar {
+  max-width: 180px;
+}
+
 .link {
   cursor: pointer;
 }
 
 .btnbtn {
   margin-top: 12px;
+}
+
+.helper-text, .helper-block {
+  font-style: italic;
+}
+
+.helper-text {
+}
+
+.helper-block {
+  margin: 5px 0 0 0;
+  display: block;
+}
+
+span.helper-text::before {
+    content: "- ";
+}
+
+#sorting-method-select {
+    margin: 5px 0 8px 0;
+}
+
+.toggle {
+  margin-right: 5px;
 }
 
 .disclaimer {
@@ -62,17 +94,21 @@ a {
   margin-bottom: 0.2rem;
 }
 
+.slider-label {
+    margin: 20px 0 4px 0;
+}
+
 /* https://www.w3schools.com/howto/howto_js_rangeslider.asp */
 
-.slidevalue {
-    width: 10%;
+.slidervalue {
+    width: 5%;
     display: inline-block;
     text-align: right;
+    padding-left: 15px;
 }
 
 .slidecontainer {
-    width: 80%; /* Width of the outside container */
-    margin-top: 10px;
+    width: 92%; /* Width of the outside container */
     display: inline-block;
 }
 
@@ -158,6 +194,38 @@ a {
   margin: 0px;
   padding-top: 3px;
   padding-bottom: 3px;
+}
+
+.progress-text {
+  padding-top: 2px;
+  color: white;
+  font-size: 16px;
+}
+
+.progress {
+  margin-bottom: 5px;
+  background-color: #8e8e8e;
+  width: 100%;
+}
+
+.set-bar {
+  height: 28px;
+}
+
+.mythic {
+  background-color: #bf4427;
+}
+
+.rare {
+  background-color: #a58e4a;
+}
+
+.uncommon {
+  background-color: #5d7eab;
+}
+
+.common {
+  background-color: black;
 }
 
 /* https://codepen.io/Deadlymuffin/pen/hGiqo/ */
