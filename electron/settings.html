@@ -221,11 +221,11 @@
           <div class="settings-row counter-reset-row">
             <span class="counter-reset-span">Total &ndash; {totalWinLossCounter.win} : {totalWinLossCounter.loss}</span>
             <span class="counter-adj-span">
-              <button id="total-win-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="up">+ Win</button>
-              <button id="total-win-minus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="down">- Win</button>
-              <button id="total-loss-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="up">+ Loss</button>
-              <button id="total-loss-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="down">- Loss</button>
-              <button id="total-reset-button" class="btn btn-danger reset-button" data-deckid="total">Reset</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="up">+ Win</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="down">- Win</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="up">+ Loss</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="down">- Loss</button>
+              <button class="btn btn-danger reset-button" data-deckid="total">Reset</button>
             </span>
           </div>
           <div class="settings-row counter-reset-row" rv-each-deck="counterDeckList">
@@ -268,11 +268,11 @@
           <div class="settings-row counter-reset-row">
             <span class="counter-reset-span">Total &ndash; {dailyTotalWinLossCounter.win} : {dailyTotalWinLossCounter.loss}</span>
             <span class="counter-adj-span">
-              <button id="total-win-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="up" data-daily="true">+ Win</button>
-              <button id="total-win-minus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="down" data-daily="true">- Win</button>
-              <button id="total-loss-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="up" data-daily="true">+ Loss</button>
-              <button id="total-loss-plus-button" class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="down" data-daily="true">- Loss</button>
-              <button id="daily-total-reset-button" class="btn btn-danger reset-button" data-deckid="total" data-daily="true">Reset</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="up" data-daily="true">+ Win</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="win" data-direction="down" data-daily="true">- Win</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="up" data-daily="true">+ Loss</button>
+              <button class="btn btn-primary counter-adj-button" data-deckid="total" data-winloss="loss" data-direction="down" data-daily="true">- Loss</button>
+              <button class="btn btn-danger reset-button" data-deckid="total" data-daily="true">Reset</button>
             </span>
           </div>
           <div class="settings-row counter-reset-row" rv-each-deck="dailyCounterDeckList">
