@@ -197,6 +197,7 @@ span.helper-text::before {
 }
 
 .progress-text {
+  padding-top: 2px;
   color: white;
   font-size: 16px;
 }
