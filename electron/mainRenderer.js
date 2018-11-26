@@ -1437,7 +1437,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
     //open links externally by default
     $(document).on('click', 'a[href^="http"]', function(event) {
         event.preventDefault();
-        shell.openExternal(this.href);
+        if (remote.getGlobal("suppressExternalLinks")) {
+          console.log("link click suppressed")
+        } else {
+          shell.openExternal(this.href);
+        }
     });
     // load theme on first launch without settings change
     if (lastThemeFile && lastUseTheme) {

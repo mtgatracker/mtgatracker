@@ -212,24 +212,19 @@ let pyPort = null
 let appDataRoaming = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + 'Library/Preferences' : '/var/local')
 let logPath = path.join(appDataRoaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA", "output_log.txt");
 
+const argv = require('minimist')(process.argv.slice(2));
+console.dir(argv);
 
-let getBooleanArg = (short, long) => {
-  let shortIdx = process.argv.indexOf(short)
-  let longIdx = process.argv.indexOf(long)
-  return shortIdx != -1 || longIdx != -1;
-}
-
-let debugFileCmdOpt = getBooleanArg('-df', '--debug_file')
-let debugCmdOpt = getBooleanArg('-d', '--debug')
-let frameCmdOpt = getBooleanArg('-uf', '--use_framed')
-let fullFileCmdOpt = getBooleanArg('-f', '--full_file')
+let debugFileCmdOpt = argv.i || argv.input_file
+let debugCmdOpt = argv.d || argv.debug
+let undebugCmdOpt = argv.u || argv.undebug
+let fullFileCmdOpt = argv.f || argv.full_file
+let suppressExternalLinks = argv.s || argv.supress_links
 
 if (debugCmdOpt) {
   settings.set('debug', true)
-}
-
-if (frameCmdOpt) {
-  settings.set('useFrame', true)
+} else if (undebugCmdOpt) {
+  settings.set('debug', false)
 }
 
 // Hack to update to new structure
@@ -237,6 +232,7 @@ if (!settings.has('winLossCounter.alltime.total') && settings.has('winLossCounte
   settings.set('winLossCounter.alltime.total', settings.get('winLossCounter'));
 }
 
+let settingsPath = settings.file();
 let debug = settings.get('debug', false);
 let mtgaOverlayOnly = settings.get('mtgaOverlayOnly', true);
 let showErrors = settings.get('showErrors', false);
@@ -279,6 +275,8 @@ let showHideButton = settings.get('showHideButton',true)
 let showMenu = settings.get('showMenu',true)
 
 global.historyEvents = []
+global.settingsPath = settingsPath
+global.suppressExternalLinks = suppressExternalLinks
 
 let debugFile = false;
 if (debugFileCmdOpt) {
