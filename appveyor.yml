@@ -30,6 +30,7 @@ install:
   - npm audit fix
 
 build_script:
+  - npm start
   - npm run-script test
   - cd ..
   - sh build.sh
