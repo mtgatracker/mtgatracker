@@ -30,7 +30,8 @@ install:
   - npm audit fix
 
 build_script:
-  - npm start
+  - echo "" > tests/test_output_log.txt
+  - ./node_modules/.bin/electron . -i tests/test_output_log.txt
   - npm run-script test
   - cd ..
   - sh build.sh
