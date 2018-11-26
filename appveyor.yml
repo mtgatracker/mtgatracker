@@ -31,7 +31,8 @@ install:
 
 build_script:
   - echo "" > tests/test_output_log.txt
-  - ./node_modules/.bin/electron . -i tests/test_output_log.txt
+  - npm run-script copylegal
+#  - ./node_modules/.bin/electron . -i tests/test_output_log.txt
   - npm run-script test
   - cd ..
   - sh build.sh
