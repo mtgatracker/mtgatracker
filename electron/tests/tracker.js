@@ -48,16 +48,26 @@ describe('MTGATracker Tests Setup', function () {
         settingsPathBak = settingsPath + ".test.bak"
         return app.stop()
       }).then(e => {
-        fs.renameSync(pythonSettingsPath, pythonSettingsPathBak)
-        resolve(fs.renameSync(settingsPath, settingsPathBak))
+        try {
+          fs.renameSync(pythonSettingsPath, pythonSettingsPathBak)
+          fs.renameSync(settingsPath, settingsPathBak)
+        } catch (error) {
+          console.log("couldn't rename settings files; are we on CI?")
+        }
+        resolve()
       })
     })
   })
 
   after(function() {
     // restore the original settings file
-    fs.renameSync(settingsPathBak, settingsPath)
-    return fs.renameSync(pythonSettingsPathBak, pythonSettingsPath)
+    try {
+      fs.renameSync(settingsPathBak, settingsPath)
+      fs.renameSync(pythonSettingsPathBak, pythonSettingsPath)
+    } catch (error) {
+      console.log("couldn't rename settings files; are we on CI?")
+    }
+    return
   })
 
   describe('MTGATracker First Launch Tests', function() {
