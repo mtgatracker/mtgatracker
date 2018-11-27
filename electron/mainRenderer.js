@@ -13,9 +13,21 @@ const { remote, ipcRenderer, shell, clipboard } = require('electron')
 const { Menu, MenuItem } = remote
 let browserWindow = remote.getCurrentWindow()
 const activeWin = require("active-win")
-
-
 const Mousetrap = require('Mousetrap')
+
+function contextData(data) {
+  // find out what context we are in.
+  // return data for that context as a single string value.
+  if (data.showDraftStats) {
+    return appData.draftStats.map(card=>card.pretty_name).join('\n')
+  } else if (data.list_selected) {
+    return dataString = data.selected_list.map(
+      c=>(c.count_in_deck + ' ' + c.pretty_name + ' (' + c.set + ') ' + c.set_number)
+    ).join('\n')
+  } else if (data.show_available_decklists) {
+    return dataString = data.player_decks.map( d=>d.pool_name ).join('\n')
+  }
+}
 
 function copyEventHandler(e) {
   // This should copy the data on the current screen onto the clipboard.
@@ -24,8 +36,9 @@ function copyEventHandler(e) {
   // TODO: deck lists.
 
   console.log('Copying relevant data to clipboard, if any.')
-  if (appData.showDraftStats) {
-    let dataString = appData.draftStats.map(card=>card.pretty_name).join('\n')
+  let dataString = contextData(appData)
+
+  if (dataString) {
     clipboard.writeText(dataString)
   }
 }
