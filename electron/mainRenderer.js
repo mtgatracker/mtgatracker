@@ -9,10 +9,28 @@ const Timer = require('easytimer.js');
 const keytar = require('keytar')
 const hideWindowManager = require("./hide-manager")
 
-const { remote, ipcRenderer, shell } = require('electron')
+const { remote, ipcRenderer, shell, clipboard } = require('electron')
 const { Menu, MenuItem } = remote
 let browserWindow = remote.getCurrentWindow()
 const activeWin = require("active-win")
+
+
+const Mousetrap = require('Mousetrap')
+
+function copyEventHandler(e) {
+  // This should copy the data on the current screen onto the clipboard.
+  // The format should be context specific, comma or tab delimited seems 
+  // like the best choice for most stuff.
+  // TODO: deck lists.
+
+  console.log('Copying relevant data to clipboard, if any.')
+  if (appData.showDraftStats) {
+    let dataString = appData.draftStats.map(card=>card.pretty_name).join('\n')
+    clipboard.writeText(dataString)
+  }
+}
+Mousetrap.bind('ctrl+c', copyEventHandler)
+
 
 let addClickHandler = (selector,handler) => {
   let new_handler = (e) => {
