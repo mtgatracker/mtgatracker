@@ -1,0 +1,46 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header themeable">Draft History: { data.eventName }</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> Endpoint info
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <b>API URL:</b> { data.API_URL }
+            </div>
+            <!-- /.panel-body -->
+        </div>
+    </div>
+    <!-- /.col-lg-8 -->
+     <div class="col-lg-3">
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> Recent game client versions
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body panel-med panel-tall-collapsible">
+                <img id="client-versions-loading" src="../loading.gif">
+                <canvas id="client-versions-plot"></canvas>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel .chat-panel -->
+    </div>
+    <!-- /.col-lg-4 -->
+ </div>
+<!-- /.row -->
+<script>
+  if (localStorage.getItem("dark-mode") == "true") {
+    enableDarkMode(true)
+    $(function() {
+      enableDarkMode(true)
+    })
+  }
+</script>

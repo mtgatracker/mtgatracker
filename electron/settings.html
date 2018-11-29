@@ -332,11 +332,23 @@
         <div class="settings-container">
           <div class="settings-row">
             <h3>Inspector Account</h3>
+            <p><b>Inspector is now local!</b> You can read more about this change <a href="https://blog.mtgatracker.com/mtgatracker-five-point-o">here</a>. <b>Click
+              the button below to retrieve any data stored on the MTGATracker: Inspector Web Application</b></p>
+            <button id="collect-all-inspector-data" class="btn btnbtn btn-secondary">Collect all Inspector data</button>
+            <br>
+            <br>
+            <p>When you click this button, the collection script will go through <b>four</b> distinct steps:
+              Authentication, Basic Record Collection, Cold-Storage Record Collection, and Draft Collection. Once
+              clicked, please do not close the window until you see the "All Clear!" message in the log below.</p>
+            <p><b>You only need to do this process once!</b> Please don't stress out our servers by running
+              this process over and over. If you're having issues, please get in touch with us on Discord!</p>
+            <br>
+            <p><b>Collection log</b></p>
+            <div id="collect-inspector-progress" class="well">
+            </div>
+            <hr>
             <p>On first launch, MTGATracker generates a key that is private and unique to your machine.
               Treat it like a password!</p>
-            <p>To authorize your Inspector account to view records from your tracker / machine, make sure you're signed
-              in to Inspector in your default browser, then click the link below.</p>
-            <p><b><a rv-authref="trackerID">Authorize Inspector</a></b></p>
             <p><b>View Tracker key</b>: <span id="showTrackerID">(click to reveal)</span></p>
           </div>
         </div>
