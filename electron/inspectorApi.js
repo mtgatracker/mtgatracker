@@ -63,7 +63,7 @@ api.get('decks/:includeHidden', (req, res) => {
 
 api.get('drafts/:limit', (req, res) => {
   console.log("getting drafts")
-  let cursor = db.draft.find({})
+  let cursor = db.draft.find({}).sort({date: -1})
   if (req.params.limit && req.params.limit != "undefinded") {
     try {
       let limitInt = parseInt(req.params.limit)
@@ -103,7 +103,7 @@ let createDeckFilter = (query) => {
     "opponent": "opponent"
   }
   Object.keys(queryIn).filter(key => Object.keys(filterable).includes(key)).forEach(key => {
-    let filterObj = query[key].toString()  // sanitize query inputs, juuuust to be safe
+    let filterObj = queryIn[key].toString()  // sanitize query inputs, juuuust to be safe
     queryObj[`${filterable[key]}`] = filterObj;
     // TODO: reimplement the doesntExistFilter.... somehow
 //     js doesn't allow literals as keys :(
@@ -143,7 +143,7 @@ let fetchGames = (req, res) => {
 
     let perPage = 10;
     let numPages = Math.ceil(count / perPage);
-    let cursor = db.game.find(filter)
+    let cursor = db.game.find(filter).sort({date: -1})
     let docCursor = cursor.skip((pageInt - 1) * perPage).limit(perPage);
     cursor.exec((err, docs) => {
       res.json({totalPages: numPages,
@@ -370,15 +370,10 @@ api.post("insert-game", (req, res) => {
       player.timeSpentSeconds += parseFloat(playerTimeSplit[2]);
     }
   }
-  console.log(1)
   db.game.findOne({gameID: model.gameID}, (err, game) => {
-    console.log(err)
-    console.log(game)
-    console.log(2)
     if (game) {
       return res.json({error: "game_already_exists"})
     }
-    console.log(3)
     db.game.insert(model)
     let deckQuery = {deckID: model.players[0].deck.deckID}
     db.deck.findOne(deckQuery, (err, deck) => {
@@ -425,6 +420,19 @@ api.post("rankChange", (req, res) => {
   }, 1000)
 })
 
+
+api.post("insert-draft", (req, res) => {
+  console.log("POST /insert-draft")
+
+  const model = req.uploadData[0].json();
+  // hashtag nike
+  db.draft.findOne({draftID: model.draftID, date: model.date}, (err, draft) => {
+    if (draft) {
+      return res.json({error: "draft_already_exists"})
+    }
+    db.draft.insert(model, e => res.json({draft: "inserted"}))
+  })
+})
 
 api.post("draft-pick", (req, res) => {
   console.log("POST /draft-pick")

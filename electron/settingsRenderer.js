@@ -560,24 +560,26 @@ document.addEventListener("DOMContentLoaded", function(event) {
   })
   $("#collect-all-inspector-data").click((e) => {
     $("#collect-inspector-progress").css("display", "block")
-    $("#collect-inspector-progress").append("<p><i>Authenticating with Inspector API...</i></p>")
+    $("#collect-inspector-progress").append("<p>Authenticating with Inspector API...</p>")
     $("#collect-all-inspector-data").prop("disabled", true)
     let gameUrl = API_URL + "/tracker-api/games"
     getTrackerToken().then(tokenObj => {
-      $("#collect-inspector-progress").append("<p><i>Authenticated!</i></p>")
-      $("#collect-inspector-progress").append("<p><i>Requesting game records...</i></p>")
+      // TODO: un-callback-hell-ify this mess
+      $("#collect-inspector-progress").append("<p>Success!</p>")
+      $("#collect-inspector-progress").append("<hr>")
+      $("#collect-inspector-progress").append("<p>Requesting game records...</p>")
       let {token} = tokenObj;
       request.get({
         url: gameUrl,
         json: true,
         headers: {'User-Agent': 'MTGATracker-App', token: token}
       }, (err, res, data) => {
-        $("#collect-inspector-progress").append(`<p><i>Found ${data.docs.length} records!</i></p>`)
+        $("#collect-inspector-progress").append(`<p>Found <b>${data.docs.length}</b> records to save!</i></p>`)
         let coldStorageDocs = data.docs.filter(doc => doc.inColdStorage)
         let regularDocs = data.docs.filter(doc => doc.inColdStorage == undefined)
-        $("#collect-inspector-progress").append(`<p><i>${regularDocs.length} games can be added immediately, ${coldStorageDocs.length} must be fetched from cold-storage...</i></p>`)
-        $("#collect-inspector-progress").append(`<p><i>Adding ${regularDocs.length} records to local inspector...</i></p>`)
-        $("#collect-inspector-progress").append(`<p><span id="collection-game-count">Processed 0...</span></p>`)
+        $("#collect-inspector-progress").append(`<p><b>${regularDocs.length}</b> games can be added immediately, <b>${coldStorageDocs.length}</b> must be fetched from cold-storage...</p>`)
+        $("#collect-inspector-progress").append(`<p>Adding <b>${regularDocs.length}</b> records to local inspector...</p>`)
+        $("#collect-inspector-progress").append(`<p><i><span id="collection-game-count">Processed 0...</span></i></p>`)
 
         let inserted = 0;
         let alreadyThere = 0;
@@ -604,10 +606,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
             .catch(err => {
               console.log(err)
               if (err.message == "game_already_exists") {
-                console.log(err.message)
                 alreadyThere++;
               } else {
-                $("#collect-inspector-progress").append(`<p>ERROR: ${err}</p>`)
+                console.log(err.message)
+                $("#collect-inspector-progress").append(`<p><b>ERROR:</b> ${err}</p>`)
               }
               inserted += 1;
               if (inserted % 10 == 0) {
@@ -615,21 +617,134 @@ document.addEventListener("DOMContentLoaded", function(event) {
               }
             }))
         promiseSerial(insertFuncs).then(res => {
-          let finished = `<p>Finished importing ${inserted} games`
+          let finished = `<p>Finished importing <b>${inserted}</b> games!`
           if (alreadyThere) {
-            finished += ` (${alreadyThere} games already existed)`
+            finished += ` (<i>${alreadyThere} games already existed</i>)`
           }
           finished += "</p>"
           $("#collect-inspector-progress").append(finished)
+          $("#collect-inspector-progress").append("<hr>")
           let coldStorageBuckets = {}
           for (let game of coldStorageDocs) {
             coldStorageBuckets[game.inColdStorage] = game._id
           }
-          $("#collect-inspector-progress").append(`<p>Collecting ${coldStorageDocs.length} games from cold storage (from ${Object.keys(coldStorageBuckets).length} cold-storage blocks)...`)
+          $("#collect-inspector-progress").append(`<p>Collecting <b>${coldStorageDocs.length}</b> games from cold storage (from ${Object.keys(coldStorageBuckets).length} cold-storage blocks)...`)
+          let coldStorageFetchPromises = []
           for (let bucket in coldStorageBuckets) {
             let gameID = coldStorageBuckets[bucket]
-            // TODO: finish here
+            let getFromColdStorageURL = `${API_URL}/tracker-api/game/_id/${gameID}/from_cold_storage`
+            coldStorageFetchPromises.push(new Promise((resolve, reject) => {
+              request.get({
+                url: getFromColdStorageURL,
+                json: true,
+                headers: {'User-Agent': 'MTGATracker-App', token: token}
+              }, (err, res, data) => {
+                resolve(data)
+              })
+            }))
           }
+          Promise.all(coldStorageFetchPromises).then(results => {
+            $("#collect-inspector-progress").append(`<p><i><span id="collection-game-count-cs">Processed 0...</span></i></p>`)
+            let csInsertFuncs = []
+            inserted = 0;
+            alreadyThere = 0;
+            for (let csResult of results) {
+              for (let game of csResult.records) {
+                game.date = new Date(Date.parse(game.date))
+                csInsertFuncs.push(() => fetch(fetchURL, {method: "POST", body: JSON.stringify(game)})
+                  .then(resp => resp.json())
+                  .then(data => {
+                    if (data.error) {
+                      throw new Error(data.error)
+                    }
+                    console.log(`got ${data} from insert-game`)
+                    console.log(data)
+
+                    inserted += 1;
+                    if (inserted % 10 == 0) {
+                      $("#collection-game-count-cs").append(` ${inserted}...`)
+                    }
+                  })
+                  .catch(err => {
+                    console.log(err)
+                    if (err.message == "game_already_exists") {
+                      alreadyThere++;
+                    } else {
+                      console.log(err.message)
+                      $("#collect-inspector-progress").append(`<p><b>ERROR:</b> ${err}</p>`)
+                    }
+                    inserted += 1;
+                    if (inserted % 10 == 0) {
+                      $("#collection-game-count-cs").append(` ${inserted}...`)
+                    }
+                  }))
+              }
+            }
+
+            promiseSerial(csInsertFuncs).then(res => {
+              console.log(res)
+              let finished = `<p>Finished importing <b>${inserted}</b> games from cold storage!`
+              if (alreadyThere) {
+                finished += ` (<i>${alreadyThere} games already existed</i>)`
+              }
+              finished += "</p>"
+              $("#collect-inspector-progress").append(finished)
+              $("#collect-inspector-progress").append("<hr>")
+              $("#collect-inspector-progress").append("<p>Collecting all Draft records...</p>")
+
+              let getDraftURL = `${API_URL}/tracker-api/drafts?per_page=1000`  // Does anyone have more than a thousand drafts? no way. nope. not possible.
+
+              request.get({
+                url: getDraftURL,
+                json: true,
+                headers: {'User-Agent': 'MTGATracker-App', token: token}
+              }, (err, res, data) => {
+
+                $("#collect-inspector-progress").append(`<p>Adding ${data.docs.length} draft records to local Inspector...</span></p>`)
+                $("#collect-inspector-progress").append(`<p><i><span id="collection-game-count-draft">Processed 0...</span></i></p>`)
+                let insertDraftURL = `insp://insert-draft`
+                inserted = 0
+                alreadyThere = 0
+                for (let draft of data.docs) draft.date = new Date(Date.parse(draft.date))
+                promiseSerial(data.docs.map(draft => () => fetch(insertDraftURL, {method: "POST", body: JSON.stringify(draft)})
+                  .then(resp => resp.json())
+                  .then(data => {
+                    if (data.error) {
+                      throw new Error(data.error)
+                    }
+                    console.log(`got ${data} from insert-draft`)
+                    console.log(data)
+
+                    inserted += 1;
+                    if (inserted % 10 == 0) {
+                      $("#collection-game-count-draft").append(` ${inserted}...`)
+                    }
+                  })
+                  .catch(err => {
+                    console.log(err)
+                    if (err.message == "draft_already_exists") {
+                      alreadyThere++;
+                    } else {
+                      console.log(err.message)
+                      $("#collect-inspector-progress").append(`<p><b>ERROR:</b> ${err}</p>`)
+                    }
+                    inserted += 1;
+                    if (inserted % 10 == 0) {
+                      $("#collection-game-count-draft").append(` ${inserted}...`)
+                    }
+                  }))).then(res => {
+                    let finished = `<p>Finished importing <b>${inserted}</b> drafts!`
+                    if (alreadyThere) {
+                      finished += ` (<i>${alreadyThere} drafts already existed</i>)`
+                    }
+                    finished += "</p>"
+                    $("#collect-inspector-progress").append(finished)
+                    $("#collect-inspector-progress").append("<hr>")
+                    $("#collect-inspector-progress").append("<p><b>All Clear!</b> Successfully completed all imports! You may now close this window.</p>")
+                  })
+              })
+            })
+          })
         })
       })
     })

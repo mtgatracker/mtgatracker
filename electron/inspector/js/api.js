@@ -308,10 +308,11 @@ var getGames = function(page, opts) {
   appData.homeGameListPage += 1;
   if (page === undefined) page = 1;
 
-  let url = `insp://games/page=${page}`
 
   if (opts && opts.removeOld)
     appData.homeGameList = []
+
+  let url = `insp://games/${query}/page=${page}`
 
   fetch(url)
     .then(resp => resp.json())
