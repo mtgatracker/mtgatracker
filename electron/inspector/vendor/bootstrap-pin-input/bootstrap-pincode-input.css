@@ -1,0 +1,67 @@
+.pincode-input-container {
+	display:inline-block;
+}
+.pincode-input-container input.first {
+	border-top-right-radius:0px;
+	border-bottom-right-radius:0px;
+}
+.pincode-input-container input.last {
+	border-top-left-radius:0px;
+	border-bottom-left-radius:0px;
+	border-left-width:0px;
+}
+.pincode-input-container input.mid {
+	border-radius:0px;
+	border-left-width:0px;
+}
+.pincode-input-text, .form-control.pincode-input-text {
+	width:35px;
+	float:left;
+}
+.pincode-input-error{
+	clear:both;
+}
+
+.pincode-input-container.touch .touchwrapper{
+	position:relative;
+	height:34px;
+	margin-right:5px;
+	overflow:hidden;
+}
+.pincode-input-container.touch .touchwrapper .pincode-input-text{
+	position: absolute;
+    top: 0px;
+    left: 0px;
+    right:0px;
+    width: 100%;
+    display: block;
+    background-color:transparent;
+    background:transparent;
+    letter-spacing:20px;
+}
+/*
+	On every digit we use the letter-spacing of the above textbox to determine the table background
+*/
+.pincode-input-container.touch .touchwrapper.touch1{width:40px;}
+.pincode-input-container.touch .touchwrapper.touch2{width:65px;}
+.pincode-input-container.touch .touchwrapper.touch3{width:90px;}
+.pincode-input-container.touch .touchwrapper.touch4{width:120px;}
+.pincode-input-container.touch .touchwrapper.touch5{width:150px;}
+.pincode-input-container.touch .touchwrapper.touch6{width:175px;}
+
+
+.pincode-input-container.touch .touchwrapper .touchtable{
+	width: 100%;
+    height: 100%;
+    table-layout:fixed;
+}
+.pincode-input-container.touch .touchwrapper .touchtable td{
+	border-right:1px solid #ccc;
+}
+.pincode-input-container.touch .touchwrapper .touchtable td.last{
+	border-right:0;
+}
+
+
+
+

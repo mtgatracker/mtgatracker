@@ -7,6 +7,11 @@ const keytar = require('keytar')
 const mtga = require('mtga')
 const path = require('path')
 const os = require('os')
+const jwt = require('jsonwebtoken')
+const request = require('request')
+
+var { rendererPreload } = require('electron-routes');
+rendererPreload();
 
 let desktopPath = path.join(os.homedir(), 'Desktop')
 
@@ -553,6 +558,82 @@ document.addEventListener("DOMContentLoaded", function(event) {
     console.log("resetting gameHstory")
     ipcRenderer.send('clearGameHistory')
   })
+  $("#collect-all-inspector-data").click((e) => {
+    $("#collect-inspector-progress").css("display", "block")
+    $("#collect-inspector-progress").append("<p><i>Authenticating with Inspector API...</i></p>")
+    $("#collect-all-inspector-data").prop("disabled", true)
+    let gameUrl = API_URL + "/tracker-api/games"
+    getTrackerToken().then(tokenObj => {
+      $("#collect-inspector-progress").append("<p><i>Authenticated!</i></p>")
+      $("#collect-inspector-progress").append("<p><i>Requesting game records...</i></p>")
+      let {token} = tokenObj;
+      request.get({
+        url: gameUrl,
+        json: true,
+        headers: {'User-Agent': 'MTGATracker-App', token: token}
+      }, (err, res, data) => {
+        $("#collect-inspector-progress").append(`<p><i>Found ${data.docs.length} records!</i></p>`)
+        let coldStorageDocs = data.docs.filter(doc => doc.inColdStorage)
+        let regularDocs = data.docs.filter(doc => doc.inColdStorage == undefined)
+        $("#collect-inspector-progress").append(`<p><i>${regularDocs.length} games can be added immediately, ${coldStorageDocs.length} must be fetched from cold-storage...</i></p>`)
+        $("#collect-inspector-progress").append(`<p><i>Adding ${regularDocs.length} records to local inspector...</i></p>`)
+        $("#collect-inspector-progress").append(`<p><span id="collection-game-count">Processed 0...</span></p>`)
+
+        let inserted = 0;
+        let alreadyThere = 0;
+        let fetchURL = `insp://insert-game`
+
+        for (let game of regularDocs) {
+          game.date = new Date(Date.parse(game.date))
+        }
+
+        let insertFuncs = regularDocs.map(doc => () => fetch(fetchURL, {method: "POST", body: JSON.stringify(doc)})
+            .then(resp => resp.json())
+            .then(data => {
+              if (data.error) {
+                throw new Error(data.error)
+              }
+              console.log(`got ${data} from insert-game`)
+              console.log(data)
+
+              inserted += 1;
+              if (inserted % 10 == 0) {
+                $("#collection-game-count").append(` ${inserted}...`)
+              }
+            })
+            .catch(err => {
+              console.log(err)
+              if (err.message == "game_already_exists") {
+                console.log(err.message)
+                alreadyThere++;
+              } else {
+                $("#collect-inspector-progress").append(`<p>ERROR: ${err}</p>`)
+              }
+              inserted += 1;
+              if (inserted % 10 == 0) {
+                $("#collection-game-count").append(` ${inserted}...`)
+              }
+            }))
+        promiseSerial(insertFuncs).then(res => {
+          let finished = `<p>Finished importing ${inserted} games`
+          if (alreadyThere) {
+            finished += ` (${alreadyThere} games already existed)`
+          }
+          finished += "</p>"
+          $("#collect-inspector-progress").append(finished)
+          let coldStorageBuckets = {}
+          for (let game of coldStorageDocs) {
+            coldStorageBuckets[game.inColdStorage] = game._id
+          }
+          $("#collect-inspector-progress").append(`<p>Collecting ${coldStorageDocs.length} games from cold storage (from ${Object.keys(coldStorageBuckets).length} cold-storage blocks)...`)
+          for (let bucket in coldStorageBuckets) {
+            let gameID = coldStorageBuckets[bucket]
+            // TODO: finish here
+          }
+        })
+      })
+    })
+  })
   $("#exportCollectionMTGGButton").click((e) => {
     console.log("exporting mtgg to desktop")
     let allPromises = []
@@ -632,5 +713,46 @@ document.addEventListener("DOMContentLoaded", function(event) {
     $(".slidevalue-recent-cards").html(value);
   }
 })
+
+// https://hackernoon.com/functional-javascript-resolving-promises-sequentially-7aac18c4431e
+const promiseSerial = funcs =>
+  funcs.reduce((promise, func) =>
+    promise.then(result => func().then(Array.prototype.concat.bind(result))),
+    Promise.resolve([]))
+
+var token;
+
+let getTrackerToken = () => {
+  return new Promise((resolve, reject) => {
+    let tokenOK = true;
+    if (token) {
+      if (jwt.decode(token).exp < Date.now() / 1000) tokenOK = false
+    } else {
+      tokenOK = false;
+    }
+    if (tokenOK) {
+      console.log("old token was fine")
+      resolve({token: token})
+    } else {
+      keytar.getPassword("mtgatracker", "tracker-id").then(trackerID => {
+        console.log("sending token request...")
+        request.post({
+            url: `${API_URL}/public-api/tracker-token`,
+            json: true,
+            body: {trackerID: trackerID},
+            headers: {'User-Agent': 'MTGATracker-App'}
+        }, (err, res, data) => {
+          if (err || res.statusCode != 200) {
+            errors.push({on: "get_token", error: err || res})
+            reject({attempt: attempt, errors: errors})
+          } else {
+            token = data.token;
+            resolve({token: data.token})
+          }
+        })
+      })
+    }
+  })
+}
 
 // ipcRenderer.send('settingsChanged', {cool: true})

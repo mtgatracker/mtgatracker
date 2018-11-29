@@ -1,0 +1,31 @@
+        <div class="container themeable">
+            <div class="row">
+                <div class="col-md-4 col-md-offset-4">
+                    <div class="login-panel panel panel-default">
+                        <div class="panel-heading">
+                            <h3 id="login-header" class="panel-title">Exiling Teferi's...</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div id="auth-loading">
+                                <img src="../loading.gif">
+                                <i>&nbsp;&nbsp;One sec while we load a few things</i>
+                            </div>
+                            <div id="auth-error" style="display: none;">
+                                <h4><b>ah jeez...</b> we ran into a problem</h4>
+                                <p class="reminder"><i><b>Error:</b> { data.loginError }</i></p>
+                                <p class="reminder"><i><b>Description:</b> { data.loginErrorDescription }</i></p>
+                                <hr />
+                                <h3><b>er.. what now?</b></h3>
+                                <p>You can go back and <a href="/login">try to log in again,</a> or come get help in our <a href="https://discord.gg/Ygfv25w">Discord server</a>.</p>
+                            </div>
+                            <div id="auth-success" style="display: none;">
+                                <h4><b class="success">Success!</b></h4>
+                                <p>Redirecting home in 3... 2...</p>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /.sidebar-collapse -->
+                </div>
+            </div>
+        </div>

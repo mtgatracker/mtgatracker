@@ -1,0 +1,102 @@
+/* https://codemyui.com/toggle-switch-collection-using-pure-css-custom-properties/ */
+
+.switch{
+  --uiSwitchSize: var(--switchSize, 35px);
+  --uiSwitchBgColor: var(--switchBgColor, #888);
+  --uiSwitchBgColorActive: var(--switchBgColorActive, #4ed164);
+  --uiSwitchBorderColorActive: var(--switchBorderColorActive, rgba(0,0,0,0));
+  --uiSwitchBorderColorFocus: var(--switchBgColorFocus, rgba(0,0,0,0));
+  --uiSwitchButtonBgColor: var(--switchButtonBgColor, #fff);
+
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.switch__label{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.switch__toggle{
+  width: 0;
+  height: 0;
+  opacity: 0;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.switch__toggle:focus ~ .switch__label{
+  box-shadow: 0 0 0 var(--uiSwitchThickFocus, 4px) var(--uiSwitchBorderColorFocus);
+}
+
+.switch__toggle:checked:focus ~ .switch__label{
+  box-shadow: 0 0 0 var(--uiSwitchThickFocus, 4px) var(--uiSwitchBorderColorActive);
+}
+
+.switch__label:before, .switch__label:after{
+  content: "";
+  cursor: pointer;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.switch__label:before{
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background-color: var(--uiSwitchBgColor);
+}
+
+.switch__label:after{
+  top: 50%;
+  z-index: 3;
+  transition: transform .4s cubic-bezier(0.44,-0.12, 0.07, 1.15);
+}
+
+/* type 1 */
+
+.switch_type1{
+  --uiSwitchBorderRadius: var(--switchBorderRadius, 10px);
+
+  width: var(--uiSwitchSize);
+  height: calc((var(--uiSwitchSize) / 2));
+  border-radius: var(--uiSwitchBorderRadius);
+  background-color: var(--uiSwitchBgColorActive);
+}
+
+.switch_type1 .switch__label{
+  border-radius: var(--uiSwitchBorderRadius);
+}
+
+.switch_type1 .switch__label:before{
+  border-radius: var(--uiSwitchBorderRadius);
+  transition: opacity .2s ease-out .1s, transform .2s ease-out .1s;
+  /*transform: scale(1);*/
+  opacity: 1;
+}
+
+.switch_type1 .switch__toggle:checked ~ .switch__label:before{
+  transform: scale(0);
+  opacity: .7;
+}
+
+.switch_type1 .switch__label:after{
+  width: calc(var(--uiSwitchSize) / 2);
+  height: calc(var(--uiSwitchSize) / 2);
+  transform: translate3d(0, -50%, 0);
+
+  background-color: var(--uiSwitchButtonBgColor);
+  border-radius: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .3);
+}
+
+.switch_type1 .switch__toggle:checked ~ .switch__label:after{
+  transform: translate3d(100%, -50%, 0);
+}
