@@ -918,7 +918,8 @@ function uploadGame(gameData) {
   return new Promise((resolve, reject) => {
     let anonGameData = {
       anonymousUserID: crypto.createHash('md5').update(gameData.players[0].name).digest("hex"),
-      gameID: crypto.createHash('md5').update(gameData.gameID).digest("hex")
+      gameID: crypto.createHash('md5').update(gameData.gameID).digest("hex"),
+      client_version: appData.version,
     }
     console.log("posting game request...")
     console.log(anonGameData)
