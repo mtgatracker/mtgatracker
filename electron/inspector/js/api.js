@@ -312,6 +312,7 @@ var getGames = function(page, opts) {
   if (opts && opts.removeOld)
     appData.homeGameList = []
 
+  let query = Object.keys(opts).map(key => `${key}=${opts[key]}`).join("&")
   let url = `insp://games/${query}/page=${page}`
 
   fetch(url)
