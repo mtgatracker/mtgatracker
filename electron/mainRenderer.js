@@ -907,7 +907,7 @@ function uploadGame(gameData) {
 
       if (remote.getGlobal("showInspector")) {
         // TODO: open inspector window instead of linking to https://inspector...
-        addMessage("Game saved in Inspector!", "https://inspector.mtgatracker.com")
+        addMessage("Game saved in Inspector!", "javascript:openInspector();")
       }
     })
     .catch(err => {
@@ -1199,6 +1199,8 @@ let close = () => {
   browserWindow.close()
 }
 
+let openInspector = () => { ipcRenderer.send('openInspector', null); }
+
 let menu_items = [
   {
     label: 'History',
@@ -1210,7 +1212,7 @@ let menu_items = [
   },
   {
     label: 'Inspector',
-    action: () => { ipcRenderer.send('openInspector', null); }
+    action: openInspector
   },
   {
     label: 'Zoom',
