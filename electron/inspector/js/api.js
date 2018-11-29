@@ -312,7 +312,11 @@ var getGames = function(page, opts) {
   if (opts && opts.removeOld)
     appData.homeGameList = []
 
-  let query = Object.keys(opts).map(key => `${key}=${opts[key]}`).join("&")
+  // HACK: electron router won't recognize "game//page=2" for "game/:query/page=2" , so stuff
+  // a fake query if no opts defined
+  let query = "query=none"
+
+  if (opts) query = Object.keys(opts).map(key => `${key}=${opts[key]}`).join("&")
   let url = `insp://games/${query}/page=${page}`
 
   fetch(url)
