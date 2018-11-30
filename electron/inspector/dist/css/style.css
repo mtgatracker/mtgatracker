@@ -127,6 +127,10 @@ body {
 #deck-edit-label {
   margin: 0 10px;
 }
+.loading-spinner {
+  height: 40px;
+  width: 40px;
+}
 .decklist-p {
   margin: 0px 0 2px;
 }

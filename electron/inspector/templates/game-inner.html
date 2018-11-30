@@ -15,7 +15,7 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <img class="game-loading" src="../loading.gif">
+                <span id="game-loading">Loading...</span>
                 <div class="col-lg-12 col-md-12 col-sm-12">
                     <h5><b>On the Play:</b> {data.currentGameOnPlay}</h5>
                     <h5><b>Elapsed Time:</b> {data.currentGameElapsedTime}</h5>
@@ -42,7 +42,7 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <img class="game-loading" src="../loading.gif">
+                <span id="game-loading">Loading...</span>
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <h4 type-check="Creature" rv-typecount="data.currentGameHeroDeck">Creature</h4>
                     <p class="decklist-p" rv-each-card="data.currentGameHeroDeck" type-check="Creature" rv-hideifnotcorrecttype="card.cardType">
@@ -98,7 +98,7 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <img class="game-loading" src="../loading.gif">
+                <span id="game-loading">Loading...</span>
 
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <h4 type-check="Creature" rv-typecount="data.currentGameOpponentDeck">Creature</h4>
@@ -175,7 +175,7 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <img id="decks-loading" src="../loading.gif">
+                <span id="decks-loading">Loading...</span>
                 <div class="list-group themeable">
                     <div rv-each-deck="data.homeDeckList" rv-deckid="deck.deckID" rv-class-deckhidden="deck.hidden">
                         <a rv-href="deck.link" class="list-group-item">

@@ -7,7 +7,7 @@
 <!-- /.row -->
 <div class="row">
     <div class="col-lg-8">
-        <img class="draft-loading" src="../loading.gif">
+        <span id="draft-loading">Loading...</span>
         <div rv-each-pick="data.picks" class="panel panel-default themeable">
           <div class="panel-heading">Pack { pick.packNumber }, Pick { pick.pickNumber }</div>
           <div class="panel-body">
@@ -35,7 +35,7 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <img id="drafts-loading" src="../loading.gif">
+                <span id="drafts-loading">Loading...</span>
                 <div class="list-group themeable">
                     <div rv-each-draft="data.homeDraftList" rv-draftid="draft.draftID">
                         <a rv-href="draft.link" class="list-group-item">

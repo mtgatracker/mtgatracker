@@ -22,7 +22,7 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <img id="matchup-loading" src="../loading.gif">
+                <span id="matchup-loading">Loading...</span>
                 <canvas id="matchup-plot"></canvas>
             </div>
             <!-- /.panel-body -->
@@ -35,7 +35,7 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <img id="timeline-loading" src="../loading.gif">
+                <span id="timeline-loading">Loading...</span>
                 <ul class="timeline themeable">
                     <li rv-each-game="data.homeGameList" rv-class-timeline-inverted="game.won">
                         <a class="timeline-badge" rv-linegame="game" rv-href="game.link"></a>
@@ -75,7 +75,7 @@
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
-                <img id="decks-loading" src="../loading.gif">
+                <span id="decks-loading">Loading...</span>
                 <div class="list-group themeable">
                     <div rv-each-deck="data.homeDeckList" rv-deckid="deck.deckID" rv-class-deckhidden="deck.hidden">
                         <a rv-href="deck.link" class="list-group-item">
