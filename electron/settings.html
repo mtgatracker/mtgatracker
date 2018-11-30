@@ -347,6 +347,11 @@
             <div id="collect-inspector-progress" class="well">
             </div>
             <hr>
+            <button id="backup-inspector-data" class="btn btnbtn btn-secondary">Backup local Inspector databases</button>
+            <br/>
+            <br/>
+            <p>Pressing this button will create a copy of your inspector database files at %APPDATA%/mtgatracker/database-backups/inspector-[type]-[date].db</p>
+            <hr>
             <p>On first launch, MTGATracker generates a key that is private and unique to your machine.
               Treat it like a password!</p>
             <p><b>View Tracker key</b>: <span id="showTrackerID">(click to reveal)</span></p>
@@ -438,6 +443,9 @@
               <li>
                 You can now import Inspector Data from the cloud. Check the Inspector tab of the Settings page to
                 retrieve your data (only required once).
+              </li>
+              <li>
+                You can now backup local Inspector databases. Check the Inspector tab of the Settings page to create database backups at any time.
               </li>
               <li>
                 Double clicking on the tray icon will now bring MTGATracker into focus

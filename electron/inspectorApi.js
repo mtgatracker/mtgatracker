@@ -1,10 +1,6 @@
 var { cardsColors } = require("mtga")
 var { Router } = require('electron-routes');
-var { app, remote } = require("electron")
 var path = require("path")
-
-const eApp = app || remote.app;
-const userDataPath = eApp.getPath('userData');
 
 var Datastore = require('nedb')
 
@@ -17,11 +13,13 @@ Datastore.prototype.save = function(doc, callback) {
   })
 }
 
+var { databaseFiles } = require("./conf")
+
 var db = {}
-db.game = new Datastore({ filename: path.join(userDataPath, "inspector-game.db"), autoload: true });
-db.deck = new Datastore({ filename: path.join(userDataPath, "inspector-deck.db"), autoload: true });
-db.draft = new Datastore({ filename: path.join(userDataPath, "inspector-draft.db"), autoload: true });
-db.inventory = new Datastore({ filename: path.join(userDataPath, "inspector-inventory.db"), autoload: true });
+db.game = new Datastore({filename: databaseFiles.game, autoload: true });
+db.deck = new Datastore({filename: databaseFiles.deck, autoload: true });
+db.draft = new Datastore({filename: databaseFiles.draft, autoload: true });
+db.inventory = new Datastore({filename: databaseFiles.inventory, autoload: true });
 
 const api = new Router('insp');
 

@@ -13,6 +13,8 @@ const request = require('request')
 var { rendererPreload } = require('electron-routes');
 rendererPreload();
 
+var { databaseFiles } = require("./conf")
+
 let desktopPath = path.join(os.homedir(), 'Desktop')
 
 const tt = require('electron-tooltip')
@@ -557,6 +559,32 @@ document.addEventListener("DOMContentLoaded", function(event) {
   $("#resetGameHistory").click((e) => {
     console.log("resetting gameHstory")
     ipcRenderer.send('clearGameHistory')
+  })
+  $("#backup-inspector-data").click((e) => {
+
+    let allDatabaseFiles = Object.values(databaseFiles)
+    let dbDirname = path.dirname(allDatabaseFiles[0])
+    let backupDirname = path.join(dbDirname, "inspector_backups")
+
+    if (!fs.existsSync(backupDirname)){
+        fs.mkdirSync(backupDirname);
+    }
+
+    let today = new Date()
+    let backupPrefix = `${today.getFullYear()}_${today.getMonth()}_${today.getDate()}_${today.getHours()}_${today.getMinutes()}_${today.getSeconds()}`
+
+    let allWrittenPromises = []
+
+    for (let file of allDatabaseFiles) {
+      let filePath = path.parse(file)
+      let backupName = `${filePath.name}-${backupPrefix}${filePath.ext}`
+      let backupFile = path.join(backupDirname, backupName)
+      let stream = fs.createReadStream(path.format(filePath)).pipe(fs.createWriteStream(backupFile))
+      allWrittenPromises.push(new Promise((resolve, reject) => {
+        stream.on("finish", resolve)
+      }))
+    }
+    Promise.all(allWrittenPromises).then(e => alert(`Files backed up to ${backupDirname}${path.sep}inspector-<type>-${backupPrefix}.db`))
   })
   $("#collect-all-inspector-data").click((e) => {
     $("#collect-inspector-progress").css("display", "block")
