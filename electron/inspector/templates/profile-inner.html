@@ -1,0 +1,161 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header themeable">Profile</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+    <div class="col-lg-12">
+        <!-- /.panel -->
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-clock-o fa-fw"></i> Player Stats
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="col-lg-12">
+                    <span id="player-stats-loading">Loading...</span>
+                </div>
+                <div class="col-lg-6">
+                    <h5><b>Total games played:</b> { data.totalGamesPlayed }</h5>
+                    <h5><b>Unique decks played with:</b> { data.totalDecks }</h5>
+                </div>
+                <hr class="only-small" />
+                <div class="col-lg-6">
+                    <h5><b>Total time spent in-game:</b> { data.totalTimeSeconds | humanseconds }</h5>
+                    <h5><b>Average game time:</b> { data.averageGameLengthSeconds | humanseconds }</h5>
+                    <h5><b>Longest game time:</b> { data.longestGameLengthSeconds | humanseconds }</h5>
+                </div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <div class="col-lg-6">
+        <!-- /.panel -->
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-clock-o fa-fw"></i> Lifetime Win / Loss
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body panel-tall panel-tall-collapsible">
+                <span id="overall-wl-loading">Loading...</span>
+                <canvas id="overall-wl-plot"></canvas>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+
+    <div class="col-lg-6">
+        <!-- /.panel -->
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-clock-o fa-fw"></i> Event Frequency History
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body panel-tall">
+                <span id="event-usage-loading">Loading...</span>
+                <canvas id="event-usage-plot"></canvas>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+
+    <div class="col-lg-12">
+        <!-- /.panel -->
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-clock-o fa-fw"></i> Lifetime Win / Loss Per Event
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body panel-tall panel-tall-collapsible">
+                <span id="overall-wl-by-event-loading">Loading...</span>
+                <canvas id="overall-wl-by-event-plot"></canvas>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+
+    <!--
+    <div class="col-lg-6">
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> Most Used Colors
+                <span class="header-toggle">
+                    <label class="switch switch_type1" role="switch">
+                      <input type="checkbox" class="switch__toggle" id="edit-decks">
+                      <span class="switch__label"></span>
+                    </label>
+                </span>
+                <span class="header-toggle" id="deck-edit-label">Edit</span>
+            </div>
+            <div class="panel-body">
+                <span id="colors-loading">Loading...</span>
+            </div>
+        </div>
+    </div>
+    -->
+
+    <hr />
+
+    <!--
+    <hr />
+    <div class="col-lg-6">
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-clock-o fa-fw"></i> Most-Used Cards
+            </div>
+            <div class="panel-body">
+                <span id="most-used-cards-loading">Loading...</span>
+            </div>
+        </div>
+    </div>
+    <hr />
+    -->
+
+    <!--
+    <div class="col-lg-12">
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-clock-o fa-fw"></i> Collection Stats
+            </div>
+            <div class="panel-body">
+                <span id="collection-loading">Loading...</span>
+            </div>
+        </div>
+    </div>
+    -->
+
+    <!--
+    <div class="col-lg-4">
+        <div class="panel panel-default themeable">
+            <div class="panel-body">
+            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+            <!-- Responsive, Default --><!--
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-5857646066627583"
+                 data-ad-slot="1436238352"
+                 data-ad-format="auto"></ins>
+            <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            </div>
+        </div>
+    </div>
+    -->
+    <!-- /.col-lg-4 -->
+</div>
+<!-- /.row -->
+<script>
+  if (localStorage.getItem("dark-mode") == "true") {
+    enableDarkMode(true)
+    $(function() {
+      enableDarkMode(true)
+    })
+  }
+</script>

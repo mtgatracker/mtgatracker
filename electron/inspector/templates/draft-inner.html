@@ -1,0 +1,66 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header themeable">Draft History: { data.eventName }</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+    <div class="col-lg-8">
+        <span id="draft-loading">Loading...</span>
+        <div rv-each-pick="data.picks" class="panel panel-default themeable">
+          <div class="panel-heading">Pack { pick.packNumber }, Pick { pick.pickNumber }</div>
+          <div class="panel-body">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <h5><b>Picked</b></h5>
+              <div>
+                  <i rv-rarity="pick.pick.rarity" class="fa fa-circle fa-fw"></i><b><i>{ pick.pick.name }</i></b> <span rv-multimana="pick.pick.cost"></span>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <h5><b>Pack</b></h5>
+              <div rv-each-pass="pick.pack">
+                <i rv-rarity="pass.rarity" class="fa fa-circle fa-fw"></i>{ pass.name } <span rv-multimana="pass.cost"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <!-- /.col-lg-8 -->
+
+    <div class="col-lg-4">
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> My drafts
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <span id="drafts-loading">Loading...</span>
+                <div class="list-group themeable">
+                    <div rv-each-draft="data.homeDraftList" rv-draftid="draft.draftID">
+                        <a rv-href="draft.link" class="list-group-item">
+                            <i class="fa fa-leanpub fa-fw"></i> { draft.draftName }
+                            <span class="pull-right text-muted small"> { draft.timeago }</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- /.list-group -->
+                <a href="/drafts" class="btn btn-default btn-block themeable">View All Drafts</a>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel .chat-panel -->
+    </div>
+    <!-- /.col-lg-4 -->
+
+
+</div>
+<!-- /.row -->
+<script>
+  if (localStorage.getItem("dark-mode") == "true") {
+    enableDarkMode(true)
+    $(function() {
+      enableDarkMode(true)
+    })
+  }
+</script>

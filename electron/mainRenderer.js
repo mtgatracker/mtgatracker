@@ -45,6 +45,9 @@ function copyEventHandler(e) {
 Mousetrap.bind('ctrl+c', copyEventHandler)
 
 
+var { rendererPreload } = require('electron-routes');
+rendererPreload();
+
 let addClickHandler = (selector,handler) => {
   let new_handler = (e) => {
     if (!$.contains($('.menu-div').get(0),event.target) && !$('#main-menu').hasClass('hide-me')){
@@ -841,72 +844,22 @@ function unpopulateDecklist() {
     resizeWindow()
 }
 
-let getTrackerToken = () => {
+function passThrough(endpoint, passData, playerID) {
+  passData.playerId = playerID;
   return new Promise((resolve, reject) => {
-    let tokenOK = true;
-    if (token) {
-      if (jwt.decode(token).exp < Date.now() / 1000) tokenOK = false
-    } else {
-      tokenOK = false;
-    }
-    if (tokenOK) {
-      console.log("old token was fine")
-      resolve({token: token})
-    } else {
-      keytar.getPassword("mtgatracker", "tracker-id").then(trackerID => {
-        console.log("sending token request...")
-        request.post({
-            url: `${API_URL}/public-api/tracker-token`,
-            json: true,
-            body: {trackerID: trackerID},
-            headers: {'User-Agent': 'MTGATracker-App'}
-        }, (err, res, data) => {
-          if (err || res.statusCode != 200) {
-            errors.push({on: "get_token", error: err || res})
-            reject({attempt: attempt, errors: errors})
-          } else {
-            token = data.token;
-            resolve({token: data.token})
-          }
-        })
-      })
-    }
-  })
-}
-
-function passThrough(endpoint, passData, playerKey, errors) {
-  if (!errors) {
-    errors = []
-  }
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      getTrackerToken().then(tokenObj => {
-        let {token} = tokenObj;
-        passData.hero = playerKey;
-        if (!remote.getGlobal("incognito")) {  // we're only allowed to use passThrough data if not incognito
-          setTimeout(() => {
-            console.log(`posting ${endpoint} request...`)
-            request.post({
-              url: `${API_URL}/${endpoint}`,
-              json: true,
-              body: passData,
-              headers: {'User-Agent': 'MTGATracker-App', token: token}
-            }, (err, res, data) => {
-              console.log(`finished posting ${endpoint} request...`)
-              if (err || res.statusCode != 200) {
-                errors.push({on: `post_${endpoint}`, error: err || res})
-                reject({errors: errors})
-              } else {
-                console.log(`${endpoint} uploaded! huzzah!`)
-                resolve({
-                  success: true
-                })
-              }
-            })
-          }, 100 * uploadDelay)
-        }
-      })
-    }, 3000)  // wait a second to let the game result be saved before trying to modify it's rank
+    console.log(`posting ${endpoint} request...`)
+    let fetchURL = `insp://${endpoint}`
+    fetch(fetchURL, {method: "POST", body: JSON.stringify(passData)})
+    .then(resp => resp.json())
+    .then(data => {
+      if (data.error) throw new Error(data.error)
+      console.log(`finished posting ${endpoint} request...`)
+      resolve({success: true})
+    }).catch(err => {
+      addMessage(`WARNING! Could not record ${endpoint}! Please contact us in Discord for support! (${err})`)
+      console.log(err)
+      reject({on: `post_${endpoint}`, error: err || res})
+    })
   })
 }
 
@@ -933,11 +886,7 @@ function getDeckById(deckID){
   return appData.player_decks.find(x => x.deck_id == deckID) || false
 }
 
-function uploadGame(attempt, gameData, errors) {
-  if (!errors) {
-    errors = []
-  }
-  if (attempt == 0) { // only set local winloss counters on first upload attempt
+function uploadGame(gameData) {
     const victory = gameData.players[0].name === gameData.winner;
 
     //only update per-deck win/loss for decks we know about
@@ -976,66 +925,52 @@ function uploadGame(attempt, gameData, errors) {
       key: "total",
       value: {alltime:appData.winLossObj.alltime.total,daily:appData.winLossObj.daily.total}
     });
-  }
+
+  let fetchURL = `insp://insert-game`
+  fetch(fetchURL, {method: "POST", body: JSON.stringify(gameData)})
+    .then(resp => resp.json())
+    .then(data => {
+      if (data.error) {
+        throw new Error(data.error)
+      }
+      console.log(`got ${data} from insert-game`)
+      console.log(data)
+
+      if (remote.getGlobal("showInspector")) {
+        // TODO: open inspector window instead of linking to https://inspector...
+        addMessage("Game saved in Inspector!", "javascript:openInspector();")
+      }
+    })
+    .catch(err => {
+      console.log(err)
+      addMessage(`WARNING! Could not save game result! Please contact us in Discord for support! (${err})`)
+    })
 
   return new Promise((resolve, reject) => {
-    if (attempt > 5) {
-      if (!remote.getGlobal("incognito")) {
-        addMessage("WARNING! Could not upload game result to inspector! Error log generated @ uploadfailure.log ... please send this log to our discord #bug_reports channel!")
-        resizeWindow()
+    let anonGameData = {
+      anonymousUserID: crypto.createHash('md5').update(gameData.players[0].name).digest("hex"),
+      gameID: crypto.createHash('md5').update(gameData.gameID).digest("hex"),
+      client_version: appData.version,
+    }
+    console.log("posting game request...")
+    console.log(anonGameData)
+    postGameUrl = `${API_URL}/anon-api/game`
+    request.post({
+      url: postGameUrl,
+      json: true,
+      body: anonGameData,
+      headers: {'User-Agent': 'MTGATracker-App', token: token}
+    }, (err, res, data) => {
+      console.log("finished posting game request...")
+      console.log(res)
+      console.log(err)
+      if (err || res.statusCode != 201) {
+        console.log({on: "post_game", error: err || res})
+        resolve({attempt: attempt, errors: errors})
+      } else {
+        resolve({success: true})
       }
-      let filePath = runFromSource ? "uploadfailure.log" : "../uploadfailure.log";
-      cleanErrors(errors)
-      fs.writeFile(filePath, JSON.stringify({fatal: "too_many_attempts", errors: errors}))
-      reject({fatal: "too_many_attempts", errors: errors})
-    } else {
-      let delay = 1000 * attempt;
-      setTimeout(() => {
-        getTrackerToken().then(tokenObj => {
-          let {token} = tokenObj;
-          if (token.errors) {
-            errors.push({on: "get_token", error: err || res})
-            resolve({attempt: attempt, errors: errors})
-          } else {
-            gameData.client_version = appData.version
-            if (remote.getGlobal("incognito")) {  // we're not allowed to use this game data :(
-              gameData = {anonymousUserID: crypto.createHash('md5').update(gameData.players[0].name).digest("hex")}
-            }
-            console.log("posting game request...")
-            let postGameUrl = `${API_URL}/tracker-api/game`
-            if (remote.getGlobal("incognito")) {
-              postGameUrl = `${API_URL}/anon-api/game`
-            }
-            setTimeout(() => {
-              request.post({
-                url: postGameUrl,
-                json: true,
-                body: gameData,
-                headers: {'User-Agent': 'MTGATracker-App', token: token}
-              }, (err, res, data) => {
-                console.log("finished posting game request...")
-                console.log(res)
-                console.log(err)
-                if (err || res.statusCode != 201) {
-                  errors.push({on: "post_game", error: err || res})
-                  resolve({attempt: attempt, errors: errors})
-                } else {
-                  resolve({
-                    success: true
-                  })
-                }
-              })
-            }, 100 * uploadDelay)
-          }
-        })
-      }, delay)
-    }
-  }).then(result => {
-    if (!result || !result.success) {
-      return uploadGame(++attempt, gameData, result.errors)
-    } else {
-      return result
-    }
+    })
   })
 }
 
@@ -1063,12 +998,7 @@ let onMessage = (data) => {
               $(".cardsleft").addClass("gamecomplete")
 
               gameLookup[data.game.gameID] = {count: 0, uploaded: true}
-              uploadGame(0, data.game)
-                .then(() => {
-                  if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
-                    addMessage("Game sent to Inspector!", "https://inspector.mtgatracker.com")
-                  }
-                })
+              uploadGame(data.game)
             } else if (data.gameID) {
               console.log(`match_complete and gameID ${data.gameID} but no game data`)
               if (gameAlreadyUploaded(data.gameID)) {
@@ -1076,13 +1006,7 @@ let onMessage = (data) => {
                   if (!gameLookup[data.gameID].uploaded) {
                     gameLookup[data.gameID].uploaded = true
                     if (lastGameState) {
-                      uploadGame(0, lastGameState)
-                        .then(() => {
-                          console.log("successfully uploaded game!")
-                          if (!remote.getGlobal("incognito") && remote.getGlobal("showInspector")) {
-                            addMessage("Game sent to Inspector!", "https://inspector.mtgatracker.com")
-                          }
-                        })
+                      uploadGame(lastGameState)
                     }
                   }
                 }
@@ -1168,7 +1092,7 @@ let onMessage = (data) => {
 
           appData.draftStats = data.draft_collection_count
         } else if (data.rank_change) {
-          passThrough("tracker-api/rankChange", data.rank_change, data.player_key).catch(e => {
+          passThrough("rankChange", data.rank_change, data.player_key).catch(e => {
             console.log("error uploading rank data: ")
             console.log(e)
           })
@@ -1232,7 +1156,7 @@ let onMessage = (data) => {
            // })
           }
         } else if (data.draftPick) {
-          passThrough("tracker-api/draft-pick", data.draftPick, data.player_key).catch(e => {
+          passThrough("draft-pick", data.draftPick, data.player_key).catch(e => {
             console.log("error uploading draftPick data: ")
             console.log(e)
           })
@@ -1306,6 +1230,8 @@ let close = () => {
   browserWindow.close()
 }
 
+let openInspector = () => { ipcRenderer.send('openInspector', null); }
+
 let menu_items = [
   {
     label: 'History',
@@ -1314,6 +1240,10 @@ let menu_items = [
   {
     label: 'Settings',
     action: () => { ipcRenderer.send('openSettings', null); }
+  },
+  {
+    label: 'Inspector',
+    action: openInspector
   },
   {
     label: 'Zoom',
