@@ -67,12 +67,8 @@ api.get('drafts/:limit', (req, res) => {
   if (req.params.limit && req.params.limit != "undefinded") {
     try {
       let limitInt = parseInt(req.params.limit)
-      console.log("limitInt")
-      console.log(limitInt)
-      console.log(typeof limitInt)
       if (limitInt > 0) {
         cursor.limit(limitInt)
-        console.log(`limiting to ${limitInt}`)
       }
     } catch (e) {
       console.log(`WARN: couldn't cast ${req.params.limit} to int`)
@@ -135,7 +131,6 @@ let fetchGames = (req, res) => {
     if (req.params.page && req.params.page != "undefinded") {
       try {
         let pageInt = parseInt(req.params.page)
-        console.log(`games page ${pageInt}`)
       } catch (e) {
         console.log(`WARN: couldn't cast page ${req.params.page} to int, defaulting to page 1`)
       }
@@ -230,18 +225,12 @@ api.get("event-history", (req, res) => {
 })
 
 api.get("win-loss/by-event", (req, res) => {
-  console.log("win-loss/by-event")
   console.log("/api/win-loss/by-event" + JSON.stringify(req.params))
   filter = {eventID: {$exists: true}}
   db.game.find(filter, (err, docs) => {
     let uniqueEventIDs = new Set(docs.map(doc => doc.eventID))
     let eventCountTotals = []
     for (let eventID of uniqueEventIDs) {
-      console.log(docs[0])
-      console.log(docs[0].winner)
-      console.log(docs[0].players[0].name)
-      console.log(docs.filter(event => event.eventID == eventID && event.winner == event.players[0].name))
-      console.log(docs.filter(event => event.eventID == eventID && event.winner == event.players[0].name).length)
       let winObj = docs.filter(event => event.eventID == eventID && event.winner == event.players[0].name)
       let wins = 0;
       if (winObj) wins = winObj.length
@@ -250,7 +239,6 @@ api.get("win-loss/by-event", (req, res) => {
       if (lossObj) losses = lossObj.length
       eventCountTotals.push({eventID: eventID, wins: wins, losses: losses})
     }
-    console.log(eventCountTotals)
 
     eventCountTotals.sort((a,b) => {
       let diff = (b.wins + b.losses) - (a.wins + a.losses)
@@ -299,7 +287,6 @@ api.get("deck/:deckID/hide", (req, res) => {
   console.log("searching for deckid " + deckID)
   db.deck.findOne({ deckID: deckID}, (err, result) => {
     if (err) throw new Error(err);
-    console.log(result)
     if (result !== null) {
        result.hidden = true;
        db.deck.save(result)
@@ -316,7 +303,6 @@ api.get("deck/:deckID/unhide", (req, res) => {
   console.log("searching for deckid " + deckID)
   db.deck.findOne({ deckID: deckID}, (err, result) => {
     if (err) throw new Error(err);
-    console.log(result)
     if (result !== null) {
        result.hidden = false;
        db.deck.save(result)
@@ -402,9 +388,7 @@ api.post("insert-game", (req, res) => {
 api.post("rankChange", (req, res) => {
   setTimeout(e => {  // HACK: let any games currently being saved finish first.
     const model = req.uploadData[0].json();
-    console.log(model)
     let gameSearch = {"players.0.userID": model.playerId}
-    console.log(gameSearch)
 
     db.game.find(gameSearch).sort({date: -1}).limit(1).exec((err, result) => {
       if (result.length == 0) {
@@ -453,8 +437,6 @@ api.post("draft-pick", (req, res) => {
       draftObj = drafts[0]
     }
 
-    console.log(draftObj)
-
     // decide if we should use existing, or create new object
     let lastPick = {packNumber: 1000, pickNumber: 1000}; // if no object to pull, feed fake data that will fail
     if (draftObj && draftObj.picks) lastPick = draftObj.picks[draftObj.picks.length - 1]
@@ -468,8 +450,6 @@ api.post("draft-pick", (req, res) => {
       )
     if (fitsExistingDraft) {
       draftObj.picks.push(model)
-      console.log("saving")
-      console.log(draftObj)
       db.draft.save(draftObj)
       return res.json(draftObj);
     } else {
@@ -485,11 +465,7 @@ api.post("draft-pick", (req, res) => {
           hero: hero,
           draftID: draftID,
         }
-        console.log("inserting")
-        console.log(draftObj)
         db.draft.insert(draftObj, (err, result) => {
-          console.log("inserted")
-          console.log(result)
           return res.json(result);
         })
       }

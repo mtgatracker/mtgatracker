@@ -724,6 +724,10 @@ const openHistoryHandler = (menuItem, browserWindow, event) => {
   focusMTGAHistory();
 }
 
+const openInspectorHandler = (menuItem, browserWindow, event) => {
+  focusInspector();
+}
+
 const closeTrackerHandler = (menuItem, browserWindow, event) => {
   mainWindow.close();
 }
@@ -740,11 +744,13 @@ const createTray = () => {
     const contextMenu = Menu.buildFromTemplate([
       {label: "DeckTracker", type: "normal", click: openDeckTrackerHandler},
       {label: "Settings", type: "normal", click: openSettingsHandler},
+      {label: "Inspector", type: "normal", click: openInspectorHandler},
       {label: "History", type: "normal", click: openHistoryHandler},
       {label: "Quit", type: "normal", click: closeTrackerHandler }
     ])
     tray.setToolTip('MTGA Tracker')
     tray.setContextMenu(contextMenu)
+    tray.on("double-click", (event, bounds) => openDeckTrackerHandler())
   }
 }
 
@@ -834,6 +840,19 @@ function focusMTGATrackerSettings() {
   } else {
     openSettingsWindow();
   }
+}
+
+function focusInspector() {
+  if(inspectorWindow) {
+    inspectorWindow.show();
+    if(inspectorWindow.isMinimized()) {
+      inspectorWindow.restore();
+    }
+    inspectorWindow.focus();
+  } else {
+    openInspectorWindow();
+  }
+
 }
 
 function focusMTGAHistory() {
