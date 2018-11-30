@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="5.0178714mm"
+   height="5.2329245mm"
+   viewBox="0 0 17.77986 18.541859"
+   id="svg3845"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="tap.svg">
+  <defs
+     id="defs3847">
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-0" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-2" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-7" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-4" />
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern-6" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="-315.32663"
+     inkscape:cy="35.877846"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     units="px"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata3850">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-712.0576,-533.49688)">
+    <path
+       inkscape:connector-curvature="0"
+       id="path3436"
+       d="m 729.83746,542.93716 -10.15992,0 3.72531,-2.64584 c -1.397,-1.10064 -2.98447,-1.65097 -4.80481,-1.65097 -0.91013,0 -1.52397,0.1905 -1.86263,0.52917 -0.3175,0.33864 -0.48684,0.97364 -0.48684,1.8838 0,2.49764 1.29117,5.16464 3.85231,8.00095 l -2.92097,2.98447 c -3.40782,-4.16981 -5.12231,-7.87395 -5.12231,-11.13358 0,-1.96848 0.59266,-3.51364 1.77799,-4.6778 1.16415,-1.14299 2.75165,-1.73566 4.69895,-1.73566 2.39184,0 4.97414,0.91016 7.78928,2.73048 l 2.18017,-3.7253 1.33347,9.44028 z"
+       style="fill:#0d0f0f;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+  </g>
+</svg>

@@ -1,0 +1,109 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header themeable">Deck Inspector: { data.currentDeckName } </h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+    <div class="col-lg-8">
+        <!-- /.panel -->
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-clock-o fa-fw"></i> Deck Matchup
+                <!-- TODO finish this-->
+                <!--<span class="header-toggle">
+                    <label class="switch switch_type1" role="switch">
+                      <input type="checkbox" class="switch__toggle" id="matchup-style">
+                      <span class="switch__label"></span>
+                    </label>
+                </span>
+                <span class="header-toggle" id="matchup-style-label">Single color</span> -->
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <span id="matchup-loading">Loading...</span>
+                <canvas id="matchup-plot"></canvas>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+        <!-- /.panel -->
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-clock-o fa-fw"></i> Deck Game History
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <span id="timeline-loading">Loading...</span>
+                <ul class="timeline themeable">
+                    <li rv-each-game="data.homeGameList" rv-class-timeline-inverted="game.won">
+                        <a class="timeline-badge" rv-linegame="game" rv-href="game.link"></a>
+                        <!--<div class="timeline-badge danger"><i class="fa fa-exclamation-circle"></i></div>-->
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4 class="timeline-title"><a class="themeable" rv-href="game.deckLink">{ game.heroDeckName }</a>
+                                    <span rv-multimana="game.heroDeckColors"></span>
+                                </h4>
+                                <h5>vs. { game.opponent } <span rv-multimana="game.opponentDeckColors"></span></h5>
+                                <p><small class="text-muted"><a class="themeable" rv-href="game.link"><i class="fa fa-clock-o"></i> { game.timeago }</a></small>
+                            </div>
+                            <div class="timeline-body">
+                                <p>{ game.hero } vs { game.opponent } - <i>Winner: { game.winner }</i></p>
+                            </div>
+                        </div>
+                    </li>
+                    <li><div class="timeline-button"><input type="button" id="more-games-button" class="btn btn-lg btn-info btn-block themeable" value="Load more games"></div></li>
+                </ul>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-8 -->
+    <div class="col-lg-4">
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> My decks
+                <span class="header-toggle">
+                    <label class="switch switch_type1" role="switch">
+                      <input type="checkbox" class="switch__toggle" id="edit-decks">
+                      <span class="switch__label"></span>
+                    </label>
+                </span>
+                <span class="header-toggle" id="deck-edit-label">Edit</span>
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <span id="decks-loading">Loading...</span>
+                <div class="list-group themeable">
+                    <div rv-each-deck="data.homeDeckList" rv-deckid="deck.deckID" rv-class-deckhidden="deck.hidden">
+                        <a rv-href="deck.link" class="list-group-item">
+                            <i class="fa fa-leanpub fa-fw"></i> { deck.deckName }
+                            <span class="pull-right text-muted small"><em> { deck.wins } <i class="fa fa-caret-up fa-fw green"></i> / { deck.losses} <i class="fa fa-caret-down fa-fw red"></i></em>
+                            </span>
+                        </a>
+                        <div class="hide-deck" style="display: none;">
+                          <button rv-hide="deck.hidden" style="display: none;" rv-softhidedeck="deck.deckID" class="hide-deck-button btn btn-sm btn-danger themeable">Hide from quick view</button>
+                          <button rv-show="deck.hidden" style="display: none;" rv-unhidedeck="deck.deckID" class="hide-deck-button btn btn-sm btn-info themeable">Show in quick view</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.list-group -->
+                <a href="/decks" class="btn btn-default btn-block themeable">View All Decks</a>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel .chat-panel -->
+    </div>
+    <!-- /.col-lg-4 -->
+</div>
+<!-- /.row -->
+<script>
+  if (localStorage.getItem("dark-mode") == "true") {
+    enableDarkMode(true)
+    $(function() {
+      enableDarkMode(true)
+    })
+  }
+</script>
