@@ -167,6 +167,8 @@ let profileRoute = (c, n) => {
           options: stackedBarOptions
         })
         appData.overallWinLossByEventChart.update()
+        // HACK: for some reason dark mode isn't working on overall winrate by event. shrug?????
+        if (localStorage.getItem("dark-mode") == "true") enableDarkMode(true)
       })
       getPlayerEventHistory().then(playerHistory => {
 
