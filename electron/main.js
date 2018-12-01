@@ -277,6 +277,21 @@ logPath = settings.get("logPath", logPath)
 let showUIButtons = settings.get('showUIButtons',true)
 let showHideButton = settings.get('showHideButton',true)
 let showMenu = settings.get('showMenu',true)
+let blankInventory = {
+                        wcCommon: 0,
+                        wcUncommon: 0,
+                        wcRare: 0,
+                        wcMythic: 0,
+                        boosters: [],
+                        draftTokens: 0,
+                        gems: 0,
+                        gold: 0,
+                        vaultProgress: 0,
+                        wcTrackPosition: 0,
+                      }
+let inventory = settings.get('inventory',blankInventory)
+let inventorySpent = JSON.parse(JSON.stringify(blankInventory))
+let inventoryGained = JSON.parse(JSON.stringify(blankInventory))
 
 global.historyEvents = []
 
@@ -312,6 +327,40 @@ ipcMain.on('updateWinLossCounters', (e,arg) => {
     }
   } catch (e) {
     console.log("could not send counterChanged message");
+    console.log(e);
+  }
+})
+
+ipcMain.on('inventoryChanged', (e,new_inventory) => {
+  let fields = ['gold','gems','wcCommon','wcUncommon','wcRare','wcMythic']
+  for (let field of fields) {
+    let changed = new_inventory[field] - global.inventory[field]
+    if (changed > 0){
+      global.inventoryGained[field] += changed
+    } else {
+      global.inventorySpent[field] -= changed
+    }
+  }
+
+  for (let new_set of new_inventory.boosters){
+    let old_set = global.inventory.boosters.find(x => x.collation_id == new_set.collation_id) || null
+    let changed = old_set == null ? new_set.count : new_set.count - old_set.count
+    if (changed > 0){
+      global.inventoryGained.boosters[new_set.collation_id] += changed
+    } else {
+      global.inventorySpent.boosters[new_set.collation_id] += changed
+    }
+  }
+
+  global.inventory = new_inventory
+  settings.set('inventory',new_inventory)
+
+  try {
+    if ( settingsWindow != null){
+      settingsWindow.webContents.send('inventoryChanged',global.inventory,global.inventorySpent,global.inventoryGained);
+    }
+  } catch (e) {
+    console.log("could not send inventoryChanged message");
     console.log(e);
   }
 })
@@ -694,6 +743,9 @@ global.settingsPaneIndex = "general"
 global.showUIButtons = showUIButtons
 global.showHideButton = showHideButton
 global.showMenu = showMenu
+global.inventory = inventory
+global.inventorySpent = inventorySpent
+global.inventoryGained = inventoryGained
 
 /*************************************************************
  * window management

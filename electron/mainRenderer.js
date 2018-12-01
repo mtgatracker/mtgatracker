@@ -1080,6 +1080,8 @@ let onMessage = (data) => {
               value: appData.lastVaultProgress
             })
           }
+          //console.log(data.inventory)
+          ipcRenderer.send('inventoryChanged', data.inventory)
          // passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
          //   console.log("error uploading inventory data: ")
          //   console.log(e)

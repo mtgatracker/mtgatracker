@@ -38,6 +38,10 @@ var buildWorker = function(func) {
   return worker
 }
 
+let inventory = remote.getGlobal('inventory')
+let inventorySpent = remote.getGlobal('inventorySpent')
+let inventoryGained = remote.getGlobal('inventoryGained')
+
 var settingsData = {
   version: remote.getGlobal("version"),
   commit: "",
@@ -101,7 +105,26 @@ var settingsData = {
   ],
   showUIButtons: remote.getGlobal('showUIButtons'),
   showHideButton: remote.getGlobal('showHideButton'),
-  showMenu: remote.getGlobal('showMenu')
+  showMenu: remote.getGlobal('showMenu'),
+  gold: inventory.gold,
+  goldSpent: inventorySpent.gold,
+  goldGained: inventoryGained.gold,
+  gems: inventory.gems,
+  gemsSpent: inventorySpent.gems,
+  gemsGained: inventoryGained.gems,
+  wcCommon: inventory.wcCommon,
+  wcCommonSpent: inventorySpent.wcCommon,
+  wcCommonGained: inventoryGained.wcCommon,
+  wcUncommon: inventory.wcUncommon,
+  wcUncommonSpent: inventorySpent.wcUncommon,
+  wcUncommonGained: inventoryGained.wcUncommon,
+  wcRare: inventory.wcRare,
+  wcRareSpent: inventorySpent.wcRare,
+  wcRareGained: inventoryGained.wcRare,
+  wcMythic: inventory.wcMythic,
+  wcMythicSpent: inventorySpent.wcMythic,
+  wcMythicGained: inventoryGained.wcMythic,
+  boosters: inventory.boosters
 }
 
 settingsData.counterDeckList = counterDecks(settingsData.winLossObj.alltime);
@@ -149,6 +172,15 @@ ipcRenderer.on('counterChanged', (e,new_wlc) => {
   settingsData.totalWinLossCounter = settingsData.winLossObj.alltime.total;
   settingsData.dailyTotalWinLossCounter = settingsData.winLossObj.daily.total;
 });
+
+ipcRenderer.on('inventoryChanged',(e,new_inventory,new_inventory_spent,new_inventory_gained) => {
+  let fields = ['gold','gems','wcCommon','wcUncommon','wcRare','wcMythic']
+  for (let field of fields){
+    settingsData[field] = new_inventory[field]
+    settingsData[field + 'Spent'] = new_inventory_spent[field]
+    settingsData[field + 'Gained'] = new_inventory_gained[field]
+  }
+})
 
 /*
  * Format decks in winLossCounter to array for display in rivets.
@@ -272,6 +304,34 @@ rivets.binders.uncommonprogress = function(el, value) {
 
 rivets.binders.commonprogress = function(el, value) {
   el.style.width = Math.max(0, (100 * value.commonOwned / value.commonTotal)) + "%"
+}
+
+settingsData.netGold = () => {
+  return settingsData.goldGained - settingsData.goldSpent
+}
+
+settingsData.netGems = () => {
+  return settingsData.gemsGained - settingsData.gemsSpent
+}
+
+settingsData.netDraftTokens = () => {
+  return settingsData.draftTokensGained - settingsData.draftTokensSpent
+}
+
+settingsData.netWcCommon = () => {
+  return settingsData.wcCommonGained - settingsData.wcCommonSpent
+}
+
+settingsData.netWcUncommon = () => {
+  return settingsData.wcUncommonGained - settingsData.wcUncommonSpent
+}
+
+settingsData.netWcRare = () => {
+  return settingsData.wcRareGained - settingsData.wcRareSpent
+}
+
+settingsData.netWcMythic = () => {
+  return settingsData.wcMythicGained - settingsData.wcMythicSpent
 }
 
 const setPromoMap = {

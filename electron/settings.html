@@ -362,10 +362,77 @@
         <div class="settings-container">
           <div class="settings-row">
             <h3>Collection</h3>
-            <p><b>Basic info</b>: { lastCollectionCount }</p>
-            <button id="exportCollectionMTGGButton" class="btn btnbtn btn-secondary">Export collection (MTGGoldfish .csv format)</button>
-            <br>
-            <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
+            <p>{ lastCollectionCount }</p>
+            <h4>Currency</h4>
+            <table class="inv-table gold-table">
+              <thead>
+                <tr>
+                  <th>&nbsp;</th>
+                  <th>Current</th>
+                  <th>Gained</th>
+                  <th>Spent</th>
+                  <th>Net</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="inv-label">Gold</td>
+                  <td>{gold}</td>
+                  <td>{goldGained}</td>
+                  <td>{goldSpent}</td>
+                  <td rv-text="netGold < goldGained goldSpent | call"></td>
+                </tr>
+                <tr>
+                  <td class="inv-label">Gems</td>
+                  <td>{gems}</td>
+                  <td>{gemsGained}</td>
+                  <td>{gemsSpent}</td>
+                  <td rv-text="netGems < gemsGained gemsSpent | call"></td>
+                </tr>
+              </tbody>
+            </table>
+            <h4>Wildcards</h4>
+            <table class="inv-table wildcard-table">
+              <thead>
+                <tr>
+                  <th>&nbsp;</th>
+                  <th>Current</th>
+                  <th>Gained</th>
+                  <th>Spent</th>
+                  <th>Net</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="inv-label">Common</td>
+                  <td>{wcCommon}</td>
+                  <td>{wcCommonGained}</td>
+                  <td>{wcCommonSpent}</td>
+                  <td rv-text="netWcCommon < wcCommonGained wcCommonSpent | call"></td>
+                </tr>
+                <tr>
+                  <td class="inv-label">Uncommon</td>
+                  <td>{wcUncommon}</td>
+                  <td>{wcUncommonGained}</td>
+                  <td>{wcUncommonSpent}</td>
+                  <td rv-text="netWcUncommon < wcUncommonGained wcUncommonSpent | call"></td>
+                </tr>
+                <tr>
+                  <td class="inv-label">Rare</td>
+                  <td>{wcRare}</td>
+                  <td>{wcRareGained}</td>
+                  <td>{wcRareSpent}</td>
+                  <td rv-text="netWcRare < wcRareGained wcRareSpent | call"></td>
+                </tr>
+                <tr>
+                  <td class="inv-label">Mythic</td>
+                  <td>{wcMythic}</td>
+                  <td>{wcMythicGained}</td>
+                  <td>{wcMythicSpent}</td>
+                  <td rv-text="netWcMythic < wcMythicGained wcMythicSpent | call"></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           <div class="settings-row">
             <h3>Set Progress</h3>
@@ -417,6 +484,13 @@
               </ul>
             </div>
             <div id="no-recently-obtained-cards">The tracker hasn't tracked any recently obtained cards (obtain cards to update this).</div>
+          </div>
+          <hr/>
+          <div class="settings-row">
+            <h3>Collection export</h3>
+            <button id="exportCollectionMTGGButton" class="btn btnbtn btn-secondary">Export collection (MTGGoldfish .csv format)</button>
+            <br>
+            <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
           </div>
         </div>
       </div>
