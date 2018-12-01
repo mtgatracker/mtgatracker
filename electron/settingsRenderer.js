@@ -306,6 +306,22 @@ rivets.binders.commonprogress = function(el, value) {
   el.style.width = Math.max(0, (100 * value.commonOwned / value.commonTotal)) + "%"
 }
 
+rivets.binders.netgold = (el,value) => {
+  let $el = $(el)
+  $el.text(value)
+  if (value > 0){
+    $el.addClass('gained')
+    $el.removeClass('spent')
+  } else if (value < 0) {
+    $el.addClass('spent')
+    $el.removeClass('gained')
+  } else {
+    $el.removeClass('spent')
+    $el.removeClass('gained')
+  }
+
+}
+
 settingsData.netGold = () => {
   return settingsData.goldGained - settingsData.goldSpent
 }

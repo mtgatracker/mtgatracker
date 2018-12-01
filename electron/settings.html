@@ -363,11 +363,10 @@
           <div class="settings-row">
             <h3>Collection</h3>
             <p>{ lastCollectionCount }</p>
-            <h4>Currency</h4>
             <table class="inv-table gold-table">
               <thead>
                 <tr>
-                  <th>&nbsp;</th>
+                  <th class="table-type">Currency</th>
                   <th>Current</th>
                   <th>Gained</th>
                   <th>Spent</th>
@@ -376,14 +375,14 @@
               </thead>
               <tbody>
                 <tr>
-                  <td class="inv-label">Gold</td>
+                  <td class="inv-label"><img src="img/coin.png"/>Gold</td>
                   <td>{gold}</td>
-                  <td>{goldGained}</td>
-                  <td>{goldSpent}</td>
-                  <td rv-text="netGold < goldGained goldSpent | call"></td>
+                  <td rv-class-gained="goldGained">{goldGained}</td>
+                  <td rv-class-spent="goldSpent">{goldSpent}</td>
+                  <td rv-netgold="netGold < goldGained goldSpent | call"></td>
                 </tr>
                 <tr>
-                  <td class="inv-label">Gems</td>
+                  <td class="inv-label"><img src="img/gem.png"/>Gems</td>
                   <td>{gems}</td>
                   <td>{gemsGained}</td>
                   <td>{gemsSpent}</td>
@@ -391,11 +390,10 @@
                 </tr>
               </tbody>
             </table>
-            <h4>Wildcards</h4>
             <table class="inv-table wildcard-table">
               <thead>
                 <tr>
-                  <th>&nbsp;</th>
+                  <th class="table-type">Wildcards</th>
                   <th>Current</th>
                   <th>Gained</th>
                   <th>Spent</th>
@@ -404,28 +402,28 @@
               </thead>
               <tbody>
                 <tr>
-                  <td class="inv-label">Common</td>
+                  <td class="inv-label"><span class="wc wcCommon"></span>Common</td>
                   <td>{wcCommon}</td>
                   <td>{wcCommonGained}</td>
                   <td>{wcCommonSpent}</td>
                   <td rv-text="netWcCommon < wcCommonGained wcCommonSpent | call"></td>
                 </tr>
                 <tr>
-                  <td class="inv-label">Uncommon</td>
+                  <td class="inv-label"><span class="wc wcUncommon"></span>Uncommon</td>
                   <td>{wcUncommon}</td>
                   <td>{wcUncommonGained}</td>
                   <td>{wcUncommonSpent}</td>
                   <td rv-text="netWcUncommon < wcUncommonGained wcUncommonSpent | call"></td>
                 </tr>
                 <tr>
-                  <td class="inv-label">Rare</td>
+                  <td class="inv-label"><span class="wc wcRare"></span>Rare</td>
                   <td>{wcRare}</td>
                   <td>{wcRareGained}</td>
                   <td>{wcRareSpent}</td>
                   <td rv-text="netWcRare < wcRareGained wcRareSpent | call"></td>
                 </tr>
                 <tr>
-                  <td class="inv-label">Mythic</td>
+                  <td class="inv-label"><span class="wc wcMythic"></span>Mythic</td>
                   <td>{wcMythic}</td>
                   <td>{wcMythicGained}</td>
                   <td>{wcMythicSpent}</td>
@@ -890,6 +888,8 @@
             <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
             <div>Icons made by <a href="https://www.flaticon.com/authors/cole-bemis" title="Cole Bemis">Cole Bemis</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
             <div>Icons made by <a href="https://www.flaticon.com/authors/becris" title="Becris">Becris</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/dinosoftlabs" title="DinosoftLabs">DinosoftLabs</a> from <a href="https://www.flaticon.com/"           title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"          title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/"          title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"          title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
           </div>
         </div>
       </div>
