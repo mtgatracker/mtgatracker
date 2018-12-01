@@ -306,7 +306,7 @@ rivets.binders.commonprogress = function(el, value) {
   el.style.width = Math.max(0, (100 * value.commonOwned / value.commonTotal)) + "%"
 }
 
-rivets.binders.netgold = (el,value) => {
+rivets.binders.netinv = (el,value) => {
   let $el = $(el)
   $el.text(value)
   if (value > 0){

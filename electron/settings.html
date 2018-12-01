@@ -379,14 +379,14 @@
                   <td>{gold}</td>
                   <td rv-class-gained="goldGained">{goldGained}</td>
                   <td rv-class-spent="goldSpent">{goldSpent}</td>
-                  <td rv-netgold="netGold < goldGained goldSpent | call"></td>
+                  <td rv-netinv="netGold < goldGained goldSpent | call"></td>
                 </tr>
                 <tr>
                   <td class="inv-label"><img src="img/gem.png"/>Gems</td>
                   <td>{gems}</td>
-                  <td>{gemsGained}</td>
-                  <td>{gemsSpent}</td>
-                  <td rv-text="netGems < gemsGained gemsSpent | call"></td>
+                  <td rv-class-gained="gemsGained">{gemsGained}</td>
+                  <td rv-class-spent="gemsSpent">{gemsSpent}</td>
+                  <td rv-netinv="netGems < gemsGained gemsSpent | call"></td>
                 </tr>
               </tbody>
             </table>
@@ -404,30 +404,30 @@
                 <tr>
                   <td class="inv-label"><span class="wc wcCommon"></span>Common</td>
                   <td>{wcCommon}</td>
-                  <td>{wcCommonGained}</td>
-                  <td>{wcCommonSpent}</td>
-                  <td rv-text="netWcCommon < wcCommonGained wcCommonSpent | call"></td>
+                  <td rv-class-gained="wcCommonGained">{wcCommonGained}</td>
+                  <td rv-class-spent="wcCommonSpent">{wcCommonSpent}</td>
+                  <td rv-netinv="netWcCommon < wcCommonGained wcCommonSpent | call"></td>
                 </tr>
                 <tr>
                   <td class="inv-label"><span class="wc wcUncommon"></span>Uncommon</td>
                   <td>{wcUncommon}</td>
-                  <td>{wcUncommonGained}</td>
-                  <td>{wcUncommonSpent}</td>
-                  <td rv-text="netWcUncommon < wcUncommonGained wcUncommonSpent | call"></td>
+                  <td rv-class-gained="wcUncommonGained">{wcUncommonGained}</td>
+                  <td rv-class-spent="wcUncommonSpent">{wcUncommonSpent}</td>
+                  <td rv-netinv="netWcUncommon < wcUncommonGained wcUncommonSpent | call"></td>
                 </tr>
                 <tr>
                   <td class="inv-label"><span class="wc wcRare"></span>Rare</td>
                   <td>{wcRare}</td>
-                  <td>{wcRareGained}</td>
-                  <td>{wcRareSpent}</td>
-                  <td rv-text="netWcRare < wcRareGained wcRareSpent | call"></td>
+                  <td rv-class-gained="wcRareGained">{wcRareGained}</td>
+                  <td rv-class-spent="wcRareSpent">{wcRareSpent}</td>
+                  <td rv-netinv="netWcRare < wcRareGained wcRareSpent | call"></td>
                 </tr>
                 <tr>
                   <td class="inv-label"><span class="wc wcMythic"></span>Mythic</td>
                   <td>{wcMythic}</td>
-                  <td>{wcMythicGained}</td>
-                  <td>{wcMythicSpent}</td>
-                  <td rv-text="netWcMythic < wcMythicGained wcMythicSpent | call"></td>
+                  <td rv-class-gained="wcMythicGained">{wcMythicGained}</td>
+                  <td rv-class-spent="wcMythicSpent">{wcMythicSpent}</td>
+                  <td rv-netinv="netWcMythic < wcMythicGained wcMythicSpent | call"></td>
                 </tr>
               </tbody>
             </table>
