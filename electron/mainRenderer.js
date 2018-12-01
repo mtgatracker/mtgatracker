@@ -20,12 +20,17 @@ function contextData(data) {
   // return data for that context as a single string value.
   if (data.showDraftStats) {
     return appData.draftStats.map(card=>card.pretty_name).join('\n')
+  } else if (data.draw_stats) {
+    //FIXME: Figure out where the set and card numbers are stored.
+    return data.draw_stats.map(
+      c=>(c.count_in_deck + ' ' + c.card + ' (???) ?')
+    ).join('\n')
   } else if (data.list_selected) {
-    return dataString = data.selected_list.map(
+    return data.selected_list.map(
       c=>(c.count_in_deck + ' ' + c.pretty_name + ' (' + c.set + ') ' + c.set_number)
     ).join('\n')
   } else if (data.show_available_decklists) {
-    return dataString = data.player_decks.map( d=>d.pool_name ).join('\n')
+    return data.player_decks.map( d=>d.pool_name ).join('\n')
   }
 }
 
@@ -68,13 +73,25 @@ let addClickHandler = (selector,handler) => {
 // poll for active window semi-regularly; if it's not MTGA or MTGATracker, minimize / unset alwaysontop
 setInterval(() => {
   if (appData.mtgaOverlayOnly) {
-    activeWin().then(win => {
-      if (win.owner.name == "MTGA.exe" || win.owner.name == "MTGATracker.exe" || win.title == "MTGA Tracker") {
-        if(!browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(true)
+    try {
+      activeWin().then(win => {
+        if (win.owner.name == "MTGA.exe" || win.owner.name == "MTGATracker.exe" || win.title == "MTGA Tracker") {
+          if(!browserWindow.isAlwaysOnTop()) {
+            browserWindow.setAlwaysOnTop(true)
+          }
+        } else {
+          if(browserWindow.isAlwaysOnTop()) {
+            browserWindow.setAlwaysOnTop(false)
+          }
+        }
+      })
+    } catch(e) {
+      if (e instanceof Error && e.message == "Cannot find module 'ffi'") {
+        // optional dependencies shouldn't throw 5 errors per second.
       } else {
-        if(browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(false)
+        throw e;
       }
-    })
+    }
   } else {
     console.log("skipping overlay check and turning on always on top")
     if(!browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(true)
