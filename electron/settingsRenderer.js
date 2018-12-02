@@ -9,6 +9,7 @@ const path = require('path')
 const os = require('os')
 const jwt = require('jsonwebtoken')
 const request = require('request')
+const Datastore = require('nedb')
 
 var { rendererPreload } = require('electron-routes');
 rendererPreload();
@@ -586,6 +587,143 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
     Promise.all(allWrittenPromises).then(e => alert(`Files backed up to ${backupDirname}${path.sep}inspector-<type>-${backupPrefix}.db`))
   })
+  $("#game-db-import-select").click(function() {
+    dialog.showOpenDialog({
+      properties: ["openFile"],
+      defaultPath: databaseFiles.game
+    }, filePath => {
+      if (filePath) {
+        $("#db-import-progress").append(`<p>Importing from: ${filePath}</p>`)
+        let importDB = new Datastore({filename: filePath[0]})
+        importDB.loadDatabase(err => {
+          if (err) {
+            $("#db-import-progress").append(`<p><b>ERROR</b>: ${err}</p>`)
+            $("#db-import-progress").append("<hr>")
+            return
+          }
+          importDB.count({}, (err, count) => {
+            $("#db-import-progress").append(`<p>Attempting to import ${count} games</p>`)
+            importDB.find({}, (err, docs) => {
+              console.log(docs[0])
+              if (!docs[0].gameID) {
+                $("#db-import-progress").append("<p><b>ERROR</b>: wrong database type!</p>")
+                $("#db-import-progress").append("<hr>")
+                return
+              }
+              let inserted = 0;
+              let alreadyThere = 0;
+              let fetchURL = `insp://insert-game`
+              $("#db-import-progress").append(`Processing... `)
+              let insertFuncs = docs.map(doc => () => fetch(fetchURL, {method: "POST", body: JSON.stringify(doc)})
+                .then(resp => resp.json())
+                .then(data => {
+                  if (data.error) {
+                    throw new Error(data.error)
+                  }
+                  console.log(`got ${data} from insert-game`)
+                  inserted += 1;
+                  if (inserted % 10 == 0) {
+                    $("#db-import-progress").append(` ${inserted}...`)
+                  }
+                })
+                .catch(err => {
+                 console.log(err)
+                  if (err.message == "game_already_exists") {
+                    alreadyThere++;
+                  } else {
+                    console.log(err)
+                    $("#db-import-progress").append(`<p><b>ERROR:</b> ${err}</p>`)
+                  }
+                  inserted += 1;
+                  if (inserted % 10 == 0) {
+                    $("#db-import-progress").append(` ${inserted}...`)
+                  }
+                }))
+              promiseSerial(insertFuncs).then(res => {
+                let finished = `<p>Finished importing <b>${inserted}</b> games!`
+                if (alreadyThere) {
+                  finished += ` (<i>${alreadyThere} games already existed</i>)`
+                }
+                finished += "</p>"
+                $("#db-import-progress").append(finished)
+                $("#db-import-progress").append("<hr>")
+              })
+            })
+          })
+        })
+      }
+    })
+  })
+
+  $("#draft-db-import-select").click(function() {
+    dialog.showOpenDialog({
+      properties: ["openFile"],
+      defaultPath: databaseFiles.draft
+    }, filePath => {
+      if (filePath) {
+        $("#db-import-progress").append(`<p>Importing from: ${filePath}</p>`)
+        let importDB = new Datastore({filename: filePath[0]})
+        importDB.loadDatabase(err => {
+          if (err) {
+            $("#db-import-progress").append(`<p><b>ERROR</b>: ${err}</p>`)
+            $("#db-import-progress").append("<hr>")
+            return
+          }
+          importDB.count({}, (err, count) => {
+            $("#db-import-progress").append(`<p>Attempting to import ${count} drafts</p>`)
+            importDB.find({}, (err, docs) => {
+              console.log(docs[0])
+              if (!docs[0].draftID) {
+                $("#db-import-progress").append("<p><b>ERROR</b>: wrong database type!</p>")
+                $("#db-import-progress").append("<hr>")
+                return
+              }
+              let inserted = 0;
+              let alreadyThere = 0;
+              let insertDraftURL = `insp://insert-draft`
+              $("#db-import-progress").append(`Processing... `)
+              promiseSerial(docs.map(draft => () => fetch(insertDraftURL, {method: "POST", body: JSON.stringify(draft)})
+                  .then(resp => resp.json())
+                  .then(data => {
+                    if (data.error) {
+                      throw new Error(data.error)
+                    }
+                    console.log(`got ${data} from insert-draft`)
+                    console.log(data)
+
+                    inserted += 1;
+                    if (inserted % 10 == 0) {
+                      $("#db-import-progress").append(` ${inserted}...`)
+                    }
+                  })
+                  .catch(err => {
+                    console.log(err)
+                    if (err.message == "draft_already_exists") {
+                      alreadyThere++;
+                    } else {
+                      console.log(err.message)
+                      $("#db-import-progress").append(`<p><b>ERROR:</b> ${err}</p>`)
+                    }
+                    inserted += 1;
+                    if (inserted % 10 == 0) {
+                      $("#db-import-progress").append(` ${inserted}...`)
+                    }
+                  }))).then(res => {
+                    let finished = `<p>Finished importing <b>${inserted}</b> drafts!`
+                    if (alreadyThere) {
+                      finished += ` (<i>${alreadyThere} drafts already existed</i>)`
+                    }
+                    finished += "</p>"
+                    $("#db-import-progress").append(finished)
+                    $("#db-import-progress").append("<hr>")
+                  })
+            })
+          })
+        })
+      }
+    })
+  })
+
   $("#collect-all-inspector-data").click((e) => {
     $("#collect-inspector-progress").css("display", "block")
     $("#collect-inspector-progress").append("<p>Authenticating with Inspector API...</p>")
