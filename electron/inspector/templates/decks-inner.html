@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header themeable">All decks</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> My decks
+                <span class="header-toggle">
+                    <label class="switch switch_type1" role="switch">
+                      <input type="checkbox" class="switch__toggle" id="edit-decks">
+                      <span class="switch__label"></span>
+                    </label>
+                </span>
+                <span class="header-toggle" id="deck-edit-label">Edit</span>
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <span id="decks-loading">Loading...</span>
+                <div class="list-group themeable">
+                    <div rv-each-deck="data.homeDeckList" rv-deckid="deck.deckID">
+                        <a rv-href="deck.link" class="list-group-item">
+                            <i class="fa fa-leanpub fa-fw"></i> <span rv-class-deckhidden="deck.hidden" class="themeable">{ deck.deckName }</span>
+                            <span class="pull-right text-muted small"><em> { deck.wins } <i class="fa fa-caret-up fa-fw green"></i> / { deck.losses} <i class="fa fa-caret-down fa-fw red"></i></em>
+                            </span>
+                        </a>
+                        <div class="hide-deck" style="display: none;">
+                          <button rv-hide="deck.hidden" style="display: none;" rv-softhidedeck="deck.deckID" class="hide-deck-button btn btn-sm btn-danger themeable">Hide from quick view</button>
+                          <button rv-show="deck.hidden" style="display: none;" rv-unhidedeck="deck.deckID" class="hide-deck-button btn btn-sm btn-info themeable">Show in quick view</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel .chat-panel -->
+    </div>
+    <!-- /.col-lg-4 -->
+</div>
+<!-- /.row -->
+<script>
+  if (localStorage.getItem("dark-mode") == "true") {
+    enableDarkMode(true)
+    $(function() {
+      enableDarkMode(true)
+    })
+  }
+</script>

@@ -1,5 +1,6 @@
 const console = require('console');
 const jwt = require('jsonwebtoken');
+const { inspectorRouter } = require("./inspectorApi")
 
 global.updateReady = false
 global.updateDownloading = false
@@ -407,6 +408,40 @@ let openSettingsWindow = () => {
   settingsWindow.on('close', () => {global.settingsPaneIndex = 'general'})
 }
 
+let openInspectorWindow = () => {
+  if(inspectorWindow == null) {
+    let settingsWidth = debug ? 1400 : 1025;
+
+    const inspectorWindowStateMgr = windowStateKeeper('settings')
+    inspectorWindow = new BrowserWindow({width: settingsWidth,
+                                        height: 800,
+                                        toolbar: false,
+                                        titlebar: false,
+                                        title: false,
+                                        show: false,
+                                        icon: "img/icon_small.ico",
+                                        x: inspectorWindowStateMgr.x,
+                                        y: inspectorWindowStateMgr.y})
+    inspectorWindowStateMgr.track(inspectorWindow)
+    inspectorWindow.setMenu(null)
+    inspectorWindow.loadURL(require('url').format({
+      pathname: path.join(__dirname, 'inspector/index.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+    if (debug) {
+      inspectorWindow.webContents.openDevTools()
+    }
+    inspectorWindow.on('closed', function () {
+      inspectorWindow = null;
+    })
+  }
+  inspectorWindow.once('ready-to-show', () => {
+    inspectorWindow.show()
+  })
+  inspectorWindow.on('close', () => {global.settingsPaneIndex = 'general'})
+}
+
 
 
 let openHistoryWindow = () => {
@@ -476,6 +511,7 @@ let openTOSWindow = () => {
 }
 
 ipcMain.on('openSettings', openSettingsWindow)
+ipcMain.on('openInspector', openInspectorWindow)
 ipcMain.on('openHistory', openHistoryWindow)
 
 app.disableHardwareAcceleration()
@@ -667,6 +703,7 @@ global.showMenu = showMenu
 
 let mainWindow = null
 let settingsWindow = null
+let inspectorWindow = null
 let historyWindow = null
 let tosWindow = null
 
@@ -689,6 +726,10 @@ const openHistoryHandler = (menuItem, browserWindow, event) => {
   focusMTGAHistory();
 }
 
+const openInspectorHandler = (menuItem, browserWindow, event) => {
+  focusInspector();
+}
+
 const closeTrackerHandler = (menuItem, browserWindow, event) => {
   mainWindow.close();
 }
@@ -705,11 +746,13 @@ const createTray = () => {
     const contextMenu = Menu.buildFromTemplate([
       {label: "DeckTracker", type: "normal", click: openDeckTrackerHandler},
       {label: "Settings", type: "normal", click: openSettingsHandler},
+      {label: "Inspector", type: "normal", click: openInspectorHandler},
       {label: "History", type: "normal", click: openHistoryHandler},
       {label: "Quit", type: "normal", click: closeTrackerHandler }
     ])
     tray.setToolTip('MTGA Tracker')
     tray.setContextMenu(contextMenu)
+    tray.on("double-click", (event, bounds) => openDeckTrackerHandler())
   }
 }
 
@@ -799,6 +842,19 @@ function focusMTGATrackerSettings() {
   } else {
     openSettingsWindow();
   }
+}
+
+function focusInspector() {
+  if(inspectorWindow) {
+    inspectorWindow.show();
+    if(inspectorWindow.isMinimized()) {
+      inspectorWindow.restore();
+    }
+    inspectorWindow.focus();
+  } else {
+    openInspectorWindow();
+  }
+
 }
 
 function focusMTGAHistory() {

@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header themeable">All drafts</h1>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default themeable">
+            <div class="panel-heading">
+                <i class="fa fa-bell fa-fw"></i> My drafts
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <span id="drafts-loading">Loading...</span>
+                <div class="list-group themeable">
+                    <div rv-each-draft="data.homeDraftList" rv-draftid="draft.draftID">
+                        <a rv-href="draft.link" class="list-group-item">
+                            <i class="fa fa-leanpub fa-fw"></i>{ draft.draftName }
+                            <span class="pull-right text-muted small"> { draft.timeago }</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel .chat-panel -->
+    </div>
+    <!-- /.col-lg-4 -->
+</div>
+<!-- /.row -->
+<script>
+  if (localStorage.getItem("dark-mode") == "true") {
+    enableDarkMode(true)
+    $(function() {
+      enableDarkMode(true)
+    })
+  }
+</script>
