@@ -82,6 +82,10 @@ ipcRenderer.on('inventoryChanged',(e,new_inventory,new_inventory_spent,new_inven
   }
 })
 
+ipcRenderer.on('recentCardsChanged',(e,new_recent) => {
+  collectionData.recentCards = new_recent
+})
+
 rivets.binders.showcollectionpane = (el, val) => {
   el.style.display = "none"
   if (el.attributes.value.value == val) {

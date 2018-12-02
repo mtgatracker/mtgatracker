@@ -365,6 +365,19 @@ ipcMain.on('inventoryChanged', (e,new_inventory) => {
   }
 })
 
+ipcMain.on('recentCardsChanged', (e,new_recent) => {
+  global.recentCards = new_recent
+  settings.set('recentCards',new_recent)
+  try {
+    if ( collectionWindow != null){
+      collectionWindow.webContents.send('recentCardsChanged',global.recentCards);
+    }
+  } catch (e) {
+    console.log("could not send recentCardsChanged message");
+    console.log(e);
+  }
+})
+
 ipcMain.on('messageAcknowledged', (event, arg) => {
   let acked = settings.get("messagesAcknowledged", [])
   acked.push(arg)
