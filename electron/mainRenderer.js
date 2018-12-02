@@ -1108,7 +1108,7 @@ let onMessage = (data) => {
               if(Object.keys(objectToPush.cardsObtained).length > 0) {
                 appData.recentCards.unshift(objectToPush);
                 console.log(appData.recentCards);
-                ipcRenderer.send('recentCardsChanged', appData.recentCards)
+                ipcRenderer.send('recentCardsChanged', objectToPush)
               }
             }
 

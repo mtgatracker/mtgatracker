@@ -82,8 +82,18 @@ ipcRenderer.on('inventoryChanged',(e,new_inventory,new_inventory_spent,new_inven
   }
 })
 
+/**
+ * Heavy handed manipulation of variables because rivets is dumb
+ */
 ipcRenderer.on('recentCardsChanged',(e,new_recent) => {
-  collectionData.recentCards = new_recent
+  let old_recent = collectionData.recentCards
+  let new_recent_cards = []
+  collectionData.recentCards = null
+  for (let recent of old_recent) {
+  	new_recent_cards.push(recent)
+  }
+  new_recent_cards.unshift(new_recent)
+  collectionData.recentCards = new_recent_cards
 })
 
 rivets.binders.showcollectionpane = (el, val) => {

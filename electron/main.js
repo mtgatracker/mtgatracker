@@ -366,11 +366,11 @@ ipcMain.on('inventoryChanged', (e,new_inventory) => {
 })
 
 ipcMain.on('recentCardsChanged', (e,new_recent) => {
-  global.recentCards = new_recent
-  settings.set('recentCards',new_recent)
+  global.recentCards.unshift(new_recent)
+  settings.set('recentCards',global.recentCards)
   try {
     if ( collectionWindow != null){
-      collectionWindow.webContents.send('recentCardsChanged',global.recentCards);
+      collectionWindow.webContents.send('recentCardsChanged',new_recent);
     }
   } catch (e) {
     console.log("could not send recentCardsChanged message");
