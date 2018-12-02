@@ -9,7 +9,6 @@ const path = require('path')
 const request = require('request')
 const os = require('os')
 const jwt = require('jsonwebtoken')
-const request = require('request')
 
 var { rendererPreload } = require('electron-routes');
 rendererPreload();
@@ -911,8 +910,9 @@ function passThrough(endpoint, passData, errors) {
         }
       })
     }, 100 * uploadDelay)
+  })
 }
-                     
+
 // https://hackernoon.com/functional-javascript-resolving-promises-sequentially-7aac18c4431e
 const promiseSerial = funcs =>
   funcs.reduce((promise, func) =>
