@@ -1205,16 +1205,20 @@ let openInspector = () => { ipcRenderer.send('openInspector', null); }
 
 let menu_items = [
   {
+    label: 'Collection',
+    action: () => { ipcRenderer.send('openCollection', null); }
+  },
+  {
     label: 'History',
     action: () => { ipcRenderer.send('openHistory', null); }
   },
   {
-    label: 'Settings',
-    action: () => { ipcRenderer.send('openSettings', null); }
-  },
-  {
     label: 'Inspector',
     action: openInspector
+  },
+  {
+    label: 'Settings',
+    action: () => { ipcRenderer.send('openSettings', null); }
   },
   {
     label: 'Zoom',

@@ -39,10 +39,6 @@
           <span class="icon icon-user"></span>
           Inspector
         </a>
-        <a value="collection" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="collection-nav">
-          <span class="icon icon-archive"></span>
-          Collection
-        </a>
       </nav>
 
       <nav class="nav-group">
@@ -101,7 +97,6 @@
           <hr />
 
           <h4>Vault</h4>
-          <h5>Current Progress: { lastVaultProgress }%</h5>
           <div class="settings-row">
             <input rv-checked="showVaultProgress" class="tf-toggle" type="checkbox" key="showVaultProgress" data-toggle="toggle"> Show vault progress in main window
           </div>
@@ -355,140 +350,6 @@
             <p>On first launch, MTGATracker generates a key that is private and unique to your machine.
               Treat it like a password!</p>
             <p><b>View Tracker key</b>: <span id="showTrackerID">(click to reveal)</span></p>
-          </div>
-        </div>
-      </div>
-      <div id="collection-pane" value="collection" rv-showsettingspane="settingsPaneIndex">
-        <div class="settings-container">
-          <div class="settings-row">
-            <h3>Collection</h3>
-            <p>{ lastCollectionCount }</p>
-            <table class="inv-table gold-table">
-              <thead>
-                <tr>
-                  <th class="table-type">Currency</th>
-                  <th>Current</th>
-                  <th>Gained</th>
-                  <th>Spent</th>
-                  <th>Net</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="inv-label"><img src="img/coin.png"/>Gold</td>
-                  <td>{gold}</td>
-                  <td rv-class-gained="goldGained">{goldGained}</td>
-                  <td rv-class-spent="goldSpent">{goldSpent}</td>
-                  <td rv-netinv="netGold < goldGained goldSpent | call"></td>
-                </tr>
-                <tr>
-                  <td class="inv-label"><img src="img/gem.png"/>Gems</td>
-                  <td>{gems}</td>
-                  <td rv-class-gained="gemsGained">{gemsGained}</td>
-                  <td rv-class-spent="gemsSpent">{gemsSpent}</td>
-                  <td rv-netinv="netGems < gemsGained gemsSpent | call"></td>
-                </tr>
-              </tbody>
-            </table>
-            <table class="inv-table wildcard-table">
-              <thead>
-                <tr>
-                  <th class="table-type">Wildcards</th>
-                  <th>Current</th>
-                  <th>Gained</th>
-                  <th>Spent</th>
-                  <th>Net</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="inv-label"><span class="wc wcCommon"></span>Common</td>
-                  <td>{wcCommon}</td>
-                  <td rv-class-gained="wcCommonGained">{wcCommonGained}</td>
-                  <td rv-class-spent="wcCommonSpent">{wcCommonSpent}</td>
-                  <td rv-netinv="netWcCommon < wcCommonGained wcCommonSpent | call"></td>
-                </tr>
-                <tr>
-                  <td class="inv-label"><span class="wc wcUncommon"></span>Uncommon</td>
-                  <td>{wcUncommon}</td>
-                  <td rv-class-gained="wcUncommonGained">{wcUncommonGained}</td>
-                  <td rv-class-spent="wcUncommonSpent">{wcUncommonSpent}</td>
-                  <td rv-netinv="netWcUncommon < wcUncommonGained wcUncommonSpent | call"></td>
-                </tr>
-                <tr>
-                  <td class="inv-label"><span class="wc wcRare"></span>Rare</td>
-                  <td>{wcRare}</td>
-                  <td rv-class-gained="wcRareGained">{wcRareGained}</td>
-                  <td rv-class-spent="wcRareSpent">{wcRareSpent}</td>
-                  <td rv-netinv="netWcRare < wcRareGained wcRareSpent | call"></td>
-                </tr>
-                <tr>
-                  <td class="inv-label"><span class="wc wcMythic"></span>Mythic</td>
-                  <td>{wcMythic}</td>
-                  <td rv-class-gained="wcMythicGained">{wcMythicGained}</td>
-                  <td rv-class-spent="wcMythicSpent">{wcMythicSpent}</td>
-                  <td rv-netinv="netWcMythic < wcMythicGained wcMythicSpent | call"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="settings-row">
-            <h3>Set Progress</h3>
-            <div rv-each-set="lastCollectionSetProgress">
-              <div class="well">
-                <center>
-                  <img rv-setpromo="set.name" width="200px" />
-                </center>
-                <span rv-hidesetname="set.name">{ set.name }</span>
-                <div class="progress set-bar position-relative">
-                  <div rv-mythicprogress="set" class="progress-bar set-bar mythic" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
-                  </div>
-                  <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.mythicOwned} / {set.mythicTotal} Mythics</span>
-                </div>
-
-                <div class="progress set-bar position-relative">
-                  <div rv-rareprogress="set" class="progress-bar set-bar rare" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
-                  </div>
-                  <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.rareOwned} / {set.rareTotal} Rares</span>
-                </div>
-
-                <div class="progress set-bar position-relative">
-                  <div rv-uncommonprogress="set" class="progress-bar set-bar uncommon" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
-                  </div>
-                  <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.uncommonOwned} / {set.uncommonTotal} Uncommons</span>
-                </div>
-
-                <div class="progress set-bar position-relative">
-                  <div rv-commonprogress="set" class="progress-bar set-bar common" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
-                  </div>
-                  <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.commonOwned} / {set.commonTotal} Commons</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="settings-row">
-            <h3>Recently collected cards</h3>
-            <p>How many new card events to display</p>
-            <div class="slidecontainer">
-              <input type="range" min="1" max="100" value="0" class="slider" id="recent-cards-quantity-slider">
-            </div>
-            <div class="slidevalue-recent-cards slidervalue ">
-              0
-            </div>
-            <div class="recent-cards-group-container" rv-each-recentcardgroup="recentCards | filterBySlideValueRecentCards recentCardsQuantityToShow">
-              <h5 class="recent-cards-header" onclick="recentCardsSectionClickHandler(event)">Cards updated: {recentcardgroup.time}</h5>
-              <ul class="recent-cards-container" rv-recentcardsbinder="recentcardgroup.cardsObtained">
-                <!-- cards appended here from settingsRenderer -->
-              </ul>
-            </div>
-            <div id="no-recently-obtained-cards">The tracker hasn't tracked any recently obtained cards (obtain cards to update this).</div>
-          </div>
-          <hr/>
-          <div class="settings-row">
-            <h3>Collection export</h3>
-            <button id="exportCollectionMTGGButton" class="btn btnbtn btn-secondary">Export collection (MTGGoldfish .csv format)</button>
-            <br>
-            <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
           </div>
         </div>
       </div>
@@ -900,10 +761,8 @@
             <h3>Feedback</h3>
 
             <div class="settings-row">
-              <div class="checkbox">
-                <label>
-                  <input rv-checked="sendAnonymousUsageInfo" id="enable-anonymous-usage-toggle" type="checkbox" data-toggle="toggle"> Send MTGATracker Developers Anonymous Usage Information
-                </label>
+              <div class="settings-row">
+                  <input rv-checked="sendAnonymousUsageInfo" key="sendAnonymousUsageInfo" type="checkbox" data-toggle="toggle" class="tf-toggle"> Send MTGATracker Developers Anonymous Usage Information
               </div>
               <p>This shows us what features & settings y'all use the most to help us decide what to make next, and which features to continue supporting.</p>
             </div>
@@ -927,7 +786,7 @@
               <b>Tell us your thoughts!</b>
             </div>
             <div class="settings-row">
-              <textarea class="form-control"></textarea>
+              <textarea class="form-control" id="feedback-text"></textarea>
             </div>
 
             <div class="settings-row">

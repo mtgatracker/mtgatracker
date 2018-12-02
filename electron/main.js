@@ -356,8 +356,8 @@ ipcMain.on('inventoryChanged', (e,new_inventory) => {
   settings.set('inventory',new_inventory)
 
   try {
-    if ( settingsWindow != null){
-      settingsWindow.webContents.send('inventoryChanged',global.inventory,global.inventorySpent,global.inventoryGained);
+    if ( collectionWindow != null){
+      collectionWindow.webContents.send('inventoryChanged',global.inventory,global.inventorySpent,global.inventoryGained);
     }
   } catch (e) {
     console.log("could not send inventoryChanged message");
@@ -454,6 +454,40 @@ let openSettingsWindow = () => {
     settingsWindow.show()
   })
   settingsWindow.on('close', () => {global.settingsPaneIndex = 'general'})
+}
+
+let openCollectionWindow = () => {
+  if(collectionWindow == null) {
+    let collectionWidth = debug ? 1400 : 1025;
+
+    const collectionWindowStateMgr = windowStateKeeper('collection')
+    collectionWindow = new BrowserWindow({width: collectionWidth,
+                                        height: 800,
+                                        toolbar: false,
+                                        titlebar: false,
+                                        title: false,
+                                        maximizable: false,
+                                        show: false,
+                                        icon: "img/icon_small.ico",
+                                        x: collectionWindowStateMgr.x,
+                                        y: collectionWindowStateMgr.y})
+    collectionWindowStateMgr.track(collectionWindow)
+    collectionWindow.setMenu(null)
+    collectionWindow.loadURL(require('url').format({
+      pathname: path.join(__dirname, 'collection.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+    if (debug) {
+      collectionWindow.webContents.openDevTools()
+    }
+    collectionWindow.on('closed', function () {
+      collectionWindow = null;
+    })
+  }
+  collectionWindow.once('ready-to-show', () => {
+    collectionWindow.show()
+  })
 }
 
 let openInspectorWindow = () => {
@@ -559,6 +593,7 @@ let openTOSWindow = () => {
 }
 
 ipcMain.on('openSettings', openSettingsWindow)
+ipcMain.on('openCollection', openCollectionWindow)
 ipcMain.on('openInspector', openInspectorWindow)
 ipcMain.on('openHistory', openHistoryWindow)
 
@@ -756,6 +791,7 @@ let settingsWindow = null
 let inspectorWindow = null
 let historyWindow = null
 let tosWindow = null
+let collectionWindow = null
 
 let window_width = 354;
 let window_height = 200;
@@ -780,6 +816,10 @@ const openInspectorHandler = (menuItem, browserWindow, event) => {
   focusInspector();
 }
 
+const openCollectionHandler = (menuItem, browserWindow, event) => {
+  focusCollection();
+}
+
 const closeTrackerHandler = (menuItem, browserWindow, event) => {
   mainWindow.close();
 }
@@ -797,6 +837,7 @@ const createTray = () => {
       {label: "DeckTracker", type: "normal", click: openDeckTrackerHandler},
       {label: "Settings", type: "normal", click: openSettingsHandler},
       {label: "Inspector", type: "normal", click: openInspectorHandler},
+      {label: "Collection", type: "normal", click: openCollectionHandler},
       {label: "History", type: "normal", click: openHistoryHandler},
       {label: "Quit", type: "normal", click: closeTrackerHandler }
     ])
@@ -891,6 +932,18 @@ function focusMTGATrackerSettings() {
     settingsWindow.focus();
   } else {
     openSettingsWindow();
+  }
+}
+
+function focusCollection() {
+  if(collectionWindow) {
+    collectionWindow.show();
+    if(collectionWindow.isMinimized()) {
+      collectionWindow.restore();
+    }
+    collectionWindow.focus();
+  } else {
+    openCollectionWindow();
   }
 }
 
