@@ -21,6 +21,11 @@ db.deck = new Datastore({filename: databaseFiles.deck, autoload: true });
 db.draft = new Datastore({filename: databaseFiles.draft, autoload: true });
 db.inventory = new Datastore({filename: databaseFiles.inventory, autoload: true });
 
+db.game.ensureIndex({field: "date"}, err => console.log)
+db.game.ensureIndex({field: "gameID"}, err => console.log)
+db.game.ensureIndex({field: "players.0.deck.deckID"}, err => console.log)
+db.game.ensureIndex({field: "trackerIDHash"}, err => console.log)
+
 const api = new Router('insp');
 
 // TODO: how to format dates
@@ -55,6 +60,10 @@ api.get('decks/:includeHidden', (req, res) => {
   }
 
   db.deck.find(query, (err, docs) => {
+    for (let deck of docs) {
+      deck.wins = deck.wins.length
+      deck.losses = deck.losses.length
+    }
     res.json({decks: docs})
   })
 });

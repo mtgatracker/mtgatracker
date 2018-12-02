@@ -223,6 +223,26 @@ var getDrafts = function(perPage) {
     })
 }
 
+/*
+Story time!
+
+I decided to see how NeDB does with a crazy amount of data, so I generated about 10k worth of game data (based on
+mutated copies real production data). This lead to about 750 unique decks. HOO BOY is rivets stupid slow!
+With about 750ish deck to insert in to the DOM, rivets completely HANGS the UI for like, 20 seconds. It's ridiculous!
+You can reproduce this yourself if you want to by inserting a similar amount of data into your DB, and
+changing the upper limit of the slice in this function to 700ish. Besides this issue, NeDB works great.
+(and that's not even an NeDB issue!)
+
+G2H, rivets.
+*/
+var renderMoreDecks = function() {
+  for (let deck of appData.fullHomeDeckList.slice(appData.homeDeckOffset, appData.homeDeckOffset+50)) {
+    appData.homeDeckList.push(deck)
+  }
+  appData.homeDeckOffset += 50
+  appData.moreDecksToRender = appData.homeDeckOffset < appData.fullHomeDeckList.length
+}
+window.renderMoreDecks = renderMoreDecks
 
 var getDecks = function(includeHidden) {
   $("#decks-loading").css("display", "block")
@@ -231,13 +251,14 @@ var getDecks = function(includeHidden) {
     .then(resp => resp.json())
     .then(data => {
       $("#decks-loading").css("display", "none")
+      appData.homeDeckOffset = 0
+      appData.fullHomeDeckList = []
       appData.homeDeckList = []
       for (let deck of data.decks) {
         deck.link = `/deck/?deckID=${deck.deckID}`
-        deck.wins = deck.wins.length
-        deck.losses = deck.losses.length
-        appData.homeDeckList.unshift(deck)
+        appData.fullHomeDeckList.push(deck)
       }
+      renderMoreDecks()
     }).catch(err => {
       alert(err)
       console.log(err)
