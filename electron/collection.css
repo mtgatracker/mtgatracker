@@ -100,10 +100,12 @@
 }
 
 .progress-text {
-  padding-top: 1px;
-  color: white;
-  font-size: 18px;
+  margin-top: -1px;
+  font-size: 20px;
   font-weight: bold;
+  -webkit-text-fill-color: white;
+  -webkit-text-stroke-color: #999;
+  -webkit-text-stroke-width: 1px;
 }
 
 .progress {
