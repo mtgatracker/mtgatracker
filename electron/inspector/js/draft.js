@@ -13,6 +13,7 @@ let draftRoute = (c, n) => {
       rivets.bind($('#app'), {data: appData})
       getDrafts(10)
       getDraft(c.params.draftID).then(draft => {
+          appData.draft = draft
           appData.picks = []
           appData.eventName = draft.draftID.split(":")[1]
 
