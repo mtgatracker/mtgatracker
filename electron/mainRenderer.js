@@ -20,17 +20,19 @@ function contextData(data) {
   // return data for that context as a single string value.
   if (data.showDraftStats) {
     return appData.draftStats.map(card=>card.pretty_name).join('\n')
-  } else if (data.draw_stats) {
-    //FIXME: Figure out where the set and card numbers are stored.
-    return data.draw_stats.map(
-      c=>(c.count_in_deck + ' ' + c.card + ' (???) ?')
-    ).join('\n')
   } else if (data.list_selected) {
     return data.selected_list.map(
       c=>(c.count_in_deck + ' ' + c.pretty_name + ' (' + c.set + ') ' + c.set_number)
     ).join('\n')
   } else if (data.show_available_decklists) {
     return data.player_decks.map( d=>d.pool_name ).join('\n')
+  } else if (data.draw_stats.length) {
+    //FIXME: Figure out where the set and card numbers are stored.
+    return data.draw_stats.map(
+      c=>(c.count_in_deck + ' ' + c.card + ' (???) ?')
+    ).join('\n')
+  } else {
+    console.log('Contextual copy found no data.')
   }
 }
 
