@@ -462,6 +462,12 @@
                 New close, minimize, and options button
               </li>
               <li>
+                "Left Click to Unhide" has changed to a fully right-click toggle.
+              </li>
+              <li>
+                You can now send feedback about MTGATracker directly from the settings panel. No more need to email us!
+              </li>
+              <li>
                 Settings window rearranged to be more user friendly
               </li>
               <li>
@@ -828,7 +834,7 @@
             <div class="settings-row">
               <div class="checkbox">
                 <label>
-                  <input rv-checked="sendAnonymousUsageInfo" id="enable-anonymous-usage-toggle" type="checkbox" data-toggle="toggle"> Send MTGATracker Developers Anonymous Usage Information
+                  <input rv-checked="sendAnonymousUsageInfo" class="tf-toggle" key="sendAnonymousUsageInfo" id="enable-anonymous-usage-toggle" type="checkbox" data-toggle="toggle"> Send MTGATracker Developers Anonymous Usage Information
                 </label>
               </div>
               <p>This shows us what features & settings y'all use the most to help us decide what to make next, and which features to continue supporting.</p>
@@ -853,7 +859,7 @@
               <b>Tell us your thoughts!</b>
             </div>
             <div class="settings-row">
-              <textarea class="form-control"></textarea>
+              <textarea class="form-control" id="feedback-text"></textarea>
             </div>
 
             <div class="settings-row">
@@ -862,7 +868,7 @@
               (You can enter something like: "myemail@gmail.com" or "Discord: MyUsername#1234")
             </div>
             <div class="settings-row">
-              <input id="contactInfo" placeholder="No thanks!" class="form-control">
+              <input id="contact-info" placeholder="No thanks!" class="form-control">
             </div>
 
             <div class="settings-row">
