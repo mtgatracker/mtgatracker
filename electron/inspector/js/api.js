@@ -236,6 +236,7 @@ var getDecks = function(includeHidden) {
         deck.link = `/deck/?deckID=${deck.deckID}`
         deck.wins = deck.wins.length
         deck.losses = deck.losses.length
+        deck.winrate = ((deck.wins / (deck.wins + deck.losses)) * 100).toFixed(0)
         appData.homeDeckList.unshift(deck)
       }
     }).catch(err => {

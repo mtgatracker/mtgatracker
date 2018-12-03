@@ -134,6 +134,21 @@ body {
 .decklist-p {
   margin: 0px 0 2px;
 }
+#saved-decks-list span {
+  display: inline-block;
+}
+#saved-decks-list .deck-title {
+  max-width: 215px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#saved-decks-list .deck-winrate:not(.deckhidden) {
+  font-weight: bold;
+}
+#saved-decks-list .deck-win-loss {
+  width: 90px;
+}
 .btn-primary,
 .btn-primary:hover,
 .btn-primary:active,
