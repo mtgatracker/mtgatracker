@@ -75,25 +75,13 @@ let addClickHandler = (selector,handler) => {
 // poll for active window semi-regularly; if it's not MTGA or MTGATracker, minimize / unset alwaysontop
 setInterval(() => {
   if (appData.mtgaOverlayOnly) {
-    try {
-      activeWin().then(win => {
-        if (win.owner.name == "MTGA.exe" || win.owner.name == "MTGATracker.exe" || win.title == "MTGA Tracker") {
-          if(!browserWindow.isAlwaysOnTop()) {
-            browserWindow.setAlwaysOnTop(true)
-          }
-        } else {
-          if(browserWindow.isAlwaysOnTop()) {
-            browserWindow.setAlwaysOnTop(false)
-          }
-        }
-      })
-    } catch(e) {
-      if (e instanceof Error && e.message == "Cannot find module 'ffi'") {
-        // optional dependencies shouldn't throw 5 errors per second.
+    activeWin().then(win => {
+      if (win.owner.name == "MTGA.exe" || win.owner.name == "MTGATracker.exe" || win.title == "MTGA Tracker") {
+        if(!browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(true)
       } else {
-        throw e;
+        if(browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(false)
       }
-    }
+    })
   } else {
     console.log("skipping overlay check and turning on always on top")
     if(!browserWindow.isAlwaysOnTop()) browserWindow.setAlwaysOnTop(true)
