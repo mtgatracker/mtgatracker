@@ -269,9 +269,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
       shell.openExternal(this.href);
   });
   $(".nav-group-item").click((e) => {
-    console.log(e)
-    console.log(this)
-    settingsData.settingsPaneIndex = e.target.attributes.value.value
+    if ( e.target.attributes.value != undefined){
+      settingsData.settingsPaneIndex = e.target.attributes.value.value
+    } else {
+      settingsData.settingsPaneIndex = e.target.parentNode.attributes.value.value
+    }
+
   })
   $('.tf-toggle').change(function() {
     console.log("settingsChanged")
