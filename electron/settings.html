@@ -31,10 +31,6 @@
       </nav>
       <nav class="nav-group">
         <h5 class="nav-group-title">Account Settings</h5>
-        <a value="privacy" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="privacy-nav">
-          <span class="icon icon-lock"></span>
-          Privacy
-        </a>
         <a value="account" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="account-nav">
           <span class="icon icon-user"></span>
           Inspector
@@ -313,22 +309,13 @@
 
         </div>
       </div>
-      <div id="privacy-pane" value="privacy" rv-showsettingspane="settingsPaneIndex">
-        <div class="settings-container">
-          <div class="settings-row">
-            <input rv-checked="incognito" class="tf-toggle" type="checkbox" key="incognito" data-toggle="toggle"> Incognito mode
-            <br />
-            <br />
-            <p class="about-p disclaimer"><b>Warning:</b> with incognito mode enabled, MTGATracker will not send any game data to MTGATracker services, including Inspector. This means that Inspector will no longer work!</p>
-          </div>
-        </div>
-      </div>
       <div id="account-pane" value="account" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
             <h3>Inspector Account</h3>
             <p><b>Inspector is now local!</b> You can read more about this change <a href="https://blog.mtgatracker.com/mtgatracker-five-point-o">here</a>. <b>Click
               the button below to retrieve any data stored on the MTGATracker: Inspector Web Application</b></p>
+            <input id="key-override" class="form-control small" placeholder="Override Key (leave blank unless you know what you're doing!)">
             <button id="collect-all-inspector-data" class="btn btnbtn btn-secondary">Collect all Inspector data</button>
             <br>
             <br>
@@ -342,6 +329,13 @@
             <div id="collect-inspector-progress" class="well">
             </div>
             <hr>
+            <button id="game-db-import-select" class="btn btnbtn btn-secondary">Import Games Database</button>
+            <button id="draft-db-import-select" class="btn btnbtn btn-secondary">Import Drafts Database</button>
+            <p><i>Note: the decks database is derived from game records, and should never be "imported!"</i></p>
+            <p><b>DB Import log</b></p>
+            <div id="db-import-progress" class="well">
+            </div>
+            <hr>
             <button id="backup-inspector-data" class="btn btnbtn btn-secondary">Backup local Inspector databases</button>
             <br/>
             <br/>
@@ -349,7 +343,7 @@
             <hr>
             <p>On first launch, MTGATracker generates a key that is private and unique to your machine.
               Treat it like a password!</p>
-            <p><b>View Tracker key</b>: <span id="showTrackerID">(click to reveal)</span></p>
+            <p><b>View Tracker key (Select, then use ctrl-c to copy)</b>: <span class="selectable-text" id="showTrackerID">(click to reveal)</span></p>
           </div>
         </div>
       </div>
@@ -365,6 +359,39 @@
             <p class="about-p"><b>Privacy:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/legal/privacy.md">privacy.md</a></p>
             <p class="about-p"><b>Documentation:</b> <a href="https://github.com/shawkinsl/mtga-tracker/blob/master/README.md">README.md</a></p>
             <p class="about-p"><b>Inspector:</b> <a href="https://inspector.mtgatracker.com/">inspector.mtgatracker.com</a></p>
+
+
+            <br />
+            <h3>Release notes for 5.0.3</h3>
+            <ul>
+              <li class="about-p">
+                MTGATracker's Privacy Policy has updated (click
+                <a href="https://github.com/mtgatracker/mtgatracker/pull/455/commits/74318d57a5d7e81050d73cb359a459e65ceb8d98?short_path=d580c1a#diff-d580c1a415eaa72c47fbd67dbe9ae429">here</a> to see changes only)
+              </li>
+              <li>
+                 Fixed an issue with loading more games in any view in Inspector
+              </li>
+              <li>
+                Removed nonsensical "incognito" option (all trackers are always incognito, now.)
+              </li>
+            </ul>
+
+            <br />
+            <h3>Release notes for 5.0.1 & 5.0.2 (5.0.0 hotfix)</h3>
+            <ul>
+              <li class="about-p">
+                Tracker ID Key can be overridden during import (for folks who have uploaded with multiple tracker IDs)
+              </li>
+              <li>
+                Can now import database files (for folks who run trackers on multiple machines)
+              </li>
+              <li>
+                Fixed an issue where some pages in Inspector never dismiss the "Loading..." message
+              </li>
+              <li>
+                Fixed the in-tracker feedback form
+              </li>
+            </ul>
 
             <br />
             <h3>Release notes for 5.0.0</h3>

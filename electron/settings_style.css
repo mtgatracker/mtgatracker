@@ -44,6 +44,10 @@ a {
 .helper-text {
 }
 
+#key-override {
+  font-size: 11px;
+}
+
 .helper-block {
   margin: 5px 0 0 0;
   display: block;

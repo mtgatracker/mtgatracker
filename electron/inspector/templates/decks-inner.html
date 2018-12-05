@@ -21,11 +21,13 @@
             <!-- /.panel-heading -->
             <div class="panel-body">
                 <span id="decks-loading">Loading...</span>
-                <div class="list-group themeable">
+                <div id="saved-decks-list" class="list-group themeable">
                     <div rv-each-deck="data.homeDeckList" rv-deckid="deck.deckID">
-                        <a rv-href="deck.link" class="list-group-item">
-                            <i class="fa fa-leanpub fa-fw"></i> <span rv-class-deckhidden="deck.hidden" class="themeable">{ deck.deckName }</span>
-                            <span class="pull-right text-muted small"><em> { deck.wins } <i class="fa fa-caret-up fa-fw green"></i> / { deck.losses} <i class="fa fa-caret-down fa-fw red"></i></em>
+                        <a rv-href="deck.link" class="list-group-item clearfix">
+                            <span class="deck-title themeable" rv-class-deckhidden="deck.hidden"><i class="fa fa-leanpub fa-fw"></i> { deck.deckName } </span>
+                            <span class="pull-right">
+                                <span class="deck-winrate small" rv-class-deckhidden="deck.hidden">{ deck.winrate } %</span>
+                                <span class="deck-win-loss text-right text-muted small"><em> { deck.wins } <i class="fa fa-caret-up fa-fw green"></i> / { deck.losses} <i class="fa fa-caret-down fa-fw red"></i></em></span>
                             </span>
                         </a>
                         <div class="hide-deck" style="display: none;">
@@ -34,6 +36,7 @@
                         </div>
                     </div>
                 </div>
+                <a rv-show="data.moreDecksToRender" href="javascript:renderMoreDecks()" class="btn btn-default btn-block themeable">Load 50 more decks</a>
             </div>
             <!-- /.panel-body -->
         </div>

@@ -35,6 +35,9 @@ var appData = {
   currentGameOpponentDeckName: "loading ...",
   currentGameOpponentRank: "loading ...",
 
+
+  homeDeckOffset: 0,
+  fullHomeDeckList: [],
   homeDeckList: [],
   homeGameList: [],
   homeGameListPage: 1,
