@@ -137,7 +137,7 @@ let fetchGames = (req, res) => {
 
     if (req.params.page && req.params.page != "undefinded") {
       try {
-        let pageInt = parseInt(req.params.page)
+        pageInt = parseInt(req.params.page)
       } catch (e) {
         console.log(`WARN: couldn't cast page ${req.params.page} to int, defaulting to page 1`)
       }
