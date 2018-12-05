@@ -31,10 +31,6 @@
       </nav>
       <nav class="nav-group">
         <h5 class="nav-group-title">Account Settings</h5>
-        <a value="privacy" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="privacy-nav">
-          <span class="icon icon-lock"></span>
-          Privacy
-        </a>
         <a value="account" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="account-nav">
           <span class="icon icon-user"></span>
           Inspector
@@ -316,16 +312,6 @@
             </select>
           </div>
 
-        </div>
-      </div>
-      <div id="privacy-pane" value="privacy" rv-showsettingspane="settingsPaneIndex">
-        <div class="settings-container">
-          <div class="settings-row">
-            <input rv-checked="incognito" class="tf-toggle" type="checkbox" key="incognito" data-toggle="toggle"> Incognito mode
-            <br />
-            <br />
-            <p class="about-p disclaimer"><b>Warning:</b> with incognito mode enabled, MTGATracker will not send any game data to MTGATracker services, including Inspector. This means that Inspector will no longer work!</p>
-          </div>
         </div>
       </div>
       <div id="account-pane" value="account" rv-showsettingspane="settingsPaneIndex">

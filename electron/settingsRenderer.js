@@ -51,7 +51,6 @@ var settingsData = {
   sendAnonymousUsageInfo: remote.getGlobal('sendAnonymousUsageInfo'),
   showErrors: remote.getGlobal('showErrors'),
   showInspector: remote.getGlobal('showInspector'),
-  incognito: remote.getGlobal('incognito'),
   useFrame: remote.getGlobal('useFrame'),
   staticMode: remote.getGlobal('staticMode'),
   useTheme: remote.getGlobal('useTheme'),
