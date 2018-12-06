@@ -125,6 +125,16 @@ rivets.binders.recentcardsbinder = (el, cardsObtained) => {
   }
 }
 
+rivets.formatters.filterBySlideValueRecentCards = function(arr, recentCardsQuantityToShow) {
+  if (arr === null || arr === undefined){
+    return arr
+  }
+  if(recentCardsQuantityToShow >= 100) {
+    return arr;
+  }
+  return arr.slice(0,recentCardsQuantityToShow);
+}
+
 rivets.binders.setpromo = function(el, value) {
   if (Object.keys(setPromoMap).includes(value)) {
     el.style.display = "block"
