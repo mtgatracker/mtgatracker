@@ -27,9 +27,9 @@ function contextData(data) {
   } else if (data.show_available_decklists) {
     return data.player_decks.map( d=>d.pool_name ).join('\n')
   } else if (data.draw_stats.length) {
-    //FIXME: Figure out where the set and card numbers are stored.
+    // FIXME: Figure out where the set and card numbers are stored.
     return data.draw_stats.map(
-      c=>(c.count_in_deck + ' ' + c.card + ' (???) ?')
+      c=>(c.count_in_deck + ' ' + c.card)
     ).join('\n')
   } else {
     console.log('Contextual copy found no data.')
