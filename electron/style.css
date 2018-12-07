@@ -71,6 +71,10 @@ p {
     white-space: nowrap;
 }
 
+#tracker-header {
+    padding-bottom: 5px;
+}
+
 .controls {
     float: right;
     padding: 8px 8px 0 0;
