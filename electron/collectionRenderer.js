@@ -1,3 +1,4 @@
+
 const { remote, ipcRenderer, shell } = require('electron')
 const {dialog, Menu, MenuItem,} = remote
 const fs = require('fs')
@@ -94,6 +95,10 @@ ipcRenderer.on('recentCardsChanged',(e,new_recent) => {
   }
   new_recent_cards.unshift(new_recent)
   collectionData.recentCards = new_recent_cards
+})
+
+ipcRenderer.on('lastVaultProgressChanged',(e,new_progress) => {
+  collectionData.lastVaultProgress = new_progress
 })
 
 rivets.binders.showcollectionpane = (el, val) => {

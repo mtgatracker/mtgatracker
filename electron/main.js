@@ -331,6 +331,19 @@ ipcMain.on('updateWinLossCounters', (e,arg) => {
   }
 })
 
+ipcMain.on('lastVaultProgressChanged', (e,new_progress) => {
+  global.lastVaultProgress = new_progress
+  settings.set('lastVaultProgress',new_progress)
+  try {
+    if ( collectionWindow != null){
+      collectionWindow.webContents.send('lastVaultProgressChanged',global['lastVaultProgress']);
+    }
+  } catch (e) {
+    console.log("could not send lastVaultProgressChanged message");
+    console.log(e);
+  }
+})
+
 ipcMain.on('inventoryChanged', (e,new_inventory) => {
   let fields = ['gold','gems','wcCommon','wcUncommon','wcRare','wcMythic']
   for (let field of fields) {

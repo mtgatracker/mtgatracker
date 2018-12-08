@@ -1075,10 +1075,7 @@ let onMessage = (data) => {
           if (data.inventory.vaultProgress) {
             appData.lastVaultProgress = data.inventory.vaultProgress;
 
-            ipcRenderer.send('settingsChanged', {
-              key: "lastVaultProgress",
-              value: appData.lastVaultProgress
-            })
+            ipcRenderer.send("lastVaultProgressChanged",appData.lastVaultProgress)
           }
           //console.log(data.inventory)
           ipcRenderer.send('inventoryChanged', data.inventory)
