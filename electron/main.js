@@ -228,7 +228,6 @@ let fullFileCmdOpt = getBooleanArg('-f', '--full_file')
 if (debugCmdOpt) {
   settings.set('debug', true)
 }
-settings.set('debug', true)
 
 if (frameCmdOpt) {
   settings.set('useFrame', true)
