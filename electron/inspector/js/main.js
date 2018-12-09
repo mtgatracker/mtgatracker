@@ -215,6 +215,56 @@ function exportDeck(deck) {
     toastr.info("Deck Exported to Clipboard")
 }
 
+function exportDraft(draft) {
+    let result = "";
+
+    result += "Event #: 1" + "\n"
+    result += "Time:    1/1/2018 1:11:11 PM" + "\n"
+    result += "Players:" + "\n"
+    result += "--> me" + "\n"
+    result += "    bot" + "\n"
+    result += "    bot" + "\n"
+    result += "    bot" + "\n"
+    result += "    bot" + "\n"
+    result += "    bot" + "\n"
+    result += "    bot" + "\n"
+    result += "    bot" + "\n"
+    result += "\n"
+
+    if (draft && typeof draft === 'object' && draft.picks && draft.picks.constructor === Array) {
+
+        draft.picks.forEach(event => {
+          let card = cardUtils.allCards.findCard(event.pick)
+
+
+          if (event.pickNumber == 0) {
+            result += "------ " + card.get("set") + " ------" + "\n"
+            result += "\n"
+          }
+
+          result += "Pack "+(event.packNumber+1)+ " pick "+(event.pickNumber+1)+ ":\n"
+
+          event.pack.forEach(cardno => {
+            let preamble = "    "
+            let ocard = cardUtils.allCards.findCard(cardno)
+            if (cardno == event.pick) {
+              preamble = "--> "
+            }
+            result += preamble + ocard.get("prettyName") + "\n"
+
+          })
+
+
+          result += "\n"
+        })
+
+
+    }
+
+    clipboardCopy(result)
+    toastr.info("Draft Exported to Clipboard")
+}
+
 window.exportDeck = exportDeck
 
 if (localStorage.getItem("dark-mode") == "true") enableDarkMode(true)
