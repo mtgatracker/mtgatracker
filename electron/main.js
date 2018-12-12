@@ -409,7 +409,7 @@ let openSettingsWindow = () => {
 
 let openInspectorWindow = () => {
   if(inspectorWindow == null) {
-    let settingsWidth = debug ? 1400 : 1025;
+    let settingsWidth = debug ? 1400 : 1100;
 
     const inspectorWindowStateMgr = windowStateKeeper('settings')
     inspectorWindow = new BrowserWindow({width: settingsWidth,

@@ -44,6 +44,7 @@ var getDraft = function(draftID) {
       .then(resp => resp.json())
       .then(data => {
         $(".draft-loading").css("display", "none")
+        $(".export-button").prop('disabled', false);
         resolve(data)
       })
       .catch(err => {
