@@ -756,6 +756,17 @@ function resizeWindow() {
     } else {
       bounds.width = parseInt(354 * zoom);
     }
+
+    let menuHeight = 0
+    let selectors = ['#tracker-header h1', '#main-menu ul', '#main-menu ul li']
+    for (selector of selectors) {
+      menuHeight += $(selector).outerHeight(true)
+    }
+
+    if (menuHeight > totalHeight) {
+      totalHeight = menuHeight
+    }
+
     bounds.height = Math.min(parseInt(totalHeight), calcMainMaxHeight());
     if (!(debug || useFrame)) {
         browserWindow.setBounds(bounds)
@@ -1288,6 +1299,7 @@ let buildMenuItem = (menu_item) => {
 let toggleMenu = () => {
   $('#main-menu').toggleClass('hide-me');
   $('body').toggleClass('no-drag');
+  resizeWindow()
 }
 
 let updateTitleWidth = () => {
