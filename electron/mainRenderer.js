@@ -1254,7 +1254,7 @@ let openCollection = () => { ipcRenderer.send('openCollection', null); }
 let menu_items = [
   {
     label: 'Collection',
-    action: () => openCollection,
+    action: openCollection,
     keybind: "Ctrl+O"
   },
   {
