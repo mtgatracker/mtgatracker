@@ -9,10 +9,53 @@ const Timer = require('easytimer.js');
 const keytar = require('keytar')
 const hideWindowManager = require("./hide-manager")
 
-const { remote, ipcRenderer, shell } = require('electron')
+const { remote, ipcRenderer, shell, clipboard } = require('electron')
 const { Menu, MenuItem } = remote
 let browserWindow = remote.getCurrentWindow()
 const activeWin = require("active-win")
+const Mousetrap = require('Mousetrap')
+
+function contextData(data) {
+  // find out what context we are in.
+  // return data for that context as a single string value.
+  if (data.showDraftStats) {
+    return appData.draftStats.map(card=>card.pretty_name).join('\n')
+  } else if (data.list_selected) {
+    return data.selected_list.map(
+      c=>(c.count_in_deck + ' ' + c.pretty_name + ' (' + c.set + ') ' + c.set_number)
+    ).join('\n')
+  } else if (data.show_available_decklists) {
+    return data.player_decks.map( d=>d.pool_name ).join('\n')
+  } else if (data.draw_stats.length) {
+    // FIXME: Figure out where the set and card numbers are stored.
+    return data.draw_stats.map(
+      c=>(c.count_in_deck + ' ' + c.card)
+    ).join('\n')
+  } else {
+    console.log('Contextual copy found no data.')
+  }
+}
+
+function copyData() {
+  // This should copy the data on the current screen onto the clipboard.
+  // The format should be context specific, comma or tab delimited seems
+  // like the best choice for most stuff.
+  // TODO: deck lists.
+
+  console.log('Copying relevant data to clipboard, if any.')
+  let dataString = contextData(appData)
+
+  if (dataString) {
+    clipboard.writeText(dataString)
+  }
+}
+
+function copyEventHandler(e) {
+  copyData()
+}
+
+//Mousetrap.bind('ctrl+c', copyEventHandler)
+
 
 var { rendererPreload } = require('electron-routes');
 rendererPreload();
@@ -1211,19 +1254,30 @@ let close = () => {
 }
 
 let openInspector = () => { ipcRenderer.send('openInspector', null); }
+let openHistory = () => { ipcRenderer.send('openHistory', null); }
+let openSettings = () => { ipcRenderer.send('openSettings', null); }
 
 let menu_items = [
   {
     label: 'History',
-    action: () => { ipcRenderer.send('openHistory', null); }
+    action: openHistory,
+    keybind: 'Ctrl+H'
+  },
+   {
+    label: 'Inspector',
+    action: openInspector,
+    keybind: 'Ctrl+I'
   },
   {
     label: 'Settings',
-    action: () => { ipcRenderer.send('openSettings', null); }
+    action: openSettings,
+    keybind: 'Ctrl+S'
   },
   {
-    label: 'Inspector',
-    action: openInspector
+    label: 'Copy',
+    action: copyData,
+    keybind: 'Ctrl+C',
+    separator: 'top'
   },
   {
     label: 'Zoom',
@@ -1231,24 +1285,30 @@ let menu_items = [
       {
         label: 'Zoom in',
         action: zoomIn,
-        keep_open: true
+        keep_open: true,
+        keybind: 'Ctrl+\+',
+        alt_keybind: 'Ctrl+='
       },
       {
         label: 'Zoom out',
         action: zoomOut,
-        keep_open: true
+        keep_open: true,
+        keybind: 'Ctrl+-',
+        alt_keybind: 'Ctrl+Shift+-'
       },
       {
         label: 'Reset zoom',
         action: resetZoom,
-        keep_open: true
+        keep_open: true,
+        keybind: 'Ctrl+0'
       },
     ],
-    separator: 'both'
+    separator: 'bottom'
   },
   {
-    label: 'Exit',
-    action: close
+    label: 'Quit',
+    action: close,
+    keybind: 'Ctrl+Q'
   },
 ];
 
@@ -1273,6 +1333,15 @@ let buildMenuItem = (menu_item) => {
       action = () => { menu_item.action.call(); toggleMenu()}
     }
     item.click(action)
+  }
+
+  if (menu_item.keybind != undefined){
+    let span = $('<span class="keybind">' + menu_item.keybind + '</span>')
+    item.append(span)
+    Mousetrap.bind(menu_item.keybind.toLowerCase(),menu_item.action)
+    if (menu_item.alt_keybind != undefined){
+      Mousetrap.bind(menu_item.alt_keybind.toLowerCase(),menu_item.action)
+    }
   }
 
   li.append(item)
