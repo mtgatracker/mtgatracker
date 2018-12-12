@@ -125,10 +125,6 @@ p {
     text-shadow: none;
 }
 
-#tracker-body {
-    clear: both;
-}
-
 .header-warning {
     color: rgb(250, 146, 146);
     text-shadow: 2px 2px rgba(28, 28, 28, 0.5);
@@ -571,7 +567,7 @@ p {
 }
 
 /* Top level menu items link style */
-.nestedsidemenu ul li a, .nestedsidemenu ul li span {
+.nestedsidemenu ul li a {
     display: block;
     position: relative;
     /* background of menu items (default state) */
@@ -598,7 +594,7 @@ p {
     left: -5000px;
         top: 0;
     opacity: 0;
-    width: 120px;
+    width: 150px;
     visibility: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3)
     -webkit-transition: opacity .3s, visibility 0s .3s, left 0s .3s;
@@ -682,7 +678,7 @@ p {
   position: absolute;
   left    : 5px;
   height  : 1px;
-  width   : 110px;
+  width   : 140px;
   border-top: 1px solid #8a8a8a;
   z-index: 1;
 }
@@ -693,3 +689,13 @@ p {
 }
 
 
+#main-menu {
+    width: 150px;
+}
+
+.keybind {
+    display: inline-block;
+    float: right;
+    padding-top: 2px;
+    color: #8a8a8a;
+}
