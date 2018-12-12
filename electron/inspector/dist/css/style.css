@@ -745,3 +745,8 @@ table.dataTable thead .sorting:after {
   width: 100%;
   margin-bottom: 15px;
 }
+
+.export-button {
+    float: right;
+    margin: 2px 0 0 0;
+}
