@@ -798,7 +798,7 @@ function resizeWindow() {
     }
 
     let menuHeight = 0
-    let selectors = ['#tracker-header h1', '#main-menu ul', '#main-menu ul li', '#main-menu ul li ul']
+    let selectors = ['#tracker-header h1', '#main-menu ul', '#main-menu ul li ul']
     for (selector of selectors) {
       menuHeight += $(selector).outerHeight(true)
     }
