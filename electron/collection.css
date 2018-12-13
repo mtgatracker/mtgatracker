@@ -146,10 +146,18 @@
   background-color: black;
 }
 
-.inv-label img {
+.inv-icon {
     width: 32px;
     margin-right: 5px;
     margin-top: -5px;
+}
+
+.booster-set {
+  width: 165px;
+}
+
+.booster-label {
+
 }
 
 .inv-table {

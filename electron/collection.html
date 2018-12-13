@@ -47,14 +47,14 @@
             </thead>
             <tbody>
               <tr>
-                <td class="inv-label"><img src="img/coin.png"/>Gold</td>
+                <td class="inv-label"><img src="img/coin.png" class="inv-icon"/>Gold</td>
                 <td>{gold}</td>
                 <td rv-class-gained="goldGained">{goldGained}</td>
                 <td rv-class-spent="goldSpent">{goldSpent}</td>
                 <td rv-netinv="netGold < goldGained goldSpent | call"></td>
               </tr>
               <tr>
-                <td class="inv-label"><img src="img/gem.png"/>Gems</td>
+                <td class="inv-label"><img src="img/gem.png" class="inv-icon"/>Gems</td>
                 <td>{gems}</td>
                 <td rv-class-gained="gemsGained">{gemsGained}</td>
                 <td rv-class-spent="gemsSpent">{gemsSpent}</td>
@@ -102,6 +102,27 @@
                 <td rv-netinv="netWcMythic < wcMythicGained wcMythicSpent | call"></td>
               </tr>
             </tbody>
+          </table>
+          <table class="inv-table booster-table">
+            <thead>
+              <tr>
+                <th class="table-type">Booster Packs</th>
+                <th>Current</th>
+                <th>Gained</th>
+                <th>Spent</th>
+                <th>Net</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr rv-each-booster="boosters">
+                <td class="inv-label booster-label"><img rv-setpromo="booster.collationId" class="booster-set"/></td>
+                <td>{booster.count}</td>
+                <td rv-boostersgained="booster.collationId"></td>
+                <td rv-boostersspent="booster.collationId"></td>
+                <td rv-netboosters="booster.collationId"></td>
+              </tr>
+            </tbody>
+          </table>
           </table>
         </div>
         <div id="completion-pane" value="completion" rv-showcollectionpane="collectionPaneIndex">

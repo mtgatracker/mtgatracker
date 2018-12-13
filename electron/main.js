@@ -288,10 +288,15 @@ let blankInventory = {
                         gold: 0,
                         vaultProgress: 0,
                         wcTrackPosition: 0,
+                        boosters: []
                       }
 let inventory = settings.get('inventory',blankInventory)
+if (inventory.boosters == undefined){inventory.boosters = []}
 let inventorySpent = JSON.parse(JSON.stringify(blankInventory))
 let inventoryGained = JSON.parse(JSON.stringify(blankInventory))
+let blankBoosters = {100005: 0,100006: 0,100007: 0,100008: 0,100009: 0,}
+inventorySpent.boosters = JSON.parse(JSON.stringify(blankBoosters))
+inventoryGained.boosters = JSON.parse(JSON.stringify(blankBoosters))
 
 global.historyEvents = []
 
@@ -356,12 +361,19 @@ ipcMain.on('inventoryChanged', (e,new_inventory) => {
   }
 
   for (let new_set of new_inventory.boosters){
-    let old_set = global.inventory.boosters.find(x => x.collation_id == new_set.collation_id) || null
-    let changed = old_set == null ? new_set.count : new_set.count - old_set.count
-    if (changed > 0){
-      global.inventoryGained.boosters[new_set.collation_id] += changed
+    let old_set = global.inventory.boosters.find(x => x.collationId == new_set.collationId) || null
+    let changed = 0
+    if (old_set == null){
+      changed = new_set.count
+      global.inventoryGained.boosters[new_set.collationId] = 0
+      global.inventorySpent.boosters[new_set.collationId] = 0
     } else {
-      global.inventorySpent.boosters[new_set.collation_id] += changed
+      changed = new_set.count - old_set.count
+    }
+    if (changed > 0){
+      global.inventoryGained.boosters[new_set.collationId] += changed
+    } else {
+      global.inventorySpent.boosters[new_set.collationId] -= changed
     }
   }
 

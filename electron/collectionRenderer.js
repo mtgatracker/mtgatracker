@@ -28,6 +28,17 @@ let debug = remote.getGlobal('debug')
 let inventory = remote.getGlobal('inventory')
 let inventorySpent = remote.getGlobal('inventorySpent')
 let inventoryGained = remote.getGlobal('inventoryGained')
+let sortBoosters = (boosters) => {
+  return boosters.sort( (a,b) => {
+    if (a.collationId > b.collationId){
+      return -1
+    } else if (a.collationId < b.collationId){
+      return 1
+    } else {
+      return 0
+    }
+  })
+}
 
 var collectionData = {
   collectionPaneIndex: 'treasure',
@@ -54,7 +65,10 @@ var collectionData = {
   wcRareGained: inventoryGained.wcRare,
   wcMythic: inventory.wcMythic,
   wcMythicSpent: inventorySpent.wcMythic,
-  wcMythicGained: inventoryGained.wcMythic
+  wcMythicGained: inventoryGained.wcMythic,
+  boosters: sortBoosters(inventory.boosters),
+  boostersSpent: inventorySpent.boosters,
+  boostersGained: inventoryGained.boosters,
 }
 
 const menu = new Menu()
@@ -81,6 +95,27 @@ ipcRenderer.on('inventoryChanged',(e,new_inventory,new_inventory_spent,new_inven
     collectionData[field + 'Spent'] = new_inventory_spent[field]
     collectionData[field + 'Gained'] = new_inventory_gained[field]
   }
+
+  collectionData.boosters = null
+  boosters = []
+  for (booster of new_inventory.boosters){
+    boosters.push(booster)
+  }
+  collectionData.boosters = sortBoosters(boosters)
+
+  collectionData.boostersSpent = null
+  boostersSpent = {}
+  $.each(new_inventory_spent.boosters, (k,v) => {
+    boostersSpent[k] = v
+  })
+  collectionData.boostersSpent = boostersSpent
+
+  collectionData.boostersGained = null
+  boostersGained = {}
+  $.each(new_inventory_gained.boosters, (k,v) => {
+    boostersGained[k] = v
+  })
+  collectionData.boostersGained = boostersGained
 })
 
 /**
@@ -141,7 +176,7 @@ rivets.formatters.filterBySlideValueRecentCards = function(arr, recentCardsQuant
 }
 
 rivets.binders.setpromo = function(el, value) {
-  if (Object.keys(setPromoMap).includes(value)) {
+  if (Object.keys(setPromoMap).includes(value.toString())) {
     el.style.display = "block"
     el.src = setPromoMap[value]
   } else {
@@ -173,20 +208,61 @@ rivets.binders.commonprogress = function(el, value) {
   el.style.width = Math.max(0, (100 * value.commonOwned / value.commonTotal)) + "%"
 }
 
-rivets.binders.netinv = (el,value) => {
+rivets.binders.netinv = (el,change) => {
   let $el = $(el)
-  $el.text(value)
-  if (value > 0){
+  $el.text(change)
+  if (change > 0){
     $el.addClass('gained')
     $el.removeClass('spent')
-  } else if (value < 0) {
+  } else if (change < 0) {
     $el.addClass('spent')
     $el.removeClass('gained')
   } else {
     $el.removeClass('spent')
     $el.removeClass('gained')
   }
+}
 
+rivets.binders.boostersgained = (el,collectionId) => {
+  let $el = $(el)
+  let change = collectionData['boostersGained'][collectionId]
+  $el.text(change)
+  if (change > 0){
+    $el.removeClass('spent')
+    $el.addClass('gained')
+  } else {
+    $el.removeClass('spent')
+    $el.removeClass('gained')
+  }
+}
+
+rivets.binders.boostersspent = (el,collectionId) => {
+  let $el = $(el)
+  let change = collectionData['boostersSpent'][collectionId]
+  $el.text(change)
+  if (change > 0){
+    $el.addClass('spent')
+    $el.removeClass('gained')
+  } else {
+    $el.removeClass('spent')
+    $el.removeClass('gained')
+  }
+}
+
+rivets.binders.netboosters = (el,collationId) => {
+  let change = collectionData['boostersGained'][collationId] - collectionData['boostersSpent'][collationId]
+  let $el = $(el)
+  $el.text(change)
+  if (change > 0){
+    $el.addClass('gained')
+    $el.removeClass('spent')
+  } else if (change < 0) {
+    $el.addClass('spent')
+    $el.removeClass('gained')
+  } else {
+    $el.removeClass('spent')
+    $el.removeClass('gained')
+  }
 }
 
 collectionData.netGold = () => {
@@ -219,10 +295,15 @@ collectionData.netWcMythic = () => {
 
 const setPromoMap = {
   RIX: "img/card_set_promos/rix.png",
+  100006: "img/card_set_promos/rix.png",
   M19: "img/card_set_promos/m19.png",
+  100008: "img/card_set_promos/m19.png",
   GRN: "img/card_set_promos/grn.png",
+  100009: "img/card_set_promos/grn.png",
   XLN: "img/card_set_promos/xln.png",
+  100005: "img/card_set_promos/xln.png",
   DAR: "img/card_set_promos/dar.png",
+  100007: "img/card_set_promos/dar.png",
   ANA: "img/card_set_promos/ana.png",
 }
 
