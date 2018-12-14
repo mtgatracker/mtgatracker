@@ -13,7 +13,7 @@ const { remote, ipcRenderer, shell, clipboard } = require('electron')
 const { Menu, MenuItem } = remote
 let browserWindow = remote.getCurrentWindow()
 const activeWin = require("active-win")
-const Mousetrap = require('Mousetrap')
+const mousetrap = require('mousetrap')
 
 function contextData(data) {
   // find out what context we are in.
@@ -54,7 +54,7 @@ function copyEventHandler(e) {
   copyData()
 }
 
-//Mousetrap.bind('ctrl+c', copyEventHandler)
+//mousetrap.bind('ctrl+c', copyEventHandler)
 
 
 var { rendererPreload } = require('electron-routes');
@@ -1339,9 +1339,9 @@ let buildMenuItem = (menu_item) => {
   if (menu_item.keybind != undefined){
     let span = $('<span class="keybind">' + menu_item.keybind + '</span>')
     item.append(span)
-    Mousetrap.bind(menu_item.keybind.toLowerCase(),menu_item.action)
+    mousetrap.bind(menu_item.keybind.toLowerCase(),menu_item.action)
     if (menu_item.alt_keybind != undefined){
-      Mousetrap.bind(menu_item.alt_keybind.toLowerCase(),menu_item.action)
+      mousetrap.bind(menu_item.alt_keybind.toLowerCase(),menu_item.action)
     }
   }
 
