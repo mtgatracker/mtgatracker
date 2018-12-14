@@ -88,16 +88,17 @@ def block_watch_task(in_queue, out_queue):
                 pass
             block_title = block_lines[0].split(" ")[-1]
             json_str = "\n".join(block_lines[1:])
-        elif block_lines[0].strip().endswith("{"):
+        elif block_lines[1].strip().endswith("{"):
             """
             these blocks looks like: 
             
-            [UnityCrossThreadLogger]7/2/2018 10:27:59 PM (-1) Incoming Rank.Updated {
+            [UnityCrossThreadLogger]7/2/2018 10:27:59 PM
+            (-1) Incoming Rank.Updated {
               "json": "stuff
             }
             """
-            block_title = block_lines[0].strip().split(" ")[-2]  # skip trailing {
-            json_str = "{" + "\n".join(block_lines[1:])       # just cut the first line and manually add { back in
+            block_title = block_lines[1].strip().split(" ")[-2]  # skip trailing {
+            json_str = "{" + "\n".join(block_lines[2:])          # cut the first two lines and manually add { back in
         if json_str:
             try:
                 blob = json.loads(json_str)
