@@ -1253,11 +1253,6 @@ let openCollection = () => { ipcRenderer.send('openCollection', null); }
 
 let menu_items = [
   {
-    label: 'Collection',
-    action: openCollection,
-    keybind: "Ctrl+O"
-  },
-  {
     label: 'History',
     action: openHistory,
     keybind: 'Ctrl+H'
@@ -1272,6 +1267,11 @@ let menu_items = [
     action: openSettings,
     keybind: 'Ctrl+;',
     alt_keybind: 'Ctrl+S'
+  },
+  {
+    label: 'Vault',
+    action: openCollection,
+    keybind: "Ctrl+V"
   },
   {
     label: 'Copy',
