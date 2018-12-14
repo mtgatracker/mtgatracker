@@ -1271,7 +1271,8 @@ let menu_items = [
   {
     label: 'Settings',
     action: openSettings,
-    keybind: 'Ctrl+S'
+    keybind: 'Ctrl+;',
+    alt_keybind: 'Ctrl+S'
   },
   {
     label: 'Copy',

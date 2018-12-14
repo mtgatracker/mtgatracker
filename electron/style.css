@@ -117,7 +117,7 @@ p {
     display: none;
 }
 
-.nestedsidemenu ul li > a {
+.nestedsidemenu ul li > a, .nestedsidemenu ul li a span {
     text-shadow: none;
 }
 
