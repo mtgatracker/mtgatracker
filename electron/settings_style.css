@@ -201,9 +201,10 @@ span.helper-text::before {
 }
 
 .progress-text {
-  padding-top: 2px;
+  padding-top: 1px;
   color: white;
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 .progress {
@@ -217,15 +218,27 @@ span.helper-text::before {
 }
 
 .mythic {
-  background-color: #bf4427;
+  background: linear-gradient(135deg,
+                              #bd3a25 0%,
+                              #f5941c 33%,
+                              #f5941c 66%,
+                              #bd3a25 100%);
 }
 
 .rare {
-  background-color: #a58e4a;
+  background: linear-gradient(135deg,
+                              #816d3e 0%,
+                              #dec17e 33%,
+                              #dec17e 66%,
+                              #816d3e 100%);
 }
 
 .uncommon {
-  background-color: #5d7eab;
+  background: linear-gradient(135deg,
+                              #666666 0%,
+                              #bbe1ef 33%,
+                              #bbe1ef 66%,
+                              #666666 100%);
 }
 
 .common {
@@ -297,3 +310,79 @@ span.helper-text::before {
 .counter-reset-row {
   height: 32px;
 }
+
+.inv-label img {
+    width: 32px;
+    margin-right: 5px;
+    margin-top: -5px;
+}
+
+.inv-table {
+    font-size: 1.25em;
+    width: 750px;
+    margin-bottom: 15px;
+}
+
+.inv-table td {
+    padding-top: 5px;
+}
+
+.inv-table td, .inv-table th {
+  text-align: right;
+  width: 115px;
+    background: white;
+  border-right: none;
+}
+
+.inv-table th {
+  vertical-align: bottom;
+}
+
+td.inv-label {
+    text-align: left;
+    width: 175px;
+    padding-left: 5px;
+}
+
+.wc {
+   height: 32px;
+    width: 24px;
+    display: inline-block;
+    border: 1px solid black;
+    border-radius: 4px;
+    float: left;
+    margin-right: 10px;
+    margin-left: 5px;
+}
+
+.wcCommon {
+  background-color: #bebebe;
+}
+
+.wcUncommon {
+  background-color: #a4c1d1;
+}
+
+.wcRare {
+  background-color: #fbca2a;
+}
+
+.wcMythic {
+  background-color: #ff6c0d;
+}
+
+.gained {
+  color: green;
+}
+
+.spent {
+  color: red;
+}
+
+th.table-type {
+  font-size: 1.3em;
+  text-align: left;
+  padding-left: 0px;
+  font-weight: bold;
+}
+

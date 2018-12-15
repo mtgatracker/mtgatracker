@@ -277,6 +277,26 @@ logPath = settings.get("logPath", logPath)
 let showUIButtons = settings.get('showUIButtons',true)
 let showHideButton = settings.get('showHideButton',true)
 let showMenu = settings.get('showMenu',true)
+let blankInventory = {
+                        wcCommon: 0,
+                        wcUncommon: 0,
+                        wcRare: 0,
+                        wcMythic: 0,
+                        boosters: [],
+                        draftTokens: 0,
+                        gems: 0,
+                        gold: 0,
+                        vaultProgress: 0,
+                        wcTrackPosition: 0,
+                        boosters: []
+                      }
+let inventory = settings.get('inventory',blankInventory)
+if (inventory.boosters == undefined){inventory.boosters = []}
+let inventorySpent = JSON.parse(JSON.stringify(blankInventory))
+let inventoryGained = JSON.parse(JSON.stringify(blankInventory))
+let blankBoosters = {100005: 0,100006: 0,100007: 0,100008: 0,100009: 0,}
+inventorySpent.boosters = JSON.parse(JSON.stringify(blankBoosters))
+inventoryGained.boosters = JSON.parse(JSON.stringify(blankBoosters))
 
 global.historyEvents = []
 
@@ -312,6 +332,73 @@ ipcMain.on('updateWinLossCounters', (e,arg) => {
     }
   } catch (e) {
     console.log("could not send counterChanged message");
+    console.log(e);
+  }
+})
+
+ipcMain.on('lastVaultProgressChanged', (e,new_progress) => {
+  global.lastVaultProgress = new_progress
+  settings.set('lastVaultProgress',new_progress)
+  try {
+    if ( collectionWindow != null){
+      collectionWindow.webContents.send('lastVaultProgressChanged',global['lastVaultProgress']);
+    }
+  } catch (e) {
+    console.log("could not send lastVaultProgressChanged message");
+    console.log(e);
+  }
+})
+
+ipcMain.on('inventoryChanged', (e,new_inventory) => {
+  let fields = ['gold','gems','wcCommon','wcUncommon','wcRare','wcMythic']
+  for (let field of fields) {
+    let changed = new_inventory[field] - global.inventory[field]
+    if (changed > 0){
+      global.inventoryGained[field] += changed
+    } else {
+      global.inventorySpent[field] -= changed
+    }
+  }
+
+  for (let new_set of new_inventory.boosters){
+    let old_set = global.inventory.boosters.find(x => x.collationId == new_set.collationId) || null
+    let changed = 0
+    if (old_set == null){
+      changed = new_set.count
+      global.inventoryGained.boosters[new_set.collationId] = 0
+      global.inventorySpent.boosters[new_set.collationId] = 0
+    } else {
+      changed = new_set.count - old_set.count
+    }
+    if (changed > 0){
+      global.inventoryGained.boosters[new_set.collationId] += changed
+    } else {
+      global.inventorySpent.boosters[new_set.collationId] -= changed
+    }
+  }
+
+  global.inventory = new_inventory
+  settings.set('inventory',new_inventory)
+
+  try {
+    if ( collectionWindow != null){
+      collectionWindow.webContents.send('inventoryChanged',global.inventory,global.inventorySpent,global.inventoryGained);
+    }
+  } catch (e) {
+    console.log("could not send inventoryChanged message");
+    console.log(e);
+  }
+})
+
+ipcMain.on('recentCardsChanged', (e,new_recent) => {
+  global.recentCards.unshift(new_recent)
+  settings.set('recentCards',global.recentCards)
+  try {
+    if ( collectionWindow != null){
+      collectionWindow.webContents.send('recentCardsChanged',new_recent);
+    }
+  } catch (e) {
+    console.log("could not send recentCardsChanged message");
     console.log(e);
   }
 })
@@ -405,6 +492,40 @@ let openSettingsWindow = () => {
     settingsWindow.show()
   })
   settingsWindow.on('close', () => {global.settingsPaneIndex = 'general'})
+}
+
+let openCollectionWindow = () => {
+  if(collectionWindow == null) {
+    let collectionWidth = debug ? 1400 : 1025;
+
+    const collectionWindowStateMgr = windowStateKeeper('collection')
+    collectionWindow = new BrowserWindow({width: collectionWidth,
+                                        height: 800,
+                                        toolbar: false,
+                                        titlebar: false,
+                                        title: false,
+                                        maximizable: false,
+                                        show: false,
+                                        icon: "img/icon_small.ico",
+                                        x: collectionWindowStateMgr.x,
+                                        y: collectionWindowStateMgr.y})
+    collectionWindowStateMgr.track(collectionWindow)
+    collectionWindow.setMenu(null)
+    collectionWindow.loadURL(require('url').format({
+      pathname: path.join(__dirname, 'collection.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+    if (debug) {
+      collectionWindow.webContents.openDevTools()
+    }
+    collectionWindow.on('closed', function () {
+      collectionWindow = null;
+    })
+  }
+  collectionWindow.once('ready-to-show', () => {
+    collectionWindow.show()
+  })
 }
 
 let openInspectorWindow = () => {
@@ -510,6 +631,7 @@ let openTOSWindow = () => {
 }
 
 ipcMain.on('openSettings', openSettingsWindow)
+ipcMain.on('openCollection', openCollectionWindow)
 ipcMain.on('openInspector', openInspectorWindow)
 ipcMain.on('openHistory', openHistoryWindow)
 
@@ -694,6 +816,9 @@ global.settingsPaneIndex = "general"
 global.showUIButtons = showUIButtons
 global.showHideButton = showHideButton
 global.showMenu = showMenu
+global.inventory = inventory
+global.inventorySpent = inventorySpent
+global.inventoryGained = inventoryGained
 
 /*************************************************************
  * window management
@@ -704,6 +829,7 @@ let settingsWindow = null
 let inspectorWindow = null
 let historyWindow = null
 let tosWindow = null
+let collectionWindow = null
 
 let window_width = 354;
 let window_height = 200;
@@ -728,6 +854,10 @@ const openInspectorHandler = (menuItem, browserWindow, event) => {
   focusInspector();
 }
 
+const openCollectionHandler = (menuItem, browserWindow, event) => {
+  focusCollection();
+}
+
 const closeTrackerHandler = (menuItem, browserWindow, event) => {
   mainWindow.close();
 }
@@ -745,6 +875,7 @@ const createTray = () => {
       {label: "DeckTracker", type: "normal", click: openDeckTrackerHandler},
       {label: "Settings", type: "normal", click: openSettingsHandler},
       {label: "Inspector", type: "normal", click: openInspectorHandler},
+      {label: "Collection", type: "normal", click: openCollectionHandler},
       {label: "History", type: "normal", click: openHistoryHandler},
       {label: "Quit", type: "normal", click: closeTrackerHandler }
     ])
@@ -839,6 +970,18 @@ function focusMTGATrackerSettings() {
     settingsWindow.focus();
   } else {
     openSettingsWindow();
+  }
+}
+
+function focusCollection() {
+  if(collectionWindow) {
+    collectionWindow.show();
+    if(collectionWindow.isMinimized()) {
+      collectionWindow.restore();
+    }
+    collectionWindow.focus();
+  } else {
+    openCollectionWindow();
   }
 }
 

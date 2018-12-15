@@ -54,9 +54,6 @@ function copyEventHandler(e) {
   copyData()
 }
 
-//mousetrap.bind('ctrl+c', copyEventHandler)
-
-
 var { rendererPreload } = require('electron-routes');
 rendererPreload();
 
@@ -801,7 +798,7 @@ function resizeWindow() {
     }
 
     let menuHeight = 0
-    let selectors = ['#tracker-header h1', '#main-menu ul', '#main-menu ul li']
+    let selectors = ['#tracker-header h1', '#main-menu ul', '#main-menu ul li ul']
     for (selector of selectors) {
       menuHeight += $(selector).outerHeight(true)
     }
@@ -1129,11 +1126,10 @@ let onMessage = (data) => {
           if (data.inventory.vaultProgress) {
             appData.lastVaultProgress = data.inventory.vaultProgress;
 
-            ipcRenderer.send('settingsChanged', {
-              key: "lastVaultProgress",
-              value: appData.lastVaultProgress
-            })
+            ipcRenderer.send("lastVaultProgressChanged",appData.lastVaultProgress)
           }
+          //console.log(data.inventory)
+          ipcRenderer.send('inventoryChanged', data.inventory)
          // passThrough("tracker-api/inventory", data.inventory, data.player_key).catch(e => {
          //   console.log("error uploading inventory data: ")
          //   console.log(e)
@@ -1160,10 +1156,7 @@ let onMessage = (data) => {
               if(Object.keys(objectToPush.cardsObtained).length > 0) {
                 appData.recentCards.unshift(objectToPush);
                 console.log(appData.recentCards);
-                ipcRenderer.send('settingsChanged', {
-                  key: "recentCards",
-                  value: appData.recentCards
-                })
+                ipcRenderer.send('recentCardsChanged', objectToPush)
               }
             }
 
@@ -1256,6 +1249,7 @@ let close = () => {
 let openInspector = () => { ipcRenderer.send('openInspector', null); }
 let openHistory = () => { ipcRenderer.send('openHistory', null); }
 let openSettings = () => { ipcRenderer.send('openSettings', null); }
+let openCollection = () => { ipcRenderer.send('openCollection', null); }
 
 let menu_items = [
   {
@@ -1273,6 +1267,11 @@ let menu_items = [
     action: openSettings,
     keybind: 'Ctrl+;',
     alt_keybind: 'Ctrl+S'
+  },
+  {
+    label: 'Vault',
+    action: openCollection,
+    keybind: "Ctrl+V"
   },
   {
     label: 'Copy',

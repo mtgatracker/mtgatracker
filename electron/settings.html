@@ -35,10 +35,6 @@
           <span class="icon icon-user"></span>
           Inspector
         </a>
-        <a value="collection" rv-settingspaneactive="settingsPaneIndex" class="nav-group-item" id="collection-nav">
-          <span class="icon icon-archive"></span>
-          Collection
-        </a>
       </nav>
 
       <nav class="nav-group">
@@ -97,7 +93,6 @@
           <hr />
 
           <h4>Vault</h4>
-          <h5>Current Progress: { lastVaultProgress }%</h5>
           <div class="settings-row">
             <input rv-checked="showVaultProgress" class="tf-toggle" type="checkbox" key="showVaultProgress" data-toggle="toggle"> Show vault progress in main window
           </div>
@@ -352,68 +347,6 @@
           </div>
         </div>
       </div>
-      <div id="collection-pane" value="collection" rv-showsettingspane="settingsPaneIndex">
-        <div class="settings-container">
-          <div class="settings-row">
-            <h3>Collection</h3>
-            <p><b>Basic info</b>: { lastCollectionCount }</p>
-            <button id="exportCollectionMTGGButton" class="btn btnbtn btn-secondary">Export collection (MTGGoldfish .csv format)</button>
-            <br>
-            <p>(File will be saved as <code>Desktop/mtga_collection_mtggoldfish.csv</code> )</p>
-          </div>
-          <div class="settings-row">
-            <h3>Set Progress</h3>
-            <div rv-each-set="lastCollectionSetProgress">
-              <div class="well">
-                <center>
-                  <img rv-setpromo="set.name" width="200px" />
-                </center>
-                <span rv-hidesetname="set.name">{ set.name }</span>
-                <div class="progress set-bar position-relative">
-                  <div rv-mythicprogress="set" class="progress-bar set-bar mythic" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
-                  </div>
-                  <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.mythicOwned} / {set.mythicTotal} Mythics</span>
-                </div>
-
-                <div class="progress set-bar position-relative">
-                  <div rv-rareprogress="set" class="progress-bar set-bar rare" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
-                  </div>
-                  <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.rareOwned} / {set.rareTotal} Rares</span>
-                </div>
-
-                <div class="progress set-bar position-relative">
-                  <div rv-uncommonprogress="set" class="progress-bar set-bar uncommon" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
-                  </div>
-                  <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.uncommonOwned} / {set.uncommonTotal} Uncommons</span>
-                </div>
-
-                <div class="progress set-bar position-relative">
-                  <div rv-commonprogress="set" class="progress-bar set-bar common" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
-                  </div>
-                  <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.commonOwned} / {set.commonTotal} Commons</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="settings-row">
-            <h3>Recently collected cards</h3>
-            <p>How many new card events to display</p>
-            <div class="slidecontainer">
-              <input type="range" min="1" max="100" value="0" class="slider" id="recent-cards-quantity-slider">
-            </div>
-            <div class="slidevalue-recent-cards slidervalue ">
-              0
-            </div>
-            <div class="recent-cards-group-container" rv-each-recentcardgroup="recentCards | filterBySlideValueRecentCards recentCardsQuantityToShow">
-              <h5 class="recent-cards-header" onclick="recentCardsSectionClickHandler(event)">Cards updated: {recentcardgroup.time}</h5>
-              <ul class="recent-cards-container" rv-recentcardsbinder="recentcardgroup.cardsObtained">
-                <!-- cards appended here from settingsRenderer -->
-              </ul>
-            </div>
-            <div id="no-recently-obtained-cards">The tracker hasn't tracked any recently obtained cards (obtain cards to update this).</div>
-          </div>
-        </div>
-      </div>
       <div id="about-pane" value="about" rv-showsettingspane="settingsPaneIndex">
         <div class="settings-container">
           <div class="settings-row">
@@ -428,11 +361,18 @@
             <p class="about-p"><b>Inspector:</b> <a href="https://inspector.mtgatracker.com/">inspector.mtgatracker.com</a></p>
 
             <br />
+            <h3>Release notes for 5.0.5</h3>
+            <ul>
+              <li>Moved collection information into its own window "Vault"</li>
+              <li>Added tracking of gold, gems, wildcards and booster packs.</li>
+            </ul>
+
+            <br />
             <h3>Release notes for 5.0.4</h3>
             <ul>
               <li class="about-p">Hotfix for December update log changes</li>
               <li>Added the ability to export draft information in MTGO format (thanks isharacomix!)</li>
-              <li>Added ability to copy screens (draft packs, decklists, list of decks) (thanks AnnanFey!)</li>
+              <li>Added ability to copy screens (draft packs, decklists, list of decks) (thanks AnnanFay!)</li>
               <li>Added keyboard shortcuts to the menu</li>
               <li>Fixed menu being cut off in rollup mode</li>
             </ul>
@@ -858,6 +798,8 @@
             <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
             <div>Icons made by <a href="https://www.flaticon.com/authors/cole-bemis" title="Cole Bemis">Cole Bemis</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
             <div>Icons made by <a href="https://www.flaticon.com/authors/becris" title="Becris">Becris</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/dinosoftlabs" title="DinosoftLabs">DinosoftLabs</a> from <a href="https://www.flaticon.com/"           title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"          title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+            <div>Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/"          title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/"          title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
           </div>
         </div>
       </div>
@@ -868,10 +810,7 @@
             <h3>Feedback</h3>
 
             <div class="settings-row">
-              <div class="checkbox">
-                <label>
-                  <input rv-checked="sendAnonymousUsageInfo" class="tf-toggle" key="sendAnonymousUsageInfo" id="enable-anonymous-usage-toggle" type="checkbox" data-toggle="toggle"> Send MTGATracker Developers Anonymous Usage Information
-                </label>
+                  <input rv-checked="sendAnonymousUsageInfo" key="sendAnonymousUsageInfo" type="checkbox" data-toggle="toggle" class="tf-toggle"> Send MTGATracker Developers Anonymous Usage Information
               </div>
               <p>This shows us what features & settings y'all use the most to help us decide what to make next, and which features to continue supporting.</p>
             </div>
