@@ -641,12 +641,12 @@ rivets.binders.showvault = function(el, value) {
 }
 
 rivets.binders.wholemana = function(el, value) {
-  if (value.length == 1) el.style.display = "inline-block"
+  if (value.length > 0) el.style.display = "inline-block"
   else el.style.display = "none"
 }
 
 rivets.binders.splitmana = function(el, value) {
-  if (value.length > 1) el.style.display = "inline-block"
+  if (value.length > 0) el.style.display = "inline-block"
   else el.style.display = "none"
 }
 
