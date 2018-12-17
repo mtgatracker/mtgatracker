@@ -1,9 +1,12 @@
-#deck-list,#draft-collection-list {
+.cardlist {
     padding-bottom: 0px;
 }
 
 .cost {
   margin-right: 7px;
+}
+
+.mana-symbol {
   margin-top: 10px;
 }
 
@@ -11,7 +14,7 @@
   background-image:none!important;
 }
 
-.card-g {
+.card-g  {
   background-color: #244224;
   /* background-color: #185218; */
 }
@@ -65,9 +68,6 @@
 
 .card-r {
   background-color: #611c1c;
-  /* background-color: #611c1c; */
-  border-bottom: solid #441515 1px;
-  border-top: solid #441515 1px;
 }
 
 .card-r.card-g {
@@ -118,7 +118,6 @@
     padding-left: 0px;
     padding-top: 0px;
     padding-bottom: 0px;
-    position: relative;
 }
 
 .cardcount {

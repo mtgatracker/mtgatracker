@@ -214,13 +214,22 @@ var appData = {
     draftStats: [],
     game_complete: false,
     game_dismissed: false,
+    showCost: true,
+    showTotalCards: false,
+    showTimers: false,
+    showBack: false,
+    cardlist: [],
     show_available_decklists: true,
+    showWinLossCounters: true,
     no_decks: false,
     no_list_selected: true,
     list_selected: false,
+    showPlayerDecks: true,
     selected_list_size: "0",
     selected_list: [],
     selected_list_name: "",
+    showReminder: true,
+    showTitle: false,
     player_decks: [],
     total_cards_in_deck: "0",
     draw_stats: [],
@@ -605,7 +614,7 @@ let mergeDuplicates = function(decklist) {
     return Array.from(mergedDecklist.values());
 };
 
-rivets.formatters.decklistSort = function(decklist) {
+let decklistSort = function(decklist) {
     if (decklist.length === 0) {
         return decklist;
     }
@@ -622,7 +631,29 @@ rivets.formatters.decklistSort = function(decklist) {
     } else if (sortMethod == "color") {
         return colorSort(sorted_decklist);
     }
-};
+}
+
+let convertSelectedList = (decklist) => {
+  for (card of decklist){
+    card.count = card.count_in_deck
+  }
+  return decklistSort(decklist)
+}
+
+let convertDrawStats = (decklist) => {
+  for (card of decklist){
+    card.pretty_name = card.card
+    card.count = card.count_in_deck
+  }
+  return decklistSort(decklist)
+}
+
+let convertDraftStats = (decklist) => {
+  for (card of decklist){
+    card.pretty_name = card.pretty_name + ' owned'
+  }
+  return decklist
+}
 
 rivets.binders.showmessage = function(el, value) {
   if (value && remote.getGlobal('messagesAcknowledged').includes(value)) {
@@ -640,51 +671,34 @@ rivets.binders.showvault = function(el, value) {
   }
 }
 
-rivets.binders.wholemana = function(el, value) {
-  if (value.length == 1) el.style.display = "inline-block"
-  else el.style.display = "none"
-}
+rivets.binders.manasymbols = (el,cost) => {
+  let $el = $(el);
+  $el.children().remove()
 
-rivets.binders.splitmana = function(el, value) {
-  if (value.length > 1) el.style.display = "inline-block"
-  else el.style.display = "none"
-}
+  if (!appData.showCost) {
+    return ''
+  }
 
-rivets.binders.mana = function(el, value) {
-    mi_class = "mi-" + value.toLowerCase()
-    el.classList.remove("mi-w")
-    el.classList.remove("mi-b")
-    el.classList.remove("mi-g")
-    el.classList.remove("mi-u")
-    el.classList.remove("mi-r")
-    el.classList.remove("mi-1")
-    el.classList.remove("mi-2")
-    el.classList.remove("mi-3")
-    el.classList.remove("mi-4")
-    el.classList.remove("mi-5")
-    el.classList.remove("mi-6")
-    el.classList.remove("mi-7")
-    el.classList.remove("mi-8")
-    el.classList.remove("mi-9")
-    el.classList.remove("mi-10")
-    el.classList.remove("mi-x")
-    el.classList.add(mi_class)
-}
+  for (let symbol of cost){
+    let $span = $('<span class="mana-symbol"></span>')
+    let colors = []
 
-rivets.binders.splitmanafill = function(el, value) {
-    if (!value.length > 1) return
-    while (el.firstChild) {
-        el.removeChild(el.firstChild);
+    if (symbol.indexOf('/') == -1) {
+      colors.push(symbol.toLowerCase())
+    } else {
+      colors = symbol.split('/').map(x => x.replace('(','').replace(')','').toLowerCase())
+      $span.addClass('mi-split').addClass('mi-split-color')
     }
-    value = value.slice(1, -1)
-    value = value.split("/")
-    for (let idx in value) {
-      let splitColor = value[idx]
-      let newI = document.createElement("i")
-      newI.classList.add("mi")
-      newI.classList.add(`mi-${splitColor.toLowerCase()}`)
-      el.appendChild(newI)
+    for (let color of colors) {
+      let $i = ($('<i class="mi mi-shadow mi-' + color + '"></i>'))
+      if (colors.length == 1){
+        $i.addClass('mi-mana')
+      }
+      $span.append($i)
     }
+
+    $(el).append($span)
+  }
 }
 
 rivets.binders.card_color = function(el, value) {
@@ -830,11 +844,18 @@ function populateDeck(elem) {
     });
 
     if (deck != null){
+      appData.showCost = true
       appData.selected_list = deck.cards;
+      appData.showBack = true
+      appData.cardlist = convertSelectedList(deck.cards);
+      appData.showTotalCards = false;
       appData.selected_list_name = deck.pool_name;
+      appData.showTitle = true
       appData.list_selected = true;
       appData.no_list_selected = false;
       appData.showDeckCounters = true;
+      appData.showPlayerDecks = false
+      appData.showReminder = false
     }
 
     resizeWindow()
@@ -844,18 +865,29 @@ function exitDraft() {
     appData.game_in_progress = false;
     appData.show_available_decklists = true;
     appData.showDraftStats = false;
+    appData.cardlist = []
+    appData.showWinLossCounters = true
+    appData.showPlayerDecks = true
     resizeWindow()
 }
 
 function unpopulateDecklist() {
     appData.list_selected = false;
+    appData.cardlist = []
     appData.no_list_selected = true;
+    appData.selected_list_name = ''
+    appData.showBack = false
+    appData.showTotalCards = false
     appData.activeDeck = 'total';
     appData.deckWinCounter = 0;
     appData.deckLossCounter = 0;
     appData.dailyDeckWinCounter = 0;
     appData.dailyDeckLossCounter = 0;
     appData.showDeckCounters = false;
+    appData.showPlayerDecks = true
+    appData.showTitle = false
+    appData.showTimers = false
+    appData.showReminder = true
 
     appData.game_in_progress = false;
     appData.show_available_decklists = true;
@@ -1015,6 +1047,7 @@ let onMessage = (data) => {
               console.log(`Backend sent match_complete for ${data.game.gameID}, but already know that game`)
             } else if (data.game) {
               appData.game_complete = true;
+              appData.showBack = true
               $(".cardsleft").addClass("gamecomplete")
 
               gameLookup[data.game.gameID] = {count: 0, uploaded: true}
@@ -1091,6 +1124,16 @@ let onMessage = (data) => {
               appData.draw_stats = data.draw_odds.stats;
               appData.total_cards_in_deck = data.draw_odds.total_cards_in_deck;
             }
+
+            appData.showCost = true
+            appData.showTotalCards = true
+            appData.selected_list_name = ''
+            appData.showTitle = false
+            appData.showPlayerDecks = false
+            appData.showTimers = true
+            appData.showReminder = false
+            appData.cardlist = convertDrawStats(appData.draw_stats)
+
         }
     } else if (data.game_history_event) {
       ipcRenderer.send('gameHistoryEvent', data.game_history_event)
@@ -1111,6 +1154,16 @@ let onMessage = (data) => {
           appData.showDraftStats = true;
 
           appData.draftStats = data.draft_collection_count
+          appData.showCost = false
+          appData.showTotalCards = false
+          appData.showWinLossCounters = false
+          appData.selected_list_name = ''
+          appData.showTitle = false
+          appData.showPlayerDecks = false
+          appData.showBack = false
+          appData.showTimers = false
+          appData.showReminder = false
+          appData.cardlist = convertDraftStats(appData.draftStats)
         } else if (data.rank_change) {
           passThrough("rankChange", data.rank_change, data.player_key).catch(e => {
             console.log("error uploading rank data: ")

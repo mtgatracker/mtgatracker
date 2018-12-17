@@ -1,5 +1,4 @@
-.cost {
-  margin-right: 7px;
+.cost span {
   margin-top: 5px;
 }
 
@@ -82,7 +81,11 @@ h1 {
   display: block;
   position: relative;
   left: 8px;
-  top: -23px;
+  top: -50px;
+}
+
+.deck-title {
+  font-size: 1.17em;
 }
 
 /**#deck-list .back-link:after {
@@ -106,5 +109,5 @@ h1 {
   padding: 0 8px 5px 25px;
 }
  #browse-back:after {
-    top: -22px;
+    /**top: -50px;**/
  }
