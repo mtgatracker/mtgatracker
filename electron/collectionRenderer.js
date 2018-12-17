@@ -414,10 +414,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
   collectionWorker.postMessage({allCards: mtga.allCards})
 
   $(".nav-group-item").click((e) => {
+    $('.nav-group-item').removeClass('active')
     if (e.target.attributes.value != undefined){
       collectionData.collectionPaneIndex = e.target.attributes.value.value
+      $(e.target).addClass('active')
     } else {
       collectionData.collectionPaneIndex = e.target.parentNode.attributes.value.value
+      $(e.target.parentNode).addClass('active')
     }
   })
 
