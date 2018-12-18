@@ -636,13 +636,14 @@ let decklistSort = function(decklist) {
 let convertSelectedList = (decklist) => {
   for (card of decklist){
     card.count = card.count_in_deck
+    card.displayName = card.pretty_name
   }
   return decklistSort(decklist)
 }
 
 let convertDrawStats = (decklist) => {
   for (card of decklist){
-    card.pretty_name = card.card
+    card.displayName = card.card
     card.count = card.count_in_deck
   }
   return decklistSort(decklist)
@@ -650,7 +651,7 @@ let convertDrawStats = (decklist) => {
 
 let convertDraftStats = (decklist) => {
   for (card of decklist){
-    card.pretty_name = card.pretty_name + ' owned'
+    card.displayName = card.pretty_name + ' owned'
   }
   return decklist
 }
