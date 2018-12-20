@@ -90,7 +90,8 @@ if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..'
         global.checkInProgress = false
       })
     }
-  }, 30000)
+  },  1000     * 60       * 60     * 2)
+  //  1 second * 1 minute * 1 hour * 2 = 2 hours
 }
 
 const findProcess = require('find-process');
