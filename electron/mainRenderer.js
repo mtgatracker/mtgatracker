@@ -640,51 +640,30 @@ rivets.binders.showvault = function(el, value) {
   }
 }
 
-rivets.binders.wholemana = function(el, value) {
-  if (value.length == 1) el.style.display = "inline-block"
-  else el.style.display = "none"
-}
+rivets.binders.manasymbols = (el,cost) => {
+  let $el = $(el);
+  $el.children().remove()
 
-rivets.binders.splitmana = function(el, value) {
-  if (value.length > 1) el.style.display = "inline-block"
-  else el.style.display = "none"
-}
+  for (let symbol of cost){
+    let $span = $('<span class="mana-symbol"></span>')
+    let colors = []
 
-rivets.binders.mana = function(el, value) {
-    mi_class = "mi-" + value.toLowerCase()
-    el.classList.remove("mi-w")
-    el.classList.remove("mi-b")
-    el.classList.remove("mi-g")
-    el.classList.remove("mi-u")
-    el.classList.remove("mi-r")
-    el.classList.remove("mi-1")
-    el.classList.remove("mi-2")
-    el.classList.remove("mi-3")
-    el.classList.remove("mi-4")
-    el.classList.remove("mi-5")
-    el.classList.remove("mi-6")
-    el.classList.remove("mi-7")
-    el.classList.remove("mi-8")
-    el.classList.remove("mi-9")
-    el.classList.remove("mi-10")
-    el.classList.remove("mi-x")
-    el.classList.add(mi_class)
-}
-
-rivets.binders.splitmanafill = function(el, value) {
-    if (!value.length > 1) return
-    while (el.firstChild) {
-        el.removeChild(el.firstChild);
+    if (symbol.indexOf('/') == -1) {
+      colors.push(symbol.toLowerCase())
+    } else {
+      colors = symbol.split('/').map(x => x.replace('(','').replace(')','').toLowerCase())
+      $span.addClass('mi-split').addClass('mi-split-color')
     }
-    value = value.slice(1, -1)
-    value = value.split("/")
-    for (let idx in value) {
-      let splitColor = value[idx]
-      let newI = document.createElement("i")
-      newI.classList.add("mi")
-      newI.classList.add(`mi-${splitColor.toLowerCase()}`)
-      el.appendChild(newI)
+    for (let color of colors) {
+      let $i = ($('<i class="mi mi-shadow mi-' + color + '"></i>'))
+      if (colors.length == 1){
+        $i.addClass('mi-mana')
+      }
+      $span.append($i)
     }
+
+    $(el).append($span)
+  }
 }
 
 rivets.binders.card_color = function(el, value) {

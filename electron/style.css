@@ -439,6 +439,11 @@ p {
     background-color: #8a8a8a;
 }
 
+.mana-symbol {
+    display: inline-block;
+    padding-left: 1px
+}
+
 .cost {
     float: right;
     margin-right: 17px;
