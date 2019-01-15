@@ -91,7 +91,7 @@ if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..'
       })
     }
   },  1000     * 60       * 60     * 2)
-  //  1 second * 1 minute * 1 hour * 2 = 2 hours
+  //  1 second * 1 minute * 1 hour * 2 = 2 hours 
 }
 
 const findProcess = require('find-process');
@@ -102,21 +102,6 @@ updater.autoUpdater.on('update-downloaded', (e) => {
     text: "A new version has been downloaded. Restart to update!"
   })
 })
-
-if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
-  setInterval(() => {
-    if (!global.updateDownloading) {
-      updater.check((err, status) => {
-        if (!err && status) {
-          // Download the update
-          updater.download()
-          global.updateDownloading = true;
-        }
-      })
-    }
-  }, 1000)
-}
-
 
 // adapted from the excellent medium post:
 // https://medium.com/@hql287/persisting-windows-state-in-electron-using-javascript-closure-17fc0821d37
