@@ -199,10 +199,21 @@ function clipboardCopy(text) {
     return result;
 }
 
-function exportDeck(deck) {
+function exportDeck(deck, sideboard=null) {
     let result = "";
     if (deck && typeof deck === 'object' && deck.constructor === Array) {
          deck.forEach(cardObj => {
+           if (typeof cardObj == "number" || typeof cardObj == "string") {
+             let card = cardUtils.allCards.findCard(cardID)
+             result += `1 ${card.get("prettyName")} (${card.get("set")}) ${card.get("setNumber")}` + "\n"
+           } else if (cardObj.count) {
+             result += `${cardObj.count} ${cardObj.name} (${cardObj.set}) ${cardObj.setNumber}` + "\n"
+           }
+         })
+    }
+    if (sideboard && typeof sideboard === 'object' && deck.constructor === Array) {
+         result += + "\n"
+         sideboard.forEach(cardObj => {
            if (typeof cardObj == "number" || typeof cardObj == "string") {
              let card = cardUtils.allCards.findCard(cardID)
              result += `1 ${card.get("prettyName")} (${card.get("set")}) ${card.get("setNumber")}` + "\n"

@@ -101,10 +101,18 @@ def parse_draft_status(blob):
 def parse_event_decksubmit(blob):
     import app.mtga_app as mtga_app
     course_deck = blob["CourseDeck"]
+    course_limited_pool = blob.get('CardPool', None)
     app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     if course_deck:
         deck = util.process_deck(course_deck, save_deck=False)
         mtga_app.mtga_watch_app.intend_to_join_game_with = deck
+    if course_limited_pool
+        limited_pool = {}
+        for c in course_limited_pool:
+            if c not in limited_pool:
+                limited_pool[c]=0
+            limited_pool[c]+=1
+    mtga_app.mtga_watch_app.current_limited_pool = limited_pool
 
 
 @util.debug_log_trace
@@ -115,6 +123,7 @@ def parse_direct_challenge_queued(blob):
     if course_deck:
         deck = util.process_deck(course_deck, save_deck=False)
         mtga_app.mtga_watch_app.intend_to_join_game_with = deck
+    mtga_app.mtga_watch_app.current_limited_pool = None
 
 
 @util.debug_log_trace
@@ -309,7 +318,8 @@ def parse_game_state_message(message, timestamp=None):
                         mtga_app.mtga_watch_app.game = Game(new_match_id, new_hero, new_oppo, shared_battlefield,
                                                             shared_exile, shared_limbo, shared_stack,
                                                             app.mtga_app.mtga_watch_app.match.event_id,
-                                                            app.mtga_app.mtga_watch_app.match.opponent_rank)
+                                                            app.mtga_app.mtga_watch_app.match.opponent_rank,
+                                                            limited_pool=mtga_app.mtga_watch_app.limited_card_pool)
         if 'annotations' in message.keys():
             for annotation in message['annotations']:
                 annotation_type = annotation['type'][0]

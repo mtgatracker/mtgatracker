@@ -206,7 +206,7 @@ class Match(object):
 
 class Game(object):
     def __init__(self, match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo, shared_stack,
-                 event_id, opponent_rank="Unknown"):
+                 event_id, opponent_rank="Unknown", limited_pool=None):
         self.match_id = match_id
         self.final = False
         self.winner = None
@@ -227,6 +227,7 @@ class Game(object):
         self.exile = shared_exile
         self.limbo = shared_limbo
         self.stack = shared_stack
+        self.limited_pool = limited_pool
 
         self.ignored_iids = set()
         self.last_hero_library_hash = None
@@ -406,5 +407,7 @@ class Game(object):
             "gameHistory": minimized_events,
             "historyKey": blob_map
         }
+        if self.limited_pool:
+            gameJSON["cardPool"] = self.limited_pool
         gameJSON["game_hash"] = hash_json_object(gameJSON)
         return gameJSON
