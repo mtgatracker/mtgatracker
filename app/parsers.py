@@ -319,7 +319,7 @@ def parse_game_state_message(message, timestamp=None):
                                                             shared_exile, shared_limbo, shared_stack,
                                                             app.mtga_app.mtga_watch_app.match.event_id,
                                                             app.mtga_app.mtga_watch_app.match.opponent_rank,
-                                                            limited_pool=mtga_app.mtga_watch_app.limited_card_pool)
+                                                            limited_pool=mtga_app.mtga_watch_app.current_limited_pool)
         if 'annotations' in message.keys():
             for annotation in message['annotations']:
                 annotation_type = annotation['type'][0]
