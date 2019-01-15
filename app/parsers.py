@@ -106,8 +106,8 @@ def parse_event_decksubmit(blob):
     if course_deck:
         deck = util.process_deck(course_deck, save_deck=False)
         mtga_app.mtga_watch_app.intend_to_join_game_with = deck
+    limited_pool = {}
     if course_limited_pool:
-        limited_pool = {}
         for c in course_limited_pool:
             if c not in limited_pool:
                 limited_pool[c]=0
