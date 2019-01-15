@@ -113,6 +113,7 @@ def parse_event_decksubmit(blob):
                 limited_pool[c]=0
             limited_pool[c]+=1
     mtga_app.mtga_watch_app.current_limited_pool = limited_pool
+    app.mtga_app.mtga_logger.info("{}".format(limited_pool))
 
 
 @util.debug_log_trace
@@ -768,5 +769,5 @@ def parse_match_playing(blob):
         queue_obj = {"game_history_event": event_texts}
         general_output_queue.put(queue_obj)
         mtga_app.mtga_watch_app.game = Game(match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo,
-                                            shared_stack, event_id, opponent_rank)
+                                            shared_stack, event_id, opponent_rank, limited_pool=mtga_app.mtga_watch_app.current_limited_pool)
         mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
