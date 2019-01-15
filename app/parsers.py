@@ -105,15 +105,17 @@ def parse_event_decksubmit(blob):
     app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     if course_deck:
         deck = util.process_deck(course_deck, save_deck=False)
+        # looks like course_deck already has a sideboard field that works in draft, need to check sealed
         mtga_app.mtga_watch_app.intend_to_join_game_with = deck
     limited_pool = {}
     if course_limited_pool:
         for c in course_limited_pool:
-            if c not in limited_pool:
-                limited_pool[c]=0
-            limited_pool[c]+=1
+            _c = str(c)
+            if _c not in limited_pool:
+                limited_pool[_c]=0
+            limited_pool[_c]+=1
     mtga_app.mtga_watch_app.current_limited_pool = limited_pool
-    app.mtga_app.mtga_logger.info("{}".format(limited_pool))
+    #app.mtga_app.mtga_logger.info("{}".format(limited_pool))
 
 
 @util.debug_log_trace
