@@ -81,7 +81,7 @@ let gameRoute = (c, n) => {
         appData.currentGameWinner = game.winner
         appData.currentGameOpponent = game.opponent
         appData.currentGameHeroDeck = []
-        appData.currentGameHereSideboard = []
+        appData.currentGameHeroSideboard = []
 
         Object.keys(game.players[0].deck.cards).forEach(cardID => {
           let card = cardUtils.allCards.findCard(cardID)
