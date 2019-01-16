@@ -34,6 +34,9 @@ def dispatch_blob(blob):
         parsers.pass_through("rank_change", blob["playerId"], blob)
     elif "block_title" in blob and blob["block_title"] == "Inventory.Updated":
         parsers.pass_through("inventory_update", None, blob)
+    elif ("block_title" in blob and blob["block_title"] == "ClientToMatchServiceMessageType_ClientToGREMessage" and
+          "Payload" in blob and "SubmitDeckResp" in blob['Payload']):
+        parsers.parse_sideboard_submit(blob)
     elif "matchGameRoomStateChangedEvent" in blob:
         dispatch_match_gametoom_state_change(blob)
     elif "block_title" in blob and blob["block_title"] == "Event.MatchCreated":
@@ -113,8 +116,6 @@ def dispatch_client_to_gre(blob):
                      "ClientMessageType_ConnectReq"]
     if message_type in dont_care_types:
         pass
-    elif message_type == "ClientToMatchServiceMessageType_ClientToGREMessage":
-         parsers.parse_sideboard_submit(message["payload"]["SubmitDeckResp"])
     elif message_type == "ClientMessageType_MulliganResp":
         parsers.parse_mulligan_response(client_message)
     elif message_type in unknown_types:
