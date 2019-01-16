@@ -211,8 +211,8 @@ function exportDeck(deck, sideboard=null) {
            }
          })
     }
-    if (sideboard && typeof sideboard === 'object' && deck.constructor === Array) {
-         result += + "\n"
+    if (sideboard && typeof sideboard === 'object' && sideboard.constructor === Array && sideboard.length > 0) {
+         result += "\n"
          sideboard.forEach(cardObj => {
            if (typeof cardObj == "number" || typeof cardObj == "string") {
              let card = cardUtils.allCards.findCard(cardID)

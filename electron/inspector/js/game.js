@@ -99,14 +99,14 @@ let gameRoute = (c, n) => {
             appData.currentGameHeroDeck.push(cardObj)
           }
         })
-        if (game.players[0].deck.sidebard)
+        if (game.players[0].deck.sideboard)
         {
-            Object.keys(game.players[0].deck.sidebard).forEach(cardID => {
+            Object.keys(game.players[0].deck.sideboard).forEach(cardID => {
               let card = cardUtils.allCards.findCard(cardID)
               if (card) {
                 let cardObj = {
                   cardID: cardID,
-                  count: game.players[0].deck.sidebard[cardID],
+                  count: game.players[0].deck.sideboard[cardID],
                   colors: card.get("colors"),
                   cost: card.get("cost"),
                   name: card.get("prettyName"),
@@ -114,10 +114,7 @@ let gameRoute = (c, n) => {
                   setNumber: card.get("setNumber"),
                   cardType: card.get("cardType").split(" ").slice(-1)[0] // "Legendary Creature" => "Creature"
                 }
-                if (cardObj.count > 0)
-                {
-                  appData.currentGameHeroSideboard.push(cardObj)
-                }
+                appData.currentGameHeroSideboard.push(cardObj)
               }
             })
         }
