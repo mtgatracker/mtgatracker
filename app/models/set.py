@@ -23,11 +23,14 @@ class Set(object):
 
 class Pool(object):
 
-    def __init__(self, pool_name, cards=None):
+    def __init__(self, pool_name, cards=None, side=None):
         self.pool_name = pool_name
         if cards is None:
             cards = []
+        if side is None:
+            side = []
         self.cards = cards
+        self.side = side
 
     def __repr__(self):
         return "<Pool {}: {} cards>".format(self.pool_name, len(self.cards))
@@ -173,11 +176,16 @@ class Deck(Pool):
 
     def to_min_json(self):
         min_deck = {}
+        min_side = {}
         for card in self.cards:
             if card.mtga_id not in min_deck:
                 min_deck[card.mtga_id] = 0
             min_deck[card.mtga_id] += 1
-        return {"deckID": self.deck_id, "poolName": self.pool_name, "cards": min_deck}
+        for card in self.side:
+            if card.mtga_id not in min_side:
+                min_side[card.mtga_id] = 0
+            min_side[card.mtga_id] += 1
+        return {"deckID": self.deck_id, "poolName": self.pool_name, "cards": min_deck, "sideboard": min_side}
 
     @classmethod
     def from_dict(cls, obj):
