@@ -120,10 +120,11 @@ def parse_direct_challenge_queued(blob):
 @util.debug_log_trace
 def parse_sideboard_submit(blob):
     import app.mtga_app as mtga_app
+    app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     og_deck_id = mtga_app.mtga_watch_app.intend_to_join_game_with.deck_id
     og_deck_name = mtga_app.mtga_watch_app.intend_to_join_game_with.pool_name
 
-    deck_card_ids = blob["Deck"]["DeckCards"]
+    deck_card_ids = blob['Payload']['SubmitDeckResp']["Deck"]["DeckCards"]
     main_deck_lookup = {}
     for card_id in deck_card_ids:
         if card_id not in main_deck_lookup.keys():
@@ -131,7 +132,7 @@ def parse_sideboard_submit(blob):
         main_deck_lookup[card_id]["quantity"] += 1
     new_main_deck_list = [i for i in main_deck_lookup.values()]
 
-    sideboard_card_ids = blob["Deck"]["SideboardCards"]
+    sideboard_card_ids = blob['Payload']['SubmitDeckResp']["Deck"]["SideboardCards"]
     sideboard_lookup = {}
     for card_id in sideboard_card_ids:
         if card_id not in sideboard_lookup.keys():
@@ -145,7 +146,6 @@ def parse_sideboard_submit(blob):
         "mainDeck": new_main_deck_list,
         "sideboard": new_sideboard_list
     }
-    app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     deck = util.process_deck(new_deck_obj, save_deck=False)
     mtga_app.mtga_watch_app.intend_to_join_game_with = deck
 
