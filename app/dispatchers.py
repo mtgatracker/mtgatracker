@@ -113,7 +113,7 @@ def dispatch_client_to_gre(blob):
                      "ClientMessageType_ConnectReq"]
     if message_type in dont_care_types:
         pass
-    elif message_type == "ClientToMatchServiceMessageType_ClientToGREMessage"
+    elif message_type == "ClientToMatchServiceMessageType_ClientToGREMessage":
          parsers.parse_sideboard_submit(message["payload"]["SubmitDeckResp"])
     elif message_type == "ClientMessageType_MulliganResp":
         parsers.parse_mulligan_response(client_message)
