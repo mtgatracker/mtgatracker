@@ -15,7 +15,7 @@ def dispatch_blob(blob):
         dispatch_jsonrpc_method(blob)
     elif "greToClientEvent" in blob:
         dispatch_gre_to_client(blob)
-    elif "clientToGreMessage" in blob:
+    elif "ClientToGreMessage" in blob:
         dispatch_client_to_gre(blob)
     elif "Deck.GetDeckLists" in blob:  # this looks like it's a response to a jsonrpc method
         parsers.parse_get_decklists(blob)
