@@ -58,7 +58,6 @@ class MTGAWatchApplication(object):
         self._log_bit_count = 1
         self.player_id = None
         self.intend_to_join_game_with = None
-        self.current_limited_pool = None
         self.player_decks = {}
         self.draft_history = {}
         self.last_blob = None
