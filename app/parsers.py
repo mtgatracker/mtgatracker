@@ -101,21 +101,10 @@ def parse_draft_status(blob):
 def parse_event_decksubmit(blob):
     import app.mtga_app as mtga_app
     course_deck = blob["CourseDeck"]
-    course_limited_pool = blob.get('CardPool', None)
     app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     if course_deck:
         deck = util.process_deck(course_deck, save_deck=False)
-        # looks like course_deck already has a sideboard field that works in draft, need to check sealed
         mtga_app.mtga_watch_app.intend_to_join_game_with = deck
-    limited_pool = {}
-    if course_limited_pool:
-        for c in course_limited_pool:
-            _c = str(c)
-            if _c not in limited_pool:
-                limited_pool[_c]=0
-            limited_pool[_c]+=1
-    mtga_app.mtga_watch_app.current_limited_pool = limited_pool
-    #app.mtga_app.mtga_logger.info("{}".format(limited_pool))
 
 
 @util.debug_log_trace
@@ -126,7 +115,6 @@ def parse_direct_challenge_queued(blob):
     if course_deck:
         deck = util.process_deck(course_deck, save_deck=False)
         mtga_app.mtga_watch_app.intend_to_join_game_with = deck
-    mtga_app.mtga_watch_app.current_limited_pool = None
 
 
 @util.debug_log_trace
@@ -321,8 +309,7 @@ def parse_game_state_message(message, timestamp=None):
                         mtga_app.mtga_watch_app.game = Game(new_match_id, new_hero, new_oppo, shared_battlefield,
                                                             shared_exile, shared_limbo, shared_stack,
                                                             app.mtga_app.mtga_watch_app.match.event_id,
-                                                            app.mtga_app.mtga_watch_app.match.opponent_rank,
-                                                            limited_pool=mtga_app.mtga_watch_app.current_limited_pool)
+                                                            app.mtga_app.mtga_watch_app.match.opponent_rank)
         if 'annotations' in message.keys():
             for annotation in message['annotations']:
                 annotation_type = annotation['type'][0]
@@ -771,5 +758,5 @@ def parse_match_playing(blob):
         queue_obj = {"game_history_event": event_texts}
         general_output_queue.put(queue_obj)
         mtga_app.mtga_watch_app.game = Game(match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo,
-                                            shared_stack, event_id, opponent_rank, limited_pool=mtga_app.mtga_watch_app.current_limited_pool)
+                                            shared_stack, event_id, opponent_rank)
         mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
