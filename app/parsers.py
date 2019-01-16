@@ -123,7 +123,7 @@ def parse_sideboard_submit(blob):
     og_deck_id = mtga_app.mtga_watch_app.intend_to_join_game_with.deck_id
     og_deck_name = mtga_app.mtga_watch_app.intend_to_join_game_with.pool_name
 
-    deck_card_ids = blob["deck"]["deckCards"]
+    deck_card_ids = blob["Deck"]["DeckCards"]
     main_deck_lookup = {}
     for card_id in deck_card_ids:
         if card_id not in main_deck_lookup.keys():
@@ -131,7 +131,7 @@ def parse_sideboard_submit(blob):
         main_deck_lookup[card_id]["quantity"] += 1
     new_main_deck_list = [i for i in main_deck_lookup.values()]
 
-    sideboard_card_ids = blob["deck"]["sideboardCards"]
+    sideboard_card_ids = blob["Deck"]["SideboardCards"]
     sideboard_lookup = {}
     for card_id in sideboard_card_ids:
         if card_id not in sideboard_lookup.keys():

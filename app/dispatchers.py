@@ -72,9 +72,6 @@ def dispatch_gre_to_client(blob):
         message_type = message["type"]
         if message_type in dont_care_types:
             pass
-        # TODO: fix this once sideboard logs are also fixed
-        elif message_type == "GREMessageType_SubmitDeckReq":
-             parsers.parse_sideboard_submit(message["submitDeckReq"])
         elif message_type in ["GREMessageType_GameStateMessage", "GREMessageType_QueuedGameStateMessage"]:
             game_state_message = message['gameStateMessage']
             try:
@@ -104,6 +101,8 @@ def dispatch_gre_to_client(blob):
 @util.debug_log_trace
 def dispatch_client_to_gre(blob):
     # TODO: seems this is dead code (9/10/18) :(
+    app.mtga_app.mtga_logger.info("DISPATCH CLIENT TO GRE&&&&&")
+    app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     client_message = blob['clientToGreMessage']
     message_type = client_message['type']
     dont_care_types = ["ClientMessageType_UIMessage"]
@@ -114,6 +113,8 @@ def dispatch_client_to_gre(blob):
                      "ClientMessageType_ConnectReq"]
     if message_type in dont_care_types:
         pass
+    elif message_type == "ClientToMatchServiceMessageType_ClientToGREMessage"
+         parsers.parse_sideboard_submit(message["payload"]["SubmitDeckResp"])
     elif message_type == "ClientMessageType_MulliganResp":
         parsers.parse_mulligan_response(client_message)
     elif message_type in unknown_types:
