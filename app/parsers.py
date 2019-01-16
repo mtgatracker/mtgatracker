@@ -134,7 +134,7 @@ def parse_sideboard_submit(blob):
     sideboard_card_ids = blob["deck"]["sideboardCards"]
     sideboard_lookup = {}
     for card_id in sideboard_card_ids:
-        if card_id notin sideboard_lookup.keys():
+        if card_id not in sideboard_lookup.keys():
             sideboard_lookup[card_id] = {"id": str(card_id), "quantity": 0}
         sideboard_lookup[card_id]["quantity"] += 1
     new_sideboard_list = [i for i in sideboard_lookup.values()]
