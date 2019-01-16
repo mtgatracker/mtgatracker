@@ -76,22 +76,25 @@ const firstRun = process.argv[1] == '--squirrel-firstrun';
 global.firstRun = firstRun
 const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
 
+function updateCheck() {
+  if (!global.updateDownloading && !global.checkInProgress) {
+    global.checkInProgress = true
+    updater.check((err, status) => {
+      if (!err && status) {
+        // Download the update
+        global.updateDownloading = true;
+        updater.download()
+      }
+      // the check is complete, we can run the check again now
+      global.checkInProgress = false
+    })
+  }
+}
+
 if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
-  setInterval(() => {
-    if (!global.updateDownloading && !global.checkInProgress) {
-      global.checkInProgress = true
-      updater.check((err, status) => {
-        if (!err && status) {
-          // Download the update
-          global.updateDownloading = true;
-          updater.download()
-        }
-        // the check is complete, we can run the check again now
-        global.checkInProgress = false
-      })
-    }
-  },  1000     * 60       * 60     * 2)
-  //  1 second * 1 minute * 1 hour * 2 = 2 hours
+  updateCheck() // check once; setInterval fires the first time AFTER the timeout
+  setInterval(updateCheck,    1000     * 60       * 60     * 2)
+                          //  1 second * 1 minute * 1 hour * 2 = 2 hours
 }
 
 const findProcess = require('find-process');
@@ -102,21 +105,6 @@ updater.autoUpdater.on('update-downloaded', (e) => {
     text: "A new version has been downloaded. Restart to update!"
   })
 })
-
-if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
-  setInterval(() => {
-    if (!global.updateDownloading) {
-      updater.check((err, status) => {
-        if (!err && status) {
-          // Download the update
-          updater.download()
-          global.updateDownloading = true;
-        }
-      })
-    }
-  }, 1000)
-}
-
 
 // adapted from the excellent medium post:
 // https://medium.com/@hql287/persisting-windows-state-in-electron-using-javascript-closure-17fc0821d37
