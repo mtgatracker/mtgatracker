@@ -15,7 +15,7 @@ def dispatch_blob(blob):
         dispatch_jsonrpc_method(blob)
     elif "greToClientEvent" in blob:
         dispatch_gre_to_client(blob)
-    elif "ClientToGreMessage" in blob:
+    elif "clientToGreMessage" in blob:
         dispatch_client_to_gre(blob)
     elif "Deck.GetDeckLists" in blob:  # this looks like it's a response to a jsonrpc method
         parsers.parse_get_decklists(blob)
@@ -104,8 +104,6 @@ def dispatch_gre_to_client(blob):
 @util.debug_log_trace
 def dispatch_client_to_gre(blob):
     # TODO: seems this is dead code (9/10/18) :(
-    app.mtga_app.mtga_logger.info("DISPATCH CLIENT TO GRE&&&&&")
-    app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     client_message = blob['clientToGreMessage']
     message_type = client_message['type']
     dont_care_types = ["ClientMessageType_UIMessage"]
