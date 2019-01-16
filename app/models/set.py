@@ -185,7 +185,7 @@ class Deck(Pool):
             if card.mtga_id not in min_side:
                 min_side[card.mtga_id] = 0
             min_side[card.mtga_id] += 1
-        return {"deckID": self.deck_id, "poolName": self.pool_name, "cards": min_deck, "side": min_side}
+        return {"deckID": self.deck_id, "poolName": self.pool_name, "cards": min_deck, "sideboard": min_side}
 
     @classmethod
     def from_dict(cls, obj):
