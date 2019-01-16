@@ -131,10 +131,19 @@ def parse_sideboard_submit(blob):
         main_deck_lookup[card_id]["quantity"] += 1
     new_main_deck_list = [i for i in main_deck_lookup.values()]
 
+    sideboard_card_ids = blob["deck"]["sideboardCards"]
+    sideboard_lookup = {}
+    for card_id in sideboard_card_ids:
+        if card_id notin sideboard_lookup.keys():
+            sideboard_lookup[card_id] = {"id": str(card_id), "quantity": 0}
+        sideboard_lookup[card_id]["quantity"] += 1
+    new_sideboard_list = [i for i in sideboard_lookup.values()]
+
     new_deck_obj = {
         "id": og_deck_id,
         "name": og_deck_name,
-        "mainDeck": new_main_deck_list
+        "mainDeck": new_main_deck_list,
+        "sideboard": new_sideboard_list
     }
     app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     deck = util.process_deck(new_deck_obj, save_deck=False)
