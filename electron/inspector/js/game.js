@@ -81,6 +81,7 @@ let gameRoute = (c, n) => {
         appData.currentGameWinner = game.winner
         appData.currentGameOpponent = game.opponent
         appData.currentGameHeroDeck = []
+        appData.currentGameHeroSideboard = []
 
         Object.keys(game.players[0].deck.cards).forEach(cardID => {
           let card = cardUtils.allCards.findCard(cardID)
@@ -98,6 +99,26 @@ let gameRoute = (c, n) => {
             appData.currentGameHeroDeck.push(cardObj)
           }
         })
+        if (game.players[0].deck.sideboard)
+        {
+            Object.keys(game.players[0].deck.sideboard).forEach(cardID => {
+              let card = cardUtils.allCards.findCard(cardID)
+              if (card) {
+                let cardObj = {
+                  cardID: cardID,
+                  count: game.players[0].deck.sideboard[cardID],
+                  colors: card.get("colors"),
+                  cost: card.get("cost"),
+                  name: card.get("prettyName"),
+                  set: card.get("set"),
+                  setNumber: card.get("setNumber"),
+                  cardType: card.get("cardType").split(" ").slice(-1)[0] // "Legendary Creature" => "Creature"
+                }
+                appData.currentGameHeroSideboard.push(cardObj)
+              }
+            })
+        }
+
         appData.currentGameHeroDeckName = `${game.hero}'s deck: ${game.players[0].deck.poolName}`
         appData.currentGameOpponentDeckName = game.players[1].deck.poolName
         appData.currentGameOpponentDeck = []

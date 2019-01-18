@@ -37,7 +37,7 @@
             <div class="panel-heading">
                 { data.currentGameHeroDeckName }
                 <span class="header-toggle">
-                    <button class="btn btn-xs btn-info themeable export-button" onclick="exportDeck(appData.currentGameHeroDeck)" disabled>Export</button>
+                    <button class="btn btn-xs btn-info themeable export-button" onclick="exportDeck(appData.currentGameHeroDeck, appData.currentGameHeroSideboard)" disabled>Export</button>
                 </span>
             </div>
             <!-- /.panel-heading -->
@@ -82,6 +82,12 @@
                 <div class="col-lg-6 col-md-6 col-sm-12">
                     <h4 type-check="Land" rv-typecount="data.currentGameHeroDeck">Land</h4>
                     <p class="decklist-p" rv-each-card="data.currentGameHeroDeck" type-check="Land" rv-hideifnotcorrecttype="card.cardType">
+                        <i>{ card.count }</i> - { card.name } <span rv-multimana="card.cost"></span>
+                    </p>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <h4>Sideboard</h4>
+                    <p class="decklist-p" rv-each-card="data.currentGameHeroSideboard">
                         <i>{ card.count }</i> - { card.name } <span rv-multimana="card.cost"></span>
                     </p>
                 </div>

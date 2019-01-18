@@ -154,6 +154,16 @@ def process_deck(deck_dict, save_deck=True):
         except Exception as e:
             mtga_app.mtga_logger.error("{}Unknown mtga_id: {}".format(ld(), card_obj))
             mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck_dict["name"], card_obj))
+    for card_obj in deck_dict["sideboard"]:
+        try:
+            id_key = "id" if "id" in card_obj else "Id"
+            qt_key = "quantity" if "quantity" in card_obj else "Quantity"
+            card = all_mtga_cards.search(card_obj[id_key])[0]
+            for i in range(card_obj[qt_key]):
+                deck.side.append(card)
+        except Exception as e:
+            mtga_app.mtga_logger.error("{}Unknown mtga_id: {}".format(ld(), card_obj))
+            mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck_dict["name"], card_obj))
     if save_deck:
         with mtga_app.mtga_watch_app.game_lock:
             mtga_app.mtga_watch_app.player_decks[deck_id] = deck
@@ -299,4 +309,3 @@ class KillableTailer(Tailer):
                 self.seek(where)
                 time.sleep(delay)
         return
-

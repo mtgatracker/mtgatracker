@@ -34,6 +34,9 @@ def dispatch_blob(blob):
         parsers.pass_through("rank_change", blob["playerId"], blob)
     elif "block_title" in blob and blob["block_title"] == "Inventory.Updated":
         parsers.pass_through("inventory_update", None, blob)
+    elif ("block_title" in blob and blob["block_title"] == "ClientToMatchServiceMessageType_ClientToGREMessage" and
+          "Payload" in blob and "SubmitDeckResp" in blob['Payload']):
+        parsers.parse_sideboard_submit(blob)
     elif "matchGameRoomStateChangedEvent" in blob:
         dispatch_match_gametoom_state_change(blob)
     elif "block_title" in blob and blob["block_title"] == "Event.MatchCreated":
@@ -72,9 +75,6 @@ def dispatch_gre_to_client(blob):
         message_type = message["type"]
         if message_type in dont_care_types:
             pass
-        # TODO: fix this once sideboard logs are also fixed
-        # elif message_type == "GREMessageType_SubmitDeckReq":
-        #     parsers.parse_sideboard_submit(message["submitDeckReq"])
         elif message_type in ["GREMessageType_GameStateMessage", "GREMessageType_QueuedGameStateMessage"]:
             game_state_message = message['gameStateMessage']
             try:
