@@ -277,13 +277,20 @@ let blankInventory = {
                         gold: 0,
                         vaultProgress: 0,
                         wcTrackPosition: 0,
-                        boosters: []
+                        boosters: [
+                          {collationId: 100005, count: 0},
+                          {collationId: 100006, count: 0},
+                          {collationId: 100007, count: 0},
+                          {collationId: 100008, count: 0},
+                          {collationId: 100009, count: 0},
+                          {collationId: 100010, count: 0},
+                        ]
                       }
 let inventory = settings.get('inventory',blankInventory)
-if (inventory.boosters == undefined){inventory.boosters = []}
+
 let inventorySpent = JSON.parse(JSON.stringify(blankInventory))
 let inventoryGained = JSON.parse(JSON.stringify(blankInventory))
-let blankBoosters = {100005: 0,100006: 0,100007: 0,100008: 0,100009: 0,}
+let blankBoosters = {100005: 0,100006: 0,100007: 0,100008: 0,100009: 0,100010: 0}
 inventorySpent.boosters = JSON.parse(JSON.stringify(blankBoosters))
 inventoryGained.boosters = JSON.parse(JSON.stringify(blankBoosters))
 
@@ -489,7 +496,7 @@ let openCollectionWindow = () => {
 
     const collectionWindowStateMgr = windowStateKeeper('collection')
     collectionWindow = new BrowserWindow({width: collectionWidth,
-                                        height: 800,
+                                        height: 850,
                                         toolbar: false,
                                         titlebar: false,
                                         title: false,

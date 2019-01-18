@@ -40,6 +40,16 @@ let sortBoosters = (boosters) => {
   })
 }
 
+let padBoosters = (boosters) => {
+  let collationIds = [100005,100006,100007,100008,100009,100010]
+  for (collationId of collationIds) {
+    if (!boosters.find((x) => { return x.collationId == collationId})) {
+      boosters.push({collationId: collationId, count: 0})
+    }
+  }
+  return boosters
+}
+
 var collectionData = {
   collectionPaneIndex: 'treasure',
   lastVaultProgress: remote.getGlobal('lastVaultProgress'),
@@ -66,7 +76,7 @@ var collectionData = {
   wcMythic: inventory.wcMythic,
   wcMythicSpent: inventorySpent.wcMythic,
   wcMythicGained: inventoryGained.wcMythic,
-  boosters: sortBoosters(inventory.boosters),
+  boosters: sortBoosters(padBoosters(inventory.boosters)),
   boostersSpent: inventorySpent.boosters,
   boostersGained: inventoryGained.boosters,
 }
@@ -101,6 +111,9 @@ ipcRenderer.on('inventoryChanged',(e,new_inventory,new_inventory_spent,new_inven
   for (booster of new_inventory.boosters){
     boosters.push(booster)
   }
+
+  boosters = padBoosters(boosters)
+
   collectionData.boosters = sortBoosters(boosters)
 
   collectionData.boostersSpent = null
@@ -294,16 +307,18 @@ collectionData.netWcMythic = () => {
 }
 
 const setPromoMap = {
+  XLN: "img/card_set_promos/xln.png",
+  100005: "img/card_set_promos/xln.png",
   RIX: "img/card_set_promos/rix.png",
   100006: "img/card_set_promos/rix.png",
+  DAR: "img/card_set_promos/dar.png",
+  100007: "img/card_set_promos/dar.png",
   M19: "img/card_set_promos/m19.png",
   100008: "img/card_set_promos/m19.png",
   GRN: "img/card_set_promos/grn.png",
   100009: "img/card_set_promos/grn.png",
-  XLN: "img/card_set_promos/xln.png",
-  100005: "img/card_set_promos/xln.png",
-  DAR: "img/card_set_promos/dar.png",
-  100007: "img/card_set_promos/dar.png",
+  RNA: "img/card_set_promos/rna.png",
+  100010: "img/card_set_promos/rna.png",
   ANA: "img/card_set_promos/ana.png",
 }
 
@@ -394,9 +409,28 @@ document.addEventListener("DOMContentLoaded", function(event) {
           }
         }
 
+        const collationIds = {
+          'ANA': -1,
+          'XLN': 100005,
+          'RIX': 100006,
+          'DAR': 100007,
+          'M19': 100008,
+          'GRN': 100009,
+          'RNA': 100010,
+        }
+
+         playerCardCounts = Object.values(playerCardCounts).sort((a,b) => {
+          if (collationIds[a.name] < collationIds[b.name]) {
+            return 1
+          } else if (collationIds[a.name] > collationIds[b.name]) {
+            return -1
+          } else {
+            return 0
+          }
+        })
         postMessage({
           lastCollectionCount: `${unique} unique cards, ${total} total cards`,
-          playerCardCounts: Object.values(playerCardCounts),
+          playerCardCounts:playerCardCounts,
         })
       }
     }
