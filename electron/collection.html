@@ -133,25 +133,25 @@
                 <img rv-setpromo="set.name" width="200px" />
               </center>
               <span rv-hidesetname="set.name">{ set.name }</span>
-              <div class="progress set-bar position-relative">
+              <div class="progress set-bar position-relative" rv-show="set.mythicTotal">
                 <div rv-mythicprogress="set" class="progress-bar set-bar mythic" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
                 </div>
                 <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.mythicOwned} / {set.mythicTotal} Mythics</span>
               </div>
 
-              <div class="progress set-bar position-relative">
+              <div class="progress set-bar position-relative" rv-show="set.rareTotal">
                 <div rv-rareprogress="set" class="progress-bar set-bar rare" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
                 </div>
                 <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.rareOwned} / {set.rareTotal} Rares</span>
               </div>
 
-              <div class="progress set-bar position-relative">
+              <div class="progress set-bar position-relative" rv-show="set.uncommonTotal">
                 <div rv-uncommonprogress="set" class="progress-bar set-bar uncommon" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
                 </div>
                 <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.uncommonOwned} / {set.uncommonTotal} Uncommons</span>
               </div>
 
-              <div class="progress set-bar position-relative">
+              <div class="progress set-bar position-relative" rv-show="set.commonTotal">
                 <div rv-commonprogress="set" class="progress-bar set-bar common" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
                 </div>
                 <span class="justify-content-center d-flex position-absolute w-100 progress-text">{set.commonOwned} / {set.commonTotal} Commons</span>

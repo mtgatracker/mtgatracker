@@ -359,6 +359,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
               }
             }
           }
+          if (!thisCard.collectible) continue;
           let thisCardsSet = cardSets[thisCard.set]
           thisCardsSet.cards.push(thisCard)
           // add 4 for each unique card; you can collect 4 of each
