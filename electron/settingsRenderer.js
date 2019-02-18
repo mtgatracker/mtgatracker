@@ -266,13 +266,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
   })
 
   $("#sync-databases").click(e => {
+    $("#sync-databases").html("Syncing, this may take a while...")
+    $("#sync-databases").attr("disabled", "true")
     connections = []
     $(".connection-input").filter((e, v) => $(v).val()).each((e, v) => connections.push($(v).val()))
     keytar.setPassword("mtgatracker", "external-database-connections", JSON.stringify(connections)).then(set => {
       fetch(`insp://sync`)
         .then(resp => resp.json())
         .then(data => {
-          console.log("ok fetched")
+          console.log(data)
+          alert(`Uploaded ${data.uploaded} and downloaded ${data.downloaded} records.`)
+          $("#sync-databases").html("Save connections and sync databases")
+          $("#sync-databases").removeAttr("disabled")
         })
     })
   })
