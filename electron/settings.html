@@ -344,6 +344,17 @@
             <p>On first launch, MTGATracker generates a key that is private and unique to your machine.
               Treat it like a password!</p>
             <p><b>View Tracker key (Select, then use ctrl-c to copy)</b>: <span class="selectable-text" id="showTrackerID">(click to reveal)</span></p>
+            <h3>Remote Database Connections (advanced)</h3>
+            <p>Add MongoDB connection strings here to sync MTGATracker data in the cloud. Read more <a href="TODO">here</a>.</p>
+            <div rv-each-connection="externalDatabaseConnectionStrings" rv-id="connection">
+              <input rv-value="connection" class="form-control small connection-input">
+              <button rv-value="connection" class="btn btn-danger remove-connection">Remove</button>
+              <br />
+              <br />
+            </div>
+            <button id="add-connection" class="btn btn-secondary">Add a new external connection string</button>
+            <button id="save-connections" class="btn btn-success">Save connections</button>
+            <button id="sync-databases" class="btn btn-warning">Save connections and sync databases</button>
           </div>
         </div>
       </div>

@@ -1,6 +1,8 @@
 var { cardsColors } = require("mtga")
 var { Router } = require('electron-routes');
 var path = require("path")
+const keytar = require('keytar')
+const { MongoClient, ObjectID } = require('mongodb')
 
 var Datastore = require('nedb')
 
@@ -30,6 +32,52 @@ const api = new Router('insp');
 
 // TODO: how to format dates
 //db.draft.insert({date: new Date(Date.parse("2018-09-27T22:36:04.505Z"))})
+
+api.get('sync', (req, res) => {
+  console.log("doin a sync")
+
+  keytar.getPassword("mtgatracker", "external-database-connections").then(connections => {
+    if (connections) {
+      var asStrings = JSON.parse(connections)
+      // first, push data up
+      for(connection of asStrings) {
+        MongoClient.connect(connection, (err, client) => {
+          var remoteCol = client.db("mtgatracker").collection("game")
+          remoteCol.distinct("gameID").then(allGameIDs => {
+            var localCursor = db.game.find({"gameID": {"$nin": allGameIDs}})
+            localCursor.exec((err, docs) => {
+              for (doc of docs){
+                delete doc._id
+                console.log("Writing")
+                console.log(doc)
+                remoteCol.insertOne(doc);
+              }
+            })
+          })
+        })
+      }
+      // TODO: wait for all connections and writes to finish
+      // next, pull data down
+      for(connection of asStrings) {
+        MongoClient.connect(connection, (err, client) => {
+          var remoteCol = client.db("mtgatracker").collection("game")
+          db.game.find({}, (err, docs) => {
+            var allGameIDs = docs.map(x => x.gameID)
+            remoteCursor = remoteCol.find({"gameID": {"$nin": allGameIDs}}).toArray((err, docs) => {
+              for (doc of docs){
+                delete doc._id
+                console.log("Writing")
+                console.log(doc)
+                db.game.insert(doc);
+              }
+            })
+          })
+        })
+      }
+    }
+  })
+  res.json({"status": "fetching"})
+})
 
 api.get('game/:gameID', (req, res) => {
   console.log("getting game")

@@ -80,6 +80,7 @@ var settingsData = {
   updateReady: remote.getGlobal('updateReady'),
   firstRun: remote.getGlobal('firstRun'),
   trackerID: remote.getGlobal('trackerID'),
+  externalDatabaseConnectionStrings: [],
   customStyleFiles: [],
   sortingMethods: [
     {id: "draw", text: "Draw (Default)", help: "By likelihood of next draw with most likely on top, then by name."},
@@ -231,8 +232,58 @@ rivets.binders.deckid = function(el, value) {
 }
 
 var firstCounterAdjButtonClicked = true;
+
+function updateConnections() {
+  connections = []
+  $(".connection-input").filter((e, v) => $(v).val()).each((e, v) => connections.push($(v).val()))
+  settingsData.externalDatabaseConnectionStrings = connections;
+}
+
 document.addEventListener("DOMContentLoaded", function(event) {
   rivets.bind(document.getElementById('container'), settingsData)
+
+  // TODO: here
+  keytar.getPassword("mtgatracker", "external-database-connections").then(connections => {
+    // rivets doesn't like raw assignment, each elem must be pushed :|
+    if (connections) {
+        var asStrings = JSON.parse(connections)
+        asStrings.map(conn => settingsData.externalDatabaseConnectionStrings.push(conn))
+    }
+
+    // this needs to be AFTER we've loaded / added connection strings, else new connections strings won't get
+    // the click event!
+    $(".remove-connection").click(e => {
+      updateConnections()
+      settingsData.externalDatabaseConnectionStrings = settingsData.externalDatabaseConnectionStrings.filter(a => a != e.target.value)
+    })
+  })
+
+  $("#add-connection").click(e => {
+    // before modifying the array, make sure we have the latest copies of all values (else modifying array will erase them)
+    updateConnections()
+    // now add a new connection
+    settingsData.externalDatabaseConnectionStrings.push("")
+  })
+
+  $("#sync-databases").click(e => {
+    connections = []
+    $(".connection-input").filter((e, v) => $(v).val()).each((e, v) => connections.push($(v).val()))
+    keytar.setPassword("mtgatracker", "external-database-connections", JSON.stringify(connections)).then(set => {
+      fetch(`insp://sync`)
+        .then(resp => resp.json())
+        .then(data => {
+          console.log("ok fetched")
+        })
+    })
+  })
+
+  $("#save-connections").click(e => {
+    connections = []
+    $(".connection-input").filter((e, v) => $(v).val()).each((e, v) => connections.push($(v).val()))
+    keytar.setPassword("mtgatracker", "external-database-connections", JSON.stringify(connections))
+
+    alert(`Saved ${connections.length} connections`)
+  })
 
   let themePath = settingsData.runFromSource ? "themes" : path.join("..", "themes");
   fs.readdir(themePath, (err, files) => {
