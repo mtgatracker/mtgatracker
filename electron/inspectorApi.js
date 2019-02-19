@@ -56,8 +56,11 @@ api.get('sync', (req, res) => {
       var asStrings = JSON.parse(connections)
       // first, push data up
       var connectionFuncs = asStrings.map(connection => () => {
+        console.log(`connecting to ${connection}`)
         return new Promise((resolve, reject) => {
           MongoClient.connect(connection, (err, client) => {
+            console.log(err)
+            if (client) console.log("client is good")
             var remoteCol = client.db("mtgatracker").collection("game")
             remoteCol.distinct("gameID").then(allGameIDs => {
               var localCursor = db.game.find({"gameID": {"$nin": allGameIDs}})
@@ -83,8 +86,11 @@ api.get('sync', (req, res) => {
       // next, pull data down
       promiseSerial(connectionFuncs).then(e => {
         var connectionFuncs = asStrings.map(connection => () => {
+          console.log(`connecting to ${connection}`)
           return new Promise((resolve, reject) => {
             MongoClient.connect(connection, (err, client) => {
+              console.log(err)
+              if (client) console.log("client is good")
               var remoteCol = client.db("mtgatracker").collection("game")
               db.game.find({}, (err, docs) => {
                 var allGameIDs = docs.map(x => x.gameID)
