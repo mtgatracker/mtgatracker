@@ -21,7 +21,7 @@
         "mtg",
         "mtga"
     ],
-    "author": "shawkins",
+    "author": "MTGATracker",
     "license": "MIT",
     "dependencies": {
         "active-win": "^3.0.0",
