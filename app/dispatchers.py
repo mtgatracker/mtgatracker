@@ -19,15 +19,25 @@ def dispatch_blob(blob):
         dispatch_client_to_gre(blob)
     elif "Deck.GetDeckLists" in blob:  # this looks like it's a response to a jsonrpc method
         parsers.parse_get_decklists(blob)
+    elif "Deck.GetDeckListsV3" in blob:
+        parsers.parse_get_decklists(blob, version=3)
+    elif "Deck.UpdateDeckV3" in blob:
+        parsers.parse_update_deck_v3(blob)
     elif "block_title" in blob and (blob["block_title"] == "Event.DeckSubmit" or
                                     blob["block_title"] == "Event.GetPlayerCourse"):
         parsers.parse_event_decksubmit(blob)
+    elif "block_title" in blob and blob["block_title"] == "Event.DeckSubmitV3":
+        parsers.parse_event_decksubmit(blob, version=3)
+    elif "block_title" in blob and blob["block_title"] == "Event.GetPlayerCourseV2":
+        parsers.parse_event_decksubmit(blob, version=3)
+    # TODO: is GetPlayerCoursesV2 useful?
+    # elif "block_title" in blob and blob["block_title"] == "Event.GetPlayerCoursesV2":
+    #     parsers.parse_player_courses_v2(blob)
     elif "block_title" in blob and blob["block_title"] == "PlayerInventory.GetPlayerCardsV3":
         parsers.parse_get_player_cards_v3(blob)
     elif "block_title" in blob and (blob["block_title"] == "Draft.DraftStatus" or
                                     blob["block_title"] == "Draft.MakePick"):
         parsers.parse_draft_status(blob)
-    # PlayerInventory.GetPlayerInventory
     elif "block_title" in blob and blob["block_title"] == "PlayerInventory.GetPlayerInventory":
         parsers.pass_through("inventory", blob["playerId"], blob)
     elif "block_title" in blob and blob["block_title"] == "Rank.Updated":
@@ -38,14 +48,14 @@ def dispatch_blob(blob):
           "Payload" in blob and "SubmitDeckResp" in blob['Payload']):
         parsers.parse_sideboard_submit(blob)
     elif "matchGameRoomStateChangedEvent" in blob:
-        dispatch_match_gametoom_state_change(blob)
+        dispatch_match_gameroom_state_change(blob)
     elif "block_title" in blob and blob["block_title"] == "Event.MatchCreated":
         parsers.parse_match_created(blob)
 
 
 # MID-LEVER DISPATCHERS: first depth level of a blob
 @util.debug_log_trace
-def dispatch_match_gametoom_state_change(blob):
+def dispatch_match_gameroom_state_change(blob):
     state_type = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']['stateType']
     if state_type == "MatchGameRoomStateType_Playing":
         parsers.parse_match_playing(blob)
