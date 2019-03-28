@@ -16,14 +16,23 @@ def parse_jsonrpc_blob(blob):
 
 
 @util.debug_log_trace
-def parse_get_decklists(blob):
-    # DOM: ok
+def parse_get_decklists(blob, version=1):
     import app.mtga_app as mtga_app
     mtga_app.mtga_watch_app.player_decks = {}
     decks = []
-    for deck in blob["Deck.GetDeckLists"]:
-        decks.append(util.process_deck(deck))
+
+    blob_key = "Deck.GetDeckLists"
+    if version == 3:
+        blob_key = "Deck.GetDeckListsV3"
+
+    for deck in blob[blob_key]:
+        decks.append(util.process_deck(deck, version=version))
     return decks
+
+
+@util.debug_log_trace
+def parse_update_deck_v3(blob):
+    return util.process_deck(blob["mainDeck"])
 
 
 @util.debug_log_trace
@@ -98,12 +107,11 @@ def parse_draft_status(blob):
 
 
 @util.debug_log_trace
-def parse_event_decksubmit(blob):
+def parse_event_decksubmit(blob, version=1):
     import app.mtga_app as mtga_app
     course_deck = blob["CourseDeck"]
-    app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     if course_deck:
-        deck = util.process_deck(course_deck, save_deck=False)
+        deck = util.process_deck(course_deck, save_deck=False, version=version)
         mtga_app.mtga_watch_app.intend_to_join_game_with = deck
 
 
@@ -111,7 +119,6 @@ def parse_event_decksubmit(blob):
 def parse_direct_challenge_queued(blob):
     import app.mtga_app as mtga_app
     course_deck = json.loads(blob["params"]["deck"])
-    app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     if course_deck:
         deck = util.process_deck(course_deck, save_deck=False)
         mtga_app.mtga_watch_app.intend_to_join_game_with = deck

@@ -386,3 +386,7 @@ th.table-type {
   font-weight: bold;
 }
 
+.connection-input {
+  width: 80%;
+  display: inline-block;
+}

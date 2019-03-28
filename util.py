@@ -121,13 +121,32 @@ PRECON_MAP = {
 }
 
 
-def process_deck(deck_dict, save_deck=True):
+def process_deck(deck_dict, save_deck=True, version=1):
     import app.mtga_app as mtga_app
     deck_id = deck_dict['id']
     if deck_dict["name"] in PRECON_MAP:
         deck_dict["name"] = PRECON_MAP[deck_dict["name"]]
     deck = set.Deck(deck_dict["name"], deck_id)
-    for card_obj in deck_dict["mainDeck"]:
+
+    process_func = _process_maindeck
+
+    if version == 3:
+        process_func = _process_maindeck_v3
+
+    process_func(deck, deck_dict["mainDeck"])
+    process_func(deck, deck_dict["sideboard"], True)
+
+    if save_deck:
+        with mtga_app.mtga_watch_app.game_lock:
+            mtga_app.mtga_watch_app.player_decks[deck_id] = deck
+            mtga_app.mtga_logger.info("{}deck {} is being saved".format(ld(), deck_dict["name"]))
+            mtga_app.mtga_watch_app.save_settings()
+    return deck
+
+
+def _process_maindeck(deck, decklist_blob, is_sideboard=False):
+    import app.mtga_app as mtga_app
+    for card_obj in decklist_blob:
         try:
             id_key = "id" if "id" in card_obj else "Id"
             qt_key = "quantity" if "quantity" in card_obj else "Quantity"
@@ -150,26 +169,40 @@ def process_deck(deck_dict, save_deck=True):
             # }
             card = all_mtga_cards.search(card_obj[id_key])[0]
             for i in range(card_obj[qt_key]):
-                deck.cards.append(card)
+                if is_sideboard:
+                    deck.side.append(card)
+                else:
+                    deck.cards.append(card)
         except Exception as e:
             mtga_app.mtga_logger.error("{}Unknown mtga_id: {}".format(ld(), card_obj))
-            mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck_dict["name"], card_obj))
-    for card_obj in deck_dict["sideboard"]:
+            mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck.pool_name, card_obj))
+
+
+def _process_maindeck_v3(deck, decklist_blob, is_sideboard=False):
+    import app.mtga_app as mtga_app
+
+    if len(decklist_blob) % 2 != 0:
+        mtga_app.mtga_logger.error("{}Called _process_maindeck_v3 with odd number of cards: {}".format(ld(), len(decklist_blob)))
+        mtga_app.mtga_watch_app.send_error("Could not process deck {}: _process_maindeck_v3 with odd number of cards: {}".format(deck.pool_name, len(decklist_blob)))
+        return
+
+    # split them into tuples: DOG THIS IS SICK https://docs.python.org/2/library/functions.html#zip
+    card_tups = zip(*[iter(decklist_blob)]*2)
+    for card_tup in card_tups:
         try:
-            id_key = "id" if "id" in card_obj else "Id"
-            qt_key = "quantity" if "quantity" in card_obj else "Quantity"
-            card = all_mtga_cards.search(card_obj[id_key])[0]
-            for i in range(card_obj[qt_key]):
-                deck.side.append(card)
+            card_id = card_tup[0]
+            quantity = card_tup[1]
+
+            card = all_mtga_cards.search(card_id)[0]
+            for i in range(quantity):
+                if is_sideboard:
+                    deck.side.append(card)
+                else:
+                    deck.cards.append(card)
+
         except Exception as e:
-            mtga_app.mtga_logger.error("{}Unknown mtga_id: {}".format(ld(), card_obj))
-            mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck_dict["name"], card_obj))
-    if save_deck:
-        with mtga_app.mtga_watch_app.game_lock:
-            mtga_app.mtga_watch_app.player_decks[deck_id] = deck
-            mtga_app.mtga_logger.info("{}deck {} is being saved".format(ld(), deck_dict["name"]))
-            mtga_app.mtga_watch_app.save_settings()
-    return deck
+            mtga_app.mtga_logger.error("{}Unknown mtga_id: {}".format(ld(), card_id))
+            mtga_app.mtga_watch_app.send_error("Could not process deck {}: Unknown mtga_id: {}".format(deck.pool_name, card_id))
 
 
 def rank_rarity(rarity):
