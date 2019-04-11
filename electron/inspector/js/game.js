@@ -45,9 +45,10 @@ let gameRoute = (c, n) => {
         }
 
         if (game.rankChange) {
-          appData.currentGameHeroRankBefore = `${game.rankChange.oldClass} ${game.rankChange.oldTier} - ${Math.round(100 * game.rankChange.oldProgress) / 100}`
-          appData.currentGameHeroRankAfter = `${game.rankChange.newClass} ${game.rankChange.newTier} - ${Math.round(100 * game.rankChange.newProgress) / 100}`
-          appData.currentGameHeroRankChange = Math.round(100 * (game.rankChange.newProgress - game.rankChange.oldProgress)) / 100
+          appData.currentGameHeroRankBefore = `${game.rankChange.oldClass} ${game.rankChange.oldLevel} - Step ${game.rankChange.oldStep}`
+          appData.currentGameHeroRankAfter = `${game.rankChange.newClass} ${game.rankChange.newLevel} - Step ${game.rankChange.newStep}`
+          rankChange = game.rankChange.newStep - game.rankChange.oldStep;
+          appData.currentGameHeroRankChange = `${rankChange === 0 ? '' : rankChange > 0 ? 'Up' : 'Down' } ${Math.abs(rankChange)} Step${Math.abs(rankChange) === 1 ? '': 's'}`
           appData.currentGameHasRankInfo = true;
         }
 
