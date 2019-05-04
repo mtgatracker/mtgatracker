@@ -431,6 +431,12 @@ p {
   display: inline-block;
 }
 
+.cardrank {
+  display: inline-block;
+  float: right;
+  padding-right: 4px;
+}
+
 .link {
     cursor: pointer;
 }
