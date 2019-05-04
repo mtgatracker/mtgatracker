@@ -310,11 +310,11 @@ def p1p1_data(set_name):
         return data
 
 def _load_p1p1_data(set_name):
-    import urllib
+    import urllib.request
     import json
     # fetch data list
     url = 'https://apps.draftaholicsanonymous.com/p1p1/{0}/results'.format(set_name)
-    response = urllib.request.urlopen(url).read()
+    response = request.urlopen(url).read()
     data_list = json.loads(response)['data']
     # construct data dict
     data_dict = {}
