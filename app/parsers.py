@@ -71,7 +71,7 @@ def parse_draft_status(blob):
                 card_obj["count"] = min(mtga_app.mtga_watch_app.collection[card] + picked_cards_this_draft.count(card), 4)
             else:
                 card_obj["count"] = min(0 + picked_cards_this_draft.count(card), 4)
-            card_obj["p1p1_score"] = 0
+            card_obj["p1p1_score"] = util.p1p1_scores(card_obj["set"]).pop(card_obj["name"], '?')
             collection_count.append(card_obj)
         collection_count.sort(key=lambda x: (-1 * util.rank_rarity(x["rarity"]), util.rank_colors(x["color_identity"]), util.rank_cost(x["cost"]), x["pretty_name"]))
         general_output_queue.put({"draft_collection_count": collection_count})
