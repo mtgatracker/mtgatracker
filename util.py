@@ -299,6 +299,29 @@ except FileNotFoundError:
     with open(resource_path(os.path.join('..', 'electron', 'package.json')), 'r') as package_file:
         client_version = json.load(package_file)["version"]
 
+p1p1_data_dict = {}
+
+def p1p1_data(set_name):
+    if p1p1_data_dict.has_key(set_name):
+        return p1p1_data_dict(set_name)
+    else:
+        data = _load_p1p1_data(set_name)
+        p1p1_data_dict[set_name] = data
+        return data
+
+def _load_p1p1_data(set_name):
+    import urllib
+    import json
+    # fetch data list
+    url = 'https://apps.draftaholicsanonymous.com/p1p1/{0}/results'.format(set_name)
+    response = urllib.request.urlopen(url).read()
+    data_list = json.loads(response)['data']
+    # construct data dict
+    data_dict = {}
+    for datum in data_list:
+        data_dict[datum.name] = datum
+    return data_dict
+
 
 class KillableTailer(Tailer):
 
