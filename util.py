@@ -319,7 +319,7 @@ def _load_p1p1_data(set_name):
     # construct data dict
     data_dict = {}
     for datum in data_list:
-        data_dict[datum.name] = datum
+        data_dict[datum['name']] = datum
     return data_dict
 
 
