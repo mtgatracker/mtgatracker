@@ -302,15 +302,12 @@ except FileNotFoundError:
 
 p1p1_data_dict = {}
 
-def p1p1_data(set_name):
-    if set_name in p1p1_data_dict.keys():
-        return p1p1_data_dict[set_name]
-    else:
-        data = _load_p1p1_data(set_name)
-        p1p1_data_dict[set_name] = data
-        return data
+def set_data(set_name):
+    if set_name not in p1p1_data_dict.keys():
+        p1p1_data_dict[set_name] = _load_set_data(set_name)
+    return p1p1_data_dict[set_name]
 
-def _load_p1p1_data(set_name):
+def _load_set_data(set_name):
     # fetch data list
     url = 'https://apps.draftaholicsanonymous.com/p1p1/{0}/results'.format(set_name)
     response = urllib.request.urlopen(url).read()
@@ -321,6 +318,10 @@ def _load_p1p1_data(set_name):
         data_dict[datum['name']] = datum
     return data_dict
 
+def card_rank(card_obj):
+    return set_data(card_obj['set'])
+        .get(card_obj['pretty_name'], {})
+        .get('rank', '?')
 
 class KillableTailer(Tailer):
 
