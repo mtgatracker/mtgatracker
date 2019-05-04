@@ -7,6 +7,7 @@ import os
 import sys
 import time
 from tailer import Tailer
+import urllib.request
 
 import app.models.set as set
 from mtga.set_data import all_mtga_cards
@@ -303,18 +304,16 @@ p1p1_data_dict = {}
 
 def p1p1_data(set_name):
     if set_name in p1p1_data_dict.keys():
-        return p1p1_data_dict(set_name)
+        return p1p1_data_dict[set_name]
     else:
         data = _load_p1p1_data(set_name)
         p1p1_data_dict[set_name] = data
         return data
 
 def _load_p1p1_data(set_name):
-    import urllib.request
-    import json
     # fetch data list
     url = 'https://apps.draftaholicsanonymous.com/p1p1/{0}/results'.format(set_name)
-    response = request.urlopen(url).read()
+    response = urllib.request.urlopen(url).read()
     data_list = json.loads(response)['data']
     # construct data dict
     data_dict = {}
