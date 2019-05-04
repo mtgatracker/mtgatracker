@@ -302,7 +302,7 @@ except FileNotFoundError:
 p1p1_data_dict = {}
 
 def p1p1_data(set_name):
-    if p1p1_data_dict.has_key(set_name):
+    if set_name in p1p1_data_dict.keys():
         return p1p1_data_dict(set_name)
     else:
         data = _load_p1p1_data(set_name)
