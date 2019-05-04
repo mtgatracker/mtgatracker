@@ -319,7 +319,7 @@ def _load_set_data(set_name):
     return data_dict
 
 def card_rank(card_obj):
-    return set_data(card_obj['set']).get(card_obj['pretty_name'], {}).get('rank', '?')
+    return set_data(card_obj['set']).get(card_obj['pretty_name'], {}).get('rank', '?') 
 
 class KillableTailer(Tailer):
 
