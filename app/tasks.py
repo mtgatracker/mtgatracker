@@ -74,13 +74,28 @@ def block_watch_task(in_queue, out_queue):
                 # this is not valid json, we need to surround it with a header such that it's an object instead of a list
                 json_str = '{{"{}": {}}}'.format(block_title, json_str)
         elif block_lines[1].strip() == "{":
-            """
+            """ DEPRECATED
             these logs look like:
             
             [UnityCrossThreadLogger]6/7/2018 7:21:03 PM: Match to 26848417E29213FE: GreToClientEvent
             {
               "json": "stuff"
             }
+            """
+            try:
+                timestamp = dateutil.parser.parse(block_lines[0].split("]")[1].split(": ")[0])
+            except:
+                pass
+            block_title = block_lines[0].split(" ")[-1]
+            json_str = "\n".join(block_lines[1:])
+        elif block_lines[1].strip()[0] == "{":
+
+            """
+            these logs look like:
+
+            [UnityCrossThreadLogger]6/7/2018 7:21:03 PM: Match to 26848417E29213FE: GreToClientEvent
+            { "json": "stuff" }
+            extra_stuff_down_here
             """
             try:
                 timestamp = dateutil.parser.parse(block_lines[0].split("]")[1].split(": ")[0])
