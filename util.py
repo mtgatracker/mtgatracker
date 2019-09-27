@@ -116,6 +116,22 @@ PRECON_MAP = {
     "?=?Loc/Decks/Precon/Precon_NPE_GRN_WU": "Artifacts Attack",
     # guilds replacement precon
     "?=?Loc/Decks/Precon/Precon_NPE_GRN_WU_2": "Wing and Claw",
+    # M20 precons
+    "?=?Loc/Decks/Precon/Precon_EPP_Black": "Out for Blood",
+    "?=?Loc/Decks/Precon/Precon_EPP_Blue": "Azure Skies",
+    "?=?Loc/Decks/Precon/Precon_EPP_Green": "Forest's Might",
+    "?=?Loc/Decks/Precon/Precon_EPP_Red": "Dome Destruction",
+    "?=?Loc/Decks/Precon/Precon_EPP_White": "Angelic Army",
+    "?=?Loc/Decks/Precon/Precon_EPP_BG": "Golgari Swarm",
+    "?=?Loc/Decks/Precon/Precon_EPP_BR": "Cult of Rakdos",
+    "?=?Loc/Decks/Precon/Precon_EPP_GU": "Simic Combine",
+    "?=?Loc/Decks/Precon/Precon_EPP_GW": "Selesnya Conclave",
+    "?=?Loc/Decks/Precon/Precon_EPP_RG": "Gruul Clans",
+    "?=?Loc/Decks/Precon/Precon_EPP_RW": "Boros Legion",
+    "?=?Loc/Decks/Precon/Precon_EPP_UB": "House Dimir",
+    "?=?Loc/Decks/Precon/Precon_EPP_UR": "Izzet League",
+    "?=?Loc/Decks/Precon/Precon_EPP_WB": "Orzhov Syndicate",
+    "?=?Loc/Decks/Precon/Precon_EPP_WU": "Azorius Senate",
     # twitch precon
     "?=?Loc/Decks/Precon/Precon_TwitchCon2018": "Selesnya Conclave",
 }
