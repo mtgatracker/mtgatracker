@@ -5,4 +5,4 @@ websockets
 pyinstaller
 pytest
 pynput
-mtga>=0.7.0
+mtga>=0.9.0
