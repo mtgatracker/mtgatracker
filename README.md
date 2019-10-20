@@ -162,6 +162,8 @@ The front end of MTGA Tracker is an electron app that uses node / websocket to c
 
 `app` - python backend for watching MTGA logs
 
+`tests` - tests for python scripts, run tests using command `pytest -sx`
+
 `electron` - native electron app
 
 `scripts` - various scripts and utilities. either one-time use, or just don't really fit anywhere
