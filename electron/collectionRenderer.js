@@ -348,6 +348,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         // first place. :tiny_violin:
         for (let cardID in allCards) {
           let thisCard = allCards[cardID].attributes
+          if (!thisCard.collectible) continue;
           if (!cardSets[thisCard.set]) {
             cardSets[thisCard.set] = {
               cards: [],
@@ -359,7 +360,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
               }
             }
           }
-          if (!thisCard.collectible) continue;
           let thisCardsSet = cardSets[thisCard.set]
           thisCardsSet.cards.push(thisCard)
           // add 4 for each unique card; you can collect 4 of each
@@ -373,13 +373,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
             thisCardsSet.counts.commonTotal += 4;
           }
         }
-        console.log(cardSets)
         postMessage({ready: true})
       } else if (event.data.lastCollection) {
         let total = 0;
         let unique = 0;
         let collection = event.data.lastCollection;
-        console.log(Object.keys(allCards))
         for (let key in collection) {
           if (collection[key] && Number.isInteger(collection[key])) {
             if (Object.keys(allCards).includes(key)) {
