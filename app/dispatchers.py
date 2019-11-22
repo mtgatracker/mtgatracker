@@ -17,11 +17,9 @@ def dispatch_blob(blob):
         dispatch_gre_to_client(blob)
     elif "clientToGreMessage" in blob:
         dispatch_client_to_gre(blob)
-    elif "Deck.GetDeckLists" in blob:  # this looks like it's a response to a jsonrpc method
-        parsers.parse_get_decklists(blob)
-    elif "Deck.GetDeckListsV3" in blob:
+    elif "block_title" in blob and blob["block_title"] == "Deck.GetDeckListsV3":
         parsers.parse_get_decklists(blob, version=3)
-    elif "Deck.UpdateDeckV3" in blob:
+    elif "block_title" in blob and blob["block_title"] == "Deck.UpdateDeckV3":
         parsers.parse_update_deck_v3(blob)
     elif "block_title" in blob and (blob["block_title"] == "Event.DeckSubmit" or
                                     blob["block_title"] == "Event.GetPlayerCourse"):

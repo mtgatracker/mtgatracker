@@ -187,7 +187,6 @@ if __name__ == "__main__":
                 for line in kt.follow(1):
                     if line and (line.startswith("[UnityCrossThreadLogger]") or line.startswith("[Client GRE]")):
                         # this is the start of a new block (with title), end the last one
-                        # print(current_block)
                         if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
                                                   # which is likely the slowest
                             last_idx = current_block.rindex("}")

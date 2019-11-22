@@ -21,18 +21,18 @@ def parse_get_decklists(blob, version=1):
     mtga_app.mtga_watch_app.player_decks = {}
     decks = []
 
-    blob_key = "Deck.GetDeckLists"
-    if version == 3:
-        blob_key = "Deck.GetDeckListsV3"
+    blob_key = "payload"
+    if blob_key in blob:
+        for deck in blob[blob_key]:
+            decks.append(util.process_deck(deck, version=version))
 
-    for deck in blob[blob_key]:
-        decks.append(util.process_deck(deck, version=version))
     return decks
 
 
 @util.debug_log_trace
 def parse_update_deck_v3(blob):
-    return util.process_deck(blob["mainDeck"])
+    if "payload" in blob:
+        return util.process_deck(blob["payload"])
 
 
 @util.debug_log_trace
@@ -109,10 +109,11 @@ def parse_draft_status(blob):
 @util.debug_log_trace
 def parse_event_decksubmit(blob, version=1):
     import app.mtga_app as mtga_app
-    course_deck = blob["CourseDeck"]
-    if course_deck:
-        deck = util.process_deck(course_deck, save_deck=False, version=version)
-        mtga_app.mtga_watch_app.intend_to_join_game_with = deck
+    if "payload" in blob:
+        course_deck = blob["payload"]["CourseDeck"]
+        if course_deck:
+            deck = util.process_deck(course_deck, save_deck=False, version=version)
+            mtga_app.mtga_watch_app.intend_to_join_game_with = deck
 
 
 @util.debug_log_trace
@@ -701,6 +702,7 @@ def parse_game_results(_unused_locked, match_id, result_list):
 
 @util.debug_log_trace
 def parse_match_created(blob):
+    blob = blob["payload"]
     import app.mtga_app as mtga_app
     with mtga_app.mtga_watch_app.game_lock:
         mtga_app.mtga_watch_app.match = Match(blob["matchId"],
