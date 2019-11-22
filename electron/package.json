@@ -42,7 +42,7 @@
         "mousetrap": "^1.6.2",
         "mtga": "^1.6.1",
         "nedb": "^1.8.0",
-        "npm": "^6.10.0",
+        "npm": "^6.13.1",
         "reconnecting-websocket": "^3.2.2",
         "request": "^2.85.0",
         "rivets": "^0.9.6",
