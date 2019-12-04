@@ -312,7 +312,7 @@ var dismissMessage = (element) => {
 }
 
 request.get({
-    url: `${API_URL}/public-api/tracker-notifications`,
+    url: `${API_URL}/api/tracker-notifications`,
     json: true,
     headers: {'User-Agent': 'MTGATracker-App'}
 }, (err, res, data) => {
@@ -953,7 +953,7 @@ function uploadGame(gameData) {
     }
     console.log("posting game request...")
     console.log(anonGameData)
-    postGameUrl = `${API_URL}/anon-api/game`
+    postGameUrl = `${API_URL}/api/game`
     request.post({
       url: postGameUrl,
       json: true,
