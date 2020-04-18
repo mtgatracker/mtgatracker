@@ -1,6 +1,6 @@
 {
     "name": "mtgatracker",
-    "version": "6.1.0",
+    "version": "6.1.2",
     "description": "Application to track MTGA decks in-game",
     "main": "main.js",
     "scripts": {
