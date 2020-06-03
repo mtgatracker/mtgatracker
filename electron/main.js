@@ -200,7 +200,7 @@ let pyProc = null
 let pyPort = null
 
 let appDataRoaming = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + 'Library/Preferences' : '/var/local')
-let logPath = path.join(appDataRoaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA", "output_log.txt");
+let logPath = path.join(appDataRoaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA", "Player.txt");
 
 
 let getBooleanArg = (short, long) => {
