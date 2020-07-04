@@ -17,11 +17,9 @@ def dispatch_blob(blob):
         dispatch_gre_to_client(blob)
     elif "clientToGreMessage" in blob:
         dispatch_client_to_gre(blob)
-    elif "Deck.GetDeckLists" in blob:  # this looks like it's a response to a jsonrpc method
-        parsers.parse_get_decklists(blob)
-    elif "Deck.GetDeckListsV3" in blob:
+    elif "block_title" in blob and blob["block_title"] == "Deck.GetDeckListsV3":
         parsers.parse_get_decklists(blob, version=3)
-    elif "Deck.UpdateDeckV3" in blob:
+    elif "block_title" in blob and blob["block_title"] == "Deck.UpdateDeckV3":
         parsers.parse_update_deck_v3(blob)
     elif "block_title" in blob and (blob["block_title"] == "Event.DeckSubmit" or
                                     blob["block_title"] == "Event.GetPlayerCourse"):
@@ -34,12 +32,12 @@ def dispatch_blob(blob):
     # elif "block_title" in blob and blob["block_title"] == "Event.GetPlayerCoursesV2":
     #     parsers.parse_player_courses_v2(blob)
     elif "block_title" in blob and blob["block_title"] == "PlayerInventory.GetPlayerCardsV3":
-        parsers.parse_get_player_cards_v3(blob)
+        parsers.parse_get_player_cards_v3(blob["payload"])
     elif "block_title" in blob and (blob["block_title"] == "Draft.DraftStatus" or
                                     blob["block_title"] == "Draft.MakePick"):
         parsers.parse_draft_status(blob)
     elif "block_title" in blob and blob["block_title"] == "PlayerInventory.GetPlayerInventory":
-        parsers.pass_through("inventory", blob["playerId"], blob)
+        parsers.pass_through("inventory", blob["payload"]["playerId"], blob["payload"])
     elif "block_title" in blob and blob["block_title"] == "Rank.Updated":
         parsers.pass_through("rank_change", blob["playerId"], blob)
     elif "block_title" in blob and blob["block_title"] == "Inventory.Updated":

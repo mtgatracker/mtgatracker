@@ -187,9 +187,12 @@ if __name__ == "__main__":
                 for line in kt.follow(1):
                     if line and (line.startswith("[UnityCrossThreadLogger]") or line.startswith("[Client GRE]")):
                         # this is the start of a new block (with title), end the last one
-                        # print(current_block)
                         if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
                                                   # which is likely the slowest
+                            last_idx = current_block.rindex("}")
+                            # ^ After gamestate logs, there is garbage (non-json) in the same block; strip it out
+                            # TODO: this is hella hacky and should be fixed
+                            current_block = current_block[:last_idx+1]
                             queues.block_read_queue.put(current_block)
                         current_block = line.strip() + "\n"
                     elif line and line.startswith("]") or line.startswith("}"):

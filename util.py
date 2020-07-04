@@ -118,6 +118,27 @@ PRECON_MAP = {
     "?=?Loc/Decks/Precon/Precon_NPE_GRN_WU_2": "Wing and Claw",
     # twitch precon
     "?=?Loc/Decks/Precon/Precon_TwitchCon2018": "Selesnya Conclave",
+    # brawl precons
+    "?=?Loc/Decks/Precon/Precon_Brawl_SyrGwyn": "Knights' Charge",
+    "?=?Loc/Decks/Precon/Precon_Brawl_Korvold": "Savage Hunter",
+    "?=?Loc/Decks/Precon/Precon_Brawl_Chulane": "Wild Bounty",
+    "?=?Loc/Decks/Precon/Precon_Brawl_Alela": "Faerie Schemes",
+    # EPP decks
+    "?=?Loc/Decks/Precon/Precon_EPP_BR": "Cult of Rakdos",
+    "?=?Loc/Decks/Precon/Precon_EPP_BG": "Golgari Swarm",
+    "?=?Loc/Decks/Precon/Precon_EPP_Black": "Out for Blood",
+    "?=?Loc/Decks/Precon/Precon_EPP_Blue": "Azure Skies",
+    "?=?Loc/Decks/Precon/Precon_EPP_Red": "Dome Destruction",
+    "?=?Loc/Decks/Precon/Precon_EPP_GU": "Simic Combine",
+    "?=?Loc/Decks/Precon/Precon_EPP_RG": "Gruul Clans",
+    "?=?Loc/Decks/Precon/Precon_EPP_GW": "Selesneya Conclave",
+    "?=?Loc/Decks/Precon/Precon_EPP_Green": "Forest's Might",
+    "?=?Loc/Decks/Precon/Precon_EPP_RW": "Boros Legion",
+    "?=?Loc/Decks/Precon/Precon_EPP_UR": "Izzet League",
+    "?=?Loc/Decks/Precon/Precon_EPP_WB": "Orzhov Syndicate",
+    "?=?Loc/Decks/Precon/Precon_EPP_WU": "Azorius Senate",
+    "?=?Loc/Decks/Precon/Precon_EPP_UB": "House Dimir",
+    "?=?Loc/Decks/Precon/Precon_EPP_White": "Angelic Army",
 }
 
 

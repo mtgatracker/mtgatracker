@@ -28,12 +28,12 @@ import util
 
 
 def block_watch_task(in_queue, out_queue):
+    BLOCK_SEQ = 0
     while all_die_queue.empty():
         block_recieved = in_queue.get()
         if block_recieved is None:
             out_queue.put(None)
             break
-
         log_line = None
         if isinstance(block_recieved, tuple):
             log_line, block_recieved = block_recieved
@@ -41,15 +41,35 @@ def block_watch_task(in_queue, out_queue):
         if "[" not in block_recieved and "{" not in block_recieved:
             continue
         block_lines = block_recieved.split("\n")
-        if len(block_lines) < 2:
-            continue
 
         request_or_response = None
         json_str = ""  # hit the ex
         timestamp = None
         block_title_seq = None
-
-        if block_lines[1] and block_lines[1].startswith("==>") or block_lines[1].startswith("<=="):
+        if block_lines[0] and block_lines[0].startswith("[UnityCrossThreadLogger]"):
+            line = block_lines[0].split("[UnityCrossThreadLogger]")[1]
+            if line.startswith("==>") or line.startswith("<=="):
+                request_or_response = "response"
+                if line.startswith("==>"):
+                    request_or_response = "request"
+                line = line[4:]
+                block_title = line.split(" ")[0]
+                indexes = []
+                if "{" in line:
+                    indexes.append(line.index("{"))
+                if "[" in line:
+                    indexes.append(line.index("["))
+                first_open_bracket = min(indexes)
+                json_str = line[first_open_bracket:]
+            elif len(block_lines) > 1:
+                try:
+                    timestamp = dateutil.parser.parse(block_lines[0].split("]")[1].split(": ")[0])
+                except:
+                    pass
+                block_title = block_lines[0].split(" ")[-1]
+                json_str = "\n".join(block_lines[1:])
+        # I think everything below this is deprecated...
+        elif block_lines[1] and block_lines[1].startswith("==>") or block_lines[1].startswith("<=="):
             """
             these logs looks like:
             
@@ -74,7 +94,7 @@ def block_watch_task(in_queue, out_queue):
                 # this is not valid json, we need to surround it with a header such that it's an object instead of a list
                 json_str = '{{"{}": {}}}'.format(block_title, json_str)
         elif block_lines[1].strip() == "{":
-            """
+            """ DEPRECATED
             these logs look like:
             
             [UnityCrossThreadLogger]6/7/2018 7:21:03 PM: Match to 26848417E29213FE: GreToClientEvent
@@ -102,6 +122,7 @@ def block_watch_task(in_queue, out_queue):
         if json_str:
             try:
                 blob = json.loads(json_str)
+                BLOCK_SEQ += 1
                 # useful: next time you're trying to figure out why a blob isn't getting through the queue:
                 # if "DirectGame" in json_str and "method" in blob:
                 #     import pprint
@@ -115,8 +136,7 @@ def block_watch_task(in_queue, out_queue):
                     blob["request_or_response"] = request_or_response
                 if block_title:
                     blob["block_title"] = block_title.strip()
-                if block_title_seq:
-                    blob["block_title_sequence"] = block_title_seq
+                blob["block_title_sequence"] = BLOCK_SEQ
                 out_queue.put(blob)
             except Exception as e:
                 mtga_logger.error("{}Could not parse json_blob `{}`".format(util.ld(), json_str))
@@ -161,7 +181,6 @@ def json_blob_reader_task(in_queue, out_queue):
             if mtga_watch_app.game:
                 hero_library_hash = hash(mtga_watch_app.game.hero.library)
                 opponent_hand_hash = hash(mtga_watch_app.game.opponent.hand)
-
             check_for_client_id(json_recieved)
             dispatchers.dispatch_blob(json_recieved)
             mtga_watch_app.last_blob = json_recieved

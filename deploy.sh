@@ -33,6 +33,7 @@ if ! [ -x "$(command -v jq)" ]; then
 fi
 
 setupMd5=$(md5sum.exe MTGATracker-win32-x64_$version-SQUIRREL/setup_mtgatracker_$version.exe | cut -f 1 -d " ")
+setupSha256=$(sha256sum.exe MTGATracker-win32-x64_$version-SQUIRREL/setup_mtgatracker_$version.exe | cut -f 1 -d " ")
 
 repo=mtgatracker/mtgatracker
 updateRepo=mtgatracker/mtgatracker-updates
@@ -49,12 +50,13 @@ If this hash does not match, **do not open downloaded files** and please contact
 \r\n \
 You can find information on how to perform md5 checks on windows [here](https://www.lifewire.com/validate-md5-checksum-file-4037391).\r\n \
 \r\n \
-MD5: \`$setupMd5\`"
+MD5: \`$setupMd5\` \r\n \
+\r\n \
+SHA256: \`$setupSha256\`"
 
 payload='{"tag_name": "'$version'", "draft": true, "name":"MTGATracker '$version'","body": "'$releaseBody'"}'
 
-upload_url=$(curl -s -H "Authorization: token $token"  -d "$payload" \
-     "https://api.github.com/repos/$repo/releases" | jq -r '.upload_url' | cut -f 1 -d "{")
+upload_url=$(curl -s -H "Authorization: token $token"  -d "$payload" "https://api.github.com/repos/$repo/releases" | jq -r '.upload_url' | cut -f 1 -d "{")
 
 echo "uploading setup.exe to release to url : $upload_url (about 6 mins, starting @ `date`)"
 
