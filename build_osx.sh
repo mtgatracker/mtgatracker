@@ -40,7 +40,7 @@ yes | ./electron/node_modules/.bin/electron-packager electron/ MTGATracker \
   --asar
 
 mv MTGATracker-darwin-x64 MTGATracker-darwin-x64_$version
-./electron/node_modules/.bin/create-dmg ./MTGATracker-darwin-x64_$version/MTGATracker.app/ --dmg-title="Install MTGATracker"
+./electron/node_modules/.bin/create-dmg ./MTGATracker-darwin-x64_$version/MTGATracker.app/ --dmg-title="Install MTGATracker" --overwrite
 
 end=$(date +%s)
 secs=$((end-start))

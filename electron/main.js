@@ -38,7 +38,10 @@ global.firstRun = firstRun
 
 console.log("!!!!!!!!")
 console.log(process.execPath)
-const runFromSource = !process.execPath.endsWith("MTGATracker" + process.platform == "win32" ? ".exe" : "")
+console.log("MTGATracker" + (process.platform == "win32" ? ".exe" : ""))
+console.log(process.execPath.endsWith("MTGATracker" + (process.platform == "win32" ? ".exe" : "")))
+console.log(!process.execPath.endsWith("MTGATracker" + (process.platform == "win32" ? ".exe" : "")))
+const runFromSource = !process.execPath.endsWith("MTGATracker" + (process.platform == "win32" ? ".exe" : ""))
 console.log(`runFromSource? ${runFromSource}`)
 
 function updateCheck() {
