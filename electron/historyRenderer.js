@@ -32,7 +32,9 @@ var hideModeManager;
 setInterval(() => {
   if (remote.getGlobal("mtgaOverlayOnly")) {
     activeWin().then(win => {
-      if (win.owner.name == "MTGA.exe" || win.owner.name == "MTGATracker.exe" || win.title == "MTGA Tracker") {
+      if (win.owner.name == "MTGA.exe" || win.owner.name == "MTGATracker.exe" ||
+          win.owner.name == "MTGATracker" || win.owner.name == "MTGA" ||
+          win.title == "MTGA Tracker") {
         if(!historyWindow.isAlwaysOnTop()) historyWindow.setAlwaysOnTop(true)
       } else {
         if(historyWindow.isAlwaysOnTop()) historyWindow.setAlwaysOnTop(false)

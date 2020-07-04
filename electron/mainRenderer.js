@@ -6,7 +6,6 @@ const ReconnectingWebSocket = require('./vendor/rws.js')
 const fs = require('fs')
 const jwt = require('jsonwebtoken')
 const Timer = require('easytimer.js');
-const keytar = require('keytar')
 const hideWindowManager = require("./hide-manager")
 
 const { remote, ipcRenderer, shell, clipboard } = require('electron')
@@ -150,11 +149,6 @@ setInterval(() => {
 
 var lastUseTheme = remote.getGlobal('useTheme')
 var lastThemeFile = remote.getGlobal('themeFile')
-
-var token = null;
-keytar.getPassword("mtgatracker", "tracker-id-token").then(savedToken => {
-  token = savedToken;
-})
 
 if (debug) {
   window.addEventListener('contextmenu', (e) => {
@@ -958,7 +952,7 @@ function uploadGame(gameData) {
       url: postGameUrl,
       json: true,
       body: anonGameData,
-      headers: {'User-Agent': 'MTGATracker-App', token: token}
+      headers: {'User-Agent': 'MTGATracker-App', token: "tokens-disabled-osx"}
     }, (err, res, data) => {
       console.log("finished posting game request...")
       console.log(res)

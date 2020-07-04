@@ -14,7 +14,6 @@ if (handleStartupEvent()) {
 const { app, ipcMain, BrowserWindow, Tray, Menu, nativeImage } = require('electron')
 const fs = require('fs');
 const path = require('path')
-const keytar = require('keytar')
 const uuidv4 = require('uuid/v4');
 const request = require('request')
 const crypto = require("crypto")
@@ -34,52 +33,20 @@ let checksum = (str, algorithm, encoding) => {
 
 const API_URL = "https://now.mtgatracker.com";
 
-// check if we have saved a UUID for this tracker. If not, generate one
-keytar.getPassword("mtgatracker", "tracker-id").then(savedTrackerID => {
-  let uuidIsNew = false;
-  if (!savedTrackerID) {
-    // we need to make one
-    let trackerID = uuidv4() + "_" + crypto.randomBytes(10).toString('hex');
-    keytar.setPassword("mtgatracker", "tracker-id", trackerID)
-    uuidIsNew = true;
-    global.trackerID = trackerID;
-  } else {
-    global.trackerID = savedTrackerID;
-  }
-
-  // now we check if we have a token with that uuid
-  keytar.getPassword("mtgatracker", "tracker-id-token").then(token => {
-    var decodedTrackerIdToken
-    if (token !== null) {
-      decodedTrackerIdToken = jwt.decode(token)
-    }
-    if (!token || uuidIsNew || decodedTrackerIdToken.trackerID !== global.trackerID) {
-      // we need to get a token and save it
-      request.post({
-        url: `${API_URL}/public-api/tracker-token/`,
-        json: true,
-        body: {trackerID: global.trackerID},
-        headers: {'User-Agent': 'MTGATracker-App'}
-      }, (err, res, data) => {
-        if (err) console.log(err)
-        if(res && res.statusCode == 200) {
-          keytar.setPassword("mtgatracker", "tracker-id-token", data.token)
-        } else {
-          console.log(`unknown status code while getting tracker-token: ${res.statusCode}`)
-        }
-      })
-    }
-  })
-})
-
 const firstRun = process.argv[1] == '--squirrel-firstrun';
 global.firstRun = firstRun
-const runFromSource = !process.execPath.endsWith("MTGATracker.exe")
+
+console.log("!!!!!!!!")
+console.log(process.execPath)
+const runFromSource = !process.execPath.endsWith("MTGATracker" + process.platform == "win32" ? ".exe" : "")
+console.log(`runFromSource? ${runFromSource}`)
 
 function updateCheck() {
+  console.log("!!!!!!!!!!!!!!!! starting update check")
   if (!global.updateDownloading && !global.checkInProgress) {
     global.checkInProgress = true
     updater.check((err, status) => {
+      console.log("!!!!!!!!!!!!!!!!!! updater check callback")
       if (!err && status) {
         // Download the update
         global.updateDownloading = true;
@@ -91,6 +58,7 @@ function updateCheck() {
   }
 }
 
+// TODO: update.exe? darwin check (?)
 if (!firstRun && fs.existsSync(path.resolve(path.dirname(process.execPath), '..', 'update.exe'))) {
   updateCheck() // check once; setInterval fires the first time AFTER the timeout
   setInterval(updateCheck,    1000     * 60       * 60     * 2)
@@ -172,11 +140,23 @@ function windowStateKeeper(windowName) {
 
 // check if we need to show the ToS
 let tosAcks = settings.get("tosAcks", [])
+
+// on windows, finding TOS is pretty easy
 let tosPath = 'resources/app.asar/legal/tos.md';
+
+// I think we have to use absolute paths on darwin (and probably *nix?)
+if (process.platform == 'darwin') {
+  let execPath = path.dirname(process.execPath);
+  tosPath = path.join(execPath, '..', 'Resources/app.asar/legal/tos.md')
+  console.log(`got execpath: ${execPath}`)
+}
+
+// from source (on any platform), it's even easier
 if (runFromSource) {
   tosPath = 'legal/tos.md';
 }
 
+console.log(`opening tos @ ${tosPath}`)
 let currentTOSChecksum = checksum(fs.readFileSync(tosPath))
 
 let tosAcked = false;
@@ -199,8 +179,18 @@ const PY_MODULE = 'mtgatracker_backend' // without .py suffix
 let pyProc = null
 let pyPort = null
 
-let appDataRoaming = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + 'Library/Preferences' : '/var/local')
-let logPath = path.join(appDataRoaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA", "output_log.txt");
+let appDataRoaming = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Logs' : '/var/local')
+
+let logPath = ""
+console.log("platform check")
+if (process.platform === 'win32') {
+  console.log("windows")
+  logPath = path.join(appDataRoaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA", "Player.log")
+} else if (process.platform === 'darwin') {
+  console.log("darwin")
+  logPath = path.join(appDataRoaming, "Wizards Of The Coast", "MTGA", "Player.log")
+  console.log(logPath)
+}
 
 
 let getBooleanArg = (short, long) => {
@@ -645,21 +635,20 @@ const getScriptPath = () => {
   if (process.platform === 'win32') {
     return path.join(__dirname, "..", PY_DIST_FOLDER, PY_MODULE, PY_MODULE + '.exe') // TODO: verify this
   }
+  console.log(path.join(__dirname, "..", PY_DIST_FOLDER, PY_MODULE, PY_MODULE))
   return path.join(__dirname, "..", PY_DIST_FOLDER, PY_MODULE, PY_MODULE)
 }
 
 const getPyBinPath = () => {
-  if (process.platform === 'win32') {
-    venv_path_win = path.join(__dirname, "..", "venv", "Scripts", "python.exe")
-    venv_path_x = path.join(__dirname, "..", "venv", "Scripts", "python")
-    fallback_path = "python"
-    if (fs.existsSync(venv_path_win)) {
-        return venv_path_win
-    } else if (fs.existsSync(venv_path_x)) {
-        return venv_path_x
-    } else {
-        return fallback_path // ? shrug
-    }
+  venv_path_win = path.join(__dirname, "..", "venv", "Scripts", "python.exe")
+  venv_path_x = path.join(__dirname, "..", "venv", "Scripts", "python")
+  fallback_path = "python"
+  if (fs.existsSync(venv_path_win)) {
+      return venv_path_win
+  } else if (fs.existsSync(venv_path_x)) {
+      return venv_path_x
+  } else {
+      return fallback_path // ? shrug
   }
 }
 

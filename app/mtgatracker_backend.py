@@ -100,13 +100,20 @@ async def handler(websocket, _):
     loop = asyncio.get_event_loop()
     loop.stop()
 
-if args.log_file is None:  # assume we're on windows for now # TODO
-    appdata_roaming = os.getenv("APPDATA")
-    wotc_locallow_path = os.path.join(appdata_roaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA")
-    output_log = os.path.join(wotc_locallow_path, "output_log.txt")
-    if not os.path.exists(output_log):
-        output_log = None
-    args.log_file = output_log
+if args.log_file is None:  # assume we're on windows for now # TDO
+    if sys.platform == "darwin":
+        home_dir = os.getenv("HOME")
+        output_log = os.path.join(home_dir, "Library/Logs/Wizards Of The Coast/MTGA/Player.log")
+        if not os.path.exists(output_log):
+            output_log = None
+        args.log_file = output_log
+    else:
+        appdata_roaming = os.getenv("APPDATA")
+        wotc_locallow_path = os.path.join(appdata_roaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA")
+        output_log = os.path.join(wotc_locallow_path, "Player.log")
+        if not os.path.exists(output_log):
+            output_log = None
+        args.log_file = output_log
 
 
 def click_event(_x, _y, button, pressed):
@@ -158,9 +165,22 @@ if __name__ == "__main__":
             for idx, line in enumerate(rf):
                 if line and (line.startswith("[UnityCrossThreadLogger]") or line.startswith("[Client GRE]")):
                     # this is the start of a new block (with title), end the last one
-                    # print(current_block)
-                    if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
-                        # which is likely the slowest
+                    if "{" in current_block:
+                        # try to speed up debug runs by freeing up json watcher task
+                        # which is likely the slowest, by skipping any blocks with no json in them
+
+                        # trim off any excess garbage at the end of the block
+                        block_end = len(current_block)
+                        if "]" in current_block and "}" in current_block:
+                            last_sq_bracket = min(current_block.rindex("]") + 1, block_end)
+                            last_curly_bracked = min(current_block.rindex("}") + 1, block_end)
+                            block_end = max(last_sq_bracket, last_curly_bracked)
+                        elif "}" in current_block:
+                            block_end = min(current_block.rindex("}") + 1, block_end)
+                        elif "]" in current_block:
+                            block_end = min(current_block.rindex("]") + 1, block_end)
+                        trimmed = current_block[block_end:]
+                        current_block = current_block[:block_end]
                         queues.block_read_queue.put((idx, current_block))
                     current_block = line.strip() + "\n"
                 elif line and line.startswith("]") or line.startswith("}"):

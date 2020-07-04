@@ -3,7 +3,6 @@ const {dialog, Menu, MenuItem,} = remote
 const fs = require('fs')
 
 const API_URL = remote.getGlobal("API_URL")
-const keytar = require('keytar')
 const mtga = require('mtga')
 const path = require('path')
 const request = require('request')
@@ -242,7 +241,7 @@ function updateConnections() {
 document.addEventListener("DOMContentLoaded", function(event) {
   rivets.bind(document.getElementById('container'), settingsData)
 
-  // TODO: here
+  /*
   keytar.getPassword("mtgatracker", "external-database-connections").then(connections => {
     // rivets doesn't like raw assignment, each elem must be pushed :|
     if (connections) {
@@ -257,6 +256,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       settingsData.externalDatabaseConnectionStrings = settingsData.externalDatabaseConnectionStrings.filter(a => a != e.target.value)
     })
   })
+  */
 
   $("#add-connection").click(e => {
     // before modifying the array, make sure we have the latest copies of all values (else modifying array will erase them)
@@ -270,6 +270,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     $("#sync-databases").attr("disabled", "true")
     connections = []
     $(".connection-input").filter((e, v) => $(v).val()).each((e, v) => connections.push($(v).val()))
+    /*
     keytar.setPassword("mtgatracker", "external-database-connections", JSON.stringify(connections)).then(set => {
       fetch(`insp://sync`)
         .then(resp => resp.json())
@@ -280,12 +281,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
           $("#sync-databases").removeAttr("disabled")
         })
     })
+    */
   })
 
   $("#save-connections").click(e => {
     connections = []
     $(".connection-input").filter((e, v) => $(v).val()).each((e, v) => connections.push($(v).val()))
-    keytar.setPassword("mtgatracker", "external-database-connections", JSON.stringify(connections))
+    //keytar.setPassword("mtgatracker", "external-database-connections", JSON.stringify(connections))
 
     alert(`Saved ${connections.length} connections`)
   })

@@ -4,7 +4,6 @@ const {dialog, Menu, MenuItem,} = remote
 const fs = require('fs')
 
 const API_URL = remote.getGlobal("API_URL")
-const keytar = require('keytar')
 const mtga = require('mtga')
 const path = require('path')
 const os = require('os')

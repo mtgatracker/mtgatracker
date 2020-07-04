@@ -60,6 +60,11 @@ let options = {
   currentVersion: app.getVersion()
 }
 
+if (process.platform == 'darwin') {
+  console.log("Updater: switching to OSX update repo")
+  options.repo = 'mtgatracker/mtgatracker-updates-osx'
+}
+
 const updater = new GhReleases(options)
 updater.autoUpdater.autoDownload = false;  // fix issue where multiple downloaders fight over the lock
 

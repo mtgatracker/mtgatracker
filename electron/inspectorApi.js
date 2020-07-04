@@ -1,7 +1,6 @@
 var { cardsColors } = require("mtga")
 var { Router } = require('electron-routes');
 var path = require("path")
-const keytar = require('keytar')
 const { MongoClient, ObjectID } = require('mongodb')
 
 var Datastore = require('nedb')
@@ -51,6 +50,8 @@ api.get('sync', (req, res) => {
   var downloadConnPromises = []
   var downloadPromises = []
 
+  console.log("sync diabled for OSX!")
+  /*
   keytar.getPassword("mtgatracker", "external-database-connections").then(connections => {
     if (connections) {
       var asStrings = JSON.parse(connections)
@@ -114,6 +115,7 @@ api.get('sync', (req, res) => {
       })
     }
   })
+  */
 })
 
 api.get('game/:gameID', (req, res) => {

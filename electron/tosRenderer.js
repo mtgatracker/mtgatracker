@@ -3,11 +3,15 @@ const fs = require('fs')
 const md = require("markdown").markdown
 let runFromSource = remote.getGlobal('runFromSource')
 document.addEventListener("DOMContentLoaded", function(event) {
-  let mdPath = "resources/app.asar/legal/tos.md"
-  if (runFromSource) {
-    mdPath = "legal/tos.md"
+
+  let tosPath = 'resources/app.asar/legal/tos.md';
+  if (process.platform == 'darwin') {
+    tosPath = 'Contents/Resources/app.asar/legal/tos.md'
   }
-  fs.readFile(mdPath, "utf-8", (error, fileContents) => {
+  if (runFromSource) {
+    tosPath = 'legal/tos.md';
+  }
+  fs.readFile(tosPath, "utf-8", (error, fileContents) => {
     console.log(error)
     console.log(fileContents)
     let fileLines = fileContents.split("\n")

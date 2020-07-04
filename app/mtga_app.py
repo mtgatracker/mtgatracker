@@ -63,9 +63,12 @@ class MTGAWatchApplication(object):
         self.last_blob = None
         self.error_count = 0
         self.collection = {}
-
-        appdata_roaming = os.getenv("APPDATA")
-        self._settings_path = os.path.join(appdata_roaming, "..", "LocalLow", "MTGATracker")
+        if (sys.platform == "darwin"):
+            home_dir = os.getenv("HOME")
+            self._settings_path = os.path.join(home_dir, "Library/Application Support/MTGATracker/backend")
+        else:
+            appdata_roaming = os.getenv("APPDATA")
+            self._settings_path = os.path.join(appdata_roaming, "..", "LocalLow", "MTGATracker")
         self._settings_json_path = os.path.join(self._settings_path, "settings.json")
         self.load_settings()
 
