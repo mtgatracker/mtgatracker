@@ -80,7 +80,7 @@ async def consumer_handler(websocket):
             all_die_queue.put("DIE")
         else:
             print("ack {}".format(message))
-        await websocket.send("ack {}".format(message))
+        await websocket.send(json.dumps({"ack": message}))
 
 
 async def handler(websocket, _):
