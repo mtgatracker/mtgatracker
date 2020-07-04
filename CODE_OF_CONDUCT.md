@@ -1,4 +1,75 @@
+# MTGATracker Code of Conduct
+
+MTGATracker is free and open-source software. This means that anyone can create a GitHub account, and create a pull request
+to improve MTGATracker. However, for the safety of our community, any person doing so should read and understand this code of conduct, as
+their act of contribution will be considered an implicit agreement to it.
+
+Any contributor who breaks these pledges may be removed from the MTGATracker community (including their contributions) with or without notice.
+
+## MTGATracker Pledges
+
+### MTGATracker is free and open source, forever
+
+MTGATracker is not, and never will be paid software. MTGATracker is not, and will not be ad supported.  MTGATracker does not
+and will not generate profit directly from it's software.
+
+MTGATracker is developed with love--not money--and any attempts to raise funds must be explicitly
+done so in an opt-in fashion, and also must only be either at the benefit of the community, or explicitly to recoup
+costs already spent.
+
+MTGATracker developers are fierce proponents of open software. Any code a user runs on their machine should always
+be traceable back to source, both for safety and for accountability. There should never be a penalty for
+running MTGATracker from source, rather than running a published binary.
+
+(We won't rule out things like selling stickers or T-Shirts ;) but again, efforts such as these must be done so only to
+recoup costs already spent.)
+
+### MTGATracker does not own your data
+
+MTGATracker and it's develoeprs and contributors do not make any claim to your personal data.
+
+MTGATracker may use industry-standard data analytics tools when users visit their websites, so as to better understand the community that uses MTGATracker.
+
+MTGATracker users must always be in control of their personal information, and any attempt
+made by MTGATracker to collect any personally-identifiable information must be **strictly opt-in**.
+MTGATracker will only collect data without consent if it is strictly in aggregate, and only if that data **cannot** be attributed back
+to the originating user uniquely. (Yes, this includes e.g. deck data!)
+
+For example, MTGATracker may count the number of games as user has tracked using the program, and may assign those games a unique, random
+identifier (so that MTGATracker can understand the number of individual users running the program), but MTGATracker must only correlate that information
+back to a user's personal info (e.g. your username) **strictly with that user's freely-given consent.**
+
+Similarly, MTGATracker **must not** collect (e.g.) the cards a user has chosen to put in their deck, or (e.g.) the number of times a user has been on the play
+vs. on the draw, without that user's explicit consent to do so.
+
+Whenever MTGATracker does collect data (with or without explicit consent), clear examples of the data collected must be published
+**exhaustively** in the [MTGATracker privacy policy](https://github.com/mtgatracker/mtgatracker/blob/master/legal/privacy.md).
+
+(Early adopters of MTGATracker may notice that this is a shift from when MTGATracker originally started, and this is true. We had a
+lot of fun playing with user's data at the start, but we've decided that doing so was ultimately unethical, and didn't positively contribute to MTG.)
+
+### MTGATracker loves Magic
+
+MTGATracker developers love Magic, and should always do their best to do what is best for the game. If a feature is unethical or
+may cause damage the game (for example, by excessively contributing to a stale meta), MTGATracker devs should avoid, or even outright
+reject implementing such a feature.
+
+MTGATracker developers are fiercely protective of the integrity of the game. MTGATracker developers are allowed to have opinions about
+what is and is not considered "cheating," but any ambiguity should be treated with extreme scrutiny.
+
+If a MTGATracker developer learns of (e.g.) an exploit in MTGA, they must not use it to gain any advantage, and must
+make no effort to exploit it (in MTGATracker code or otherwise).
+
+### MTGATracker and keeping secrets
+
+MTGATracker must keep some information secret (for example, passwords used to upload python binary distributions to PyPI.
+These secrets must be kept strictly to protect the integrity of MTGATracker binaries, and therefore to protect MTGATracker users.
+
 # [Contributor Covenant](https://www.contributor-covenant.org/) Code of Conduct
+
+MTGATracker follows the Contributor Covenant framework, which informs the remainder of this document.
+Please read on about this code below, or directly at
+[https://www.contributor-covenant.org](https://www.contributor-covenant.org/).
 
 ## Our Pledge
 
