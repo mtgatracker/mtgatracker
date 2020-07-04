@@ -16,8 +16,7 @@ echo "$version" > webtasks/on_demand/client-version
 fixversion="import json; rp = open('electron/package.json', 'r'); contents = json.load(rp); rp.close(); print('ok'); contents['version'] = '$version'; wp = open('electron/package.json', 'w'); json.dump(contents, wp, indent=4, separators=(',', ': '))"
 python -c "$fixversion"
 
-echo "skipping appdist build for speeeeeeed"
-# yes | pyinstaller mtgatracker_backend_osx.spec --distpath appdist
+yes | pyinstaller mtgatracker_backend_osx.spec --distpath appdist
 
 rm -r MTGATracker-darwin-x64 || echo "nothing to remove, moving on"
 rm -r MTGATracker-darwin-x64_$version* || echo "nothing to remove, moving on"
@@ -41,6 +40,7 @@ yes | ./electron/node_modules/.bin/electron-packager electron/ MTGATracker \
   --asar
 
 mv MTGATracker-darwin-x64 MTGATracker-darwin-x64_$version
+./electron/node_modules/.bin/create-dmg ./MTGATracker-darwin-x64_$version/MTGATracker.app/ --dmg-title="Install MTGATracker"
 
 end=$(date +%s)
 secs=$((end-start))

@@ -6,7 +6,7 @@
     "name": "mtgatracker",
     "repository": "https://github.com/shawkinsl/mtga-tools",
     "author": "MTGATracker",
-    "version": "8.0.3",
+    "version": "6.2.0",
     "dependencies": {
         "markdown": "^0.5.0",
         "find-process": "^1.1.0",
@@ -50,10 +50,12 @@
         "mtga"
     ],
     "devDependencies": {
-        "node-fs-extra": "^0.8.2",
+        "create-dmg": "^5.3.0",
         "electron": "^2.0.0",
+        "electron-installer-dmg": "^3.0.0",
         "electron-packager": "^12.1.0",
-        "grunt-electron-installer": "^2.1.0"
+        "grunt-electron-installer": "^2.1.0",
+        "node-fs-extra": "^0.8.2"
     },
     "main": "main.js",
     "description": "Application to track MTGA decks in-game"
