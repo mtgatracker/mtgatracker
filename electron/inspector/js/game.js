@@ -45,9 +45,21 @@ let gameRoute = (c, n) => {
         }
 
         if (game.rankChange) {
-          appData.currentGameHeroRankBefore = `${game.rankChange.oldClass} ${game.rankChange.oldTier} - ${Math.round(100 * game.rankChange.oldProgress) / 100}`
-          appData.currentGameHeroRankAfter = `${game.rankChange.newClass} ${game.rankChange.newTier} - ${Math.round(100 * game.rankChange.newProgress) / 100}`
-          appData.currentGameHeroRankChange = Math.round(100 * (game.rankChange.newProgress - game.rankChange.oldProgress)) / 100
+          appData.currentGameHeroRankBefore = `${game.rankChange.oldClass} ${game.rankChange.oldLevel} - Step ${game.rankChange.oldStep}`
+          appData.currentGameHeroRankAfter = `${game.rankChange.newClass} ${game.rankChange.newLevel} - Step ${game.rankChange.newStep}`
+          tierChange = game.rankChange.newLevel - game.rankChange.oldLevel;
+          stepChange = game.rankChange.newStep - game.rankChange.oldStep;
+
+          if (tierChange === 0) {
+            appData.currentGameHeroRankChange = `${stepChange === 0 ? '' : stepChange > 0 ? 'Up' : 'Down' } ${Math.abs(stepChange)} Step${Math.abs(stepChange) === 1 ? '': 's'}`
+          } else {
+            // Tiers go in reverse order, so 2 -> 1 is up
+            appData.currentGameHeroRankChange = `${tierChange < 0 ? 'Up' : 'Down' } ${Math.abs(tierChange)} Tier${Math.abs(tierChange) === 1 ? '': 's'}`
+          }
+
+          if (game.rankChange.newClass !== game.rankChange.oldClass) {
+            appData.currentGameHeroRankChange = `Rank Up!`
+          }
           appData.currentGameHasRankInfo = true;
         }
 
