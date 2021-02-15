@@ -7,6 +7,7 @@ import os
 import sys
 import time
 from tailer import Tailer
+import urllib.request
 
 import app.models.set as set
 from mtga.set_data import all_mtga_cards
@@ -320,6 +321,26 @@ except FileNotFoundError:
     with open(resource_path(os.path.join('..', 'electron', 'package.json')), 'r') as package_file:
         client_version = json.load(package_file)["version"]
 
+p1p1_data_dict = {}
+
+def set_data(set_name):
+    if set_name not in p1p1_data_dict.keys():
+        p1p1_data_dict[set_name] = _load_set_data(set_name)
+    return p1p1_data_dict[set_name]
+
+def _load_set_data(set_name):
+    # fetch data list
+    url = 'https://apps.draftaholicsanonymous.com/p1p1/{0}/results'.format(set_name)
+    response = urllib.request.urlopen(url).read()
+    data_list = json.loads(response)['data']
+    # construct data dict
+    data_dict = {}
+    for datum in data_list:
+        data_dict[datum['name']] = datum
+    return data_dict
+
+def card_rank(card_obj):
+    return set_data(card_obj['set']).get(card_obj['pretty_name'], {}).get('rank', '?') 
 
 class KillableTailer(Tailer):
 
