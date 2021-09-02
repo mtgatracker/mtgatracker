@@ -103,7 +103,7 @@ async def handler(websocket, _):
 if args.log_file is None:  # assume we're on windows for now # TODO
     appdata_roaming = os.getenv("APPDATA")
     wotc_locallow_path = os.path.join(appdata_roaming, "..", "LocalLow", "Wizards Of The Coast", "MTGA")
-    output_log = os.path.join(wotc_locallow_path, "output_log.txt")
+    output_log = os.path.join(wotc_locallow_path, "Player.log")
     if not os.path.exists(output_log):
         output_log = None
     args.log_file = output_log
@@ -153,60 +153,89 @@ if __name__ == "__main__":
         print("For some reason, reading the full log causes the python process to never exit.")
         print("It has something to do with putting data into the queue from this block (line marked), but other than")
         print("that I really can't figure it out. Anyways, you'll have to kill the python process manually.")
-        with open(args.log_file, 'r') as rf:
-            previous_block_end = 0
+        with open(args.log_file, 'r', encoding="utf_8_sig") as rf:
+            in_uctl = False
+            in_json = False
+            is_resp = False
             for idx, line in enumerate(rf):
-                if line and (line.startswith("[UnityCrossThreadLogger]") or line.startswith("[Client GRE]")):
-                    # this is the start of a new block (with title), end the last one
-                    # print(current_block)
-                    if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
-                        # which is likely the slowest
-                        queues.block_read_queue.put((idx, current_block))
-                    current_block = line.strip() + "\n"
-                elif line and line.startswith("]") or line.startswith("}"):
-                    current_block += line.strip() + "\n"
-                    # this is the END of a block, end it and start a new one
-                    if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
-                        # which is likely the slowest
-                        queues.block_read_queue.put((idx, current_block))
-                    current_block = ""
-                else:
-                    # we're in the middle of a block somewhere
-                    stripped = line.strip()
-                    if stripped:
-                        current_block += stripped + "\n"
+                if line:
+                    if not in_json:
+                        if in_uctl:
+                            if line.rstrip() == "{" or line.rstrip() == "[":   # start of JSON string
+                                in_json = True
+                                current_block += line.strip() + "\n"
+                            elif (line.strip().startswith("{") and line.strip().endswith("}")
+                                or line.strip().startswith("[") and line.strip().endswith("]")
+                                or line.strip().startswith("\"") and line.strip().endswith("\"")):  # JSON string line
+                                current_block += line.strip() + "\n"
+                                in_uctl = False
+                            elif line.strip().startswith("<== "):   # is response
+                                current_block += line.strip() + "\n"
+                                is_resp = True
+                            elif is_resp:   # response value
+                                current_block += line.strip() + "\n"
+                                in_uctl = False
+                        else:
+                            if len(current_block) > 0:  # put curernt_block
+                                queues.block_read_queue.put((idx, current_block))
+                                current_block = ""
+                                in_uctl = False
+                            if line.strip().startswith("[UnityCrossThreadLogger]"):
+                                current_block = line.strip() + "\n"
+                                if not (line.strip().endswith("}") or line.strip().endswith("]")):  # no JSON string in line, so continue to read line
+                                    in_uctl = True
+                                if line.strip().endswith("{") or line.strip().endswith("["):    # start of JSON string in line
+                                    in_json = True
+                    elif in_uctl and in_json:
+                        current_block += line.strip() + "\n"
+                        if line.rstrip() == "}" or line.rstrip() == "]":    # end of JSON string
+                            in_uctl = False
+                            in_json = False
                 if not all_die_queue.empty():
                     break
     count = 0
     if not args.no_follow and all_die_queue.empty():
         print("starting to tail file: {}".format(args.log_file))
         if args.log_file:
-            with open(args.log_file) as log_file:
+            with open(args.log_file, encoding="utf_8_sig") as log_file:
                 kt = KillableTailer(log_file, queues.all_die_queue)
                 kt.seek_end()
+                in_uctl = False
+                in_json = False
+                is_resp = False
                 for line in kt.follow(1):
-                    if line and (line.startswith("[UnityCrossThreadLogger]") or line.startswith("[Client GRE]")):
-                        # this is the start of a new block (with title), end the last one
-                        if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
-                                                  # which is likely the slowest
-                            last_idx = current_block.rindex("}")
-                            # ^ After gamestate logs, there is garbage (non-json) in the same block; strip it out
-                            # TODO: this is hella hacky and should be fixed
-                            current_block = current_block[:last_idx+1]
-                            queues.block_read_queue.put(current_block)
-                        current_block = line.strip() + "\n"
-                    elif line and line.startswith("]") or line.startswith("}"):
-                        current_block += line.strip() + "\n"
-                        # this is the END of a block, end it and start a new one
-                        if "{" in current_block:  # try to speed up debug runs by freeing up json watcher task
-                                                  # which is likely the slowest
-                            queues.block_read_queue.put(current_block)
-                        current_block = ""
-                    else:
-                        # we're in the middle of a block somewhere
-                        stripped = line.strip()
-                        if stripped:
-                            current_block += stripped + "\n"
+                    if line:
+                        if not in_json:
+                            if in_uctl:
+                                if line.rstrip() == "{" or line.rstrip() == "[":   # start of JSON string
+                                    in_json = True
+                                    current_block += line.strip() + "\n"
+                                elif (line.strip().startswith("{") and line.strip().endswith("}")
+                                    or line.strip().startswith("[") and line.strip().endswith("]")):
+                                    current_block += line.strip() + "\n"
+                                    in_uctl = False
+                                elif line.strip().startswith("<== "):   # is response
+                                    current_block += line.strip() + "\n"
+                                    is_resp = True
+                                elif is_resp:   # response value
+                                    current_block += line.strip() + "\n"
+                                    in_uctl = False
+                            else:
+                                if len(current_block) > 0:  # put curernt_block
+                                    queues.block_read_queue.put(current_block)
+                                    current_block = ""
+                                    in_uctl = False
+                                if line.strip().startswith("[UnityCrossThreadLogger]"):
+                                    current_block = line.strip() + "\n"
+                                    if not (line.strip().endswith("}") or line.strip().endswith("]")):  # no JSON string in line, so continue to read line
+                                        in_uctl = True
+                                    if line.strip().endswith("{") or line.strip().endswith("["):    # start of JSON string in line (never appear)
+                                        in_json = True
+                        elif in_uctl and in_json:
+                            current_block += line.strip() + "\n"
+                            if line.rstrip() == "}" or line.rstrip() == "]":    # end of JSON string
+                                in_uctl = False
+                                in_json = False
                     if not all_die_queue.empty():
                         break
         else:

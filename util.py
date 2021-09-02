@@ -142,25 +142,25 @@ PRECON_MAP = {
 }
 
 
-def process_deck(deck_dict, save_deck=True, version=1):
+def process_deck(deck_summary_dict, deck_dict, save_deck=True, version=1):
     import app.mtga_app as mtga_app
-    deck_id = deck_dict['id']
-    if deck_dict["name"] in PRECON_MAP:
-        deck_dict["name"] = PRECON_MAP[deck_dict["name"]]
-    deck = set.Deck(deck_dict["name"], deck_id)
+    deck_id = deck_summary_dict.get("DeckId")
+    if deck_summary_dict.get("name") in PRECON_MAP:
+        deck_dict["name"] = PRECON_MAP[deck_summary_dict.get("name")]
+    deck = set.Deck(deck_dict.get("name"), deck_id)
 
     process_func = _process_maindeck
 
     if version == 3:
         process_func = _process_maindeck_v3
 
-    process_func(deck, deck_dict["mainDeck"])
-    process_func(deck, deck_dict["sideboard"], True)
+    process_func(deck, deck_dict["MainDeck"])
+    process_func(deck, deck_dict["Sideboard"], True)
 
     if save_deck:
         with mtga_app.mtga_watch_app.game_lock:
             mtga_app.mtga_watch_app.player_decks[deck_id] = deck
-            mtga_app.mtga_logger.info("{}deck {} is being saved".format(ld(), deck_dict["name"]))
+            mtga_app.mtga_logger.info("{}deck {} is being saved".format(ld(), deck_dict.get("name")))
             mtga_app.mtga_watch_app.save_settings()
     return deck
 
@@ -169,8 +169,8 @@ def _process_maindeck(deck, decklist_blob, is_sideboard=False):
     import app.mtga_app as mtga_app
     for card_obj in decklist_blob:
         try:
-            id_key = "id" if "id" in card_obj else "Id"
-            qt_key = "quantity" if "quantity" in card_obj else "Quantity"
+            id_key = "cardId"
+            qt_key = "quantity"
             # why? jsonrpc methods use capitalized instead of lowercase. idk, see for yourself:
             # == > DirectGame.Challenge(42):
             # {

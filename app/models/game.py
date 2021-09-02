@@ -187,13 +187,34 @@ class Player(object):
 
 
 class Match(object):
-    def __init__(self, match_id, event_id, opponent_name, opponent_rank):
-        self.match_id = match_id
-        self.event_id = event_id
-        self.opponent_name = opponent_name
-        self.opponent_rank = opponent_rank
+    def __init__(self, match_id):
+        self.__match_id = match_id
         self.game_results = []
+    
+    @property
+    def event_id(self):
+        return self.__event_id
 
+    @event_id.setter
+    def event_id(self, event_id):
+        self.__event_id = event_id
+    
+    @property
+    def opponent_name(self):
+        return self.__opponent_name
+
+    @opponent_name.setter
+    def opponent_name(self, opponent_name):
+        self.__opponent_name = opponent_name
+        
+    @property
+    def opponent_rank(self):
+        return self.__opponent_rank
+
+    @opponent_rank.setter
+    def opponent_rank(self, opponent_rank):
+        self.__opponent_rank = opponent_rank
+        
     def current_game_number(self):
         return len(self.game_results) + 1
 
