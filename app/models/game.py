@@ -121,7 +121,7 @@ class Player(object):
                     "odds_of_draw": 0,
                 }
                 if isinstance(card, GameCard):
-                    original_deck_odds[card.mtga_id]["iid"] = card.game_id
+                    original_deck_odds[card.mtga_id]['iid'] = card.game_id
 
             original_deck_odds[card.mtga_id]["count_in_deck"] += 1
             original_deck_odds[card.mtga_id]["odds_unf"] = 100 * original_deck_odds[card.mtga_id]["count_in_deck"] / len(self.original_deck.cards)
@@ -141,7 +141,7 @@ class Player(object):
                     "odds_of_draw": 0,
                 }
                 if isinstance(card, GameCard):
-                    odds[card.mtga_id]["iid"] = card.game_id
+                    odds[card.mtga_id]['iid'] = card.game_id
 
             odds[card.mtga_id]["count_in_deck"] += 1
             odds[card.mtga_id]["odds_unf"] = 100 * odds[card.mtga_id]["count_in_deck"] / len(current_list)

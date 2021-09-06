@@ -137,8 +137,8 @@ def json_blob_reader_task(in_queue, out_queue):
             if isinstance(blob, dict) and "clientId" in blob["authenticateResponse"]:
                 # screw it, no one else is going to use this message, mess up the timestamp, who cares
                 with mtga_watch_app.game_lock:
-                    if mtga_watch_app.player_id != blob["authenticateResponse"]["clientId"]:
-                        mtga_watch_app.player_id = blob["authenticateResponse"]["clientId"]
+                    if mtga_watch_app.player_id != blob["authenticateResponse"]['clientId']:
+                        mtga_watch_app.player_id = blob["authenticateResponse"]['clientId']
                         mtga_logger.debug("{}check_for_client_id: got new clientId".format(util.ld()))
                         mtga_watch_app.save_settings()
                 general_output_queue.put({"authenticateResponse": blob["authenticateResponse"]})

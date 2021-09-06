@@ -13,7 +13,7 @@ for name in anon_name_list:
 print(len(anon_name_bank))
 
 with open("../data/04-05-2018_14-42_backup.json", "r") as inf:
-    all_data = json.load(inf)["all_docs"]
+    all_data = json.load(inf)['all_docs']
 
 print(len(all_data))
 

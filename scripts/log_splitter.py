@@ -12,9 +12,9 @@ last_block = ""
 
 def _get_state_type(json_block):
     if "matchGameRoomStateChangedEvent" in json_block\
-            and "gameRoomInfo" in json_block["matchGameRoomStateChangedEvent"]\
-            and "stateType" in json_block["matchGameRoomStateChangedEvent"]["gameRoomInfo"]:
-        return json_block["matchGameRoomStateChangedEvent"]["gameRoomInfo"]["stateType"]
+            and 'gameRoomInfo' in json_block['matchGameRoomStateChangedEvent']\
+            and 'stateType' in json_block['matchGameRoomStateChangedEvent']['gameRoomInfo']:
+        return json_block['matchGameRoomStateChangedEvent']['gameRoomInfo']['stateType']
 
 
 def check_json_for_game_start(json_block):

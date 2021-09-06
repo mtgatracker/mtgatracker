@@ -98,7 +98,7 @@ class MTGAWatchApplication(object):
             self.player_id = settings["player_id"]
         if "player_decks" in settings and settings["player_decks"]:
             for deck_id in settings["player_decks"]:
-                self.player_decks[deck_id] = Deck.from_dict(settings["player_decks"][deck_id])
+                self.player_decks[deck_id] = Deck.from_dict(settings['player_decks'][deck_id])
         mtga_logger.debug("{}queue put from settings {}".format(util.ld(), id(decklist_change_queue)))
         new_dl = {k: v.to_serializable(transform_to_counted=True) for k, v in self.player_decks.items()}
         if not new_dl:

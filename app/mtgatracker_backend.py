@@ -64,7 +64,7 @@ async def output(websocket):
         message = False
     if message:
         now = datetime.datetime.utcnow().isoformat() + 'Z'
-        message["now"] = now
+        message['now'] = now
         if isinstance(message, dict) and "error" in message.keys():
             message["data_type"] = "error"
         else:
