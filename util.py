@@ -317,8 +317,12 @@ try:
     with open(resource_path(os.path.join('electron', 'package.json')), 'r') as package_file:
         client_version = json.load(package_file)["version"]
 except FileNotFoundError:
-    with open(resource_path(os.path.join('..', 'electron', 'package.json')), 'r') as package_file:
-        client_version = json.load(package_file)["version"]
+    try:
+        with open(resource_path(os.path.join('..', 'electron', 'package.json')), 'r') as package_file:
+            client_version = json.load(package_file)["version"]
+    except FileNotFoundError:
+        with open(os.getcwd()+'\\package.json', 'r') as package_file:
+            client_version = json.load(package_file)["version"]
 
 
 class KillableTailer(Tailer):
