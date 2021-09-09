@@ -6,3 +6,4 @@ pyinstaller
 pytest
 pynput
 mtga>=0.9.3
+psutil

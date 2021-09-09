@@ -18,6 +18,8 @@ import websockets.legacy.server
 import time
 from pynput import mouse
 from app.queues import all_die_queue, game_state_change_queue, general_output_queue, decklist_change_queue
+import psutil
+from tkinter import Tk, messagebox
 
 arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument('-i', '--log_file', default=None)
@@ -127,6 +129,25 @@ def start_mouse_listener():
 
 
 if __name__ == "__main__":
+    print("MTGA.exe running check")
+    mtga_running = False
+    while not mtga_running:
+        for proc in psutil.process_iter():
+            try:
+                if proc.exe().endswith("MTGA.exe"):
+                    mtga_running = True
+                    break
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+        if not mtga_running:
+            root = Tk()
+            root.withdraw()
+            ans = messagebox.askyesnocancel(message="MTGAが起動していない可能性があります。\nはい: 再試行\nいいえ: 無視して続行")
+            if ans == True:
+                pass
+            elif ans == False:
+                mtga_running = True
+
     print("starting websocket server with port {}".format(args.port))
     start_server = websockets.serve(handler, '127.0.0.1', args.port)
     asyncio.get_event_loop().run_until_complete(start_server)
