@@ -136,6 +136,7 @@ if __name__ == "__main__":
             try:
                 if proc.exe().endswith("MTGA.exe"):
                     mtga_running = True
+                    print("MTGA.exe running check: OK")
                     break
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
@@ -147,6 +148,7 @@ if __name__ == "__main__":
                 pass
             elif ans == False:
                 mtga_running = True
+                print("MTGA.exe running check: NG")
 
     print("starting websocket server with port {}".format(args.port))
     start_server = websockets.serve(handler, '127.0.0.1', args.port)
