@@ -741,7 +741,11 @@ ws.addEventListener('open', () => {
     console.log("sent hello")
 });
 
+let boundsRoundingErrorX = false;
+let boundsRoundingErrorY = false;
+
 function resizeWindow() {
+    checkForSetBoundsMovement();
     let total = 0;
     $.each($(".card"), function(i, c) {
         total += c.offsetHeight;
@@ -757,6 +761,8 @@ function resizeWindow() {
     });
 
     bounds = browserWindow.getBounds()
+    var prevBoundsX = bounds.x;
+    var prevBoundsY = bounds.y;
     container.style.height = "" + parseInt(totalHeight) + "px"
     if (zoom > 0.85) {
       // TODO: resize with math that is less "throwing shit at the wall"
@@ -788,9 +794,40 @@ function resizeWindow() {
 
     bounds.height = Math.min(parseInt(totalHeight), calcMainMaxHeight());
     if (!(debug || useFrame)) {
-        browserWindow.setBounds(bounds)
+      if(boundsRoundingErrorX) {
+        bounds.x = prevBoundsX + 1;
+      }
+      if(boundsRoundingErrorY) {
+        bounds.y = prevBoundsY + 1;
+      }
+      browserWindow.setBounds(bounds)
     }
     setClickHandlers();
+}
+
+var firstRun = true;
+function checkForSetBoundsMovement() {
+  if(!firstRun) {
+    return;
+  }
+  if ((debug || useFrame)){
+    return;
+  }
+  var bounds = browserWindow.getBounds();
+  var prevBoundsX = bounds.x;
+  var prevBoundsY = bounds.y;
+  browserWindow.setBounds(bounds);
+  var newBounds = browserWindow.getBounds();
+  if(prevBoundsX!=newBounds.x) {
+    boundsRoundingErrorX = true;
+    newBounds.x+=2;
+  }
+  if(prevBoundsY!=newBounds.y) {
+    boundsRoundingErrorY = true;
+    newBounds.y+=2;
+  }
+  browserWindow.setBounds(newBounds);
+  firstRun = false;
 }
 
 function populateDeck(elem) {
