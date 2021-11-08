@@ -143,7 +143,7 @@ if __name__ == "__main__":
         if not mtga_running:
             root = Tk()
             root.withdraw()
-            ans = messagebox.askyesno(__file__, "MTG Arenaが起動していない可能性があります。\nはい: 再試行\nいいえ: 無視して続行")
+            ans = messagebox.askyesno("MTG Arena 起動確認", "MTG Arenaが起動していない可能性があります。\nはい: 再試行\nいいえ: 無視して続行")
             if ans == True:
                 pass
             elif ans == False:
