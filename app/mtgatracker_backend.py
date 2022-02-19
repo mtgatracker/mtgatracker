@@ -130,6 +130,7 @@ def start_mouse_listener():
 
 if __name__ == "__main__":
     CARD_DICTIONARY_FILENAME = "CardDictionary.csv"
+    APPEND_FILENAME = "Append.csv"
     print("Generate "+CARD_DICTIONARY_FILENAME)
     card_dictionary_csv = []
     for card in all_mtga_cards.cards:
@@ -137,12 +138,21 @@ if __name__ == "__main__":
         if line not in card_dictionary_csv:
             card_dictionary_csv.append(line)
     try:
-        with open(CARD_DICTIONARY_FILENAME, "w", encoding="utf-8") as f:
+        with open(CARD_DICTIONARY_FILENAME, "w", encoding="utf-8") as fw:
             for line in card_dictionary_csv:
-                f.write(line)
+                fw.write(line)
             print(os.path.abspath(CARD_DICTIONARY_FILENAME) + " was generated")
     except:
         print("Failed to generate "+CARD_DICTIONARY_FILENAME)
+    if os.path.exists(APPEND_FILENAME):
+        print("Append "+APPEND_FILENAME+" to "+CARD_DICTIONARY_FILENAME)
+        try:
+            with open(CARD_DICTIONARY_FILENAME, "a", encoding="utf-8") as fa:
+                with open(APPEND_FILENAME, "r", encoding="utf-8") as fr:
+                    fa.write(fr.read())
+                    print(os.path.abspath(APPEND_FILENAME) + " was appended")
+        except:
+            print("Failed to append "+APPEND_FILENAME)
 
     print("MTGA.exe running check")
     mtga_running = False
