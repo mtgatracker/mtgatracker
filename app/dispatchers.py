@@ -29,8 +29,10 @@ def dispatch_blob(blob):
             parsers.parse_event_decksubmit(blob, version=3)
         elif "block_title" in blob and blob["block_title"] == "Event.GetPlayerCourseV2":    # Abolished
             parsers.parse_event_decksubmit(blob, version=3)
-        elif "block_title" in blob and blob["block_title"] == "Event_GetCourses":    # New event
+        elif "block_title" in blob and blob["block_title"] == "Event_GetCourses":    # Abolished
             parsers.parse_event_decksubmit(blob)
+        elif "block_title" in blob and blob["block_title"] == "Event_GetCoursesV2":    # New event
+            parsers.parse_event_decksubmit(blob, version=2)
         # TODO: is GetPlayerCoursesV2 useful?
         # elif "block_title" in blob and blob["block_title"] == "Event.GetPlayerCoursesV2":
         #     parsers.parse_player_courses_v2(blob)

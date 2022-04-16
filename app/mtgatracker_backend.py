@@ -176,7 +176,7 @@ if __name__ == "__main__":
                 print("MTGA.exe running check: NG")
 
     print("starting websocket server with port {}".format(args.port))
-    start_server = websockets.serve(handler, '127.0.0.1', args.port)
+    start_server = websockets.serve(handler, '127.0.0.1', args.port, ping_timeout=None) # タイムアウトを防ぐためにping_timeout=Noneを設定
     asyncio.get_event_loop().run_until_complete(start_server)
 
     print("starting block watch task server")

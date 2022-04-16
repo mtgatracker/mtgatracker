@@ -593,6 +593,10 @@ def parse_game_state_message(message, timestamp=None):
                         queue_obj = {"game_history_event": event_texts}
                         mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                         general_output_queue.put(queue_obj)
+                    # TODO: 他のゾーン遷移のログを出力する
+                    else:
+                        print("zone_src:"+zone_src+", zone_dst:"+zone_dest+", category:"+category)
+
 
 @util.debug_log_trace
 def parse_zone(zone_blob):
