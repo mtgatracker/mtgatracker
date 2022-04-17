@@ -120,3 +120,4 @@ webtask/assets
 mtgatracker_backend.exe.spec
 CardDictionary.csv
 app/GreToClientEvent.json
+app/Append.csv
