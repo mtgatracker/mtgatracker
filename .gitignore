@@ -121,3 +121,10 @@ mtgatracker_backend.exe.spec
 CardDictionary.csv
 app/GreToClientEvent.json
 app/Append.csv
+app/AuthenticateResponse.json
+app/GREMessageType_ConnectResp.json
+app/GREMessageType_DieRollResultsResp.json
+app/GREMessageType_GameStateMessage.json
+app/GREMessageType_SetSettingsResp.json
+app/MatchGameRoomStateChangedEvent_end.json
+app/MatchGameRoomStateChangedEvent_start.json

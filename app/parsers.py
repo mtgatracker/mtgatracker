@@ -440,7 +440,7 @@ def parse_game_state_message(message, timestamp=None):
                 owner = object['controllerSeatId']
                 type = object["type"]
                 zone = object['zoneId']
-                if type not in ["GameObjectType_Card", "GameObjectType_Ability", "GameObjectType_SplitCard"]:
+                if type not in ["GameObjectType_Card", "GameObjectType_Ability", "GameObjectType_SplitCard", "GameObjectType_Token"]:
                     mtga_app.mtga_watch_app.game.ignored_iids.add(instance_id)
                 else:
                     player, zone = mtga_app.mtga_watch_app.game.get_owner_zone_tup(zone)
@@ -449,7 +449,7 @@ def parse_game_state_message(message, timestamp=None):
                             player = mtga_app.mtga_watch_app.game.hero
                             # if zone is shared, don't care what player we use to put this card into it
                         assert isinstance(player, Player)
-                        if type in ["GameObjectType_Card", "GameObjectType_SplitCard"]:
+                        if type in ["GameObjectType_Card", "GameObjectType_SplitCard", "GameObjectType_Token"]: # 2022/04/20 GameObjectType_Tokenを追加
                             player.put_instance_id_in_zone(instance_id, owner, zone)
                             zone.match_game_id_to_card(instance_id, card_id)
                         elif type == "GameObjectType_Ability":
@@ -458,6 +458,7 @@ def parse_game_state_message(message, timestamp=None):
                             ability_name = all_mtga_cards.find_one(card_id)
                             ability = Ability(ability_name, source_grp_id, source_instance_id, card_id, owner, instance_id)
                             zone.abilities.append(ability)
+
                 if "attackState" in object and object["attackState"] == "AttackState_Attacking":
                     card = mtga_app.mtga_watch_app.game.find_card_by_iid(instance_id)
                     limit_tuple = (mtga_app.mtga_watch_app.game.turn_number, "attacks", card)
@@ -596,6 +597,24 @@ def parse_game_state_message(message, timestamp=None):
                     # TODO: 他のゾーン遷移のログを出力する
                     else:
                         print("zone_src:"+zone_src+", zone_dst:"+zone_dest+", category:"+category)
+                if annotation_type == "AnnotationType_TokenCreated":
+                    # TODO: トークン生成
+                    if "affectorId" not in annotation.keys():
+                        affector_id = 0
+                    else:
+                        affector_id = annotation["affectorId"]
+                    affected_ids = annotation["affectedIds"]
+                    for affected_id in affected_ids:
+                        card = mtga_app.mtga_watch_app.game.find_card_by_iid(affected_id)
+                        if affector_id == 0:
+                            affector_id = card.owner_seat_id
+                        player_texts = build_event_texts_from_iid_or_grpid(affector_id, mtga_app.mtga_watch_app.game)
+                        annotation_texts = build_event_texts_from_iid_or_grpid(affected_id, mtga_app.mtga_watch_app.game)
+                        event_texts = [*player_texts, " creates ", *annotation_texts]
+                        queue_obj = {"game_history_event": event_texts}
+                        mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
+                        general_output_queue.put(queue_obj)
+
 
 
 @util.debug_log_trace
