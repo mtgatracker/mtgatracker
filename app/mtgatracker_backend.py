@@ -155,6 +155,8 @@ if __name__ == "__main__":
             print("Failed to append "+APPEND_FILENAME)
 
     print("MTGA.exe running check")
+    root = Tk()
+    root.withdraw()
     mtga_running = False
     while not mtga_running:
         for proc in psutil.process_iter():
