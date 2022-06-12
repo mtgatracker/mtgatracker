@@ -1,7 +1,6 @@
 python-dateutil
 tailer
 websockets
-pytest
 pynput
 mtga>=0.9.3
 psutil
