@@ -67,6 +67,7 @@ def dispatch_blob(blob):
 # MID-LEVER DISPATCHERS: first depth level of a blob
 @util.debug_log_trace
 def dispatch_match_gameroom_state_change(blob):
+    print("dispatch_match_gameroom_state_change")
     state_type = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']['stateType']
     if state_type == "MatchGameRoomStateType_Playing":
         parsers.parse_match_playing(blob)
@@ -91,6 +92,7 @@ def dispatch_jsonrpc_method(blob):
 @util.debug_log_trace
 def dispatch_gre_to_client(blob):
     if isinstance(blob, dict):
+        #print("dispatch_gre_to_client")
         client_messages = blob["greToClientEvent"]['greToClientMessages']
         dont_care_types = ["GREMessageType_UIMessage"]
         for message in client_messages:
@@ -126,7 +128,7 @@ def dispatch_gre_to_client(blob):
 @util.debug_log_trace
 def dispatch_client_to_gre(blob):
     # TODO: seems this is dead code (9/10/18) :(
-    client_message = blob['clientToGreMessage']
+    client_message = blob['ClientToGreMessage']
     message_type = client_message['type']
     dont_care_types = ["ClientMessageType_UIMessage"]
     unknown_types = ["ClientMessageType_PerformActionResp", "ClientMessageType_DeclareAttackersResp"
@@ -142,7 +144,7 @@ def dispatch_client_to_gre(blob):
         # TODO: log ?
         pass
     else:
-        app.mtga_app.mtga_logger.warning("{}WARNING: unknown clientToGreMessage type: {}".format(util.ld(), message_type))
+        app.mtga_app.mtga_logger.warning("{}WARNING: unknown ClientToGreMessage type: {}".format(util.ld(), message_type))
 
 
 # LOWER LEVEL DISPATCHERS: a message or game object (?)

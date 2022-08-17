@@ -258,7 +258,7 @@ if __name__ == "__main__":
             with open(args.log_file, encoding="utf_8_sig") as log_file:
                 kt = KillableTailer(log_file, queues.all_die_queue)
                 kt.seek_end()
-                in_uctl = False
+                in_uctl = False # uctl means UnityCrossThreadLogger
                 in_json = False
                 is_resp = False
                 for line in kt.follow(1):

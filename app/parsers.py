@@ -240,9 +240,11 @@ def build_event_texts_from_iid_or_grpid(iid, game, grpid=None):
 @util.debug_log_trace
 def parse_game_state_message(message, timestamp=None):
     # DOM: ok
+    #print("parse_game_state_message")
     import app.mtga_app as mtga_app
     with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
         if "turnInfo" in message.keys():
+            print("turnInfo")
             if "turnNumber" in message["turnInfo"].keys():
                 player = mtga_app.mtga_watch_app.game.get_player_in_seat(message["turnInfo"]["activePlayer"])
                 if "decisionPlayer" in message["turnInfo"].keys():
@@ -299,6 +301,7 @@ def parse_game_state_message(message, timestamp=None):
                     mtga_app.mtga_watch_app.game.current_phase += "-{}".format(message["turnInfo"]["step"])
             mtga_app.mtga_logger.debug(message["turnInfo"])
         if 'gameInfo' in message.keys():
+            print("gameInfo")
             if 'matchState' in message['gameInfo']:
                 game_number = message['gameInfo']['gameNumber']
                 game_player_id = "-game{}-{}".format(game_number, mtga_app.mtga_watch_app.game.hero.player_id)
@@ -334,6 +337,7 @@ def parse_game_state_message(message, timestamp=None):
                                                             mtga_app.mtga_watch_app.match.event_id,
                                                             mtga_app.mtga_watch_app.match.opponent_rank)
         if 'annotations' in message.keys():
+            print("annotations")
             for annotation in message['annotations']:
                 annotation_type = annotation['type'][0]
                 if annotation_type == 'AnnotationType_ObjectIdChanged':
@@ -431,6 +435,7 @@ def parse_game_state_message(message, timestamp=None):
                         mtga_app.mtga_watch_app.send_error("Exception during parse AnnotationType_ResolutionComplete. Check log for more details")
 
         if 'gameObjects' in message.keys():
+            print("gameObjects")
             game_objects = message['gameObjects']
             for object in game_objects:
                 card_id = object['grpId']
@@ -486,6 +491,7 @@ def parse_game_state_message(message, timestamp=None):
                             mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                             general_output_queue.put(queue_obj)
         if 'zones' in message.keys():
+            print("zones")
             cards_to_remove_from_zones = {}
             for zone in message['zones']:
                 try:
@@ -507,6 +513,7 @@ def parse_game_state_message(message, timestamp=None):
                     if card in zone.cards:
                         zone.cards.remove(card)
         if message["type"] == "GameStateType_Diff" and "players" in message.keys():
+            print("GameStateType_Diff")
             players = message["players"]
             for player in players:
                 seat = player["systemSeatNumber"]
@@ -525,6 +532,7 @@ def parse_game_state_message(message, timestamp=None):
         # If this code is in the block above gameObjects, then we will end up with lots of
         # "unknown" cards for opponent cards and actions
         if 'annotations' in message.keys():
+            print("annotations")
             for annotation in message['annotations']:
                 annotation_type = annotation['type'][0]
                 if annotation_type == "AnnotationType_ZoneTransfer":
@@ -670,7 +678,7 @@ def parse_mulligan_response(blob):
 @util.debug_log_trace
 def parse_accept_hand(blob):
     import app.mtga_app as mtga_app
-    client_message = blob['clientToGreMessage']
+    client_message = blob['ClientToGreMessage']
     response = client_message['mulliganResp']['decision']
     if response == "MulliganOption_AcceptHand":
         with mtga_app.mtga_watch_app.game_lock:
@@ -738,6 +746,7 @@ def parse_match_created(blob):
 
 @util.debug_log_trace
 def parse_match_playing(blob):
+    print("parse_match_playing")
     # MatchGameRoomStateType_Playing
     import app.mtga_app as mtga_app
     temp_players = {

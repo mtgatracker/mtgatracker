@@ -106,6 +106,8 @@ def block_watch_task(in_queue, out_queue):
             if not json_str.startswith("[Message summarized"):
                 # [Message summarized because one or more GameStateMessages exceeded the 50 GameObject or 50 Annotation limit.]
                 try:
+                    with open('blob.txt', 'w') as f:
+                        f.write(json_str)
                     blob = json.loads(json_str)
                     BLOCK_SEQ += 1
                     # useful: next time you're trying to figure out why a blob isn't getting through the queue:
