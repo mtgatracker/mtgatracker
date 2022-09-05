@@ -128,3 +128,4 @@ app/GREMessageType_GameStateMessage.json
 app/GREMessageType_SetSettingsResp.json
 app/MatchGameRoomStateChangedEvent_end.json
 app/MatchGameRoomStateChangedEvent_start.json
+app/blog.json

@@ -67,7 +67,7 @@ def dispatch_blob(blob):
 # MID-LEVER DISPATCHERS: first depth level of a blob
 @util.debug_log_trace
 def dispatch_match_gameroom_state_change(blob):
-    print("dispatch_match_gameroom_state_change")
+    #print("dispatch_match_gameroom_state_change")
     state_type = blob['matchGameRoomStateChangedEvent']['gameRoomInfo']['stateType']
     if state_type == "MatchGameRoomStateType_Playing":
         parsers.parse_match_playing(blob)

@@ -244,7 +244,7 @@ def parse_game_state_message(message, timestamp=None):
     import app.mtga_app as mtga_app
     with mtga_app.mtga_watch_app.game_lock:  # the game state may become inconsistent in between these steps, so lock it
         if "turnInfo" in message.keys():
-            print("turnInfo")
+            #print("turnInfo")
             if "turnNumber" in message["turnInfo"].keys():
                 player = mtga_app.mtga_watch_app.game.get_player_in_seat(message["turnInfo"]["activePlayer"])
                 if "decisionPlayer" in message["turnInfo"].keys():
@@ -301,7 +301,7 @@ def parse_game_state_message(message, timestamp=None):
                     mtga_app.mtga_watch_app.game.current_phase += "-{}".format(message["turnInfo"]["step"])
             mtga_app.mtga_logger.debug(message["turnInfo"])
         if 'gameInfo' in message.keys():
-            print("gameInfo")
+            #print("gameInfo")
             if 'matchState' in message['gameInfo']:
                 game_number = message['gameInfo']['gameNumber']
                 game_player_id = "-game{}-{}".format(game_number, mtga_app.mtga_watch_app.game.hero.player_id)
@@ -337,7 +337,7 @@ def parse_game_state_message(message, timestamp=None):
                                                             mtga_app.mtga_watch_app.match.event_id,
                                                             mtga_app.mtga_watch_app.match.opponent_rank)
         if 'annotations' in message.keys():
-            print("annotations")
+            #print("annotations")
             for annotation in message['annotations']:
                 annotation_type = annotation['type'][0]
                 if annotation_type == 'AnnotationType_ObjectIdChanged':
@@ -435,7 +435,7 @@ def parse_game_state_message(message, timestamp=None):
                         mtga_app.mtga_watch_app.send_error("Exception during parse AnnotationType_ResolutionComplete. Check log for more details")
 
         if 'gameObjects' in message.keys():
-            print("gameObjects")
+            #print("gameObjects")
             game_objects = message['gameObjects']
             for object in game_objects:
                 card_id = object['grpId']
@@ -491,7 +491,7 @@ def parse_game_state_message(message, timestamp=None):
                             mtga_app.mtga_watch_app.game.events.append(queue_obj["game_history_event"])
                             general_output_queue.put(queue_obj)
         if 'zones' in message.keys():
-            print("zones")
+            #print("zones")
             cards_to_remove_from_zones = {}
             for zone in message['zones']:
                 try:
@@ -513,7 +513,7 @@ def parse_game_state_message(message, timestamp=None):
                     if card in zone.cards:
                         zone.cards.remove(card)
         if message["type"] == "GameStateType_Diff" and "players" in message.keys():
-            print("GameStateType_Diff")
+            #print("GameStateType_Diff")
             players = message["players"]
             for player in players:
                 seat = player["systemSeatNumber"]
@@ -532,7 +532,7 @@ def parse_game_state_message(message, timestamp=None):
         # If this code is in the block above gameObjects, then we will end up with lots of
         # "unknown" cards for opponent cards and actions
         if 'annotations' in message.keys():
-            print("annotations")
+            #print("annotations")
             for annotation in message['annotations']:
                 annotation_type = annotation['type'][0]
                 if annotation_type == "AnnotationType_ZoneTransfer":
@@ -746,7 +746,7 @@ def parse_match_created(blob):
 
 @util.debug_log_trace
 def parse_match_playing(blob):
-    print("parse_match_playing")
+    #print("parse_match_playing")
     # MatchGameRoomStateType_Playing
     import app.mtga_app as mtga_app
     temp_players = {
@@ -760,10 +760,7 @@ def parse_match_playing(blob):
 
     for player in game_room_players:
         temp_players[player["systemSeatId"]]["player_id"] = player["userId"]
-        if game_room_config["clientMetadata"].get(player["userId"]+"_RankClass") and game_room_config["clientMetadata"].get(player["userId"]+"_RankTier"):
-            temp_players[player["systemSeatId"]]["rank"] = game_room_config["clientMetadata"].get(player["userId"]+"_RankClass")+" "+game_room_config["clientMetadata"].get(player["userId"]+"_RankTier")
-        else:
-            temp_players[player["systemSeatId"]]["rank"] = "Unknown"
+        temp_players[player["systemSeatId"]]["rank"] = "Unknown"
 
     reserved_players = game_room_config["reservedPlayers"]
     for player in reserved_players:
