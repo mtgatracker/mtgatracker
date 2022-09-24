@@ -16,7 +16,6 @@ import websockets
 import websockets.legacy
 import websockets.legacy.server
 import time
-from pynput import mouse
 from app.queues import all_die_queue, game_state_change_queue, general_output_queue, decklist_change_queue
 import psutil
 from tkinter import Tk, messagebox
@@ -25,7 +24,6 @@ arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument('-i', '--log_file', default=None)
 arg_parser.add_argument('-nf', '--no_follow', action="store_true", default=False)
 arg_parser.add_argument('-f', '--read_full_log', action="store_true", default=False)
-arg_parser.add_argument('-m', '--mouse_events', action="store_true", default=False)
 arg_parser.add_argument('-p', '--port', default=8089, type=int)
 args = arg_parser.parse_args()
 
@@ -113,21 +111,6 @@ if args.log_file is None:  # assume we're on windows for now # TODO
     args.log_file = output_log
 
 
-def click_event(_x, _y, button, pressed):
-    if pressed:
-        if button == mouse.Button.right:
-            general_output_queue.put({"right_click": True})
-        if button == mouse.Button.left:
-            general_output_queue.put({"left_click": True})
-    if not all_die_queue.empty():
-        return False
-
-
-def start_mouse_listener():
-    with mouse.Listener(on_click=click_event) as listener:
-        listener.join()
-
-
 if __name__ == "__main__":
     CARD_DICTIONARY_FILENAME = "CardDictionary.csv"
     APPEND_FILENAME = "Append.csv"
@@ -196,12 +179,6 @@ if __name__ == "__main__":
     print("starting websocket thread")
     websocket_thread = threading.Thread(target=asyncio.get_event_loop().run_forever)
     websocket_thread.start()
-
-    print("starting mouse thread")
-    mouse_thread = None
-    if args.mouse_events:
-        mouse_thread = threading.Thread(target=start_mouse_listener)
-        mouse_thread.start()
 
     if args.read_full_log:
         print("WARNING: known issue with reading full log!")
@@ -308,8 +285,5 @@ if __name__ == "__main__":
     json_watch_process.join()
     websocket_thread.join()
     start_server.ws_server.close()
-    if mouse_thread:
-        mouse_thread.join()
-        print("mouse joined!")
     while queues.json_blob_queue.qsize():
         queues.json_blob_queue.get()

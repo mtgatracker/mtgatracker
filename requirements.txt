@@ -1,6 +1,6 @@
+mtga>=0.9.3
+psutil
+pyinstaller
 python-dateutil
 tailer
 websockets
-pynput
-mtga>=0.9.3
-psutil
