@@ -756,7 +756,7 @@ def parse_match_playing(blob):
     game_room_info = blob["matchGameRoomStateChangedEvent"]["gameRoomInfo"]
     game_room_players = game_room_info["players"]
     game_room_config = game_room_info["gameRoomConfig"]
-    event_id = game_room_config['eventId']
+    event_id = game_room_config.get('eventId')
 
     for player in game_room_players:
         temp_players[player["systemSeatId"]]["player_id"] = player["userId"]
