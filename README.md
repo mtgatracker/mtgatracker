@@ -236,6 +236,6 @@ interactions MTGA Tracker has, as well as [repo-supervisor](https://github.com/a
 secrets safe, even in an open-source project.
 
 Special shoutout to [fyears/electron-python-example](https://github.com/fyears/electron-python-example) for providing
-a truly excellent tutotial to launchpad off of!
+a truly excellent tutorial to launchpad off of!
 
 MTGA Tracker is licensed under the [MIT License](https://opensource.org/licenses/MIT).
