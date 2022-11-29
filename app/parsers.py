@@ -10,6 +10,24 @@ from app.models.card import Ability
 from mtga import all_mtga_cards
 
 
+class DraftPickKey:
+    REQUEST = "request"
+    PAYLOAD = "Payload"
+    DRAFT_ID = "DraftId"
+    GRP_ID = "GrpId"
+    PACK = "Pack"
+    PICK = "Pick"
+    EVENT = "draft_event"
+
+class DraftNotifyKey:
+    DRAFT_ID = "draftId"
+    GRP_ID = "GrpId"
+    PACK = "SelfPack"
+    PICK = "SelfPick"
+    CARDS = "PackCards"
+    EVENT = DraftPickKey.EVENT
+
+
 @util.debug_log_trace
 def parse_jsonrpc_blob(blob):
     pass
@@ -109,6 +127,52 @@ def parse_draft_status(blob):
         draft_history[draftId] = {'picks': picks, 'pack': pack, 'picknum': blob["pickNumber"], 'packnum': blob["packNumber"]}
     else:
         draft_history[draftId] = None
+
+
+@util.debug_log_trace
+def parse_draft_pick(blob, title):
+    # get request
+    if DraftPickKey.REQUEST not in blob:
+        return
+    else:
+        blob = blob[DraftPickKey.REQUEST]
+
+    # get Payload
+    if DraftPickKey.PAYLOAD not in blob:
+        return
+    else:
+        blob = blob[DraftPickKey.PAYLOAD]
+
+    queue_obj = {
+        DraftPickKey.EVENT: title,
+        DraftPickKey.PACK: blob.get(DraftPickKey.PACK),
+        DraftPickKey.PICK: blob.get(DraftPickKey.PICK)
+    }
+
+    general_output_queue.put(queue_obj)
+
+
+@util.debug_log_trace
+def parse_draft_pick(blob, title):
+    # get request
+    if DraftPickKey.REQUEST not in blob:
+        return
+    else:
+        blob = blob[DraftPickKey.REQUEST]
+
+    # get Payload
+    if DraftPickKey.PAYLOAD not in blob:
+        return
+    else:
+        blob = blob[DraftPickKey.PAYLOAD]
+
+    queue_obj = {
+        DraftPickKey.EVENT: title,
+        DraftPickKey.PACK: blob.get(DraftPickKey.PACK),
+        DraftPickKey.PICK: blob.get(DraftPickKey.PICK)
+    }
+
+    general_output_queue.put(queue_obj)
 
 
 @util.debug_log_trace

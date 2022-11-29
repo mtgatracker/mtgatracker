@@ -44,6 +44,10 @@ def dispatch_blob(blob):
         elif "block_title" in blob and (blob["block_title"] == "Draft.DraftStatus" or
                                         blob["block_title"] == "Draft.MakePick"):
             parsers.parse_draft_status(blob)
+        elif "block_title" in blob and (blob["block_title"] == "Event_PlayerDraftMakePick"):    # new event
+            parsers.parse_draft_pick(blob, blob["block_title"])
+        elif "block_title" in blob and (blob["block_title"] == "Draft.Notify"):                 # new event
+            parsers.parse_draft_notify(blob, blob["block_title"])
         elif "block_title" in blob and blob["block_title"] == "PlayerInventory.GetPlayerInventory":
             if "payload" in blob:
                 parsers.pass_through("inventory", blob["payload"]["playerId"], blob["payload"])
