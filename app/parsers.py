@@ -153,19 +153,7 @@ def parse_draft_pick(blob, title):
 
 
 @util.debug_log_trace
-def parse_draft_pick(blob, title):
-    # get request
-    if DraftPickKey.REQUEST not in blob:
-        return
-    else:
-        blob = blob[DraftPickKey.REQUEST]
-
-    # get Payload
-    if DraftPickKey.PAYLOAD not in blob:
-        return
-    else:
-        blob = blob[DraftPickKey.PAYLOAD]
-
+def parse_draft_notify(blob, title):
     queue_obj = {
         DraftPickKey.EVENT: title,
         DraftPickKey.PACK: blob.get(DraftPickKey.PACK),
