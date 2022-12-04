@@ -17,15 +17,20 @@ class DraftPickKey:
     GRP_ID = "GrpId"
     PACK = "Pack"
     PICK = "Pick"
-    EVENT = "draft_event"
+    EVENT = "draft_pick_event"
+    CARD_NAME = "CardName"
 
 class DraftNotifyKey:
     DRAFT_ID = "draftId"
     GRP_ID = "GrpId"
-    PACK = "SelfPack"
-    PICK = "SelfPick"
-    CARDS = "PackCards"
-    EVENT = DraftPickKey.EVENT
+    SELF_PACK = "SelfPack"
+    SELF_PICK = "SelfPick"
+    PACK_CARDS = "PackCards"
+    EVENT = "draft_pack_event"
+    PACK = "Pack"
+    PICK = "Pick"
+    RARE = "Rare"
+    UNCOMMON = "Uncommon"
 
 
 @util.debug_log_trace
@@ -143,10 +148,14 @@ def parse_draft_pick(blob, title):
     else:
         blob = blob[DraftPickKey.PAYLOAD]
 
+    grp_id = blob.get(DraftPickKey.GRP_ID)
+    card = all_mtga_cards.find_one(grp_id)
+    card_name = card.pretty_name
+
     queue_obj = {
-        DraftPickKey.EVENT: title,
-        DraftPickKey.PACK: blob.get(DraftPickKey.PACK),
-        DraftPickKey.PICK: blob.get(DraftPickKey.PICK)
+        DraftPickKey.EVENT: {
+            DraftPickKey.CARD_NAME: card_name
+        }
     }
 
     general_output_queue.put(queue_obj)
@@ -155,9 +164,10 @@ def parse_draft_pick(blob, title):
 @util.debug_log_trace
 def parse_draft_notify(blob, title):
     queue_obj = {
-        DraftPickKey.EVENT: title,
-        DraftPickKey.PACK: blob.get(DraftPickKey.PACK),
-        DraftPickKey.PICK: blob.get(DraftPickKey.PICK)
+        DraftNotifyKey.EVENT: {
+            DraftNotifyKey.PACK: blob.get(DraftNotifyKey.PACK),
+            DraftNotifyKey.PICK: blob.get(DraftNotifyKey.PICK)
+        }
     }
 
     general_output_queue.put(queue_obj)
