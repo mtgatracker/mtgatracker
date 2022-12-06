@@ -140,13 +140,13 @@ def parse_draft_pick(blob, title):
     if DraftPickKey.REQUEST not in blob:
         return
     else:
-        blob = blob[DraftPickKey.REQUEST]
+        blob = json.loads(blob[DraftPickKey.REQUEST])
 
     # get Payload
     if DraftPickKey.PAYLOAD not in blob:
         return
     else:
-        blob = blob[DraftPickKey.PAYLOAD]
+        blob = json.loads(blob[DraftPickKey.PAYLOAD])
 
     grp_id = blob.get(DraftPickKey.GRP_ID)
     card = all_mtga_cards.find_one(grp_id)
@@ -163,6 +163,7 @@ def parse_draft_pick(blob, title):
 
 @util.debug_log_trace
 def parse_draft_notify(blob, title):
+    app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
     queue_obj = {
         DraftNotifyKey.EVENT: {
             DraftNotifyKey.PACK: blob.get(DraftNotifyKey.PACK),
