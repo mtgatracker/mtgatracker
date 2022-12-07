@@ -21,6 +21,7 @@ class DraftPickKey:
     CARD_NAME = "CardName"
 
 class DraftNotifyKey:
+    PAYLOAD = "Payload"
     DRAFT_ID = "draftId"
     GRP_ID = "GrpId"
     SELF_PACK = "SelfPack"
@@ -31,6 +32,8 @@ class DraftNotifyKey:
     PICK = "Pick"
     RARE = "Rare"
     UNCOMMON = "Uncommon"
+    COMMON = "Common"
+    BASIC_LAND = "BasicLand"
 
 
 @util.debug_log_trace
@@ -164,10 +167,32 @@ def parse_draft_pick(blob, title):
 @util.debug_log_trace
 def parse_draft_notify(blob, title):
     app.mtga_app.mtga_logger.info("{}".format(pprint.pformat(blob)))
+
+    rare = []
+    uncommon = []
+    common = []
+    basic_land = []
+
+    for grp_id in blob.get(DraftNotifyKey.PACK_CARDS):
+        card = all_mtga_cards.find_one(grp_id)
+        match card.rarity:
+            case 1:
+                basic_land.append(card.pretty_name)
+            case 2:
+                common.append(card.pretty_name)
+            case 3:
+                uncommon.append(card.pretty_name)
+            case 4 | 5:
+                rare.append(card.pretty_name)
+
     queue_obj = {
         DraftNotifyKey.EVENT: {
-            DraftNotifyKey.PACK: blob.get(DraftNotifyKey.PACK),
-            DraftNotifyKey.PICK: blob.get(DraftNotifyKey.PICK)
+            DraftNotifyKey.PACK: blob.get(DraftNotifyKey.SELF_PACK),
+            DraftNotifyKey.PICK: blob.get(DraftNotifyKey.SELF_PICK),
+            DraftNotifyKey.BASIC_LAND: basic_land,
+            DraftNotifyKey.COMMON: common,
+            DraftNotifyKey.UNCOMMON: uncommon,
+            DraftNotifyKey.RARE: rare
         }
     }
 
