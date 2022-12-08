@@ -173,7 +173,10 @@ def parse_draft_notify(blob, title):
     common = []
     basic_land = []
 
-    for grp_id in blob.get(DraftNotifyKey.PACK_CARDS):
+    pack_cards = blob.get(DraftNotifyKey.PACK_CARDS).split(",")
+    pack_card_gids = [int(s) for s in pack_cards]
+
+    for grp_id in pack_card_gids:
         card = all_mtga_cards.find_one(grp_id)
         match card.rarity:
             case 1:
