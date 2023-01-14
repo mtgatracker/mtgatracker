@@ -187,13 +187,34 @@ class Player(object):
 
 
 class Match(object):
-    def __init__(self, match_id, event_id, opponent_name, opponent_rank):
-        self.match_id = match_id
-        self.event_id = event_id
-        self.opponent_name = opponent_name
-        self.opponent_rank = opponent_rank
+    def __init__(self, match_id):
+        self.__match_id = match_id
         self.game_results = []
+    
+    @property
+    def event_id(self):
+        return self.__event_id
 
+    @event_id.setter
+    def event_id(self, event_id):
+        self.__event_id = event_id
+    
+    @property
+    def opponent_name(self):
+        return self.__opponent_name
+
+    @opponent_name.setter
+    def opponent_name(self, opponent_name):
+        self.__opponent_name = opponent_name
+        
+    @property
+    def opponent_rank(self):
+        return self.__opponent_rank
+
+    @opponent_rank.setter
+    def opponent_rank(self, opponent_rank):
+        self.__opponent_rank = opponent_rank
+        
     def current_game_number(self):
         return len(self.game_results) + 1
 
@@ -347,10 +368,11 @@ class Game(object):
 
         hero_chess_time_total, oppo_chess_time_total = self.calculate_chess_timer_total()
 
+        # 2022/04/17 self.hero.original_deckがNoneである場合に備えて参考演算子を追加
         hero_obj = {
             "name": self.hero.player_name,
             "userID": self.hero.player_id,
-            "deck": self.hero.original_deck.to_min_json(),
+            "deck": self.hero.original_deck.to_min_json() if self.hero.original_deck else {"deckID": None, "poolName": None, "cards": None, "sideboard": None},
             "playedCards": self.hero.played_cards_to_min_json(),
             "mulliganCount": self.hero.mulligan_count,
             "timeSpent": str(hero_chess_time_total),

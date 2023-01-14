@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Player-test.log",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "--log_file", 
+                "Player-test.log",
+                "--read_full_log"
+            ],
+        }
+    ]
+}
