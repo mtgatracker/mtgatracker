@@ -118,7 +118,7 @@ if __name__ == "__main__":
     card_dictionary_csv = []
     for card in all_mtga_cards.cards:
         if (not card.is_token and   # トークンはGathererに画像が無いので除外
-            not card.is_digital_only and    # デジタル専用カードもGathererに画像が無いので除外
+            #not card.is_digital_only and    # デジタル専用カードもGathererに画像が無いので除外としたが、Scryfallからダウンロードしたので除外しない
             not card.set == "ARENASUP"):    # ARENASUPはイベント用紋章とかなので除外
             # ダンジョンはGathererに画像があるので除外しない
             line = card.pretty_name + "," + card.pretty_name + "\n"
