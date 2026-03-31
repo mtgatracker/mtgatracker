@@ -1,5 +1,9 @@
 # MTGATracker
 
+# Archive Notice
+
+**MTGATracker is no longer maintained.** This repository and software should no longer be used.
+
 [![Discord](https://img.shields.io/discord/425145310684250112.svg)](https://discordapp.com/channels/425145310684250112/425145310684250114)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/mtgatracker/mtgatracker?svg=true)](https://ci.appveyor.com/project/shawkinsl/mtgatracker)
 [![Github All Releases](https://img.shields.io/github/downloads/shawkinsl/mtga-tracker/total.svg)](https://github.com/shawkinsl/mtga-tracker/releases)
