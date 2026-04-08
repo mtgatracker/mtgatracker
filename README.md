@@ -236,7 +236,7 @@ The use of MTGATracker is considered an implicit agreement to this policy.
 ### Credits, License
 
 MTGA Tracker is built with many free / oss libraries, in general listed in the various manifest files.
-MTGA Tracker is mainly built using [JetBrains' PyCharm](https://www.jetbrains.com/pycharm/), [cmder](http://cmder.net/),
+MTGA Tracker is mainly built using [JetBrains' PyCharm](https://www.jetbrains.com/pycharm/), [cmder](https://cmder.app/),
 [Electron](https://electronjs.org/), [Python](https://www.python.org/), and many other libraries and tools.
 
 Thanks to Auth0 for both the [webtask.io](https://webtask.io) serverless platform, which drives any web-based
