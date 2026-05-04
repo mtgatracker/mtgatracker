@@ -1,8 +1,6 @@
+mtga>=0.9.3
+psutil
+pyinstaller
 python-dateutil
-requests
 tailer
 websockets
-pyinstaller
-pytest
-pynput
-mtga>=0.9.3

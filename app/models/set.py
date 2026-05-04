@@ -122,8 +122,20 @@ class Pool(object):
 
 
 class Zone(Pool):
+    zone_ids = {
+        "ZoneType_Suppressed": 24,
+        "ZoneType_Pending": 25,
+        "ZoneType_Command	": 26,
+        "ZoneType_Stack": 27,
+        "ZoneType_Battlefield": 28,
+        "ZoneType_Exile": 29,
+        "ZoneType_Limbo": 30
+    }
+
     def __init__(self, pool_name, zone_id=-1):
         super().__init__(pool_name)
+        if zone_id == -1:
+            zone_id = Zone.zone_ids.get(pool_name, -1)
         self.zone_id = zone_id
         self.abilities = []
 

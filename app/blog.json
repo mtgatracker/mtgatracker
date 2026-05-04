@@ -1,0 +1,61 @@
+{
+    "transactionId": "f3b498b4-40d6-4ce2-b2fa-92085e12d7fc",
+    "requestId": 2,
+    "timestamp": "1660252637463",
+    "matchGameRoomStateChangedEvent": {
+        "gameRoomInfo": {
+            "gameRoomConfig": {
+                "eventId": "Play_Brawl",
+                "reservedPlayers": [
+                    {
+                        "userId": "TJV53KNQL5ATHAWMKNGVENZFGE",
+                        "playerName": "pos#41882",
+                        "systemSeatId": 1,
+                        "teamId": 1,
+                        "connectionInfo": {
+                            "connectionState": "ConnectionState_Open"
+                        },
+                        "courseId": "Avatar_Basic_Jetmir_SNC",
+                        "sessionId": "7b21503b-c468-416b-acf6-82a084c70a87",
+                        "platformId": "Windows"
+                    },
+                    {
+                        "userId": "UMZFPJVQTFA5HAZMT7XSPI3E6I",
+                        "playerName": "blueberrymoss#65596",
+                        "systemSeatId": 2,
+                        "teamId": 2,
+                        "connectionInfo": {
+                            "connectionState": "ConnectionState_Open"
+                        },
+                        "courseId": "Avatar_Basic_Ellywick_AFR",
+                        "sessionId": "63363eaf-d72b-460b-b87c-e9edd64acb48",
+                        "platformId": "Windows"
+                    }
+                ],
+                "matchId": "0a2ce317-baca-4cb6-be0d-65d69e2f3b30",
+                "greConfig": {
+                    "gameStateRedactorConfiguration": {
+                        "enableRedaction": true,
+                        "enableForceDiff": true
+                    },
+                    "clipsConfiguration": {},
+                    "checkpointConfiguration": {}
+                },
+                "greHostLoggerLevel": "Info",
+                "joinRoomTimeoutSecs": 60,
+                "playerDisconnectTimeoutSecs": 30
+            },
+            "stateType": "MatchGameRoomStateType_Playing",
+            "players": [
+                {
+                    "userId": "TJV53KNQL5ATHAWMKNGVENZFGE",
+                    "systemSeatId": 1
+                },
+                {
+                    "userId": "UMZFPJVQTFA5HAZMT7XSPI3E6I",
+                    "systemSeatId": 2
+                }
+            ]
+        }
+    }
+}

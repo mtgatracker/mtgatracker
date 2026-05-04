@@ -3,7 +3,7 @@ import threading
 import os
 import logging.handlers
 import sys
-import requests
+# import requests
 
 import util
 from app.queues import general_output_queue

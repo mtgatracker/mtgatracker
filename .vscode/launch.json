@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Player-test.log",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "app\\mtgatracker_backend.py",
+            "console": "integratedTerminal"
+        }
+    ]
+}

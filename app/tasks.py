@@ -1,5 +1,6 @@
 import dateutil.parser
 import json
+import traceback
 import app.dispatchers as dispatchers
 from app.mtga_app import mtga_watch_app, mtga_logger
 from app.queues import all_die_queue, game_state_change_queue, decklist_change_queue, general_output_queue
@@ -43,111 +44,99 @@ def block_watch_task(in_queue, out_queue):
         block_lines = block_recieved.split("\n")
 
         request_or_response = None
+        is_timestamp_only = False
+        block_title = ""
         json_str = ""  # hit the ex
         timestamp = None
-        block_title_seq = None
         if block_lines[0] and block_lines[0].startswith("[UnityCrossThreadLogger]"):
-            line = block_lines[0].split("[UnityCrossThreadLogger]")[1]
-            if line.startswith("==>") or line.startswith("<=="):
+            line = block_lines[0].split("[UnityCrossThreadLogger]")[1].strip()
+
+            # starts with request or response or non-message event
+            if line.startswith("==>"):
+                request_or_response = "request"
+                line = line.split("==>")[1].strip()
+            elif line.startswith("<=="):    # never appear
                 request_or_response = "response"
-                if line.startswith("==>"):
-                    request_or_response = "request"
-                line = line[4:]
-                block_title = line.split(" ")[0]
+                line = line.split("<==")[1].strip()
+            elif line.startswith("non-message event:"):
+                line = line.split("non-message event:")[1].strip()
+
+            # starts with timestamp
+            try:
+                timestamp = dateutil.parser.parse(line.split(": ")[0])
+                if len(line.split(": ")) == 1:
+                    is_timestamp_only = True
+            except:
+                pass
+
+            indexes = []
+            if line.startswith("Connecting to matchId"):    # Connecting to matchId
+                block_title = "Connecting to matchId"
+                json_str = "{ \"matchId\": \""+line.split("Connecting to matchId")[1].strip()+"\" }"
+            elif line.startswith("non-message event"):    # non-message event
+                block_title = line.split(": ")[-1].strip()
+            elif line.startswith("[GraphMan]"):    # [GraphMan]
+                block_title = line.strip()
+            elif "{" in line or "[" in line:  # has JSON string in line
                 indexes = []
                 if "{" in line:
                     indexes.append(line.index("{"))
                 if "[" in line:
                     indexes.append(line.index("["))
                 first_open_bracket = min(indexes)
-                json_str = line[first_open_bracket:]
-            elif len(block_lines) > 1:
-                try:
-                    timestamp = dateutil.parser.parse(block_lines[0].split("]")[1].split(": ")[0])
-                except:
-                    pass
-                block_title = block_lines[0].split(" ")[-1]
-                json_str = "\n".join(block_lines[1:])
-        # I think everything below this is deprecated...
-        elif block_lines[1] and block_lines[1].startswith("==>") or block_lines[1].startswith("<=="):
-            """
-            these logs looks like:
-            
-            [UnityCrossThreadLogger]6/7/2018 7:21:03 PM
-            ==> Log.Info(530):
-            {
-                "json": "stuff"
-            }
-            """
-            title_line = block_lines[1]
-            block_title = " ".join(title_line.split(" ")[1:]).split("(")[0]
-            block_title_seq = None
+                block_title = line[:first_open_bracket].strip()
+                json_str = line[first_open_bracket:].strip()
+            elif "(" in line:   # has no JSON string but "("
+                first_open_bracket = line.index("(")
+                block_title = line[:first_open_bracket].strip()
+            elif "Match to" in line or "to Match" in line:   # Match to clientId, clientId to Match
+                block_title = line.split(": ")[-1]
+                if len(block_lines) >= 2:
+                    json_str = "\n".join(block_lines[1:])
+            elif is_timestamp_only and len(block_lines) >= 3:   # response
+                if block_lines[1].startswith("<=="):
+                    request_or_response = "response"
+                    block_title = block_lines[1].split("<==")[1].split("(")[0].strip()
+                    if block_lines[2].startswith("{") or block_lines[2].startswith("["):
+                        json_str = "\n".join(block_lines[2:])
+                elif block_lines[1].startswith("("):    #transactionId
+                    block_title = " ".join(block_lines[1].split(" ")[1:-1])
 
-            if "(" in title_line and ")" in title_line:
-                block_title_seq = title_line.split("(")[1].split(")")[0]  # wtf is this thing?
-            request_or_response = "response"
-            if title_line.startswith("==>"):
-                request_or_response = "request"
-
-            json_str = "\n".join(block_lines[2:]).strip()
-            if json_str.startswith("["):
-                # this is not valid json, we need to surround it with a header such that it's an object instead of a list
-                json_str = '{{"{}": {}}}'.format(block_title, json_str)
-        elif block_lines[1].strip() == "{":
-            """ DEPRECATED
-            these logs look like:
-            
-            [UnityCrossThreadLogger]6/7/2018 7:21:03 PM: Match to 26848417E29213FE: GreToClientEvent
-            {
-              "json": "stuff"
-            }
-            """
-            try:
-                timestamp = dateutil.parser.parse(block_lines[0].split("]")[1].split(": ")[0])
-            except:
-                pass
-            block_title = block_lines[0].split(" ")[-1]
-            json_str = "\n".join(block_lines[1:])
-        elif block_lines[1].strip().endswith("{"):
-            """
-            these blocks looks like: 
-            
-            [UnityCrossThreadLogger]7/2/2018 10:27:59 PM
-            (-1) Incoming Rank.Updated {
-              "json": "stuff
-            }
-            """
-            block_title = block_lines[1].strip().split(" ")[-2]  # skip trailing {
-            json_str = "{" + "\n".join(block_lines[2:])          # cut the first two lines and manually add { back in
         if json_str:
-            try:
-                blob = json.loads(json_str)
-                BLOCK_SEQ += 1
-                # useful: next time you're trying to figure out why a blob isn't getting through the queue:
-                # if "DirectGame" in json_str and "method" in blob:
-                #     import pprint
-                #     pprint.pprint(blob)
-                if log_line:
-                    blob["log_line"] = log_line
-                if timestamp:
-                    blob["timestamp"] = timestamp
-                mtga_logger.info("{}success parsing blob: {}({}) / log_line {}".format(util.ld(), block_title, block_title_seq, log_line))
-                if request_or_response:
-                    blob["request_or_response"] = request_or_response
-                if block_title:
-                    blob["block_title"] = block_title.strip()
-                blob["block_title_sequence"] = BLOCK_SEQ
-                out_queue.put(blob)
-            except Exception as e:
-                mtga_logger.error("{}Could not parse json_blob `{}`".format(util.ld(), json_str))
-                mtga_watch_app.send_error("Could not parse json_blob {}".format(json_str))
+            if not json_str.startswith("[Message summarized"):
+                # [Message summarized because one or more GameStateMessages exceeded the 50 GameObject or 50 Annotation limit.]
+                try:
+                    #with open('blob.txt', 'w') as f:
+                    #    f.write(json_str)
+                    blob = json.loads(json_str)
+                    BLOCK_SEQ += 1
+                    # useful: next time you're trying to figure out why a blob isn't getting through the queue:
+                    # if "DirectGame" in json_str and "method" in blob:
+                    #     import pprint
+                    #     pprint.pprint(blob)
+                    if log_line and isinstance(blob, dict):
+                        blob["log_line"] = log_line
+                    if timestamp and isinstance(blob, dict):
+                        blob["timestamp"] = timestamp
+                    mtga_logger.info("{}success parsing blob: {} / log_line {}".format(util.ld(), block_title, log_line))
+                    if request_or_response and isinstance(blob, dict):
+                        blob["request_or_response"] = request_or_response
+                    if block_title and isinstance(blob, dict):
+                        blob["block_title"] = block_title.strip()
+                    if isinstance(blob, dict):
+                        blob["block_title_sequence"] = BLOCK_SEQ
+                    out_queue.put(blob)
+                except Exception as e:
+                    mtga_logger.error("{}Could not parse json_blob `{}`".format(util.ld(), json_str))
+                    mtga_logger.error("{}".format(traceback.format_exc())) #debug
+                    mtga_watch_app.send_error("Could not parse json_blob {}".format(json_str))
 
 
 def json_blob_reader_task(in_queue, out_queue):
 
     def check_for_client_id(blob):
         if "authenticateResponse" in blob:
-            if "clientId" in blob["authenticateResponse"]:
+            if isinstance(blob, dict) and "clientId" in blob["authenticateResponse"]:
                 # screw it, no one else is going to use this message, mess up the timestamp, who cares
                 with mtga_watch_app.game_lock:
                     if mtga_watch_app.player_id != blob["authenticateResponse"]['clientId']:

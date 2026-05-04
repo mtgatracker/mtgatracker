@@ -1,20 +1,21 @@
 import datetime
-import sys
+#import sys
 
 import app.models.set as mset
-from app.mtga_app import mtga_watch_app
+from app.mtga_app import mtga_watch_app, mtga_logger
 from app.models.card import GameCard
 from app.models.set import Deck
 from util import all_mtga_cards
-try:
-    from app._secrets import API_URL, hash_json_object
-except ImportError:
-    sys.stderr.write("WARNING! Using secrets template; this will not hit production databases!")
-    from app.secrets_template import API_URL, hash_json_object
+
+#try:
+#    from app._secrets import API_URL, hash_json_object
+#except ImportError:
+#    sys.stderr.write("WARNING! Using secrets template; this will not hit production databases!")
+#    from app.secrets_template import API_URL, hash_json_object
 
 
 class Player(object):
-    def __init__(self, player_name, player_id, seat, battlefield, exile, limbo, stack, deck_cards=None):
+    def __init__(self, player_name, player_id, seat, suppressed, pending, command, stack, battlefield, exile, limbo, deck_cards=None):
         self.player_name = player_name
         self.player_id = player_id
         self.seat = seat
@@ -23,19 +24,24 @@ class Player(object):
         self.mulligan_count = 0
         self.starting_hand = 0
 
-        self.library = mset.Library("{}'s library".format(self.player_name), deck_cards, seat)
-        self.hand = mset.Zone("{}'s hand".format(self.player_name))
-        self.graveyard = mset.Zone("{}'s graveyard".format(self.player_name))
+        self.revealed = mset.Zone("{}'s revealed".format(self.player_name), 18 if seat == 1 else 19 if seat == 2 else -1)
+        self.hand = mset.Zone("{}'s hand".format(self.player_name), 31 if seat == 1 else 35 if seat == 2 else -1)
+        self.library = mset.Library("{}'s library".format(self.player_name), deck_cards, seat, 32 if seat == 1 else 36 if seat == 2 else -1)
+        self.graveyard = mset.Zone("{}'s graveyard".format(self.player_name), 33 if seat == 1 else 37 if seat == 2 else -1)
+        self.sideboard = mset.Zone("{}'s sideboard".format(self.player_name), 34 if seat == 1 else 38 if seat == 2 else -1)
+        self.suppressed = suppressed
+        self.pending = pending
+        self.command = command
+        self.stack = stack
+        self.battlefield = battlefield
         self.exile = exile
         self.limbo = limbo
-        self.battlefield = battlefield
-        self.stack = stack
         self.is_hero = False
         self.original_deck = None
         self._deck_cards = deck_cards
 
-        self.private_zones = [self.library, self.hand, self.graveyard]
-        self.shared_zones = [self.exile, self.battlefield, self.limbo, self.stack]
+        self.private_zones = [self.revealed, self.hand, self.library, self.graveyard, self.sideboard]
+        self.shared_zones = [self.suppressed, self.pending, self.command, self.stack, self.battlefield, self.exile, self.limbo]
         self.all_zones = self.private_zones + self.shared_zones
 
     @property
@@ -45,23 +51,60 @@ class Player(object):
         return total
 
     def get_zone_by_name(self, name):
-        # ["ZoneType_Hand", "ZoneType_Library", "ZoneType_Graveyard", "ZoneType_Exile", "ZoneType_Limbo"]
-        if name == "ZoneType_Hand":
+        if name == "ZoneType_Revealed":
+            return self.revealed
+        elif name == "ZoneType_Suppressed":
+            return self.stack
+        elif name == "ZoneType_Pending":
+            return self.stack
+        elif name == "ZoneType_Command":
+            return self.stack
+        elif name == "ZoneType_Stack":
+            return self.stack
+        elif name == "ZoneType_Battlefield":
+            return self.battlefield
+        elif name == "ZoneType_Exile":
+            return self.exile
+        elif name == "ZoneType_Limbo":
+            return self.limbo
+        elif name == "ZoneType_Hand":
             return self.hand
         elif name == "ZoneType_Library":
             return self.library
         elif name == "ZoneType_Graveyard":
             return self.graveyard
-        elif name == "ZoneType_Exile":
-            return self.exile
-        elif name == "ZoneType_Limbo":
-            return self.limbo
-        elif name == "ZoneType_Stack":
-            return self.stack
-        elif name == "ZoneType_Battlefield":
-            return self.battlefield
+        elif name == "ZoneType_Sideboard":
+            return self.sideboard
+        return None
 
-    def get_location_of_instance(self, instance_id):
+    def get_zone_by_id(self, id):
+        if id == 18 or id == 19:  # Revealed zones
+            return self.revealed
+        elif id == 24:
+            return self.stack
+        elif id == 25:
+            return self.stack
+        elif id == 26:
+            return self.stack
+        elif id == 27:
+            return self.stack
+        elif id == 28:
+            return self.battlefield
+        elif id == 29:
+            return self.exile
+        elif id == 30:
+            return self.limbo
+        elif id == 31 or id == 35:  # Hand zones
+            return self.hand
+        elif id == 32 or id == 36:  # Library zones
+            return self.library
+        elif id == 33 or id == 37:  # Graveyard zones
+            return self.graveyard
+        elif id == 34 or id == 38:  # Sideboard zones
+            return self.sideboard
+        return None
+    
+    def get_location_of_instance(self, instance_id, messages_zones=[]):
         for zone in self.all_zones:
             for card in zone.cards:
                 if card.game_id == instance_id or instance_id in card.previous_iids:
@@ -69,17 +112,22 @@ class Player(object):
             for ability in zone.abilities:
                 if ability.game_id == instance_id:
                     return ability, zone
+        for zone in messages_zones:
+            if 'objectInstanceIds' in zone:
+                for oiid in zone['objectInstanceIds']:
+                    if oiid == instance_id:
+                        return None, self.get_zone_by_id(zone['zoneId'])
         return None, None
 
-    def put_instance_id_in_zone(self, instance_id, owner_id, zone):
-        card, current_zone = self.get_location_of_instance(instance_id)
+    def put_instance_id_in_zone(self, instance_id, owner_id, zone, messages_zones=[]):
+        card, current_zone = self.get_location_of_instance(instance_id, messages_zones)
         if current_zone:
             if current_zone != zone:
-                # mtga_logger.info("-- iid {} => {}".format(instance_id, card))
+                mtga_logger.debug("-- iid {} => {}".format(instance_id, card))
                 current_zone.transfer_card_to(card, zone)
         else:
             unknown_card = GameCard("unknown", "unknown", [], [], "", "", -1, "Unknown", -1, -1, owner_id, instance_id)
-            # mtga_logger.info("-- iid {} => {}".format(instance_id, unknown_card))
+            mtga_logger.debug("-- iid {} => {}".format(instance_id, unknown_card))
             zone.cards.append(unknown_card)
 
     @property
@@ -187,13 +235,34 @@ class Player(object):
 
 
 class Match(object):
-    def __init__(self, match_id, event_id, opponent_name, opponent_rank):
-        self.match_id = match_id
-        self.event_id = event_id
-        self.opponent_name = opponent_name
-        self.opponent_rank = opponent_rank
+    def __init__(self, match_id):
+        self.__match_id = match_id
         self.game_results = []
+    
+    @property
+    def event_id(self):
+        return self.__event_id
 
+    @event_id.setter
+    def event_id(self, event_id):
+        self.__event_id = event_id
+    
+    @property
+    def opponent_name(self):
+        return self.__opponent_name
+
+    @opponent_name.setter
+    def opponent_name(self, opponent_name):
+        self.__opponent_name = opponent_name
+        
+    @property
+    def opponent_rank(self):
+        return self.__opponent_rank
+
+    @opponent_rank.setter
+    def opponent_rank(self, opponent_rank):
+        self.__opponent_rank = opponent_rank
+        
     def current_game_number(self):
         return len(self.game_results) + 1
 
@@ -205,7 +274,14 @@ class Match(object):
 
 
 class Game(object):
-    def __init__(self, match_id, hero, opponent, shared_battlefield, shared_exile, shared_limbo, shared_stack,
+    def __init__(self, match_id, hero, opponent, 
+                 shared_suppressed,
+                 shared_pending,
+                 shared_command,
+                 shared_stack,
+                 shared_battlefield, 
+                 shared_exile, 
+                 shared_limbo, 
                  event_id, opponent_rank="Unknown"):
         self.match_id = match_id
         self.final = False
@@ -223,10 +299,13 @@ class Game(object):
         assert isinstance(self.hero, Player)
         self.opponent = opponent
         assert isinstance(self.opponent, Player)
+        self.suppressed = shared_suppressed
+        self.pending = shared_pending
+        self.command = shared_command
+        self.stack = shared_stack
         self.battlefield = shared_battlefield
         self.exile = shared_exile
         self.limbo = shared_limbo
-        self.stack = shared_stack
 
         self.ignored_iids = set()
         self.last_hero_library_hash = None
@@ -250,9 +329,11 @@ class Game(object):
 
     def game_state(self):
         hero_chess_time_total, oppo_chess_time_total = self.calculate_chess_timer_total()
+        # "deck_id": self.hero.original_deck.deck_id if self.hero.original_deck is not None else None,
+        # "deck_id": self.hero.original_deck.deck_id,
         game_state = {
             "game_id": self.match_id,
-            "deck_id": self.hero.original_deck.deck_id,
+            "deck_id": self.hero.original_deck.deck_id if self.hero.original_deck is not None else {},
             "draw_odds": self.hero.calculate_draw_odds(self.ignored_iids),
             "opponent_hand": [c.to_serializable() for c in self.opponent.hand.cards],
             "elapsed_time": str(datetime.datetime.now() - self.start_time),
@@ -273,6 +354,7 @@ class Game(object):
         else:
             zone = self.hero.get_zone_by_name(zone_name)
             zone.zone_id = zone_id
+        mtga_logger.debug("Registering zone {} with id {}".format(zone_name, zone_id))
 
     def get_owner_zone_tup(self, zone_id):
         assert isinstance(self.hero, Player)
@@ -288,7 +370,7 @@ class Game(object):
         return None, None
 
     def get_player_in_seat(self, seat_id):
-        from app.mtga_app import mtga_logger
+        
         if self.hero.seat == seat_id:
             return self.hero
         elif self.opponent.seat == seat_id:
@@ -347,10 +429,11 @@ class Game(object):
 
         hero_chess_time_total, oppo_chess_time_total = self.calculate_chess_timer_total()
 
+        # 2022/04/17 self.hero.original_deckがNoneである場合に備えて参考演算子を追加
         hero_obj = {
             "name": self.hero.player_name,
             "userID": self.hero.player_id,
-            "deck": self.hero.original_deck.to_min_json(),
+            "deck": self.hero.original_deck.to_min_json() if self.hero.original_deck else {"deckID": None, "poolName": None, "cards": None, "sideboard": None},
             "playedCards": self.hero.played_cards_to_min_json(),
             "mulliganCount": self.hero.mulligan_count,
             "timeSpent": str(hero_chess_time_total),
