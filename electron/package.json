@@ -53,7 +53,7 @@
     },
     "devDependencies": {
         "electron": "^1.8.8",
-        "electron-packager": "^9.1.0",
+        "electron-packager": "^16.0.0",
         "grunt-electron-installer": "^2.1.0",
         "node-fs-extra": "^0.8.2"
     },
