@@ -1,6 +1,8 @@
 import app.parsers as parsers
 import app.mtga_app
 import util
+import base64
+import models.messages_pb2
 
 # HIGHEST LEVEL DISPATCHERS: any json blob
 
@@ -15,7 +17,7 @@ def dispatch_blob(blob):
         dispatch_jsonrpc_method(blob)
     elif "greToClientEvent" in blob:
         dispatch_gre_to_client(blob)
-    elif "clientToGreMessage" in blob:
+    elif "clientToMatchServiceMessageType" in blob:
         dispatch_client_to_gre(blob)
     elif "block_title" in blob and blob["block_title"] == "Deck.GetDeckListsV3":
         parsers.parse_get_decklists(blob, version=3)
@@ -111,24 +113,21 @@ def dispatch_gre_to_client(blob):
 
 @util.debug_log_trace
 def dispatch_client_to_gre(blob):
-    # TODO: seems this is dead code (9/10/18) :(
-    client_message = blob['clientToGreMessage']
-    message_type = client_message['type']
-    dont_care_types = ["ClientMessageType_UIMessage"]
-    unknown_types = ["ClientMessageType_PerformActionResp", "ClientMessageType_DeclareAttackersResp"
-                     "ClientMessageType_DeclareBlockersResp", "ClientMessageType_SetSettingsReq",
-                     "ClientMessageType_SelectNResp", "ClientMessageType_SelectTargetsResp",
-                     "ClientMessageType_SubmitTargetsReq", "ClientMessageType_SubmitAttackersReq",
-                     "ClientMessageType_ConnectReq"]
-    if message_type in dont_care_types:
-        pass
-    elif message_type == "ClientMessageType_MulliganResp":
-        parsers.parse_mulligan_response(client_message)
-    elif message_type in unknown_types:
-        # TODO: log ?
-        pass
-    else:
-        app.mtga_app.mtga_logger.warning("{}WARNING: unknown clientToGreMessage type: {}".format(util.ld(), message_type))
+    binaryPayload = base64.b64decode(blob['payload'])
+    msgType = blob['clientToMatchServiceMessageType'].split('_')[1]
 
+    if msgType == 'ClientToMatchDoorConnectRequest':
+        msg = models.messages_pb2.ClientToMatchDoorConnectRequest()
+    elif msgType == 'ClientToGREMessage' or msgType == 'ClientToGREUIMessage':
+        msg = models.messages_pb2.ClientToGREMessage()
+    elif msgType == 'AuthenticateRequest':
+        msg = models.messages_pb2.AuthenticateRequest()
+    elif msgType == 'CreateMatchGameRoomRequest':
+        msg = models.messages_pb2.CreateMatchGameRoomRequest()
+    elif msgType == 'EchoRequest':
+        msg = models.messages_pb2.EchoRequest()
 
-# LOWER LEVEL DISPATCHERS: a message or game object (?)
+    msg.ParseFromString(binaryPayload)
+    app.mtga_app.mtga_logger.debug(blob['payload'])
+    app.mtga_app.mtga_logger.debug(msg)
+
